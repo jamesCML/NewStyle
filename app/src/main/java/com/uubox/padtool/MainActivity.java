@@ -22,6 +22,8 @@ import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -42,7 +44,7 @@ public class MainActivity extends Activity {
     private TextView mLoadMsg;
     private Button mButton;
     private FrameLayout mParent;
-
+    private CheckBox mCheckBox;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +53,7 @@ public class MainActivity extends Activity {
         mLoadMsg = findViewById(R.id.loading_msg);
         mButton = findViewById(R.id.loading_bt);
         mParent = findViewById(R.id.main_parent);
+        mCheckBox = findViewById(R.id.loading_cb);
         SimpleUtil.log("MainActivity-------------create------------" + hashCode());
         SimpleUtil.DEBUG = CommonUtils.getAppVersionName(this).contains("debug");
 
@@ -81,7 +84,19 @@ public class MainActivity extends Activity {
         } else {
             mLoadMsg.setText("进入游戏会自动显示游戏键位图!");
         }
+        mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SimpleUtil.log("ischeck:" + isChecked);
+                SimpleUtil.saveToShare(MainActivity.this, "ini", "showloading", !isChecked);
+            }
+        });
 
+        AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0);
+        alphaAnimation.setDuration(300);
+        alphaAnimation.setRepeatCount(Animation.INFINITE);
+        alphaAnimation.setRepeatMode(Animation.REVERSE);
+        mButton.startAnimation(alphaAnimation);
     }
 
     @Override
@@ -99,8 +114,17 @@ public class MainActivity extends Activity {
         if (!(Boolean) SimpleUtil.getFromShare(this, "ini", "init", boolean.class)) {
             new IniTask().execute();
         } else {
+
+            if (!(Boolean) SimpleUtil.getFromShare(this, "ini", "showloading", boolean.class, true)) {
+                Intent intent = new Intent(MainActivity.this, MainService.class);
+                startService(intent);
+                finish();
+                return;
+            }
+
             mButton.setVisibility(View.VISIBLE);
             mButton.setText("好的");
+            mCheckBox.setVisibility(View.VISIBLE);
         }
     }
 
@@ -194,6 +218,7 @@ public class MainActivity extends Activity {
         startService(intent);
         MainActivity.this.finish();*/
             mProgress.setVisibility(View.VISIBLE);
+            mButton.clearAnimation();
             mButton.setVisibility(View.GONE);
             SimpleUtil.runOnUIThread(new Runnable() {
                 @Override
@@ -204,7 +229,7 @@ public class MainActivity extends Activity {
                     SimpleUtil.zoomy = Math.max(a1, a2);
                     SimpleUtil.saveToShare(MainActivity.this, "ini", "zoomx", SimpleUtil.zoomx);
                     SimpleUtil.saveToShare(MainActivity.this, "ini", "zoomy", SimpleUtil.zoomy);
-                    SimpleUtil.toast(MainActivity.this, SimpleUtil.zoomx + "," + SimpleUtil.zoomy);
+                    //SimpleUtil.toast(MainActivity.this, SimpleUtil.zoomx + "," + SimpleUtil.zoomy);
                 }
             }, 200);
         }
@@ -252,6 +277,12 @@ public class MainActivity extends Activity {
             mProgress.setVisibility(View.GONE);
             mButton.setText("好的");
             mButton.setVisibility(View.VISIBLE);
+            AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0);
+            alphaAnimation.setDuration(300);
+            alphaAnimation.setRepeatCount(Animation.INFINITE);
+            alphaAnimation.setRepeatMode(Animation.REVERSE);
+            mButton.startAnimation(alphaAnimation);
+            mCheckBox.setVisibility(View.VISIBLE);
 
         }
     }

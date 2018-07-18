@@ -503,6 +503,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             SimpleUtil.log("mWindowManager is not null!return!");
             return;
         }
+        setUpAsForeground("大吉大利，今晚吃鸡！");
         mUSBManager = (UsbManager) getSystemService(Context.USB_SERVICE);
 
         mWindowManager = (WindowManager) getApplication().getSystemService(Context.WINDOW_SERVICE);

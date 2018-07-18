@@ -34,6 +34,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import com.uubox.adapters.OverSizeAdapter;
 import com.uubox.padtool.R;
 import com.uubox.views.KeyboardEditWindowManager;
+import com.uubox.views.WrapFloat;
 
 public class SimpleUtil {
     public static boolean DEBUG;
@@ -147,25 +148,25 @@ public class SimpleUtil {
     public static Object getFromShare(Context context, String lib, String key, Class<?> type, Object defaultValue) {
         SharedPreferences preferences = context.getSharedPreferences(lib, 0);
         if (type == int.class) {
-            return preferences.getInt(key, 0);
+            return preferences.getInt(key, (Integer) defaultValue);
         } else if (type == long.class) {
-            return preferences.getLong(key, 0);
+            return preferences.getLong(key, (Long) defaultValue);
         } else if (type == String.class) {
-            return preferences.getString(key, null);
+            return preferences.getString(key, (String) defaultValue);
         } else if (type == boolean.class) {
-            return preferences.getBoolean(key, false);
+            return preferences.getBoolean(key, (Boolean) defaultValue);
         } else return null;
     }
 
     public static Object getFromShare(SharedPreferences preferences, String key, Class<?> type, Object defaultValue) {
         if (type == int.class) {
-            return preferences.getInt(key, 0);
+            return preferences.getInt(key, (Integer) defaultValue);
         } else if (type == long.class) {
-            return preferences.getLong(key, 0);
+            return preferences.getLong(key, (Long) defaultValue);
         } else if (type == String.class) {
-            return preferences.getString(key, null);
+            return preferences.getString(key, (String) defaultValue);
         } else if (type == boolean.class) {
-            return preferences.getBoolean(key, false);
+            return preferences.getBoolean(key, (Boolean) defaultValue);
         } else return null;
     }
 
@@ -551,21 +552,21 @@ public class SimpleUtil {
                 FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 params.gravity = Gravity.BOTTOM | Gravity.CENTER;
 
-                View topView = KeyboardEditWindowManager.getInstance().init(context).getTopView();
+              /*  View topView = KeyboardEditWindowManager.getInstance().init(context).getTopView();
                 if (topView != null && topView.getId() == R.id.dialog_msgbottom_par) {
                     KeyboardEditWindowManager.getInstance().removeView(topView);
-                }
+                }*/
                 ScaleAnimation scaleAnimation_show = new ScaleAnimation(0f, 1f, 0f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
                 scaleAnimation_show.setDuration(300);
                 view.startAnimation(scaleAnimation_show);
-                KeyboardEditWindowManager.getInstance().init(context).addView(view, params);
+                WrapFloat.getInstance(context).addView(view);
                 SimpleUtil.runOnUIThread(new Runnable() {
                     @Override
                     public void run() {
                         ScaleAnimation scaleAnimation_close = new ScaleAnimation(1f, 0f, 1f, 0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
                         scaleAnimation_close.setDuration(300);
                         view.startAnimation(scaleAnimation_close);
-                        KeyboardEditWindowManager.getInstance().init(context).removeView(view);
+                        WrapFloat.getInstance(context).removeView(view);
                     }
                 }, 2000);
             }
