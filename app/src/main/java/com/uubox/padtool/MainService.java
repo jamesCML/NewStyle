@@ -66,7 +66,6 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
     private ParcelFileDescriptor mParcelFileDescriptor;
     private AOADataPack mAOADataPack;
     private final int HANDLE_SCAN_AOA = 2;
-
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -563,7 +562,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
     private void initFloating() {
         mfloatingIv = mlayout.findViewById(R.id.floating_imageView);
         //mfloatingentergame = mlayout.findViewById(R.id.floating_entergame);
-        mfloatingIv.setImageResource(R.mipmap.app_icon0805001);
+        mfloatingIv.setImageResource(R.mipmap.app_icon0805001_gray);
         mfloatingIv.getBackground().setAlpha(150);
         mfloatingIv.setTag(1);
         mGestureDetector = new GestureDetector(this, new MyOnGestureListener());
@@ -759,7 +758,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             int action = event.getAction();
             switch (action) {
                 case MotionEvent.ACTION_DOWN:
-                    mfloatingIv.setTag(1);
+                    //mfloatingIv.setTag(1);mfloatingIv.setImageDrawable(getDrawable((mAOADataPack == null || !mAOADataPack.isAOAConnect()) ? R.mipmap.app_icon0805001_gray : R.mipmap.app_icon0805001));
                     mfloatingIv.setImageResource((mAOADataPack == null || !mAOADataPack.isAOAConnect()) ? R.mipmap.app_icon0805001_gray : R.mipmap.app_icon0805001);
                     isMove = false;
                     mTouchStartX = (int) event.getRawX();

@@ -553,9 +553,8 @@ public class SimpleUtil {
 
                 View topView = KeyboardEditWindowManager.getInstance().init(context).getTopView();
                 if (topView != null && topView.getId() == R.id.dialog_msgbottom_par) {
-                    params.bottomMargin = topView.getHeight() + 10;
+                    KeyboardEditWindowManager.getInstance().removeView(topView);
                 }
-
                 ScaleAnimation scaleAnimation_show = new ScaleAnimation(0f, 1f, 0f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
                 scaleAnimation_show.setDuration(300);
                 view.startAnimation(scaleAnimation_show);

@@ -92,7 +92,7 @@ public class KeyboardFloatView extends FrameLayout {
             x = InjectUtil.getBtnPositionX(btn);
             y = InjectUtil.getBtnPositionY(btn);
             ImageView iv = mIvBtns[btn.ordinal()];
-            if (x < 0 || y < 0 || iv != null
+            if ((x <= 0 && y <= 0 && InjectUtil.getBtnRadius(btn) <= 0) || iv != null
                     // 不显示方向键和鼠标
                     || btn == KeyboardView.Btn.L || btn == KeyboardView.Btn.R) {
                 continue;

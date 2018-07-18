@@ -195,11 +195,18 @@ public class MainActivity extends Activity {
         MainActivity.this.finish();*/
             mProgress.setVisibility(View.VISIBLE);
             mButton.setVisibility(View.GONE);
-            SimpleUtil.zoomy = findViewById(R.id.main_parent).getHeight();
-            SimpleUtil.zoomx = findViewById(R.id.main_parent).getWidth();
-            SimpleUtil.saveToShare(MainActivity.this, "ini", "zoomx", SimpleUtil.zoomx);
-            SimpleUtil.saveToShare(MainActivity.this, "ini", "zoomy", SimpleUtil.zoomy);
-            // SimpleUtil.toast(MainActivity.this,SimpleUtil.zoomx+","+SimpleUtil.zoomy);
+            SimpleUtil.runOnUIThread(new Runnable() {
+                @Override
+                public void run() {
+                    int a1 = findViewById(R.id.main_parent).getHeight();
+                    int a2 = findViewById(R.id.main_parent).getWidth();
+                    SimpleUtil.zoomx = Math.min(a1, a2);
+                    SimpleUtil.zoomy = Math.max(a1, a2);
+                    SimpleUtil.saveToShare(MainActivity.this, "ini", "zoomx", SimpleUtil.zoomx);
+                    SimpleUtil.saveToShare(MainActivity.this, "ini", "zoomy", SimpleUtil.zoomy);
+                    SimpleUtil.toast(MainActivity.this, SimpleUtil.zoomx + "," + SimpleUtil.zoomy);
+                }
+            }, 200);
         }
 
         @Override

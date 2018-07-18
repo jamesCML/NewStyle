@@ -4,10 +4,10 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.uubox.padtool"
-        minSdkVersion 19
-        targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion 21
+        targetSdkVersion 22
+        versionCode 2
+        versionName "2.0test"
         flavorDimensions "versionCode"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -44,7 +44,7 @@ android {
     productFlavors {
         UUBox_Wisega {
             applicationId "com.uubox.padtool"
-            manifestPlaceholders = [app_icon: "@mipmap/app_icon0805001", appname: "UUBox"]
+            manifestPlaceholders = [app_icon: "@mipmap/ic_launcher", appname: "UUBox"]
             //buildConfigField "int", "TYPE", "1"
             signingConfig signingConfigs.release
         }

@@ -941,9 +941,9 @@ public class KeyboardView extends FrameLayout
     private void makeButtonView(final Btn btn, final BtnParams params, boolean isBelong) {
         int x = params.getX();
         int y = params.getY();
-
+        int rd = params.getR();
         DragImageView iv = (DragImageView) params.img;
-        if (x < 0 || y < 0 || iv != null) {
+        if ((x <= 0 && y <= 0 && rd <= 0) || iv != null) {
             return;
         }
         iv = new DragImageView(getContext());
