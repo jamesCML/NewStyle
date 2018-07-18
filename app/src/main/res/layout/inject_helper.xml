@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@drawable/dialog_message_box_b"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_margin="2px"
+        android:background="@color/font_blue"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/frame_close"
+                android:textColor="@color/mk_white"
+                android:layout_gravity="right|center_vertical"
+                android:src="@mipmap/frame_close"
+                android:padding="2dp"
+                android:layout_width="32dp"
+                android:layout_height="32dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:id="@+id/inject_helper_title"
+                android:textColor="@color/mk_white"
+                android:textStyle="bold"
+                android:textSize="26sp"
+                android:gravity="center"
+                android:text="text"
+                android:layout_height="wrap_content" />
+        </FrameLayout>
+
+        <View
+            android:layout_marginTop="2dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_width="match_parent"
+            android:background="@color/shine"
+            android:layout_height="1px" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ScrollView
+                android:layout_marginTop="2dp"
+                android:layout_weight="5"
+                android:layout_width="match_parent"
+                android:layout_height="0dp">
+
+                <EditText
+                    android:padding="5dp"
+                    android:enabled="false"
+                    android:textColor="@color/mk_white"
+                    android:textSize="20sp"
+                    android:id="@+id/inject_helper_edit"
+                    android:background="@color/transparent"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"></EditText>
+            </ScrollView>
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

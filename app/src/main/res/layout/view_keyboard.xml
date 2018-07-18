@@ -1,0 +1,38 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fl_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <!--android:layout_marginLeft="130dp"-->
+    <!--android:layout_marginTop="40dp"-->
+
+    <!-- 用于获取摇杆按钮的默认半径 -->
+    <ImageView
+        android:id="@+id/iv_joystick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible" />
+
+    <!--android:layout_width="350dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!-- 菜单栏 l:160  top:60-->
+    <include
+        android:id="@+id/fl_menu"
+        layout="@layout/view_keyboard_menu"
+
+        />
+    <!--android:layout_marginLeft="160dp"-->
+    <!--android:layout_marginTop="60dp"-->
+    <!-- 测试界面提示语 -->
+    <TextView
+        android:id="@+id/tv_tip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="@color/b1"
+        android:textSize="20sp"
+        android:visibility="invisible" />
+
+</FrameLayout>

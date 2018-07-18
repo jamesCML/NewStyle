@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/mk_white"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/titlelist_title"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="2dp"
+        android:layout_weight="2"
+        android:gravity="center"
+        android:paddingTop="5dp"
+        android:text=""
+        android:textColor="@color/rock_blue"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <ListView
+        android:id="@+id/titlelist_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="5"
+        android:divider="@color/grey_1"
+        android:dividerHeight="1px"></ListView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:layout_weight="2"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/dialogmsgyes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:minHeight="40dp"
+            android:minWidth="80dp"
+            android:background="@drawable/dialog_message_bt_select"
+            android:text="yes" />
+
+        <Button
+            android:id="@+id/dialogmsgno"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:minHeight="40dp"
+            android:minWidth="80dp"
+            android:background="@drawable/dialog_message_bt_select"
+            android:text="no" />
+    </LinearLayout>
+</LinearLayout>

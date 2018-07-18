@@ -1,0 +1,4 @@
+<resources>
+    <dimen name="activity_btn_dialog_width">600dp</dimen>
+
+</resources>

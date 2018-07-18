@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/dialog_message_box"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/dialogmsgtitle"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:paddingTop="5dp"
+        android:text="title"
+        android:textColor="@color/mk_white"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <ScrollView
+        android:layout_width="200dp"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_weight="2">
+
+        <RadioGroup
+            android:id="@+id/dialog_radiogroup_group"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></RadioGroup>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/dialogmsgyes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:minHeight="40dp"
+            android:minWidth="80dp"
+            android:background="@drawable/dialog_message_bt_select"
+            android:text="yes" />
+
+        <Button
+            android:id="@+id/dialogmsgno"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:minHeight="40dp"
+            android:minWidth="80dp"
+            android:background="@drawable/dialog_message_bt_select"
+            android:text="no" />
+    </LinearLayout>
+</LinearLayout>

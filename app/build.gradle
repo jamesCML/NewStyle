@@ -1,0 +1,72 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 27
+    defaultConfig {
+        applicationId "com.uubox.padtool"
+        minSdkVersion 19
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+        flavorDimensions "versionCode"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    signingConfigs {
+        debug {
+            keyAlias 'Wisega'
+            keyPassword '123456'
+            storeFile file('../jks/xiaoji.jks')
+            storePassword '123456'
+        }
+        release {
+            keyAlias 'Wisega'
+            keyPassword '123456'
+            storeFile file('../jks/xiaoji.jks')
+            storePassword '123456'
+        }
+    }
+    buildTypes {
+        release {
+            buildConfigField "boolean", "LOG_DEBUG", "false"
+            minifyEnabled true
+            zipAlignEnabled true
+            shrinkResources true
+////            applicationIDsuffix '.release'
+            versionNameSuffix '-release'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+
+            versionNameSuffix '-debug'
+        }
+    }
+
+    productFlavors {
+        UUBox_Wisega {
+            applicationId "com.uubox.padtool"
+            manifestPlaceholders = [app_icon: "@mipmap/app_icon0805001", appname: "UUBox"]
+            //buildConfigField "int", "TYPE", "1"
+            signingConfig signingConfigs.release
+        }
+    }
+
+}
+repositories {
+    flatDir { dirs 'libs' }
+    jcenter()
+    maven {
+        url 'https://maven.google.com/'
+        name 'Google'
+    }
+}
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation 'com.android.support:design:27.1.1'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation files('libs/pad-server-v3.0.8.jar')
+    implementation(name: 'xml-debug', ext: 'aar')
+}

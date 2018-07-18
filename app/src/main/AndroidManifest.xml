@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.uubox.padtool">
+
+    <uses-feature android:name="android.hardware.usb.accessory" />
+    <uses-feature
+        android:name="android.hardware.usb.host"
+        android:required="true" />
+
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission
+        android:name="android.permission.READ_LOGS"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission
+        android:name="android.permission.CHANGE_CONFIGURATION"
+        tools:ignore="ProtectedPermissions" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="${app_icon}"
+        android:label="${appname}"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/fullscreen">
+        <activity
+            android:screenOrientation="landscape"
+            android:name=".MainActivity"
+            android:launchMode="singleTask"
+            android:label="@string/app_name"
+            android:theme="@style/fullscreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
+                android:resource="@xml/accessory_filter" />
+
+
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"></action>
+            </intent-filter>
+            <meta-data
+                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+                android:resource="@xml/device_filter"></meta-data>
+
+
+        </activity>
+
+        <service
+            android:name=".MainService"
+            android:configChanges="orientation|keyboardHidden|mcc|mnc|locale|touchscreen|navigation|screenLayout|uiMode|screenSize|smallestScreenSize|layoutDirection|fontScale|keyboard">
+
+            <!--  <intent-filter >
+                  <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED">
+                  </action>
+              </intent-filter>-->
+            <!-- <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" android:resource="@xml/device_filter">
+             </meta-data>-->
+
+
+            <!-- <intent-filter>
+                 <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"></action>
+             </intent-filter>
+             <meta-data android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
+                 android:resource="@xml/accessory_filter"
+                 >
+             </meta-data>-->
+        </service>
+
+        <receiver android:name=".GloableRec">
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+                <action android:name="android.hardware.usb.action.USB_DEVICE_DETACHED" />
+                <action android:name="com.uubox.newstyle.MainActivity.USBPERMISSION" />
+                <action android:name="android.hardware.usb.action.USB_ACCESSORY_DETACHED" />
+                <action android:name="com.uubox.newstyle.MainActivity.ACCUSBPERMISSION" />
+                <action android:name="android.intent.action.SCREEN_OFF" />
+                <action android:name="android.intent.action.SCREEN_ON" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@mipmap/msgtotop_bg_green"
+    android:id="@+id/dialog_msgbottom_par"
+    android:orientation="vertical">
+
+    <TextView
+        android:padding="2dp"
+        android:id="@+id/msgtotop_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="配置数量过大，请删除一些"
+        android:textColor="@color/lightred"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+</LinearLayout>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+
+
+    <color name="black">#000000</color>
+    <color name="grey_white">#d4d4d4</color>
+    <color name="gold">#ffd241</color>
+    <color name="shine">#fffcc8</color>
+
+    <color name="white">#fff5f5f5</color>
+    <color name="rock_blue">#ff0277c1</color>
+    <color name="grey_1">#58595a</color>
+    <color name="grey_2">#b9b9b9</color>
+    <color name="grey_4">#0f1410</color>
+
+    <color name="b1">#00d8ff</color>
+
+    <color name="transparent">@android:color/transparent</color>
+
+    <color name="truered">#ff0000</color>
+    <color name="lightred">#bbff0000</color>
+    <!--<color name="mk_loading">#69a94f</color>-->
+    <color name="mk_loading">#00af61</color>
+    <color name="mk_isdown">#bdc287</color>
+    <color name="mk_white">#FFF</color>
+    <color name="font_blue">#000</color>
+
+    <!--进度条-->
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="color_union_button">#aa33cc33</color>
+
+    <color name="holo_green_dark">#67e667</color>
+
+</resources>

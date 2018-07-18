@@ -1,0 +1,19 @@
+[
+  {
+    "outputType": {
+      "type": "APK"
+    },
+    "apkInfo": {
+      "type": "MAIN",
+      "splits": [],
+      "versionCode": 1,
+      "versionName": "1.0-release",
+      "enabled": true,
+      "outputFile": "app-UUBox_Wisega-release.apk",
+      "fullName": "UUBox_WisegaRelease",
+      "baseName": "UUBox_Wisega-release"
+    },
+    "path": "app-UUBox_Wisega-release.apk",
+    "properties": {}
+  }
+]

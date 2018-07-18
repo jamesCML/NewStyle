@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:id="@+id/dialog_keyboard_rock_attr_parent"
+    android:background="@drawable/dialog_message_box_b">
+
+    <LinearLayout
+        android:padding="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#00000000"
+        android:orientation="vertical">
+
+
+        <TextView
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center"
+            android:text="鼠标灵敏度调节"
+            android:textColor="@color/mk_white"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tv_mouse_sensitivity_x"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="水平：0"
+                android:textColor="@color/mk_white" />
+
+            <SeekBar
+                android:id="@+id/sbar_mouse_sensitivity_x"
+                style="@android:style/Widget.Holo.SeekBar"
+                android:layout_width="200dp"
+                android:layout_height="30dp"
+                android:layout_margin="10dp"
+                android:layout_marginTop="0dp"
+                android:max="30"
+                android:min="0"
+                android:progress="20"
+                android:thumb="@color/mk_loading" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tv_mouse_sensitivity_y"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="垂直：0"
+                android:textColor="@color/mk_white" />
+
+            <SeekBar
+                android:id="@+id/sbar_mouse_sensitivity_y"
+                style="@android:style/Widget.Holo.SeekBar"
+                android:layout_width="200dp"
+                android:layout_height="30dp"
+                android:layout_margin="10dp"
+                android:layout_marginTop="0dp"
+                android:max="30"
+                android:min="0"
+                android:progress="20"
+                android:thumb="@color/mk_loading" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tv_mouse_wheel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text=" 滚轮：0"
+                android:textColor="@color/mk_white" />
+
+            <SeekBar
+                android:id="@+id/sbar_mouse_Wheel"
+                style="@android:style/Widget.Holo.SeekBar"
+                android:layout_width="200dp"
+                android:layout_height="30dp"
+                android:layout_margin="10dp"
+                android:layout_marginTop="0dp"
+                android:max="100"
+                android:min="0"
+                android:progress="57"
+                android:thumb="@color/mk_loading" />
+        </LinearLayout>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="呼出鼠标指针："
+            android:textColor="@color/mk_white"
+            android:textStyle="italic" />
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingBottom="2dp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:button="@drawable/correctorerror_empty"
+                android:paddingHorizontal="5dp"
+                android:text="中键"
+                android:id="@+id/rbn_mouse_in"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/mk_white"
+                android:layout_marginLeft="10dp"
+                android:checked="true" />
+
+            <RadioButton
+                android:button="@drawable/correctorerror_empty"
+                android:paddingHorizontal="5dp"
+                android:text="右键"
+                android:textColor="@color/mk_white"
+                android:id="@+id/rbn_mouse_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:checked="false" />
+        </RadioGroup>
+
+        <Button
+            android:layout_marginBottom="6dp"
+            android:layout_gravity="right"
+            android:layout_marginRight="10dp"
+            android:text="保存"
+            android:background="@drawable/dialog_message_bt_select"
+            android:id="@+id/rbn_mouse_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</FrameLayout>

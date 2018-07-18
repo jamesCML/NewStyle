@@ -1,0 +1,16 @@
+<resources>
+
+    <!-- Base application theme. -->
+
+    <style name="fullscreen" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+    </style>
+
+    <style name="loadingstyle">
+        <item name="android:progressDrawable">@drawable/loadprogress</item>
+        <item name="android:indeterminateOnly">false</item>
+        <item name="android:progress">0</item>
+    </style>
+</resources>
