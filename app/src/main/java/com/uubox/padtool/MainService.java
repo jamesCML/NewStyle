@@ -40,6 +40,7 @@ import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -637,6 +638,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         } else if (id == 10003)//配置更新了
         {
             SimpleUtil.log("AOADataPack is NULL");
+            mAOADataPack = new AOADataPack(getBaseContext(), new AccInputThread(null, null));
             if (mAOADataPack != null) {
                 final List<AOADataPack.Config> allConfigs = mAOADataPack.loadConfigs();
                 final int[] byteSize = {0};
@@ -674,7 +676,10 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
                                 }
                             }
 
-
+                            SimpleUtil.test(getBaseContext(), allConfigs, byteSize[0], null, null);
+                            if (5 == 5) {
+                                return;
+                            }
                             SimpleUtil.addOverSizetoTop(getBaseContext(), allConfigs, byteSize[0], new Runnable() {
                                 @Override
                                 public void run() {

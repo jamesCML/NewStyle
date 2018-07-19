@@ -14,12 +14,15 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +34,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import com.uubox.adapters.MoveConfigAdapter;
 import com.uubox.adapters.OverSizeAdapter;
 import com.uubox.padtool.R;
 import com.uubox.views.KeyboardEditWindowManager;
@@ -474,9 +478,146 @@ public class SimpleUtil {
         KeyboardEditWindowManager.getInstance().addView(saveView, (2 * SimpleUtil.zoomy) / 3, (2 * SimpleUtil.zoomx) / 3);
     }
 
+    public static void test(final Context context, final List<AOADataPack.Config> allConfigs, final int size, final Runnable okTask, final Runnable noTask) {
+        String gloabkeyconfig = (String) SimpleUtil.getFromShare(context, "ini", "gloabkeyconfig", String.class, "");
+        String[] sp0 = gloabkeyconfig.split("#Z%W#", -1);
+        SimpleUtil.log("当前使用:" + sp0[1] + "\n" + sp0);
+        final View view = LayoutInflater.from(context).inflate(R.layout.dialog_oversize, null);
+        final View listPar = view.findViewById(R.id.dialog_oversize_list_par);
+        final View gunPar = view.findViewById(R.id.dialog_oversize_gun_par);
+
+        final List<AOADataPack.Config> configsLeftData = new ArrayList<>();
+        final List<AOADataPack.Config> configsRightData = new ArrayList<>();
+        for (AOADataPack.Config config : allConfigs) {
+            if (config.getIsDeleted()) {
+                configsLeftData.add(config);
+            } else {
+                configsRightData.add(config);
+            }
+        }
+
+        ListView listLeft = view.findViewById(R.id.dialog_oversize_left);
+        ListView listRight = view.findViewById(R.id.dialog_oversize_right);
+
+        final MoveConfigAdapter adapterleft = new MoveConfigAdapter(context, configsLeftData);
+        final MoveConfigAdapter adapterRight = new MoveConfigAdapter(context, configsRightData);
+        listLeft.setAdapter(adapterleft);
+        listRight.setAdapter(adapterRight);
+
+        final TextView changeGunTv = view.findViewById(R.id.dialog_oversize_changetv);
+        changeGunTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (changeGunTv.getText().toString().contains("压枪")) {
+                    listPar.setVisibility(View.GONE);
+                    gunPar.setVisibility(View.VISIBLE);
+                    changeGunTv.setText("点击我跳转到配置选择列表");
+                } else {
+                    listPar.setVisibility(View.VISIBLE);
+                    gunPar.setVisibility(View.GONE);
+                    changeGunTv.setText("点击我跳转到压枪设置");
+                }
+            }
+        });
+
+        KeyboardEditWindowManager.getInstance().init(context).addView(view, (2 * SimpleUtil.zoomy) / 3, (2 * SimpleUtil.zoomx) / 3);
+
+        final INormalBack iNormalBack = new INormalBack() {
+            @Override
+            public void back(int id, Object obj) {
+                if (id == 10007) {
+                    AOADataPack.Config config = (AOADataPack.Config) obj;
+                    config.setDeleted(true);
+                    configsLeftData.add(config);
+                    configsRightData.remove(obj);
+
+                } else if (id == 10008) {
+                    AOADataPack.Config config = (AOADataPack.Config) obj;
+                    config.setDeleted(false);
+                    configsRightData.add(config);
+                    configsLeftData.remove(obj);
+                } else if (id == 10009) {//上
+                    int position = (Integer) obj;
+                    if (position == 0) {
+                        return;
+                    }
+                    SimpleUtil.log("up position:" + position);
+                    configsRightData.add(position - 1, configsRightData.get(position));
+                    configsRightData.remove(position + 1);
+                } else if (id == 10010) {//下
+                    int position = (Integer) obj;
+                    if (position == configsRightData.size() - 1) {
+                        return;
+                    }
+                    SimpleUtil.log("down position:" + position);
+                    configsRightData.add(position + 2, configsRightData.get(position));
+                    configsRightData.remove(position);
+                }
+                adapterleft.notifyDataSetChanged();
+                adapterRight.notifyDataSetChanged();
+            }
+        };
+        SimpleUtil.addINormalCallback(iNormalBack);
+
+        view.findViewById(R.id.dialog_oversize_write).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (okTask != null) {
+                    runOnUIThread(okTask);
+                }
+            }
+        });
+        view.findViewById(R.id.dialog_oversize_cancel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SimpleUtil.removeINormalCallback(iNormalBack);
+                KeyboardEditWindowManager.getInstance().close();
+                if (noTask != null) {
+                    runOnUIThread(noTask);
+                }
+            }
+        });
+
+        final TextView cfq = view.findViewById(R.id.dialog_oversize_gun_cfq_tv);
+        final TextView bq = view.findViewById(R.id.dialog_oversize_gun_bq_tv);
+        final TextView ak = view.findViewById(R.id.dialog_oversize_gun_ak_tv);
+        SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                progress += 1;
+                switch (seekBar.getId()) {
+                    case R.id.dialog_oversize_gun_cfq:
+                        cfq.setText("冲锋枪:" + progress);
+                        break;
+                    case R.id.dialog_oversize_gun_bq:
+                        bq.setText("步枪:" + progress);
+                        break;
+                    case R.id.dialog_oversize_gun_ak:
+                        ak.setText("AK:" + progress);
+                        break;
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        };
+        SeekBar cfqBar = view.findViewById(R.id.dialog_oversize_gun_cfq);
+        SeekBar bqBar = view.findViewById(R.id.dialog_oversize_gun_bq);
+        SeekBar akBar = view.findViewById(R.id.dialog_oversize_gun_ak);
+        akBar.setOnSeekBarChangeListener(seekBarChangeListener);
+        bqBar.setOnSeekBarChangeListener(seekBarChangeListener);
+        cfqBar.setOnSeekBarChangeListener(seekBarChangeListener);
+    }
     public static void addOverSizetoTop(final Context context, final List<AOADataPack.Config> configs, final int size, final Runnable okTask, final Runnable noTask) {
         final View view = LayoutInflater.from(context).inflate(R.layout.dialog_oversize, null);
-        GridView gridView = view.findViewById(R.id.dialog_oversize_grid);
+       /* GridView gridView = view.findViewById(R.id.dialog_oversize_grid);
         final TextView textView = view.findViewById(R.id.dialog_oversize_title);
         textView.setText(size > 1024 ? "写入配置数量过大(大于1024)，请移除一些:" + size : "可以写入(小于等于1024):" + size);
         textView.setTextColor(size <= 1024 ? Color.GREEN : Color.RED);
@@ -536,7 +677,7 @@ public class SimpleUtil {
                 KeyboardEditWindowManager.getInstance().removeView(view);
 
             }
-        });
+        });*/
         KeyboardEditWindowManager.getInstance().init(context).addView(view, (2 * SimpleUtil.zoomy) / 3, (2 * SimpleUtil.zoomx) / 3);
     }
 
