@@ -66,6 +66,8 @@ public class AOADataPack implements SimpleUtil.INormalBack {
 
                 //SimpleUtil.log("游戏 "+subKey+":"+subValue);
                 String[] sp = subValue.split("#Z%W#", -1);
+                config.configSha = sp[2];
+                config.setDeleted((Boolean) SimpleUtil.getFromShare(mContext, sp[2], "isDelete", boolean.class, false));
                 SimpleUtil.log("配置 " + sp[1] + "         +++++++++++++++++++++++++ " + index);
                 config.mConfigName = sp[1];
                 if (sp0[1].equals(sp[1])) {
@@ -112,6 +114,25 @@ public class AOADataPack implements SimpleUtil.INormalBack {
                 BtnParams gunlun = xmlConfig.get(KeyboardView.Btn.GUNLUN);
                 cj_cfg_t.add(Hex.fromShortB((short) (OAODEVICE_Y - turnY(gunlun.getY()))));
                 cj_cfg_t.add(Hex.fromShortB((short) turnX(gunlun.getX())));
+
+                //开始索引：33
+                byte[] tempContainer = new byte[10];
+
+
+                //添加游戏ID
+                int configID_ = (Integer) SimpleUtil.getFromShare(mContext, sp[2], "configID", int.class);
+
+                //压枪灵敏度
+
+                int bqNum = (Integer) SimpleUtil.getFromShare(mContext, sp[2], "bqNum", int.class, 25);
+                int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, sp[2], "cfqNum", int.class, 19);
+                int akNum = (Integer) SimpleUtil.getFromShare(mContext, sp[2], "akNum", int.class, 28);
+                tempContainer[0] = (byte) bqNum;
+                tempContainer[1] = (byte) cfqNum;
+                tempContainer[2] = (byte) akNum;
+                tempContainer[3] = (byte) configID_;
+                SimpleUtil.log("configID:" + sp[2] + "   " + tempContainer[3]);
+                cj_cfg_t.add(tempContainer);
 
                 ByteArrayList keyPoints = new ByteArrayList();
                 //遍历每一个配置的具体按键
@@ -502,13 +523,13 @@ public class AOADataPack implements SimpleUtil.INormalBack {
     }
 
     public class Config {
-        protected String mContent;
-        protected String mConfigName;
-        protected ByteArrayList mData;
-        protected boolean mIsUsed;
-        protected int mSize;
-        protected boolean mIsDeleted;
-
+        private String mContent;
+        private String mConfigName;
+        private ByteArrayList mData;
+        private boolean mIsUsed;
+        private int mSize;
+        private boolean mIsDeleted;
+        private String configSha;
         public String getmContent() {
             return mContent;
         }
@@ -531,6 +552,14 @@ public class AOADataPack implements SimpleUtil.INormalBack {
 
         public boolean getIsDeleted() {
             return mIsDeleted;
+        }
+
+        public void setmData(ByteArrayList mData) {
+            this.mData = mData;
+        }
+
+        public String getConfigSha() {
+            return configSha;
         }
 
         public void setDeleted(boolean flag) {

@@ -3,90 +3,110 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/dialog_message_box"
+    android:id="@+id/parent_4"
     android:orientation="vertical">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/dialog_oversize_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:paddingTop="5dp"
-            android:textColor="@color/truered"
-            android:text="配置更新"
-            android:textSize="16sp"
-            android:textStyle="bold" />
 
         <LinearLayout
-            android:layout_gravity="right|center_vertical"
+            android:minHeight="30dp"
             android:layout_marginRight="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/dialog_oversize_write"
-                android:textStyle="bold"
-                android:layout_gravity="right|center_vertical"
-                android:textColor="@color/color_union_button"
-                android:text="写入"
-                android:layout_marginRight="20dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
+                android:layout_marginLeft="10dp"
                 android:id="@+id/dialog_oversize_cancel"
                 android:textStyle="bold"
                 android:layout_gravity="right|center_vertical"
                 android:textColor="@color/lightred"
                 android:text="取消"
+                android:padding="1dp"
+                android:background="@drawable/dialog_message_bt_select"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-        </LinearLayout>
-    </FrameLayout>
+            <TextView
+                android:id="@+id/dialog_oversize_write"
+                android:layout_gravity="right|center_vertical"
+                android:textColor="@color/mk_white"
+                android:text="写入设备"
+                android:padding="1dp"
+                android:background="@drawable/dialog_message_bt_select"
+                android:layout_marginLeft="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-    <FrameLayout
+
+            <TextView
+                android:layout_marginLeft="10dp"
+                android:id="@+id/dialog_oversize_changetv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/dialog_message_bt_select"
+                android:text="点击我跳转到压枪设置"
+                android:textColor="@color/mk_white" />
+        </LinearLayout>
+
+    <View
+        android:background="@color/grey_1"
+        android:layout_margin="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="1dp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
         <TextView
-            android:layout_margin="5dp"
-            android:text="按键配置列表"
-            android:layout_width="wrap_content"
+            android:text=""
+            android:gravity="center"
+            android:id="@+id/dialog_oversize_leftmsg"
+            android:layout_marginTop="5dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content" />
-
         <TextView
-            android:id="@+id/dialog_oversize_changetv"
-            android:layout_marginRight="80dp"
-            android:textStyle="bold"
-            android:layout_gravity="right|center_vertical"
-            android:textColor="@color/color_union_button"
-            android:text="点击我跳转到压枪设置"
-            android:layout_width="wrap_content"
+            android:text="要写入的配置"
+            android:gravity="center"
+            android:id="@+id/dialog_oversize_rightmsg"
+            android:layout_marginTop="5dp"
+            android:textColor="@color/mk_loading"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/dialog_message_box_b"
+            android:padding="1dp"
+            android:layout_margin="3dp"
             android:layout_height="wrap_content" />
-    </FrameLayout>
+    </LinearLayout>
     <LinearLayout
         android:id="@+id/dialog_oversize_list_par"
         android:visibility="visible"
         android:orientation="horizontal"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <ListView
             android:id="@+id/dialog_oversize_left"
+            android:scrollbars="none"
+
             android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_weight="30"
             android:layout_height="wrap_content"
             android:layout_gravity="center"></ListView>
 
-        <ListView
-            android:id="@+id/dialog_oversize_right"
+        <View
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="@color/grey_1"
             android:layout_width="0dp"
             android:layout_weight="1"
+            android:layout_height="wrap_content" />
+        <ListView
+
+            android:scrollbars="none"
+            android:id="@+id/dialog_oversize_right"
+            android:layout_width="0dp"
+            android:layout_weight="30"
             android:layout_height="wrap_content"
             android:layout_gravity="center"></ListView>
     </LinearLayout>
@@ -103,8 +123,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
+
         <TextView
-            android:text="步枪"
+            android:text="类型:步枪  开启快捷键:F1+1  关闭快捷键:Esc+1 灵敏度:25"
+            android:id="@+id/dialog_oversize_gun_bq_tv"
+            android:layout_marginTop="5dp"
+            android:layout_gravity="left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <SeekBar
+            android:id="@+id/dialog_oversize_gun_bq"
+            android:layout_marginTop="5dp"
+            android:layout_width="200dp"
+            android:min="1"
+            android:max="99"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_gravity="left"
+            android:text="类型:冲锋枪  开启快捷键:F2+1  关闭快捷键:Esc+2 灵敏度:19"
             android:id="@+id/dialog_oversize_gun_cfq_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
@@ -116,24 +153,9 @@
             android:min="1"
             android:max="99"
             android:layout_height="wrap_content" />
-
         <TextView
-            android:text="冲锋枪"
-            android:id="@+id/dialog_oversize_gun_bq_tv"
-            android:layout_marginTop="5dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <SeekBar
-            android:id="@+id/dialog_oversize_gun_bq"
-            android:layout_marginTop="5dp"
-            android:layout_width="200dp"
-            android:min="1"
-            android:max="99"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:text="AK47"
+            android:layout_gravity="left"
+            android:text="类型:AK47  开启快捷键:F3+1  关闭快捷键:Esc+3 灵敏度:28"
             android:id="@+id/dialog_oversize_gun_ak_tv"
             android:layout_marginTop="5dp"
             android:layout_width="wrap_content"

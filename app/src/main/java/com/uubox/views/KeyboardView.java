@@ -1133,6 +1133,9 @@ public class KeyboardView extends FrameLayout
                 break;
             case RIGHT:
                 break;
+            case MOUSE_RIGHT:
+                SimpleUtil.notifyall_(10003, null);
+                break;
             default:
                 break;
         }

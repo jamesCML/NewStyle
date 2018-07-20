@@ -637,80 +637,20 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             //SimpleUtil.log("MainService rec:"+Hex.toString((byte[])obj));
         } else if (id == 10003)//配置更新了
         {
-            SimpleUtil.log("AOADataPack is NULL");
+            SimpleUtil.saveToShare(getBaseContext(), "ini", "configschange", true);
             mAOADataPack = new AOADataPack(getBaseContext(), new AccInputThread(null, null));
             if (mAOADataPack != null) {
                 final List<AOADataPack.Config> allConfigs = mAOADataPack.loadConfigs();
-                final int[] byteSize = {0};
-                for (AOADataPack.Config config : allConfigs) {
-                    byteSize[0] += config.getmSize();
-                }
-
-                SimpleUtil.log("配置 size:" + byteSize[0]);
-                if (byteSize[0] > 1024)//超出frash，提示修改
-                {
                     SimpleUtil.runOnUIThread(new Runnable() {
                         @Override
                         public void run() {
-
-                            Object delecteconfigs_obj = SimpleUtil.getFromShare(getBaseContext(), "ini", "deleteconfigs", String.class);
-                            if (delecteconfigs_obj != null) {
-                                String delecteconfigs = (String) delecteconfigs_obj;
-                                String[] sp = delecteconfigs.split("``", -1);
-
-                                String gloabkeyconfig = (String) SimpleUtil.getFromShare(getBaseContext(), "ini", "gloabkeyconfig", String.class, "");
-                                String[] sp0 = gloabkeyconfig.split("#Z%W#", -1);
-                                SimpleUtil.log("当前使用:" + sp0[1] + ",allsize:" + allConfigs.size());
-
-                                if (sp != null) {
-                                    for (AOADataPack.Config config : allConfigs) {
-                                        SimpleUtil.log("遍历是否需要默认移除:" + config.getmConfigName());
-                                        for (String s : sp) {
-                                            if (config.getmConfigName().equals(s) && !sp0[1].equals(config.getmConfigName())) {
-                                                config.setDeleted(true);
-                                                byteSize[0] -= config.getmSize();
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            SimpleUtil.test(getBaseContext(), allConfigs, byteSize[0], null, null);
-                            if (5 == 5) {
-                                return;
-                            }
-                            SimpleUtil.addOverSizetoTop(getBaseContext(), allConfigs, byteSize[0], new Runnable() {
-                                @Override
-                                public void run() {
-                                    SimpleUtil.log("配置经过调整已经合理，可以写入配置了");
-                                    Iterator<AOADataPack.Config> it = allConfigs.iterator();
-                                    StringBuilder sb = new StringBuilder();
-                                    while (it.hasNext()) {
-                                        AOADataPack.Config config = it.next();
-                                        if (config.getIsDeleted()) {
-                                            sb.append(config.getmConfigName());
-                                            sb.append("``");
-                                            it.remove();
-                                        }
-                                    }
-                                    SimpleUtil.saveToShare(getBaseContext(), "ini", "deleteconfigs", sb.toString());
-                                    mAOADataPack.writeManyConfigs(allConfigs);
-                                }
-                            }, new Runnable() {
-                                @Override
-                                public void run() {
-                                    SimpleUtil.saveToShare(getBaseContext(), "ini", "configschange", true);
-                                }
-                            });
+                            SimpleUtil.test(getBaseContext(), allConfigs);
                         }
-                    }, 1000);
-                    return;
-                }
+                    });
+                return;
 
 
-            } else {
-                SimpleUtil.saveToShare(getBaseContext(), "ini", "configschange", true);
+
             }
         } else if (id == 10004) {
             if (mAOADataPack != null) {
@@ -751,7 +691,13 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
 
                 }
             });
+        } else if (id == 10011) {
+            List<AOADataPack.Config> allConfigs = (List<AOADataPack.Config>) obj;
+            if (mAOADataPack.isAOAConnect()) {
+                mAOADataPack.writeManyConfigs(allConfigs);
+            }
         }
+
     }
 
     /**
@@ -803,12 +749,12 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         public boolean onSingleTapConfirmed(MotionEvent e) {
             //点击悬浮窗未拖动，则打开按键编辑页面(增加：加载过程中不允许点击)
 
-            if (!SimpleUtil.screenstate) {
+            /*if (!SimpleUtil.screenstate) {
                 //mfloatingentergame.setVisibility(View.VISIBLE);
                 mHandler.removeMessages(MSG_HIDE_ENTER_GAME);
                 mHandler.sendMessageDelayed(Message.obtain(mHandler, MSG_HIDE_ENTER_GAME), 1000);
                 return true;
-            }
+            }*/
             if (!isMove && InjectUtil.getPressFloatable()) {
                 KeyboardEditWindowManager.getInstance().init(getApplicationContext());
 

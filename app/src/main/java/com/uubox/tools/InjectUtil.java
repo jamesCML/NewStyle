@@ -428,6 +428,26 @@ public class InjectUtil {
         //保存到新的配置
         if (sp[1].equals(sp[2])) {
             mSpFileName = SimpleUtil.getSha1(sp[2] + sp[0]);
+            SimpleUtil.log("it is a new config===>" + mSpFileName);
+
+            String configIDs = (String) SimpleUtil.getFromShare(context, "ini", "configsID", String.class, "");
+            if (configIDs.isEmpty()) {
+                byte[] ids = new byte[100];
+                ids[0] = 0x01;
+                SimpleUtil.saveToShare(context, "ini", "configsID", Hex.toString(ids));
+                SimpleUtil.saveToShare(context, mSpFileName, "configID", 1);
+            } else {
+                byte[] ids = Hex.parse(configIDs);
+                for (int i = 0; i < 100; i++) {
+                    if (ids[i] == 0) {
+                        ids[i] = (byte) (ids[i - 1] + 1);
+                        SimpleUtil.saveToShare(context, "ini", "configsID", Hex.toString(ids));
+                        SimpleUtil.saveToShare(context, mSpFileName, "configID", (int) ids[i]);
+                        break;
+                    }
+                }
+            }
+            SimpleUtil.log("保存新的配置ID到xml:" + mSpFileName);
         } else {//保存到已有配置
             mSpFileName = sp[2];
         }
@@ -492,8 +512,6 @@ public class InjectUtil {
     }
 
     private static void saveBtnParamsObjs() {
-
-
         XmlPugiElement ini_xml = XmlPugiElement.createXml("/sdcard/Zhiwan/ini_button_xxx.xml", "Root", true);
         XmlPugiElement zoom = ini_xml.addNode("ZOOM");
         zoom.addAttr("zoomx", SimpleUtil.zoomx + "");

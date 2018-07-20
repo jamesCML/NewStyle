@@ -341,6 +341,23 @@ public class IniTab {
                             SimpleUtil.toastTop(mContext, "[" + allKeysConfigList.get(mainPosition).mSubData.get(subPosition).name + "]正在使用中，不能删除！");
                             return;
                         }
+
+                        //先处理ID
+                        String configIDs = (String) SimpleUtil.getFromShare(mContext, "ini", "configsID", String.class, "");
+
+                        int configID_ = (Integer) SimpleUtil.getFromShare(mContext, (allKeysConfigList.get(mainPosition).mSubData.get(subPosition).whole.split("#Z%W#", -1))[2], "configID", int.class);
+
+                        byte[] ids = Hex.parse(configIDs);
+                        for (int i = 0; i < 100; i++) {
+                            if (ids[i] == configID_) {
+                                ids[i] = 0;
+                                SimpleUtil.saveToShare(mContext, "ini", "configsID", Hex.toString(ids));
+                                //SimpleUtil.saveToShare(mContext,mSpFileName,"configID",(int)ids[i]);
+                                break;
+                            }
+                        }
+
+
                         String spName = allKeysConfigList.get(mainPosition).mTv;
                         SharedPreferences shareLib = mContext.getSharedPreferences(spName + "_table", 0);
                         String key = (allKeysConfigList.get(mainPosition).mSubData.get(subPosition).whole.split("#Z%W#", -1))[0];
@@ -361,9 +378,10 @@ public class IniTab {
                             }
                         }
 
-
                         allKeysConfigAd.notifyDataSetChanged();
                         //KeyboardEditWindowManager.getInstance().close();
+                        SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
+                        SimpleUtil.notifyall_(10003, null);
                     }
                 });
 

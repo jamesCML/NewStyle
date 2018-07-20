@@ -150,11 +150,19 @@ public class KeyboardEditWindowManager {
     }
 
     public KeyboardEditWindowManager addView(View view) {
+        View topView = getTopView();
+        if (topView != null && topView.getId() == view.getId()) {
+            return Holder.instance;
+        }
         rootView.addView(view);
         return Holder.instance;
     }
 
     public void addView(View view, FrameLayout.LayoutParams params) {
+        View topView = getTopView();
+        if (topView != null && topView.getId() == view.getId()) {
+
+        }
         rootView.addView(view, params);
     }
 
@@ -194,6 +202,10 @@ public class KeyboardEditWindowManager {
         mLayoutParams.height = height;
         mWindowManager.addView(view, mLayoutParams);*/
 
+        View topView = getTopView();
+        if (topView != null && topView.getId() == view.getId()) {
+            return Holder.instance;
+        }
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(width, height);
         params.gravity = Gravity.CENTER;
         rootView.addView(view, params);

@@ -29,6 +29,7 @@ import android.widget.Toast;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -75,17 +76,12 @@ public class SimpleUtil {
         SharedPreferences preferences = context.getSharedPreferences(lib, 0);
         SharedPreferences.Editor edit = preferences.edit();
         if (value instanceof Integer) {
-            String value_int = (Integer) value + "";
-            //SimpleUtil.log("saveToShare:"+key+"->"+value_int);
             return edit.putInt(key, (Integer) value).commit();
         } else if (value instanceof Long) {
-            String value_int = (Long) value + "";
             return edit.putLong(key, (Long) value).commit();
         } else if (value instanceof String) {
-            String value_int = (String) value;
             return edit.putString(key, (String) value).commit();
         } else if (value instanceof Boolean) {
-            String value_int = (Boolean) value + "";
             return edit.putBoolean(key, (Boolean) value).commit();
         } else
             return false;
@@ -94,17 +90,12 @@ public class SimpleUtil {
     public static boolean saveToShare(SharedPreferences.Editor edit, String key, Object value) {
 
         if (value instanceof Integer) {
-            String value_int = (Integer) value + "";
-            //SimpleUtil.log("saveToShare:"+key+"->"+value_int);
             return edit.putInt(key, (Integer) value).commit();
         } else if (value instanceof Long) {
-            String value_int = (Long) value + "";
             return edit.putLong(key, (Long) value).commit();
         } else if (value instanceof String) {
-            String value_int = (String) value;
             return edit.putString(key, (String) value).commit();
         } else if (value instanceof Boolean) {
-            String value_int = (Boolean) value + "";
             return edit.putBoolean(key, (Boolean) value).commit();
         } else
             return false;
@@ -117,19 +108,13 @@ public class SimpleUtil {
     }
 
     public static SharedPreferences.Editor editSaveToShare(SharedPreferences.Editor edit, String key, Object value) {
-        //AES aes = new AES();
         if (value instanceof Integer) {
-            String value_int = (Integer) value + "";
-            //SimpleUtil.log("saveToShare:"+key+"->"+value_int);
             return edit.putInt(key, (Integer) value);
         } else if (value instanceof Long) {
-            String value_int = (Long) value + "";
             return edit.putLong(key, (Long) value);
         } else if (value instanceof String) {
-            String value_int = (String) value;
             return edit.putString(key, (String) value);
         } else if (value instanceof Boolean) {
-            String value_int = (Boolean) value + "";
             return edit.putBoolean(key, (Boolean) value);
         } else
             return null;
@@ -478,24 +463,32 @@ public class SimpleUtil {
         KeyboardEditWindowManager.getInstance().addView(saveView, (2 * SimpleUtil.zoomy) / 3, (2 * SimpleUtil.zoomx) / 3);
     }
 
-    public static void test(final Context context, final List<AOADataPack.Config> allConfigs, final int size, final Runnable okTask, final Runnable noTask) {
+    public static void test(final Context context, final List<AOADataPack.Config> allConfigs) {
         String gloabkeyconfig = (String) SimpleUtil.getFromShare(context, "ini", "gloabkeyconfig", String.class, "");
-        String[] sp0 = gloabkeyconfig.split("#Z%W#", -1);
-        SimpleUtil.log("当前使用:" + sp0[1] + "\n" + sp0);
+        final String[] sp0 = gloabkeyconfig.split("#Z%W#", -1);
+        SimpleUtil.log("test当前使用:" + sp0[1] + "\n" + gloabkeyconfig);
         final View view = LayoutInflater.from(context).inflate(R.layout.dialog_oversize, null);
         final View listPar = view.findViewById(R.id.dialog_oversize_list_par);
         final View gunPar = view.findViewById(R.id.dialog_oversize_gun_par);
-
+        final TextView rightMsg = view.findViewById(R.id.dialog_oversize_rightmsg);
         final List<AOADataPack.Config> configsLeftData = new ArrayList<>();
         final List<AOADataPack.Config> configsRightData = new ArrayList<>();
+        final int[] rightSize = {0};
         for (AOADataPack.Config config : allConfigs) {
             if (config.getIsDeleted()) {
                 configsLeftData.add(config);
             } else {
                 configsRightData.add(config);
+                rightSize[0] += config.getmSize();
             }
         }
-
+        if (rightSize[0] > 1024) {
+            rightMsg.setTextColor(Color.RED);
+            rightMsg.setText("配置过大！(大于1024):" + rightSize[0]);
+        } else {
+            rightMsg.setTextColor(Color.GREEN);
+            rightMsg.setText("可以写入配置！(小于1024):" + rightSize[0]);
+        }
         ListView listLeft = view.findViewById(R.id.dialog_oversize_left);
         ListView listRight = view.findViewById(R.id.dialog_oversize_right);
 
@@ -520,25 +513,51 @@ public class SimpleUtil {
             }
         });
 
-        KeyboardEditWindowManager.getInstance().init(context).addView(view, (2 * SimpleUtil.zoomy) / 3, (2 * SimpleUtil.zoomx) / 3);
+
 
         final INormalBack iNormalBack = new INormalBack() {
             @Override
             public void back(int id, Object obj) {
-                if (id == 10007) {
+                if (id == 10007) {//取消一个配置
                     AOADataPack.Config config = (AOADataPack.Config) obj;
+
+                    if (config.getIsUsed()) {
+                        addMsgBottomToTop(context, "正在使用的配置不能取消！", true);
+                        return;
+                    }
+                    SimpleUtil.saveToShare(context, config.getConfigSha(), "isDelete", true);
                     config.setDeleted(true);
                     configsLeftData.add(config);
                     configsRightData.remove(obj);
+                    rightSize[0] -= config.getmSize();
+                    if (rightSize[0] > 1024) {
+                        rightMsg.setTextColor(Color.RED);
+                        rightMsg.setText("配置过大！(大于1024):" + rightSize[0]);
+                    } else {
+                        rightMsg.setTextColor(Color.GREEN);
+                        rightMsg.setText("可以写入配置！(小于1024):" + rightSize[0]);
+                    }
 
-                } else if (id == 10008) {
+                } else if (id == 10008) {//增加一个配置
                     AOADataPack.Config config = (AOADataPack.Config) obj;
                     config.setDeleted(false);
+                    SimpleUtil.saveToShare(context, config.getConfigSha(), "isDelete", false);
                     configsRightData.add(config);
                     configsLeftData.remove(obj);
+                    rightSize[0] += config.getmSize();
+                    if (rightSize[0] > 1024) {
+                        rightMsg.setTextColor(Color.RED);
+                        rightMsg.setText("配置过大！(大于1024):" + rightSize[0]);
+                    } else {
+                        rightMsg.setTextColor(Color.GREEN);
+                        rightMsg.setText("可以写入配置！(小于1024):" + rightSize[0]);
+                    }
                 } else if (id == 10009) {//上
                     int position = (Integer) obj;
                     if (position == 0) {
+                        return;
+                    } else if (position == 1) {
+                        addMsgBottomToTop(context, "当前使用的配置必须放在第一位！", true);
                         return;
                     }
                     SimpleUtil.log("up position:" + position);
@@ -547,6 +566,9 @@ public class SimpleUtil {
                 } else if (id == 10010) {//下
                     int position = (Integer) obj;
                     if (position == configsRightData.size() - 1) {
+                        return;
+                    } else if (position == 0) {
+                        addMsgBottomToTop(context, "当前使用的配置必须放在第一位！", true);
                         return;
                     }
                     SimpleUtil.log("down position:" + position);
@@ -562,9 +584,39 @@ public class SimpleUtil {
         view.findViewById(R.id.dialog_oversize_write).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (okTask != null) {
-                    runOnUIThread(okTask);
+                if (rightSize[0] > 1024) {
+                    addMsgBottomToTop(context, "配置过大！(大于1024):" + rightSize[0], true);
+                    return;
                 }
+
+                int bqNum = (Integer) SimpleUtil.getFromShare(context, sp0[2], "bqNum", int.class, 25);
+                int cfqNum = (Integer) SimpleUtil.getFromShare(context, sp0[2], "cfqNum", int.class, 19);
+                int akNum = (Integer) SimpleUtil.getFromShare(context, sp0[2], "akNum", int.class, 28);
+                SimpleUtil.log("压枪灵敏度：" + bqNum + "," + cfqNum + "," + akNum);
+                for (AOADataPack.Config config : allConfigs) {
+                    if (config.getIsUsed()) {
+                        //压枪数据重新构造一下
+                        byte[] data = config.getmData().all2Bytes();
+                        data[32] = (byte) bqNum;
+                        data[33] = (byte) cfqNum;
+                        data[34] = (byte) akNum;
+                        byte[] data2 = Arrays.copyOfRange(data, 1, data.length);
+                        ByteArrayList bytes = new ByteArrayList();
+                        bytes.add(sumCheck(data2));
+                        bytes.add(data2);
+                        config.setmData(bytes);
+                        break;
+                    }
+                }
+
+                KeyboardEditWindowManager.getInstance().close();
+                Iterator<AOADataPack.Config> it = allConfigs.iterator();
+                while (it.hasNext()) {
+                    if (it.next().getIsDeleted()) {
+                        it.remove();
+                    }
+                }
+                SimpleUtil.notifyall_(10011, allConfigs);
             }
         });
         view.findViewById(R.id.dialog_oversize_cancel).setOnClickListener(new View.OnClickListener() {
@@ -572,9 +624,6 @@ public class SimpleUtil {
             public void onClick(View v) {
                 SimpleUtil.removeINormalCallback(iNormalBack);
                 KeyboardEditWindowManager.getInstance().close();
-                if (noTask != null) {
-                    runOnUIThread(noTask);
-                }
             }
         });
 
@@ -586,14 +635,18 @@ public class SimpleUtil {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 progress += 1;
                 switch (seekBar.getId()) {
-                    case R.id.dialog_oversize_gun_cfq:
-                        cfq.setText("冲锋枪:" + progress);
-                        break;
+
                     case R.id.dialog_oversize_gun_bq:
-                        bq.setText("步枪:" + progress);
+                        bq.setText("类型:步枪  开启快捷键:F1+1  关闭快捷键:Esc+1 灵敏度:" + progress);
+                        SimpleUtil.saveToShare(context, sp0[2], "bqNum", progress);
+                        break;
+                    case R.id.dialog_oversize_gun_cfq:
+                        cfq.setText("类型:冲锋枪  开启快捷键:F2+1  关闭快捷键:Esc+2 灵敏度:" + progress);
+                        SimpleUtil.saveToShare(context, sp0[2], "cfqNum", progress);
                         break;
                     case R.id.dialog_oversize_gun_ak:
-                        ak.setText("AK:" + progress);
+                        ak.setText("类型:AK47  开启快捷键:F3+1  关闭快捷键:Esc+3 灵敏度:" + progress);
+                        SimpleUtil.saveToShare(context, sp0[2], "akNum", progress);
                         break;
                 }
             }
@@ -614,6 +667,18 @@ public class SimpleUtil {
         akBar.setOnSeekBarChangeListener(seekBarChangeListener);
         bqBar.setOnSeekBarChangeListener(seekBarChangeListener);
         cfqBar.setOnSeekBarChangeListener(seekBarChangeListener);
+        int bqNum = (Integer) SimpleUtil.getFromShare(context, sp0[2], "bqNum", int.class, 25);
+        int cfqNum = (Integer) SimpleUtil.getFromShare(context, sp0[2], "cfqNum", int.class, 19);
+        int akNum = (Integer) SimpleUtil.getFromShare(context, sp0[2], "akNum", int.class, 28);
+        SimpleUtil.log("获取存储的压枪值:" + bqNum + "." + cfqNum + "," + akNum);
+        bqBar.setProgress(bqNum - 1);
+        cfqBar.setProgress(cfqNum - 1);
+        akBar.setProgress(akNum - 1);
+        bq.setText("类型:步枪  开启快捷键:F1+1  关闭快捷键:Esc+1 灵敏度:" + bqNum);
+        cfq.setText("类型:冲锋枪  开启快捷键:F2+1  关闭快捷键:Esc+2 灵敏度:" + cfqNum);
+        ak.setText("类型:AK47  开启快捷键:F3+1  关闭快捷键:Esc+3 灵敏度:" + akNum);
+        KeyboardEditWindowManager.getInstance().init(context).addView(view, (7 * SimpleUtil.zoomy) / 8, (7 * SimpleUtil.zoomx) / 8);
+
     }
     public static void addOverSizetoTop(final Context context, final List<AOADataPack.Config> configs, final int size, final Runnable okTask, final Runnable noTask) {
         final View view = LayoutInflater.from(context).inflate(R.layout.dialog_oversize, null);
