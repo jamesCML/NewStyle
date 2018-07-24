@@ -1,6 +1,7 @@
 package com.uubox.adapters;
 
 import android.content.Context;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +50,7 @@ public class MoveConfigAdapter extends BaseAdapter {
             holder.mContent = view.findViewById(R.id.moveconfig_item_content);
             holder.mName = view.findViewById(R.id.moveconfig_item_name);
             holder.mSize = view.findViewById(R.id.moveconfig_item_size);
+            holder.mCuruse = view.findViewById(R.id.moveconfig_item_curuse);
             holder.mFastkey = view.findViewById(R.id.moveconfig_item_fastkey);
             holder.mLeftArrow = view.findViewById(R.id.moveconfig_item_left);
             holder.mRightArrow = view.findViewById(R.id.moveconfig_item_right);
@@ -61,7 +63,11 @@ public class MoveConfigAdapter extends BaseAdapter {
             holder = (Holder) view.getTag();
         }
         holder.mContent.setText("目录:" + mConfigs.get(position).getmContent());
-        holder.mName.setText("配置:" + mConfigs.get(position).getmConfigName());
+        if (!mConfigs.get(position).getmConfigName().endsWith("[官方]")) {
+            holder.mName.setText("配置:" + mConfigs.get(position).getmConfigName());
+        } else {
+            holder.mName.setText(Html.fromHtml("配置:<font color='#ff0000'>" + mConfigs.get(position).getmConfigName() + "</font>"));
+        }
         holder.mSize.setText("大小:" + mConfigs.get(position).getmSize());
         if (mConfigs.get(position).getIsDeleted()) {
             holder.mRightArrow.setVisibility(View.VISIBLE);
@@ -75,7 +81,7 @@ public class MoveConfigAdapter extends BaseAdapter {
             holder.mFastkey.setText("快捷键:Ctrl+" + (position + 1));
             holder.mOriPar.setVisibility(View.VISIBLE);
         }
-
+        holder.mCuruse.setVisibility(mConfigs.get(position).getIsUsed() ? View.VISIBLE : View.GONE);
         holder.mLeftArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,6 +113,7 @@ public class MoveConfigAdapter extends BaseAdapter {
         TextView mContent;
         TextView mName;
         TextView mSize;
+        TextView mCuruse;
         TextView mFastkey;
         ImageView mLeftArrow;
         ImageView mRightArrow;

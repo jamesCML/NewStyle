@@ -48,7 +48,7 @@
             android:textColor="@color/mk_white"
             android:textSize="20sp"
             android:singleLine="true"
-            android:ellipsize="end"
+            android:ellipsize="middle"
             android:textStyle="bold" />
     </LinearLayout>
 

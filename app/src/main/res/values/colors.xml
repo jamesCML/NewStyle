@@ -20,6 +20,7 @@
 
     <color name="truered">#ff0000</color>
     <color name="lightred">#bbff0000</color>
+    <color name="configitem">#bbffffff</color>
     <!--<color name="mk_loading">#69a94f</color>-->
     <color name="mk_loading">#00af61</color>
     <color name="mk_isdown">#bdc287</color>

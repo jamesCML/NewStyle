@@ -54,11 +54,15 @@
         android:layout_height="1dp" />
 
     <LinearLayout
+        android:background="#990000ff"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
-            android:text=""
+            android:text="未选中的配置"
+            android:textColor="@color/lightred"
             android:gravity="center"
             android:id="@+id/dialog_oversize_leftmsg"
             android:layout_marginTop="5dp"
@@ -66,14 +70,13 @@
             android:layout_weight="1"
             android:layout_height="wrap_content" />
         <TextView
-            android:text="要写入的配置"
+            android:text="选中的配置"
             android:gravity="center"
             android:id="@+id/dialog_oversize_rightmsg"
             android:layout_marginTop="5dp"
             android:textColor="@color/mk_loading"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:background="@drawable/dialog_message_box_b"
             android:padding="1dp"
             android:layout_margin="3dp"
             android:layout_height="wrap_content" />
@@ -86,12 +89,13 @@
         android:layout_height="wrap_content">
 
         <ListView
+            android:layout_margin="2dp"
             android:id="@+id/dialog_oversize_left"
             android:scrollbars="none"
-
+            android:background="@drawable/dialog_message_box_b_deep"
             android:layout_width="0dp"
             android:layout_weight="30"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center"></ListView>
 
         <View
@@ -102,12 +106,13 @@
             android:layout_weight="1"
             android:layout_height="wrap_content" />
         <ListView
-
+            android:layout_margin="2dp"
+            android:background="@drawable/dialog_message_box_b_deep"
             android:scrollbars="none"
             android:id="@+id/dialog_oversize_right"
             android:layout_width="0dp"
             android:layout_weight="30"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center"></ListView>
     </LinearLayout>
 
@@ -116,10 +121,12 @@
         android:id="@+id/dialog_oversize_gun_par"
         android:layout_gravity="center"
         android:gravity="center"
-        android:padding="5dp"
+        android:padding="20dp"
+        android:layout_margin="3dp"
         android:orientation="vertical"
-        android:minWidth="300dp"
+        android:minWidth="500dp"
         android:minHeight="300dp"
+        android:background="@drawable/dialog_message_box_b_deep"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -129,7 +136,7 @@
             android:id="@+id/dialog_oversize_gun_bq_tv"
             android:layout_marginTop="5dp"
             android:layout_gravity="left"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <SeekBar
@@ -141,9 +148,10 @@
             android:layout_height="wrap_content" />
         <TextView
             android:layout_gravity="left"
+            android:layout_marginTop="10dp"
             android:text="类型:冲锋枪  开启快捷键:F2+1  关闭快捷键:Esc+2 灵敏度:19"
             android:id="@+id/dialog_oversize_gun_cfq_tv"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <SeekBar
@@ -157,8 +165,8 @@
             android:layout_gravity="left"
             android:text="类型:AK47  开启快捷键:F3+1  关闭快捷键:Esc+3 灵敏度:28"
             android:id="@+id/dialog_oversize_gun_ak_tv"
-            android:layout_marginTop="5dp"
-            android:layout_width="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <SeekBar

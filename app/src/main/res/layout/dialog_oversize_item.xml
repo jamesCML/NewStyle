@@ -15,56 +15,75 @@
         android:layout_weight="1"
         android:layout_height="wrap_content" />
 
-    <LinearLayout
+    <FrameLayout
         android:layout_gravity="center"
         android:padding="5dp"
-        android:orientation="vertical"
+        android:layout_height="wrap_content"
         android:layout_width="0dp"
-        android:layout_weight="5"
-        android:layout_height="wrap_content">
+        android:layout_weight="5">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:text="目录"
+                android:id="@+id/moveconfig_item_content"
+                android:textSize="16sp"
+                android:singleLine="true"
+                android:ellipsize="middle"
+                android:textColor="#bbffffff"
+                android:layout_marginBottom="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:text="名称"
+                android:singleLine="true"
+                android:ellipsize="middle"
+                android:textColor="#bbffffff"
+                android:id="@+id/moveconfig_item_name"
+                android:textSize="16sp"
+                android:layout_marginBottom="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:text="容量"
+                android:singleLine="true"
+                android:ellipsize="middle"
+                android:textColor="#bbffffff"
+                android:id="@+id/moveconfig_item_size"
+                android:textSize="16sp"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:text="快捷键"
+                android:singleLine="true"
+                android:ellipsize="middle"
+                android:textColor="#bbffffff"
+                android:id="@+id/moveconfig_item_fastkey"
+                android:textSize="16sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
 
         <TextView
-            android:text="目录"
-            android:id="@+id/moveconfig_item_content"
-            android:textSize="16sp"
-            android:singleLine="true"
-            android:ellipsize="middle"
-            android:textColor="#eeffffff"
-            android:layout_marginBottom="5dp"
+            android:layout_gravity="right|bottom"
+            android:layout_marginTop="3dp"
+            android:layout_marginRight="3dp"
+            android:padding="2dp"
+            android:visibility="gone"
+            android:id="@+id/moveconfig_item_curuse"
+            android:text="使用中"
+            android:textColor="@color/mk_white"
+            android:background="@drawable/dialog_message_box"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-
-        <TextView
-            android:text="名称"
-            android:singleLine="true"
-            android:ellipsize="middle"
-            android:textColor="#bbffffff"
-            android:id="@+id/moveconfig_item_name"
-            android:textSize="16sp"
-            android:layout_marginBottom="5dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:text="容量"
-            android:singleLine="true"
-            android:ellipsize="middle"
-            android:textColor="#88ffffff"
-            android:id="@+id/moveconfig_item_size"
-            android:textSize="16sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:text="快捷键"
-            android:singleLine="true"
-            android:ellipsize="middle"
-            android:textColor="#55ffffff"
-            android:id="@+id/moveconfig_item_fastkey"
-            android:textSize="16sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+    </FrameLayout>
 
     <ImageView
         android:id="@+id/moveconfig_item_right"

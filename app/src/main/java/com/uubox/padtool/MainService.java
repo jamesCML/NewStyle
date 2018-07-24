@@ -640,7 +640,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         } else if (id == 10003)//配置更新了
         {
             SimpleUtil.saveToShare(getBaseContext(), "ini", "configschange", true);
-            //mAOADataPack = new AOADataPack(getBaseContext(), new AccInputThread(null, null));
+            mAOADataPack = new AOADataPack(getBaseContext(), new AccInputThread(null, null));
             if (mAOADataPack != null) {
                 final List<AOADataPack.Config> allConfigs = mAOADataPack.loadConfigs();
                     SimpleUtil.runOnUIThread(new Runnable() {

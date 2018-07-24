@@ -475,10 +475,14 @@ public class SimpleUtil {
         final List<AOADataPack.Config> configsRightData = new ArrayList<>();
         final int[] rightSize = {0};
         for (AOADataPack.Config config : allConfigs) {
-            if (config.getIsDeleted()) {
+            if (config.getIsDeleted() && !config.getIsUsed()) {
                 configsLeftData.add(config);
             } else {
-                configsRightData.add(config);
+                if (config.getIsUsed()) {
+                    configsRightData.add(0, config);
+                } else {
+                    configsRightData.add(config);
+                }
                 rightSize[0] += config.getmSize();
             }
         }
