@@ -75,7 +75,7 @@ public class KeyboardEditWindowManager {
 
         rootView = new FrameLayout(context);
         //rootView.setBackgroundColor(Color.parseColor("#8800FF00"));
-        hideBottomUIMenu(true);
+        hideBottomUIMenu(true);//test
         rootView.setFocusableInTouchMode(true);
         /*rootView.setOnKeyListener(new View.OnKeyListener() {
             @Override
