@@ -619,6 +619,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
 
     @Override
     public void back(int id, final Object obj) {
+        SimpleUtil.log("MainService getnotify id:" + id);
         if (id == 1) {
             boolean changed = InjectUtil.hasBtnParamsChanged();
             if (changed) {
@@ -629,6 +630,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             }
             //SimpleUtil.removeINormalCallback(this);
         } else if (id == 10000) {
+            SimpleUtil.log("AOA掉线了！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！");
             closeAcc();
             mfloatingIv.setImageResource((Integer) mfloatingIv.getTag() == 1 ? R.mipmap.app_icon0805001_gray : R.mipmap.app_icon0805001_half_gray);
         } else if (id == 10001) {
@@ -638,7 +640,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         } else if (id == 10003)//配置更新了
         {
             SimpleUtil.saveToShare(getBaseContext(), "ini", "configschange", true);
-            mAOADataPack = new AOADataPack(getBaseContext(), new AccInputThread(null, null));
+            //mAOADataPack = new AOADataPack(getBaseContext(), new AccInputThread(null, null));
             if (mAOADataPack != null) {
                 final List<AOADataPack.Config> allConfigs = mAOADataPack.loadConfigs();
                     SimpleUtil.runOnUIThread(new Runnable() {

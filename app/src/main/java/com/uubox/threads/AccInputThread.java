@@ -57,7 +57,7 @@ public class AccInputThread extends Thread {
     public boolean writeAcc(byte[] data) {
         try {
             if (mFileOutputStream == null) {
-                SimpleUtil.log("write data fail:\n" + Hex.toString(data) + ",len:" + data.length);
+                SimpleUtil.log("mFileOutputStream is null!!write data fail:\n" + Hex.toString(data) + ",len:" + data.length);
                 return false;
             }
             mFileOutputStream.write(data);
