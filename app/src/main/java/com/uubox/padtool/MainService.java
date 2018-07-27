@@ -698,6 +698,12 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             if (mAOADataPack.isAOAConnect()) {
                 mAOADataPack.writeManyConfigs(allConfigs);
             }
+        } else if (id == 10012) {//进入设置，寻求配置数据
+
+            if (mAOADataPack == null) {
+                mAOADataPack = new AOADataPack(this, new AccInputThread(null, null));
+            }
+            SimpleUtil.notifyall_(10013, mAOADataPack.loadConfigs());
         }
 
     }

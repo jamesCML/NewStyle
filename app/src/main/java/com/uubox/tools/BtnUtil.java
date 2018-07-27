@@ -322,7 +322,7 @@ public class BtnUtil {
                 drawableId = R.mipmap.key_n;
                 break;
             case GUNLUN:
-                drawableId = R.mipmap.gunlun;
+                //drawableId = R.mipmap.gunlun;
                 break;
             default:
                 break;

@@ -37,9 +37,8 @@ import java.util.concurrent.ConcurrentMap;
 
 import com.uubox.padtool.MainService;
 import com.uubox.padtool.R;
-import com.uubox.tools.AES;
+import com.uubox.tools.AOADataPack;
 import com.uubox.tools.BtnUtil;
-import com.uubox.tools.Hex;
 import com.uubox.tools.IniAdapter;
 import com.uubox.tools.InjectUtil;
 import com.uubox.tools.SaveBtnParamsTask;
@@ -96,7 +95,7 @@ public class KeyboardView extends FrameLayout
     /**
      * 添加一个“按钮”
      */
-    ImageView mIvMenuBtnBtn;
+    ImageView mBarWhat;
 
     ImageView mIvMenuBtnSetting;
     /**
@@ -193,7 +192,7 @@ public class KeyboardView extends FrameLayout
         mIvKeymap = findViewById(R.id.iv_keymap);
         mTvKeymap = findViewById(R.id.tv_keymap);
         mRlMenuBar = this.findViewById(R.id.rl_menu_bar);
-        mIvMenuBtnBtn = this.findViewById(R.id.iv_menu_btn_btn);
+        mBarWhat = this.findViewById(R.id.iv_menu_btn_btn);
         mIvMenuBtnSetting = this.findViewById(R.id.iv_menu_btn_setting);
         mIvMenuBtnL = this.findViewById(R.id.iv_menu_btn_l);
         mIvMenuBtnR = this.findViewById(R.id.iv_menu_btn_r);
@@ -243,7 +242,8 @@ public class KeyboardView extends FrameLayout
         mIvMenuBtnSetting.setOnTouchListener(this);
         mIvMenuBtnL.setOnTouchListener(this);
         mIvMenuBtnR.setOnTouchListener(this);
-        mFlMain.setOnTouchListener(this);
+        //mFlMain.setOnTouchListener(this);
+        mBarWhat.setOnTouchListener(this);
         initEyes();
     }
 
@@ -264,7 +264,7 @@ public class KeyboardView extends FrameLayout
                 DragImageView iv = new DragImageView(getContext());
                 InjectUtil.getBtnNormalBtn(Btn.Q).setBelongBtn(Btn.Q);
                 iv.setTag(InjectUtil.getBtnNormalBtn(Btn.Q));
-                if (mCopyingBtn == mIvMenuBtnBtn) {
+                if (mCopyingBtn == mBarWhat) {
                     InjectUtil.getBtnNormalBtn(Btn.Q).img = iv;
                 } else if (mCopyingBtn == mIvMenuBtnL) {
                     iv.setTag(InjectUtil.getBtnNormalBtn(Btn.L));
@@ -974,7 +974,8 @@ public class KeyboardView extends FrameLayout
 
         layoutParams.leftMargin = x - www / 2;
         layoutParams.topMargin = y - hhh / 2;
-
+        iv.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN);
         allView.add(iv);
         mFlMain.addView(iv, layoutParams);
 
@@ -1147,13 +1148,45 @@ public class KeyboardView extends FrameLayout
     public boolean onTouch(View v, MotionEvent event) {
         Log.d("touch event", "getX=" + event.getX() + ",getY=" + event.getY());
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            if (v == mIvMenuBtnBtn) {
-                //todo 提方法
+            if (v == mBarWhat) {
                 if (InjectUtil.getBtnNormalBtn(Btn.Q).img != null) {
-                    Toast.makeText(getContext(), "已经存在",
-                            Toast.LENGTH_SHORT).show();
+                    SimpleUtil.addMsgBottomToTop(getContext(), "已经有一个自定义按钮", true);
                     return true;
                 }
+                // TODO: 2018/7/25 拖出自定义按钮  1. 触摸出现坐标; 2. 直接拖出
+                if (whatImg == null) {
+                    whatImg = new DragImageView(getContext());
+                    whatImg.setTag(-1);
+
+                    BtnParams param = new BtnParams();
+                    param.setBelongBtn(Btn.Q);
+                    Drawable drawable = getBtnDrawable(param);
+                    if (drawable != null) {
+                        whatImg.setImageDrawable(drawable);
+                    }
+                    whatImg.setDragListener(this);
+                    whatImg.setScaleListener(this);
+                    whatImg.setClickListener(this);
+
+
+                    int[] position = new int[2];
+                    v.getLocationInWindow(position);
+                    FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(64, 64);
+                    params.leftMargin = SimpleUtil.zoomy / 2;
+                    params.topMargin = SimpleUtil.zoomx / 3;
+
+                    mFlMain.addView(whatImg, params);
+
+
+                } else {
+                    //whatImg.setLayoutParams(layoutParams);
+                    //mFlMain.postInvalidate();
+                }
+
+
+                Log.i("touch event", "onTouch: event=" + event.toString());
+                return true;
+
             } else if (v == mIvMenuBtnL) {
 
                 if (InjectUtil.getBtnNormalBtn(Btn.L).img != null) {
@@ -1169,60 +1202,19 @@ public class KeyboardView extends FrameLayout
                     return true;
                 }
             } else if (v == mIvMenuBtnSetting) {
-                IniTab.getInstance().init(getContext(), this).show();
-                IniTab.getInstance().addNotify(new IniTab.IButtonMenuCallback() {
+                SimpleUtil.addINormalCallback(new SimpleUtil.INormalBack() {
                     @Override
-                    public void back(int type, Object carryData) {
-                        if (type == 0) {
-                            clearAllView();
-                            InjectUtil.loadBtnParamsFromPrefs(getContext(), true);
-                            loadUi();
-                            IniTab.getInstance().removeNotify(this);
+                    public void back(int id, Object obj) {
+                        if (id == 10013) {
+                            showTab((List<AOADataPack.Config>) obj);
+                            SimpleUtil.removeINormalCallback(this);
                         }
                     }
                 });
+                SimpleUtil.notifyall_(10012, null);
+
                 return true;
             }
-
-            /**
-             * 点击空白添加按键
-             */
-            if (v.getId() == R.id.fl_main) {
-
-                /**
-                 * {@link #onDrag(View, DragEvent)}. 方法中有类似部分.
-                 */
-                LayoutParams layoutParams =
-                        new LayoutParams(64, 64);
-                layoutParams.leftMargin = (int) event.getX() - 40;
-                layoutParams.topMargin = (int) event.getY() - 40;
-                if (whatImg == null) {
-                    whatImg = new DragImageView(getContext());
-                    whatImg.setTag(-1);
-
-                    BtnParams param = new BtnParams();
-                    param.setBelongBtn(Btn.Q);
-
-                    Drawable drawable = getBtnDrawable(param);
-                    if (drawable != null) {
-                        whatImg.setImageDrawable(drawable);
-                    }
-                    whatImg.setDragListener(this);
-                    whatImg.setScaleListener(this);
-                    whatImg.setClickListener(this);
-                    mFlMain.addView(whatImg, layoutParams);
-                } else {
-                    whatImg.setLayoutParams(layoutParams);
-                    mFlMain.postInvalidate();
-                }
-
-
-                Log.i("touch event", "onTouch: event=" + event.toString());
-
-
-                return false;
-            }
-
 
             DragShadowBuilder mysBuilder = new DragShadowBuilder(v);
             v.startDrag(null, mysBuilder, null, 0);
@@ -1238,6 +1230,20 @@ public class KeyboardView extends FrameLayout
 
     }
 
+    private void showTab(List<AOADataPack.Config> configs) {
+        IniTab.getInstance().init(getContext(), this, configs).show();
+        IniTab.getInstance().addNotify(new IniTab.IButtonMenuCallback() {
+            @Override
+            public void back(int type, Object carryData) {
+                if (type == 0) {
+                    clearAllView();
+                    InjectUtil.loadBtnParamsFromPrefs(getContext(), true);
+                    loadUi();
+                    IniTab.getInstance().removeNotify(this);
+                }
+            }
+        });
+    }
     private void initEyes() {
         if (InjectUtil.isShowKbFloatView(getContext())) {
             mIvKeymap.setImageResource(R.mipmap.keymap_show);

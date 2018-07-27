@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Binder;
@@ -223,10 +224,11 @@ public class MainActivity extends Activity {
             SimpleUtil.runOnUIThread(new Runnable() {
                 @Override
                 public void run() {
-                    int a1 = findViewById(R.id.main_parent).getHeight();
-                    int a2 = findViewById(R.id.main_parent).getWidth();
-                    SimpleUtil.zoomx = Math.min(a1, a2);
-                    SimpleUtil.zoomy = Math.max(a1, a2);
+                    Point point = new Point();
+                    //getWindowManager().getDefaultDisplay().getSize(point);
+                    getWindowManager().getDefaultDisplay().getRealSize(point);
+                    SimpleUtil.zoomx = Math.min(point.x, point.y);
+                    SimpleUtil.zoomy = Math.max(point.x, point.y);
                     SimpleUtil.saveToShare(MainActivity.this, "ini", "zoomx", SimpleUtil.zoomx);
                     SimpleUtil.saveToShare(MainActivity.this, "ini", "zoomy", SimpleUtil.zoomy);
                     //SimpleUtil.toast(MainActivity.this, SimpleUtil.zoomx + "," + SimpleUtil.zoomy);

@@ -55,7 +55,7 @@ public class InjectUtil {
 
     private static void loadIniFile(Context context, String filepath, String iniFile) {
 
-        XmlPugiElement xmlPugiElement = new XmlPugiElement(SimpleUtil.getAES().decrypt(SimpleUtil.getAssertSmallFile(context, "keyconfigs/" + filepath)));
+        XmlPugiElement xmlPugiElement = new XmlPugiElement(SimpleUtil.getAssertSmallFile(context, "keyconfigs/" + filepath));
 
         XmlPugiElement[] childs = xmlPugiElement.getAllChild();
 

@@ -111,7 +111,7 @@ public class AOADataPack implements SimpleUtil.INormalBack {
 
                 int gunlun_step = (Integer) SimpleUtil.getFromShare(mContext, "ini", "mMouseProgressW", int.class, 50);
                 cj_cfg_t.add((byte) gunlun_step);//wheel radio
-                BtnParams gunlun = xmlConfig.get(KeyboardView.Btn.GUNLUN);
+                BtnParams gunlun = xmlConfig.get(KeyboardView.Btn.KEY_H);
                 cj_cfg_t.add(Hex.fromShortB((short) (OAODEVICE_Y - turnY(gunlun.getY()))));
                 cj_cfg_t.add(Hex.fromShortB((short) turnX(gunlun.getX())));
 
@@ -121,7 +121,6 @@ public class AOADataPack implements SimpleUtil.INormalBack {
 
                 //添加游戏ID
                 int configID_ = (Integer) SimpleUtil.getFromShare(mContext, sp[2], "configID", int.class);
-
                 //压枪灵敏度
 
                 int bqNum = (Integer) SimpleUtil.getFromShare(mContext, sp[2], "bqNum", int.class, 25);
@@ -131,6 +130,7 @@ public class AOADataPack implements SimpleUtil.INormalBack {
                 tempContainer[1] = (byte) cfqNum;
                 tempContainer[2] = (byte) akNum;
                 tempContainer[3] = (byte) configID_;
+                config.setmConfigid(tempContainer[3]);
                 SimpleUtil.log("configID:" + sp[2] + "   " + tempContainer[3]);
                 cj_cfg_t.add(tempContainer);
 
@@ -191,7 +191,45 @@ public class AOADataPack implements SimpleUtil.INormalBack {
             public void run() {
                 SimpleUtil.addWaitToTop(mContext, "");
                 SimpleUtil.sleep(20);
-                byte index_ = (byte) 0xc0;
+
+                short totlen = 0;
+                int defaultIndex = 0;
+                byte[] gameList = new byte[4];
+                //构建C0
+                for (int i = 0; i < allConfigs.size(); i++) {
+                    totlen += allConfigs.get(i).getmSize();
+                    if (allConfigs.get(i).getIsUsed()) {
+                        defaultIndex = i + 1;
+                    }
+                    gameList[i] = allConfigs.get(i).getmConfigid();
+                }
+
+                ByteArrayList c0Data = new ByteArrayList();
+                c0Data.add((byte) 0xa5);
+                c0Data.add((byte) 0x14);
+                c0Data.add((byte) 0xc0);
+                c0Data.add((byte) defaultIndex);
+                c0Data.add(gameList);
+                c0Data.add(Hex.fromShortB(totlen));
+                byte[] leave = new byte[9];
+                c0Data.add(leave);
+
+                c0Data.add(SimpleUtil.sumCheck(c0Data.all2Bytes()));
+
+                resetReq();
+                mReq.mReqType = (byte) 0xc0;
+                mAccInputThread.writeAcc(c0Data.all2Bytes());
+                long time = System.currentTimeMillis();
+                while ((System.currentTimeMillis() - time) < 3000 && mReq.mReqResult == null) ;
+                if (mReq.mReqResult != null) {
+                    if (mReq.mReqResult[3] != 0) {
+                        SimpleUtil.log("发送C0失败！！！");
+                        return;
+                    }
+                }
+                SimpleUtil.log("发送C0成功！！！");
+
+                byte index_ = (byte) 0xc1;
                 for (int i = 0; i < allConfigs.size(); i++) {
                     resetReq();
                     SimpleUtil.log("正在载入 " + allConfigs.get(i).getmContent() + ":" + allConfigs.get(i).getmConfigName());
@@ -530,6 +568,7 @@ public class AOADataPack implements SimpleUtil.INormalBack {
         private int mSize;
         private boolean mIsDeleted;
         private String configSha;
+        private byte mConfigid;
         public String getmContent() {
             return mContent;
         }
@@ -564,6 +603,14 @@ public class AOADataPack implements SimpleUtil.INormalBack {
 
         public void setDeleted(boolean flag) {
             mIsDeleted = flag;
+        }
+
+        public byte getmConfigid() {
+            return mConfigid;
+        }
+
+        public void setmConfigid(byte mConfigid) {
+            this.mConfigid = mConfigid;
         }
 
         @Override

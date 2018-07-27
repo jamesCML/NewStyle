@@ -479,19 +479,26 @@ public class SimpleUtil {
                 configsLeftData.add(config);
             } else {
                 if (config.getIsUsed()) {
+                    if (configsRightData.size() == 4) {
+                        config.setDeleted(true);
+                        configsLeftData.add(config);
+                        configsRightData.remove(0);
+                    }
                     configsRightData.add(0, config);
-                } else {
+                    rightSize[0] += config.getmSize();
+                } else if (configsRightData.size() < 4) {
                     configsRightData.add(config);
+                    rightSize[0] += config.getmSize();
                 }
-                rightSize[0] += config.getmSize();
+
             }
         }
         if (rightSize[0] > 1024) {
             rightMsg.setTextColor(Color.RED);
-            rightMsg.setText("配置过大！(大于1024):" + rightSize[0]);
+            rightMsg.setText("配置过大！");
         } else {
             rightMsg.setTextColor(Color.GREEN);
-            rightMsg.setText("可以写入配置！(小于1024):" + rightSize[0]);
+            rightMsg.setText("可以写入配置！");
         }
         ListView listLeft = view.findViewById(R.id.dialog_oversize_left);
         ListView listRight = view.findViewById(R.id.dialog_oversize_right);
@@ -500,7 +507,12 @@ public class SimpleUtil {
         final MoveConfigAdapter adapterRight = new MoveConfigAdapter(context, configsRightData);
         listLeft.setAdapter(adapterleft);
         listRight.setAdapter(adapterRight);
+        listRight.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+            }
+        });
         final TextView changeGunTv = view.findViewById(R.id.dialog_oversize_changetv);
         changeGunTv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -536,13 +548,17 @@ public class SimpleUtil {
                     rightSize[0] -= config.getmSize();
                     if (rightSize[0] > 1024) {
                         rightMsg.setTextColor(Color.RED);
-                        rightMsg.setText("配置过大！(大于1024):" + rightSize[0]);
+                        rightMsg.setText("配置过大！");
                     } else {
                         rightMsg.setTextColor(Color.GREEN);
-                        rightMsg.setText("可以写入配置！(小于1024):" + rightSize[0]);
+                        rightMsg.setText("可以写入配置！");
                     }
 
                 } else if (id == 10008) {//增加一个配置
+                    if (configsRightData.size() == 4) {
+                        addMsgBottomToTop(context, "当前最多支持写4个配置！", true);
+                        return;
+                    }
                     AOADataPack.Config config = (AOADataPack.Config) obj;
                     config.setDeleted(false);
                     SimpleUtil.saveToShare(context, config.getConfigSha(), "isDelete", false);
@@ -551,18 +567,18 @@ public class SimpleUtil {
                     rightSize[0] += config.getmSize();
                     if (rightSize[0] > 1024) {
                         rightMsg.setTextColor(Color.RED);
-                        rightMsg.setText("配置过大！(大于1024):" + rightSize[0]);
+                        rightMsg.setText("配置过大！");
                     } else {
                         rightMsg.setTextColor(Color.GREEN);
-                        rightMsg.setText("可以写入配置！(小于1024):" + rightSize[0]);
+                        rightMsg.setText("可以写入配置！");
                     }
                 } else if (id == 10009) {//上
                     int position = (Integer) obj;
                     if (position == 0) {
                         return;
                     } else if (position == 1) {
-                        addMsgBottomToTop(context, "当前使用的配置必须放在第一位！", true);
-                        return;
+                        // addMsgBottomToTop(context, "当前使用的配置必须放在第一位！", true);
+                        // return;
                     }
                     SimpleUtil.log("up position:" + position);
                     configsRightData.add(position - 1, configsRightData.get(position));
@@ -572,8 +588,8 @@ public class SimpleUtil {
                     if (position == configsRightData.size() - 1) {
                         return;
                     } else if (position == 0) {
-                        addMsgBottomToTop(context, "当前使用的配置必须放在第一位！", true);
-                        return;
+                        //addMsgBottomToTop(context, "当前使用的配置必须放在第一位！", true);
+                        //return;
                     }
                     SimpleUtil.log("down position:" + position);
                     configsRightData.add(position + 2, configsRightData.get(position));
@@ -589,7 +605,7 @@ public class SimpleUtil {
             @Override
             public void onClick(View v) {
                 if (rightSize[0] > 1024) {
-                    addMsgBottomToTop(context, "配置过大！(大于1024):" + rightSize[0], true);
+                    addMsgBottomToTop(context, "配置过大！", true);
                     return;
                 }
 
