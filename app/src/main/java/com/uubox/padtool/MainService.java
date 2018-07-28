@@ -46,7 +46,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.uubox.threads.AccInputThread;
-import com.uubox.tools.AOADataPack;
+import com.uubox.tools.AOAConfigTool;
+import com.uubox.tools.AOAConfigTool;
 import com.uubox.tools.InjectUtil;
 import com.uubox.tools.SimpleUtil;
 import com.uubox.views.GuiStep;
@@ -65,7 +66,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
     public final static String USBPERMISSION = "com.uubox.newstyle.MainActivity.USBPERMISSION";
     public final static String ACCUSBPERMISSION = "com.uubox.newstyle.MainActivity.ACCUSBPERMISSION";
     private ParcelFileDescriptor mParcelFileDescriptor;
-    private AOADataPack mAOADataPack;
+    private AOAConfigTool mAOAConfigTool;
     private final int HANDLE_SCAN_AOA = 2;
     @Override
     public IBinder onBind(Intent intent) {
@@ -79,6 +80,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         SimpleUtil.zoomy = (Integer) SimpleUtil.getFromShare(getBaseContext(), "ini", "zoomy", int.class);
         initWindowOnlyOnce();
         SimpleUtil.addINormalCallback(this);
+        mAOAConfigTool = AOAConfigTool.getInstance(this);
     }
 
     @Override
@@ -87,7 +89,12 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         registerReceiver(homeReceiver, new IntentFilter("android.intent.action.CLOSE_SYSTEM_DIALOGS"));
         SimpleUtil.zoomx = (Integer) SimpleUtil.getFromShare(getBaseContext(), "ini", "zoomx", int.class);
         SimpleUtil.zoomy = (Integer) SimpleUtil.getFromShare(getBaseContext(), "ini", "zoomy", int.class);
-        init();
+        SimpleUtil.runOnUIThread(new Runnable() {
+            @Override
+            public void run() {
+                init();
+            }
+        }, 1000);
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -111,11 +118,11 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
                 switch (v.getId()) {
                     case R.id.id_red:
                         SimpleUtil.log("读取配置并写入");
-                        mAOADataPack = new AOADataPack(getBaseContext(), new AccInputThread(null, null));
+                        //mAOAConfigTool = new AOAConfigTool(getBaseContext(), new AccInputThread(null, null));
                         SimpleUtil.runOnThread(new Runnable() {
                             @Override
                             public void run() {
-                                mAOADataPack.loadConfigs();
+                                mAOAConfigTool.loadConfigs();
                             }
                         });
                         break;
@@ -238,7 +245,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         FileDescriptor fileDescriptor = mParcelFileDescriptor.getFileDescriptor();
         AccInputThread mAccInputThread = new AccInputThread(new FileInputStream(fileDescriptor), new FileOutputStream(fileDescriptor));
         mAccInputThread.start();
-        mAOADataPack = new AOADataPack(getBaseContext(), mAccInputThread);
+        mAOAConfigTool.startConnect(mAccInputThread);
         SimpleUtil.log("openUsbAccessory sucessful!!!!!");
         mfloatingIv.setImageResource((Integer) mfloatingIv.getTag() == 1 ? R.mipmap.app_icon0805001 : R.mipmap.app_icon0805001_half);
         checkConfigChange();
@@ -599,7 +606,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             @Override
             public void onAnimationEnd(Animator animation) {
                 mfloatingIv.setTag(0);
-                mfloatingIv.setImageResource((mAOADataPack == null || !mAOADataPack.isAOAConnect()) ? R.mipmap.app_icon0805001_half_gray : R.mipmap.app_icon0805001_half);
+                mfloatingIv.setImageResource((mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.app_icon0805001_half_gray : R.mipmap.app_icon0805001_half);
             }
         });
         animator.start();
@@ -640,9 +647,9 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         } else if (id == 10003)//配置更新了
         {
             SimpleUtil.saveToShare(getBaseContext(), "ini", "configschange", true);
-            mAOADataPack = new AOADataPack(getBaseContext(), new AccInputThread(null, null));
-            if (mAOADataPack != null) {
-                final List<AOADataPack.Config> allConfigs = mAOADataPack.loadConfigs();
+            //mAOAConfigTool = new AOAConfigTool(getBaseContext(), new AccInputThread(null, null));
+            if (mAOAConfigTool != null) {
+                final List<AOAConfigTool.Config> allConfigs = mAOAConfigTool.loadConfigs();
                     SimpleUtil.runOnUIThread(new Runnable() {
                         @Override
                         public void run() {
@@ -655,9 +662,8 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
 
             }
         } else if (id == 10004) {
-            if (mAOADataPack != null) {
-                mAOADataPack.openOrCloseRecKeycode(false);
-            }
+            mAOAConfigTool.openOrCloseRecKeycode(false);
+
         } else if (id == 10005)//按键btn返回
         {
             SimpleUtil.runOnUIThread(new Runnable() {
@@ -673,10 +679,10 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
                 @Override
                 public void run() {
                     if ((Integer) mfloatingIv.getTag() == 1) {
-                        mfloatingIv.setImageResource((mAOADataPack == null || !mAOADataPack.isAOAConnect()) ? R.mipmap.app_icon0805001_gray : R.mipmap.app_icon0805001);
+                        mfloatingIv.setImageResource((mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.app_icon0805001_gray : R.mipmap.app_icon0805001);
 
                     } else {
-                        mfloatingIv.setImageResource((mAOADataPack == null || !mAOADataPack.isAOAConnect()) ? R.mipmap.app_icon0805001_half_gray : R.mipmap.app_icon0805001_gray);
+                        mfloatingIv.setImageResource((mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.app_icon0805001_half_gray : R.mipmap.app_icon0805001_gray);
 
                     }
 
@@ -693,17 +699,6 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
 
                 }
             });
-        } else if (id == 10011) {
-            List<AOADataPack.Config> allConfigs = (List<AOADataPack.Config>) obj;
-            if (mAOADataPack.isAOAConnect()) {
-                mAOADataPack.writeManyConfigs(allConfigs);
-            }
-        } else if (id == 10012) {//进入设置，寻求配置数据
-
-            if (mAOADataPack == null) {
-                mAOADataPack = new AOADataPack(this, new AccInputThread(null, null));
-            }
-            SimpleUtil.notifyall_(10013, mAOADataPack.loadConfigs());
         }
 
     }
@@ -718,8 +713,8 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             int action = event.getAction();
             switch (action) {
                 case MotionEvent.ACTION_DOWN:
-                    //mfloatingIv.setTag(1);mfloatingIv.setImageDrawable(getDrawable((mAOADataPack == null || !mAOADataPack.isAOAConnect()) ? R.mipmap.app_icon0805001_gray : R.mipmap.app_icon0805001));
-                    mfloatingIv.setImageResource((mAOADataPack == null || !mAOADataPack.isAOAConnect()) ? R.mipmap.app_icon0805001_gray : R.mipmap.app_icon0805001);
+                    //mfloatingIv.setTag(1);mfloatingIv.setImageDrawable(getDrawable((mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.app_icon0805001_gray : R.mipmap.app_icon0805001));
+                    mfloatingIv.setImageResource((mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.app_icon0805001_gray : R.mipmap.app_icon0805001);
                     isMove = false;
                     mTouchStartX = (int) event.getRawX();
                     mTouchStartY = (int) event.getRawY();
@@ -773,9 +768,9 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
 
                 checkConfigChange();
 
-                if (mAOADataPack != null)//打开接收按键数据
+                if (mAOAConfigTool != null)//打开接收按键数据
                 {
-                    mAOADataPack.openOrCloseRecKeycode(true);
+                    mAOAConfigTool.openOrCloseRecKeycode(true);
                 }
 
             }
@@ -786,7 +781,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
 
     private void checkConfigChange() {
 
-        if (mAOADataPack == null || !mAOADataPack.isAOAConnect()) {
+        if (mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) {
             return;
         }
         SimpleUtil.runOnUIThread(new Runnable() {

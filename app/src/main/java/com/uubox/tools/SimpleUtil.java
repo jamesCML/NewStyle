@@ -11,6 +11,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.AdapterView;
@@ -177,6 +178,13 @@ public class SimpleUtil {
         Log.i("CJLOG", msg);
     }
 
+    public static void loge(String msg) {
+
+        if (!DEBUG) {
+            return;
+        }
+        Log.i("CJLOG", msg + "                     XXXXXXXXXXXXXXXXXXXX");
+    }
     public static void sleep(long millisTime) {
         try {
             Thread.sleep(millisTime);
@@ -463,7 +471,7 @@ public class SimpleUtil {
         KeyboardEditWindowManager.getInstance().addView(saveView, (2 * SimpleUtil.zoomy) / 3, (2 * SimpleUtil.zoomx) / 3);
     }
 
-    public static void test(final Context context, final List<AOADataPack.Config> allConfigs) {
+    public static void test(final Context context, final List<AOAConfigTool.Config> allConfigs) {
         String gloabkeyconfig = (String) SimpleUtil.getFromShare(context, "ini", "gloabkeyconfig", String.class, "");
         final String[] sp0 = gloabkeyconfig.split("#Z%W#", -1);
         SimpleUtil.log("test当前使用:" + sp0[1] + "\n" + gloabkeyconfig);
@@ -471,10 +479,10 @@ public class SimpleUtil {
         final View listPar = view.findViewById(R.id.dialog_oversize_list_par);
         final View gunPar = view.findViewById(R.id.dialog_oversize_gun_par);
         final TextView rightMsg = view.findViewById(R.id.dialog_oversize_rightmsg);
-        final List<AOADataPack.Config> configsLeftData = new ArrayList<>();
-        final List<AOADataPack.Config> configsRightData = new ArrayList<>();
+        final List<AOAConfigTool.Config> configsLeftData = new ArrayList<>();
+        final List<AOAConfigTool.Config> configsRightData = new ArrayList<>();
         final int[] rightSize = {0};
-        for (AOADataPack.Config config : allConfigs) {
+        for (AOAConfigTool.Config config : allConfigs) {
             if (config.getIsDeleted() && !config.getIsUsed()) {
                 configsLeftData.add(config);
             } else {
@@ -535,7 +543,7 @@ public class SimpleUtil {
             @Override
             public void back(int id, Object obj) {
                 if (id == 10007) {//取消一个配置
-                    AOADataPack.Config config = (AOADataPack.Config) obj;
+                    AOAConfigTool.Config config = (AOAConfigTool.Config) obj;
 
                     if (config.getIsUsed()) {
                         addMsgBottomToTop(context, "正在使用的配置不能取消！", true);
@@ -559,7 +567,7 @@ public class SimpleUtil {
                         addMsgBottomToTop(context, "当前最多支持写4个配置！", true);
                         return;
                     }
-                    AOADataPack.Config config = (AOADataPack.Config) obj;
+                    AOAConfigTool.Config config = (AOAConfigTool.Config) obj;
                     config.setDeleted(false);
                     SimpleUtil.saveToShare(context, config.getConfigSha(), "isDelete", false);
                     configsRightData.add(config);
@@ -613,7 +621,7 @@ public class SimpleUtil {
                 int cfqNum = (Integer) SimpleUtil.getFromShare(context, sp0[2], "cfqNum", int.class, 19);
                 int akNum = (Integer) SimpleUtil.getFromShare(context, sp0[2], "akNum", int.class, 28);
                 SimpleUtil.log("压枪灵敏度：" + bqNum + "," + cfqNum + "," + akNum);
-                for (AOADataPack.Config config : allConfigs) {
+                for (AOAConfigTool.Config config : allConfigs) {
                     if (config.getIsUsed()) {
                         //压枪数据重新构造一下
                         byte[] data = config.getmData().all2Bytes();
@@ -630,7 +638,7 @@ public class SimpleUtil {
                 }
 
                 KeyboardEditWindowManager.getInstance().close();
-                Iterator<AOADataPack.Config> it = allConfigs.iterator();
+                Iterator<AOAConfigTool.Config> it = allConfigs.iterator();
                 while (it.hasNext()) {
                     if (it.next().getIsDeleted()) {
                         it.remove();
@@ -700,7 +708,8 @@ public class SimpleUtil {
         KeyboardEditWindowManager.getInstance().init(context).addView(view, (7 * SimpleUtil.zoomy) / 8, (7 * SimpleUtil.zoomx) / 8);
 
     }
-    public static void addOverSizetoTop(final Context context, final List<AOADataPack.Config> configs, final int size, final Runnable okTask, final Runnable noTask) {
+
+    public static void addOverSizetoTop(final Context context, final List<AOAConfigTool.Config> configs, final int size, final Runnable okTask, final Runnable noTask) {
         final View view = LayoutInflater.from(context).inflate(R.layout.dialog_oversize, null);
        /* GridView gridView = view.findViewById(R.id.dialog_oversize_grid);
         final TextView textView = view.findViewById(R.id.dialog_oversize_title);
@@ -775,17 +784,15 @@ public class SimpleUtil {
                 ((TextView) view.findViewById(R.id.msgtotop_tv)).setText(msg);
                 ((TextView) view.findViewById(R.id.msgtotop_tv)).setTextColor(ERROR ? Color.RED : Color.GREEN);
                 view.setBackgroundResource(ERROR ? R.mipmap.msgtotop_bg_red : R.mipmap.msgtotop_bg_green);
-                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                params.gravity = Gravity.BOTTOM | Gravity.CENTER;
 
-              /*  View topView = KeyboardEditWindowManager.getInstance().init(context).getTopView();
-                if (topView != null && topView.getId() == R.id.dialog_msgbottom_par) {
-                    KeyboardEditWindowManager.getInstance().removeView(topView);
-                }*/
+
                 ScaleAnimation scaleAnimation_show = new ScaleAnimation(0f, 1f, 0f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
                 scaleAnimation_show.setDuration(300);
                 view.startAnimation(scaleAnimation_show);
-                WrapFloat.getInstance(context).addView(view);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                params.bottomMargin = 20;
+                params.gravity = Gravity.CENTER;
+                WrapFloat.getInstance(context).addView(view, params);
                 SimpleUtil.runOnUIThread(new Runnable() {
                     @Override
                     public void run() {

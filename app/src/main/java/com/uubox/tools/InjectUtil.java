@@ -477,6 +477,11 @@ public class InjectUtil {
                 SimpleUtil.editSaveToShare(editor, btn.getPrefFrequency() + "_2", param.getFrequency());
             }
         }
+        if (sp[1].endsWith("[官方]")) {
+            if (!sp[1].contains("刺激战场") && !sp[1].contains("全军出击") && !sp[1].contains("荒野行动") && !sp[1].contains("光荣使命")) {
+                SimpleUtil.editSaveToShare(editor, "isDelete", true);
+            }
+        }
         editor.commit();
         mHasBtnParamsChanged = false;
         //需要增加配置，打开这个函数

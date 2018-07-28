@@ -15,18 +15,51 @@ import com.uubox.threads.AccInputThread;
 import com.uubox.views.BtnParams;
 import com.uubox.views.KeyboardView;
 
-public class AOADataPack implements SimpleUtil.INormalBack {
+public class AOAConfigTool implements SimpleUtil.INormalBack {
     private final int OAODEVICE_X = 4095;
     private final int OAODEVICE_Y = 2304;
     private AccInputThread mAccInputThread;
     private Context mContext;
+    private static AOAConfigTool mInstance;
+    private static Object lock = new Object();
 
-    public AOADataPack(Context context, AccInputThread accInputThread) {
-        mAccInputThread = accInputThread;
+    private AOAConfigTool(Context context) {
+
         mContext = context;
         SimpleUtil.log("构造AOADataPack");
         SimpleUtil.addINormalCallback(this);
         init();
+    }
+
+    public static AOAConfigTool getInstance(Context context) {
+        synchronized (lock) {
+            if (mInstance == null) {
+                return mInstance = new AOAConfigTool(context);
+            }
+            return mInstance;
+        }
+    }
+
+    public byte[] getDeviceConfigD0() {
+        if (!isAOAConnect()) {
+            SimpleUtil.log("aoa not connrct!pullDeviceConfigs fail!");
+            return null;
+        }
+        ByteArrayList data = new ByteArrayList();
+        data.add((byte) 0xa5);
+        data.add((byte) 0x05);
+        data.add((byte) 0xd0);
+        data.add(SimpleUtil.sumCheck(data.all2Bytes()));
+        writeWaitResult((byte) 0xd0, data.all2Bytes(), 2000);
+        if (mReq.mReqResult != null) {
+            SimpleUtil.log("pullDeviceConfigs ok:" + Hex.toString(mReq.mReqResult));
+            return Arrays.copyOf(mReq.mReqResult, mReq.mReqResult.length);
+        }
+        return null;
+    }
+
+    public void startConnect(AccInputThread accInputThread) {
+        mAccInputThread = accInputThread;
     }
 
     public List<Config> loadConfigs() {
@@ -184,8 +217,20 @@ public class AOADataPack implements SimpleUtil.INormalBack {
 
     private Req mReq = new Req();
 
-    public void writeManyConfigs(final List<Config> allConfigs) {
+    private void writeWaitResult(byte type, byte[] data, long timeout) {
+        long time = System.currentTimeMillis();
+        resetReq();
+        mReq.mReqType = type;
+        mAccInputThread.writeAcc(data);
+        while ((System.currentTimeMillis() - time) < timeout && mReq.mReqResult == null) ;
+    }
 
+    public void writeManyConfigs(final List<Config> allConfigs) {
+        if (!isAOAConnect()) {
+            SimpleUtil.log("aoa not connrct!writeManyConfigs fail!");
+            SimpleUtil.addMsgBottomToTop(mContext, "写入配置失败！", true);
+            return;
+        }
         SimpleUtil.runOnThread(new Runnable() {
             @Override
             public void run() {
@@ -196,6 +241,7 @@ public class AOADataPack implements SimpleUtil.INormalBack {
                 int defaultIndex = 0;
                 byte[] gameList = new byte[4];
                 //构建C0
+                SimpleUtil.log("构造C0:" + allConfigs.size());
                 for (int i = 0; i < allConfigs.size(); i++) {
                     totlen += allConfigs.get(i).getmSize();
                     if (allConfigs.get(i).getIsUsed()) {
@@ -245,16 +291,86 @@ public class AOADataPack implements SimpleUtil.INormalBack {
                     index_++;
                     resetReq();
                 }
+
+                //保底配置顺序，查询一下
+                byte[] d0data = getDeviceConfigD0();
                 SimpleUtil.resetWaitTop();
-                SimpleUtil.addMsgBottomToTop(mContext, "配置写入成功！", false);
-                SimpleUtil.saveToShare(mContext, "ini", "configschange", false);
+                if (d0data != null) {
+                    SimpleUtil.addMsgBottomToTop(mContext, "配置写入成功！", false);
+                    SimpleUtil.saveToShare(mContext, "ini", "configschange", false);
+                    SimpleUtil.saveToShare(mContext, "ini", "configsorderbytes", Hex.toString(d0data));
+                } else {
+                    SimpleUtil.addMsgBottomToTop(mContext, "配置写入失败！", true);
+                }
+                SimpleUtil.notifyall_(10012, d0data);
 
             }
         });
 
     }
 
+    public void AnysLeftRihgtConfigs(List<Config> configsLeftData, List<Config> configsRightData) {
+        final List<AOAConfigTool.Config> mConfigs = AOAConfigTool.getInstance(mContext).loadConfigs();
+        byte[] d0 = AOAConfigTool.getInstance(mContext).getDeviceConfigD0();
+        SimpleUtil.log("get d0:" + Hex.toString(d0));
+        //final byte[] d0 = Hex.parse("A5 14 D0 01 04 07 05 09 02 E2 00 00 00 00 00 00 00 00 00 87");
+        if (d0 == null) {
+            SimpleUtil.addMsgBottomToTop(mContext, "读取设备配置信息失败！", true);
+            String configsorderbytes = (String) SimpleUtil.getFromShare(mContext, "ini", "configsorderbytes", String.class, "");
+            if (!configsorderbytes.isEmpty()) {
+                SimpleUtil.log("get lib d0:" + configsorderbytes);
+                d0 = Hex.parse(configsorderbytes);
+            }
+
+        }
+
+        AOAConfigTool.Config[] rightOrder = new AOAConfigTool.Config[4];
+        for (AOAConfigTool.Config config : mConfigs) {
+            if (d0 != null) {
+                boolean isFind = false;
+                config.setmIsUsed(false);
+                for (int order = 0; order < 4; order++) {
+                    if (config.getmConfigid() == Arrays.copyOfRange(d0, 4, 8)[order]) {
+                        config.setDeleted(false);
+                        rightOrder[order] = config;
+                        isFind = true;
+                        break;
+                    }
+                }
+                if (!isFind) {
+                    config.setDeleted(true);
+                    configsLeftData.add(config);
+                }
+                continue;
+            } else {
+                if (!config.getIsDeleted() && configsRightData.size() < 4) {
+                    config.setDeleted(false);
+                    configsRightData.add(config);
+                    //rightSize[0] += config.getmSize();
+                } else {
+                    config.setmIsUsed(false);
+                    config.setDeleted(true);
+                    configsLeftData.add(config);
+                }
+            }
+
+        }
+
+        if (d0 != null) {
+            rightOrder[d0[3] - 1].setmIsUsed(true);
+            for (AOAConfigTool.Config one : rightOrder) {
+                if (one != null)
+                    configsRightData.add(one);
+            }
+        }
+
+    }
+
     public boolean openOrCloseRecKeycode(boolean open) {
+        if (!isAOAConnect()) {
+            SimpleUtil.log("aoa not connrct!openOrCloseRecKeycode fail!");
+            return false;
+        }
         SimpleUtil.log((open ? "打开" : "关闭") + "接收按键");
         mReq.mReqType = (byte) 0xb2;
         mReq.mReqResult = null;
@@ -449,7 +565,7 @@ public class AOADataPack implements SimpleUtil.INormalBack {
 
 
     public boolean isAOAConnect() {
-        return mAccInputThread.isConnect();
+        return mAccInputThread != null && mAccInputThread.isConnect();
     }
 
     public void resetReq() {
@@ -569,6 +685,7 @@ public class AOADataPack implements SimpleUtil.INormalBack {
         private boolean mIsDeleted;
         private String configSha;
         private byte mConfigid;
+
         public String getmContent() {
             return mContent;
         }
@@ -583,6 +700,10 @@ public class AOADataPack implements SimpleUtil.INormalBack {
 
         public boolean getIsUsed() {
             return mIsUsed;
+        }
+
+        public void setmIsUsed(boolean flag) {
+            mIsUsed = flag;
         }
 
         public int getmSize() {

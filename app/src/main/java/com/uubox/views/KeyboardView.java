@@ -37,7 +37,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import com.uubox.padtool.MainService;
 import com.uubox.padtool.R;
-import com.uubox.tools.AOADataPack;
+import com.uubox.tools.AOAConfigTool;
 import com.uubox.tools.BtnUtil;
 import com.uubox.tools.IniAdapter;
 import com.uubox.tools.InjectUtil;
@@ -1202,17 +1202,7 @@ public class KeyboardView extends FrameLayout
                     return true;
                 }
             } else if (v == mIvMenuBtnSetting) {
-                SimpleUtil.addINormalCallback(new SimpleUtil.INormalBack() {
-                    @Override
-                    public void back(int id, Object obj) {
-                        if (id == 10013) {
-                            showTab((List<AOADataPack.Config>) obj);
-                            SimpleUtil.removeINormalCallback(this);
-                        }
-                    }
-                });
-                SimpleUtil.notifyall_(10012, null);
-
+                showTab();
                 return true;
             }
 
@@ -1230,8 +1220,8 @@ public class KeyboardView extends FrameLayout
 
     }
 
-    private void showTab(List<AOADataPack.Config> configs) {
-        IniTab.getInstance().init(getContext(), this, configs).show();
+    private void showTab() {
+        IniTab.getInstance().init(getContext(), this).show();
         IniTab.getInstance().addNotify(new IniTab.IButtonMenuCallback() {
             @Override
             public void back(int type, Object carryData) {

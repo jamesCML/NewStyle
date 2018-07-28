@@ -11,16 +11,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.uubox.padtool.R;
-import com.uubox.tools.AOADataPack;
+import com.uubox.tools.AOAConfigTool;
 import com.uubox.tools.SimpleUtil;
 
 import java.util.List;
 
 public class MoveConfigAdapter extends BaseAdapter {
     private Context mContext;
-    private List<AOADataPack.Config> mConfigs;
+    private List<AOAConfigTool.Config> mConfigs;
 
-    public MoveConfigAdapter(Context context, List<AOADataPack.Config> configs) {
+    public MoveConfigAdapter(Context context, List<AOAConfigTool.Config> configs) {
         mContext = context;
         mConfigs = configs;
     }
@@ -68,7 +68,7 @@ public class MoveConfigAdapter extends BaseAdapter {
         } else {
             holder.mName.setText(Html.fromHtml("配置:<font color='#ff0000'>" + mConfigs.get(position).getmConfigName() + "</font>"));
         }
-        holder.mSize.setText("大小:" + mConfigs.get(position).getmSize());
+        holder.mSize.setText("编号:" + mConfigs.get(position).getmConfigid());
         if (mConfigs.get(position).getIsDeleted()) {
             holder.mRightArrow.setVisibility(View.VISIBLE);
             holder.mLeftArrow.setVisibility(View.GONE);

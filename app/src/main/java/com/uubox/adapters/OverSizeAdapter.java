@@ -12,13 +12,13 @@ import java.util.List;
 
 
 import com.uubox.padtool.R;
-import com.uubox.tools.AOADataPack;
+import com.uubox.tools.AOAConfigTool;
 
 public class OverSizeAdapter extends BaseAdapter {
     private Context mContext;
-    private List<AOADataPack.Config> mConfigs;
+    private List<AOAConfigTool.Config> mConfigs;
 
-    public OverSizeAdapter(Context context, List<AOADataPack.Config> configs) {
+    public OverSizeAdapter(Context context, List<AOAConfigTool.Config> configs) {
         mContext = context;
         mConfigs = configs;
     }

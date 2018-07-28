@@ -35,7 +35,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import com.uubox.adapters.MoveConfigAdapter;
 import com.uubox.padtool.R;
 import com.uubox.tools.AES;
-import com.uubox.tools.AOADataPack;
+import com.uubox.tools.AOAConfigTool;
 import com.uubox.tools.BigKeyConfigAd;
 import com.uubox.tools.ByteArrayList;
 import com.uubox.tools.CommonUtils;
@@ -55,7 +55,6 @@ public class IniTab {
     private List<View> mViewPageList;
     private int mIndex;
     private Button mLastPress;
-    private List<AOADataPack.Config> mConfigs;
     private IniTab() {
 
     }
@@ -69,10 +68,9 @@ public class IniTab {
         private static final IniTab INI_MENU = new IniTab();
     }
 
-    public IniTab init(Context context, KeyboardView keyboardView, List<AOADataPack.Config> configs) {
+    public IniTab init(Context context, KeyboardView keyboardView) {
 
         mContext = context;
-        mConfigs = configs;
         mKeyboardView = keyboardView;
         mViewPageList = new ArrayList<>();
         mViewPageList.clear();
@@ -82,7 +80,7 @@ public class IniTab {
         mViewPage = parent.findViewById(R.id.initab_page);
         mBTBar = parent.findViewById(R.id.initab_btbar);
 
-        addKeyInit();
+        //addKeyInit();
         WriteConfigs();
         addHelper();
         mViewPage.setAdapter(pagerAdapter);
@@ -259,6 +257,7 @@ public class IniTab {
                 runnables.add(new Runnable() {
                     @Override
                     public void run() {
+                        SimpleUtil.log("使用:" + allKeysConfigList.get(mainPosition).mSubData.get(subPosition).whole);
                         String[] sp = allKeysConfigList.get(mainPosition).mSubData.get(subPosition).whole.split("#Z%W#", -1);
                         // SimpleUtil.saveToShare(mContext, InjectUtil.getComfirGameTab(), "default", "default#Z%W#" + sp[1] + "#Z%W#" + sp[2]+ "#Z%W#" +allKeysConfigList.get(mainPosition).mTv);
                         SimpleUtil.saveToShare(mContext, "ini", "gloabkeyconfig", "default#Z%W#" + sp[1] + "#Z%W#" + sp[2] + "#Z%W#" + allKeysConfigList.get(mainPosition).mTv);
@@ -515,42 +514,19 @@ public class IniTab {
     }
 
     private void WriteConfigs() {
+
         String gloabkeyconfig = (String) SimpleUtil.getFromShare(mContext, "ini", "gloabkeyconfig", String.class, "");
         final String[] sp0 = gloabkeyconfig.split("#Z%W#", -1);
         SimpleUtil.log("test当前使用:" + sp0[1] + "\n" + gloabkeyconfig);
         final View view = LayoutInflater.from(mContext).inflate(R.layout.dialog_oversize, null);
         final View listPar = view.findViewById(R.id.dialog_oversize_list_par);
         final View gunPar = view.findViewById(R.id.dialog_oversize_gun_par);
-        final TextView rightMsg = view.findViewById(R.id.dialog_oversize_rightmsg);
-        final List<AOADataPack.Config> configsLeftData = new ArrayList<>();
-        final List<AOADataPack.Config> configsRightData = new ArrayList<>();
+        final List<AOAConfigTool.Config> configsLeftData = new ArrayList<>();
+        final List<AOAConfigTool.Config> configsRightData = new ArrayList<>();
+        AOAConfigTool.getInstance(mContext).AnysLeftRihgtConfigs(configsLeftData, configsRightData);
+        SimpleUtil.log(configsRightData.size() + "");
         final int[] rightSize = {0};
-        for (AOADataPack.Config config : mConfigs) {
-            if (config.getIsDeleted() && !config.getIsUsed()) {
-                configsLeftData.add(config);
-            } else {
-                if (config.getIsUsed()) {
-                    if (configsRightData.size() == 4) {
-                        config.setDeleted(true);
-                        configsLeftData.add(config);
-                        configsRightData.remove(0);
-                    }
-                    configsRightData.add(0, config);
-                    rightSize[0] += config.getmSize();
-                } else if (configsRightData.size() < 4) {
-                    configsRightData.add(config);
-                    rightSize[0] += config.getmSize();
-                }
 
-            }
-        }
-        if (rightSize[0] > 1024) {
-            rightMsg.setTextColor(Color.RED);
-            rightMsg.setText("配置过大！");
-        } else {
-            rightMsg.setTextColor(Color.GREEN);
-            rightMsg.setText("可以写入配置！");
-        }
         ListView listLeft = view.findViewById(R.id.dialog_oversize_left);
         ListView listRight = view.findViewById(R.id.dialog_oversize_right);
 
@@ -561,7 +537,42 @@ public class IniTab {
         listRight.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (!AOAConfigTool.getInstance(mContext).isAOAConnect()) {
+                    SimpleUtil.addMsgBottomToTop(mContext, "请先连接设备再调整配置！", true);
+                    return;
+                }
+                if (configsRightData.get(position).getIsUsed()) {
+                    return;
+                }
+                for (AOAConfigTool.Config config1 : configsRightData) {
+                    if (config1.getIsUsed()) {
+                        config1.setmIsUsed(false);
+                    }
+                }
 
+                String gamesha = configsRightData.get(position).getConfigSha();
+                SimpleUtil.log("item select:" + gamesha);
+                // SimpleUtil.saveToShare(mContext, InjectUtil.getComfirGameTab(), "default", "default#Z%W#" + sp[1] + "#Z%W#" + sp[2]+ "#Z%W#" +allKeysConfigList.get(mainPosition).mTv);
+                //setUse(configsRightData.get(position));
+                configsRightData.get(position).setmIsUsed(true);
+                adapterRight.notifyDataSetChanged();
+               /* for (IniAdapter.IniObj obj : allKeysConfigList.get(mainPosition).mSubData) {
+                    if (obj.state != null) {
+                        obj.state = null;
+                        break;
+                    }
+                }
+                allKeysConfigList.get(mainPosition).mSubData.get(subPosition).state = "[使用中]";
+                inibt_cur.setText("当前使用:" + allKeysConfigList.get(mainPosition).mSubData.get(subPosition).name);
+                adapter.notifyDataSetChanged();*/
+                //KeyboardEditWindowManager.getInstance().close();
+                // SimpleUtil.notifyall_(10003, null);
+            }
+        });
+        listLeft.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                SimpleUtil.addMsgBottomToTop(mContext, "不能使用未选中的配置！", true);
             }
         });
         final TextView changeGunTv = view.findViewById(R.id.dialog_oversize_changetv);
@@ -583,9 +594,13 @@ public class IniTab {
 
         final SimpleUtil.INormalBack iNormalBack = new SimpleUtil.INormalBack() {
             @Override
-            public void back(int id, Object obj) {
+            public void back(int id, final Object obj) {
+                if (!AOAConfigTool.getInstance(mContext).isAOAConnect()) {
+                    SimpleUtil.addMsgBottomToTop(mContext, "请先连接设备再调整配置！", true);
+                    return;
+                }
                 if (id == 10007) {//取消一个配置
-                    AOADataPack.Config config = (AOADataPack.Config) obj;
+                    AOAConfigTool.Config config = (AOAConfigTool.Config) obj;
 
                     if (config.getIsUsed()) {
                         SimpleUtil.addMsgBottomToTop(mContext, "正在使用的配置不能取消！", true);
@@ -596,32 +611,22 @@ public class IniTab {
                     configsLeftData.add(config);
                     configsRightData.remove(obj);
                     rightSize[0] -= config.getmSize();
-                    if (rightSize[0] > 1024) {
-                        rightMsg.setTextColor(Color.RED);
-                        rightMsg.setText("配置过大！");
-                    } else {
-                        rightMsg.setTextColor(Color.GREEN);
-                        rightMsg.setText("可以写入配置！");
-                    }
+                    adapterleft.notifyDataSetChanged();
+                    adapterRight.notifyDataSetChanged();
 
                 } else if (id == 10008) {//增加一个配置
                     if (configsRightData.size() == 4) {
                         SimpleUtil.addMsgBottomToTop(mContext, "当前最多支持写4个配置！", true);
                         return;
                     }
-                    AOADataPack.Config config = (AOADataPack.Config) obj;
+                    AOAConfigTool.Config config = (AOAConfigTool.Config) obj;
                     config.setDeleted(false);
                     SimpleUtil.saveToShare(mContext, config.getConfigSha(), "isDelete", false);
                     configsRightData.add(config);
                     configsLeftData.remove(obj);
                     rightSize[0] += config.getmSize();
-                    if (rightSize[0] > 1024) {
-                        rightMsg.setTextColor(Color.RED);
-                        rightMsg.setText("配置过大！");
-                    } else {
-                        rightMsg.setTextColor(Color.GREEN);
-                        rightMsg.setText("可以写入配置！");
-                    }
+                    adapterleft.notifyDataSetChanged();
+                    adapterRight.notifyDataSetChanged();
                 } else if (id == 10009) {//上
                     int position = (Integer) obj;
                     if (position == 0) {
@@ -633,6 +638,8 @@ public class IniTab {
                     SimpleUtil.log("up position:" + position);
                     configsRightData.add(position - 1, configsRightData.get(position));
                     configsRightData.remove(position + 1);
+                    adapterleft.notifyDataSetChanged();
+                    adapterRight.notifyDataSetChanged();
                 } else if (id == 10010) {//下
                     int position = (Integer) obj;
                     if (position == configsRightData.size() - 1) {
@@ -644,9 +651,22 @@ public class IniTab {
                     SimpleUtil.log("down position:" + position);
                     configsRightData.add(position + 2, configsRightData.get(position));
                     configsRightData.remove(position);
+                    adapterleft.notifyDataSetChanged();
+                    adapterRight.notifyDataSetChanged();
+                } else if (id == 10012)//配置写入完成通知结果
+                {
+                    SimpleUtil.runOnUIThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            byte[] c0Data = (byte[]) obj;
+                            setUse(configsRightData.get(c0Data[3] - 1));
+                            KeyboardEditWindowManager.getInstance().close();
+
+                        }
+                    });
+                    SimpleUtil.removeINormalCallback(this);
                 }
-                adapterleft.notifyDataSetChanged();
-                adapterRight.notifyDataSetChanged();
+
             }
         };
         SimpleUtil.addINormalCallback(iNormalBack);
@@ -663,7 +683,7 @@ public class IniTab {
                 int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "cfqNum", int.class, 19);
                 int akNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "akNum", int.class, 28);
                 SimpleUtil.log("压枪灵敏度：" + bqNum + "," + cfqNum + "," + akNum);
-                for (AOADataPack.Config config : mConfigs) {
+                for (AOAConfigTool.Config config : configsRightData) {
                     if (config.getIsUsed()) {
                         //压枪数据重新构造一下
                         byte[] data = config.getmData().all2Bytes();
@@ -679,14 +699,8 @@ public class IniTab {
                     }
                 }
 
-                KeyboardEditWindowManager.getInstance().close();
-                Iterator<AOADataPack.Config> it = mConfigs.iterator();
-                while (it.hasNext()) {
-                    if (it.next().getIsDeleted()) {
-                        it.remove();
-                    }
-                }
-                SimpleUtil.notifyall_(10011, mConfigs);
+                AOAConfigTool.getInstance(mContext).writeManyConfigs(configsRightData);
+
             }
         });
         view.findViewById(R.id.dialog_oversize_cancel).setOnClickListener(new View.OnClickListener() {
@@ -752,6 +766,13 @@ public class IniTab {
         mViewPageList.add(view);
 
         //KeyboardEditWindowManager.getInstance().init(mContext).addView(view, (7 * SimpleUtil.zoomy) / 8, (7 * SimpleUtil.zoomx) / 8);
+    }
+
+    private void setUse(AOAConfigTool.Config config) {
+        SimpleUtil.saveToShare(mContext, "ini", "gloabkeyconfig", "default#Z%W#" + config.getmConfigName() + "#Z%W#" + config.getConfigSha() + "#Z%W#" + config.getmContent());
+        InjectUtil.setComfirGame(config.getmContent());
+        InjectUtil.loadBtnParamsFromPrefs(mContext);
+        mKeyboardView.loadUi();
     }
     private void addHelper() {
         ViewGroup helperitem = (ViewGroup) LayoutInflater.from(mContext).inflate(R.layout.dialog_titlelist, null);

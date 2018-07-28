@@ -2,10 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/dialog_message_box"
     android:id="@+id/parent_4"
     android:orientation="vertical">
-
 
         <LinearLayout
             android:minHeight="30dp"
@@ -55,12 +53,13 @@
 
     <LinearLayout
         android:background="#990000ff"
-        android:layout_marginLeft="2dp"
-        android:layout_marginRight="2dp"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
+            android:textStyle="bold"
             android:text="未选中的配置"
             android:textColor="@color/lightred"
             android:gravity="center"
@@ -70,6 +69,7 @@
             android:layout_weight="1"
             android:layout_height="wrap_content" />
         <TextView
+            android:textStyle="bold"
             android:text="选中的配置"
             android:gravity="center"
             android:id="@+id/dialog_oversize_rightmsg"

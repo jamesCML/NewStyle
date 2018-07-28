@@ -299,12 +299,4 @@ public class KeyboardEditWindowManager {
         }*/
     }
 
-
-    public static void showSingleView(Context context, View view) {
-        WrapFloat.getInstance(context).addView(view);
-    }
-
-    public static void removeSingeView(Context context, View view) {
-        WrapFloat.getInstance(context).removeView(view);
-    }
 }
