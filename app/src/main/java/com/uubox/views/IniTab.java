@@ -227,6 +227,13 @@ public class IniTab {
                 boolean res = shareLib.edit().remove(configsLeftData.get(position).getmTabKey()).commit();
                 SimpleUtil.log("delete iniconfig result:" + res);
                 SimpleUtil.addMsgBottomToTop(mContext, "删除" + (res ? "成功" : "失败"), !res);
+                String newConfig = (String) SimpleUtil.getFromShare(mContext, "ini", "NewConfigNotWrite", String.class, "");
+                if (!newConfig.isEmpty()) {
+                    if (configsLeftData.get(position).getmConfigName().equals(newConfig)) {
+                        SimpleUtil.log("we remove the newconfig in the lib!");
+                        SimpleUtil.saveToShare(mContext, "ini", "NewConfigNotWrite", "");
+                    }
+                }
 
                 //如果已经全部删除则删除游戏目录
 
@@ -369,26 +376,6 @@ public class IniTab {
                 if (rightSize[0] > 1024) {
                     SimpleUtil.addMsgBottomToTop(mContext, "配置过大！", true);
                     return;
-                }
-
-                int bqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "bqNum", int.class, 25);
-                int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "cfqNum", int.class, 19);
-                int akNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "akNum", int.class, 28);
-                SimpleUtil.log("压枪灵敏度：" + bqNum + "," + cfqNum + "," + akNum);
-                for (AOAConfigTool.Config config : configsRightData) {
-                    if (config.getIsUsed()) {
-                        //压枪数据重新构造一下
-                        byte[] data = config.getmData().all2Bytes();
-                        data[32] = (byte) bqNum;
-                        data[33] = (byte) cfqNum;
-                        data[34] = (byte) akNum;
-                        byte[] data2 = Arrays.copyOfRange(data, 1, data.length);
-                        ByteArrayList bytes = new ByteArrayList();
-                        bytes.add(SimpleUtil.sumCheck(data2));
-                        bytes.add(data2);
-                        config.setmData(bytes);
-                        break;
-                    }
                 }
 
                 AOAConfigTool.getInstance(mContext).writeManyConfigs(configsRightData);

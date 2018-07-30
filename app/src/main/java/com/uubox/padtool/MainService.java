@@ -252,7 +252,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             public void run() {
                 checkConfigChange();
             }
-        }, 1000);
+        }, 200);
 
     }
 
@@ -270,6 +270,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
 
 
     private void requestUsbAccessoryPermission(UsbAccessory usbAccessory) {
+        mHandler.removeMessages(HANDLE_SCAN_AOA);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(
                 ACCUSBPERMISSION), 0);
         mUSBManager.requestPermission(usbAccessory, pendingIntent);

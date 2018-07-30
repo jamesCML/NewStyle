@@ -238,6 +238,29 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                 SimpleUtil.addWaitToTop(mContext, "");
                 SimpleUtil.sleep(20);
 
+                for (AOAConfigTool.Config config : allConfigs) {
+                    if (config.getIsUsed()) {
+                        //压枪数据重新构造一下
+                        int bqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "bqNum", int.class, 25);
+                        int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "cfqNum", int.class, 19);
+                        int akNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "akNum", int.class, 28);
+                        SimpleUtil.log("压枪灵敏度：" + bqNum + "," + cfqNum + "," + akNum);
+                        byte[] data = config.getmData().all2Bytes();
+                        data[32] = (byte) bqNum;
+                        data[33] = (byte) cfqNum;
+                        data[34] = (byte) akNum;
+                        byte[] data2 = Arrays.copyOfRange(data, 1, data.length);
+                        ByteArrayList bytes = new ByteArrayList();
+                        bytes.add(SimpleUtil.sumCheck(data2));
+                        bytes.add(data2);
+                        config.setmData(bytes);
+                        break;
+                    }
+                }
+
+
+
+
                 short totlen = 0;
                 int defaultIndex = 0;
                 byte[] gameList = new byte[4];
@@ -299,6 +322,8 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                     SimpleUtil.addMsgBottomToTop(mContext, "配置写入成功！", false);
                     SimpleUtil.saveToShare(mContext, "ini", "configschange", false);
                     SimpleUtil.saveToShare(mContext, "ini", "configsorderbytes", Hex.toString(d0data));
+                    SimpleUtil.saveToShare(mContext, "ini", "NewConfigNotWrite", "");
+
                 } else {
                     SimpleUtil.addMsgBottomToTop(mContext, "配置写入失败！", true);
                 }
@@ -311,17 +336,42 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
 
     public void writeDefaultConfigs() {
         List<Config> configsRightData = new ArrayList<>();
-        AnysLeftRihgtConfigs(null, configsRightData);
+        List<Config> configsLeftData = new ArrayList<>();
+        AnysLeftRihgtConfigs(configsLeftData, configsRightData);
+
+        //特殊处理新建的配置
+        String newConfig = (String) SimpleUtil.getFromShare(mContext, "ini", "NewConfigNotWrite", String.class, "");
+
+        if (!newConfig.isEmpty()) {
+            SimpleUtil.log("we find the newConfig in the lib:" + newConfig);
+            boolean isFind = false;
+            for (Config config : configsLeftData) {
+                if (config.getmConfigName().equals(newConfig)) {
+                    for (int i = 0; i < configsRightData.size(); i++) {
+                        if (configsRightData.get(i).getIsUsed()) {
+                            config.setmIsUsed(true);
+                            configsRightData.set(i, config);
+                            isFind = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (isFind) {
+                    break;
+                }
+            }
+        }
         writeManyConfigs(configsRightData);
     }
 
     public boolean AnysLeftRihgtConfigs(List<Config> configsLeftData, List<Config> configsRightData) {
         final List<AOAConfigTool.Config> mConfigs = loadConfigs();
         byte[] d0 = getDeviceConfigD0();
-        //byte[] d0 = Hex.parse("A5 14 D0 04 04 03 07 0C 02 CE 00 00 00 00 00 00 00 00 00 77");
+        //byte[] d0 = Hex.parse("A5 14 D0 03 03 02 09 01 02 92 00 00 00 00 00 00 00 00 00 2F");
         String configsorderbytes = (String) SimpleUtil.getFromShare(mContext, "ini", "configsorderbytes", String.class, null);
         byte[] d1 = Hex.parse(configsorderbytes);
-        SimpleUtil.log("get d0:\n" + Hex.toString(d0) + "get d1:\n" + configsorderbytes);
+        SimpleUtil.log("get d0:\n" + Hex.toString(d0) + "\nget d1:\n" + configsorderbytes);
         //final byte[] d0 = Hex.parse("A5 14 D0 01 04 07 05 09 02 E2 00 00 00 00 00 00 00 00 00 87");
         if (d0 == null) {//为了排序，只能暂时获取来自存储的排序
             SimpleUtil.addMsgBottomToTop(mContext, "读取设备配置信息失败！", true);
@@ -372,15 +422,29 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
 
         }
 
-        if (d0 != null && rightOrder[d0[3] - 1] != null) {
+        if (d0 != null && d0[3] - 1 >= 0 && rightOrder[d0[3] - 1] != null) {//匹配不上
             rightOrder[d0[3] - 1].setmIsUsed(true);
             for (AOAConfigTool.Config one : rightOrder) {
                 if (one != null)
                     configsRightData.add(one);
             }
+        } else {//只能先放一点了
+            for (AOAConfigTool.Config one : rightOrder) {
+                if (one != null)
+                    configsRightData.add(one);
+            }
+            int i = 0;
+            while (configsRightData.size() != 4) {
+                Config leftOne = configsLeftData.get(i);
+                leftOne.setDeleted(false);
+                configsRightData.add(leftOne);
+                configsLeftData.remove(i++);
+            }
+            configsRightData.get(0).setmIsUsed(true);
+
         }
         //SimpleUtil.log("device order use is null:"+(rightOrder[d0[3] - 1]==null));
-        return d0 != null && d1 != null && Arrays.equals(d0, d1) && rightOrder[d0[3] - 1] != null;
+        return d0 != null && d1 != null && d0[3] - 1 >= 0 && Arrays.equals(d0, d1) && rightOrder[d0[3] - 1] != null;
     }
 
     public boolean openOrCloseRecKeycode(boolean open) {
