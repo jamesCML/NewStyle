@@ -13,7 +13,7 @@ import com.uubox.views.KeyboardView;
  * Created by CG_Dawson on 2018/3/1.
  */
 
-public class SaveBtnParamsTask extends AsyncTask<String, Integer, Void> {
+public class SaveBtnParamsTask extends AsyncTask<String, Integer, String> {
     private Context mContext;
     private KeyboardView mKeyboardView;
     private boolean isNewIni;
@@ -32,15 +32,15 @@ public class SaveBtnParamsTask extends AsyncTask<String, Integer, Void> {
     }
 
     @Override
-    protected Void doInBackground(String... args) {
+    protected String doInBackground(String... args) {
         String[] sp = args[0].split("#Z%W#", -1);
         isNewIni = sp[1].equals(sp[2]);
         InjectUtil.saveBtnParams(mContext, args[0]);
-        return null;
+        return sp[1];
     }
 
     @Override
-    protected void onPostExecute(Void aVoid) {
+    protected void onPostExecute(String aVoid) {
         if (mKeyboardView != null) {
             // SimpleUtil.notifyall_(1, null);
         }
@@ -50,9 +50,10 @@ public class SaveBtnParamsTask extends AsyncTask<String, Integer, Void> {
         if (isNewIni) {
             InjectUtil.loadBtnParamsFromPrefs(mContext);
             mKeyboardView.loadUi();
-        } else {
-            SimpleUtil.notifyall_(10003, null);
+            SimpleUtil.saveToShare(mContext, "ini", "NewConfigNotWrite", aVoid);
+
         }
+        SimpleUtil.notifyall_(10003, null);
         KeyboardEditWindowManager.getInstance().close();
 
     }

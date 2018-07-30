@@ -57,6 +57,7 @@ public class GloableRec extends BroadcastReceiver {
                 SimpleUtil.notifyall_(10001, accessory);
             } else {
                 SimpleUtil.log("usb accessonry permission fail!");
+                SimpleUtil.notifyall_(10001, null);
             }
         } else if (action.equals(Intent.ACTION_SCREEN_OFF)) {
             SimpleUtil.log("屏幕关闭");
