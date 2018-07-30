@@ -89,12 +89,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         registerReceiver(homeReceiver, new IntentFilter("android.intent.action.CLOSE_SYSTEM_DIALOGS"));
         SimpleUtil.zoomx = (Integer) SimpleUtil.getFromShare(getBaseContext(), "ini", "zoomx", int.class);
         SimpleUtil.zoomy = (Integer) SimpleUtil.getFromShare(getBaseContext(), "ini", "zoomy", int.class);
-        SimpleUtil.runOnUIThread(new Runnable() {
-            @Override
-            public void run() {
-                init();
-            }
-        }, 1000);
+        mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 1000);
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -173,7 +168,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
 
         //先判断是否支持USB
         boolean isSurportUSB = isSurportUSB();
-        SimpleUtil.log("support usb:" + isSurportUSB);
+        //SimpleUtil.log("support usb:" + isSurportUSB);
         if (!isSurportUSB) {
             return;
         }
@@ -210,12 +205,13 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         UsbAccessory[] usbAccessories = mUSBManager.getAccessoryList();
 
         if (usbAccessories == null) {
-            SimpleUtil.log("return usbAccessories list is null!!!!!!");
+            //SimpleUtil.log("return usbAccessories list is null!!!!!!");
             mfloatingIv.setImageResource((Integer) mfloatingIv.getTag() == 1 ? R.mipmap.app_icon0805001_gray : R.mipmap.app_icon0805001_half_gray);
-            mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 2000);
+            mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 1000);
             return;
         }
-
+        //防止开启异常后继续扫描
+        mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 5000);
         String s = "accessory：\n" +
                 "model:" + usbAccessories[0].getModel() + "\n" +
                 "Manufacturer:" + usbAccessories[0].getManufacturer() + "\n" +
@@ -247,10 +243,16 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         mAccInputThread.start();
         mAOAConfigTool.startConnect(mAccInputThread);
         SimpleUtil.log("openUsbAccessory sucessful!!!!!");
+        mHandler.removeMessages(HANDLE_SCAN_AOA);
         mfloatingIv.setImageResource((Integer) mfloatingIv.getTag() == 1 ? R.mipmap.app_icon0805001 : R.mipmap.app_icon0805001_half);
-        checkConfigChange();
 
         SimpleUtil.notifyall_(10004, null);
+        SimpleUtil.runOnUIThread(new Runnable() {
+            @Override
+            public void run() {
+                checkConfigChange();
+            }
+        }, 1000);
 
     }
 
@@ -461,7 +463,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
                     //mfloatingentergame.setVisibility(View.GONE);
                     break;
                 case HANDLE_SCAN_AOA:
-                    //init();
+                    init();
                     break;
             }
         }
@@ -640,27 +642,18 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             SimpleUtil.log("AOA掉线了！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！");
             closeAcc();
             mfloatingIv.setImageResource((Integer) mfloatingIv.getTag() == 1 ? R.mipmap.app_icon0805001_gray : R.mipmap.app_icon0805001_half_gray);
+            mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 1000);
         } else if (id == 10001) {
             openUsbAccessory((UsbAccessory) obj);
         } else if (id == 10002) {
             //SimpleUtil.log("MainService rec:"+Hex.toString((byte[])obj));
         } else if (id == 10003)//配置更新了
         {
-            SimpleUtil.saveToShare(getBaseContext(), "ini", "configschange", true);
-            //mAOAConfigTool = new AOAConfigTool(getBaseContext(), new AccInputThread(null, null));
-            if (mAOAConfigTool != null) {
-                final List<AOAConfigTool.Config> allConfigs = mAOAConfigTool.loadConfigs();
-                    SimpleUtil.runOnUIThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            SimpleUtil.test(getBaseContext(), allConfigs);
-                        }
-                    });
-                return;
-
-
-
+            if (mAOAConfigTool.isAOAConnect()) {
+                SimpleUtil.addMsgBottomToTop(getBaseContext(), "检测到配置有更新，自动写入中...", false);
             }
+            SimpleUtil.saveToShare(getBaseContext(), "ini", "configschange", true);
+            mAOAConfigTool.writeDefaultConfigs();
         } else if (id == 10004) {
             mAOAConfigTool.openOrCloseRecKeycode(false);
 
@@ -766,8 +759,6 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
                 // 键位菜单界面不显示小图标
                 KeyboardFloatView.getInstance(getBaseContext()).dismiss();
 
-                checkConfigChange();
-
                 if (mAOAConfigTool != null)//打开接收按键数据
                 {
                     mAOAConfigTool.openOrCloseRecKeycode(true);
@@ -789,12 +780,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             public void run() {
                 boolean ischange = (Boolean) SimpleUtil.getFromShare(getBaseContext(), "ini", "configschange", boolean.class);
                 if (ischange) {
-                    SimpleUtil.addMsgtoTop(getBaseContext(), "温馨提示", "检测到您有未更新的配置，是否更新写入设备？", new Runnable() {
-                        @Override
-                        public void run() {
-                            SimpleUtil.notifyall_(10003, null);
-                        }
-                    }, null, false);
+                    SimpleUtil.notifyall_(10003, null);
                 }
             }
         }, 500);

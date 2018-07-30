@@ -1,5 +1,6 @@
 package com.uubox.views;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -53,7 +54,7 @@ import com.uubox.tools.SimpleUtil;
  */
 public class KeyboardView extends FrameLayout
         implements View.OnDragListener, DragImageView.DragListener,
-        DragImageView.ScaleListener, View.OnClickListener, DragImageView.ClickListener, View.OnTouchListener {
+        DragImageView.ScaleListener, View.OnClickListener, DragImageView.ClickListener, View.OnTouchListener, SimpleUtil.INormalBack {
 
     public static final String TAG = "KeyboardView";
 
@@ -151,9 +152,11 @@ public class KeyboardView extends FrameLayout
     private Vibrator vibrator;
     private BtnDialogActivity btnDialogActivity;
 
+    @SuppressLint("ResourceType")
     public KeyboardView(Context context) {
         super(context);
         Log.i(TAG, "KeyboardView: ");
+        SimpleUtil.addINormalCallback(this);
         GuiStep.getInstance().init(context, "skip_note");
         LayoutInflater.from(context).inflate(R.layout.view_keyboard, this, true);
         findViews();
@@ -517,6 +520,7 @@ public class KeyboardView extends FrameLayout
                 SimpleUtil.log("preare to save setcomfirgame:" + iniName);
             }
 
+            KeyboardEditWindowManager.getInstance().removeTop();
             List<String> items = new ArrayList<>();
             items.add("保存到目录【" + InjectUtil.getComfirGame() + "】");
             items.add("新建配置目录");
@@ -1135,7 +1139,6 @@ public class KeyboardView extends FrameLayout
             case RIGHT:
                 break;
             case MOUSE_RIGHT:
-                SimpleUtil.notifyall_(10003, null);
                 break;
             default:
                 break;
@@ -1262,6 +1265,21 @@ public class KeyboardView extends FrameLayout
 
     }
 
+    @Override
+    public void back(int id, Object obj) {
+        if (id == 10004) {
+            SimpleUtil.removeINormalCallback(this);
+        } else if (id == 10013) {
+            setUse((AOAConfigTool.Config) obj);
+        }
+    }
+
+    private void setUse(AOAConfigTool.Config config) {
+        SimpleUtil.saveToShare(getContext(), "ini", "gloabkeyconfig", "default#Z%W#" + config.getmConfigName() + "#Z%W#" + config.getmTabValue() + "#Z%W#" + config.getmContent());
+        InjectUtil.setComfirGame(config.getmContent());
+        InjectUtil.loadBtnParamsFromPrefs(getContext());
+        loadUi();
+    }
     /**
      * 按钮类型
      */

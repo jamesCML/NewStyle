@@ -71,7 +71,7 @@ public class Hex {
 
     public static byte[] parse(String s) {
         if (s == null) {
-            return new byte[]{};
+            return null;
         }
         byte[] res = new byte[s.length() / 2];
         int c = 0;

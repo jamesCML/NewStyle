@@ -45,15 +45,15 @@ public class SaveBtnParamsTask extends AsyncTask<String, Integer, Void> {
             // SimpleUtil.notifyall_(1, null);
         }
         SimpleUtil.resetWaitTop();
-        Toast.makeText(mContext, "保存成功！",
-                Toast.LENGTH_SHORT).show();
+        SimpleUtil.addMsgBottomToTop(mContext, "已保存到本地！", false);
 
         if (isNewIni) {
             InjectUtil.loadBtnParamsFromPrefs(mContext);
             mKeyboardView.loadUi();
+        } else {
+            SimpleUtil.notifyall_(10003, null);
         }
         KeyboardEditWindowManager.getInstance().close();
-        SimpleUtil.notifyall_(10003, null);
 
     }
 

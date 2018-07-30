@@ -198,10 +198,6 @@ public class KeyboardEditWindowManager {
     }
 
     public KeyboardEditWindowManager addView(View view, int width, int height) {
-       /* mLayoutParams.width = width;
-        mLayoutParams.height = height;
-        mWindowManager.addView(view, mLayoutParams);*/
-
         View topView = getTopView();
         if (topView != null && topView.getId() == view.getId()) {
             return Holder.instance;
@@ -213,7 +209,9 @@ public class KeyboardEditWindowManager {
     }
 
     public View getTopView() {
-
+        for (int i = 0; i < rootView.getChildCount(); i++) {
+            SimpleUtil.log("rootViewChildID:" + rootView.getChildAt(i).getId() + "  " + rootView.getChildAt(i).getClass().getName());
+        }
         return rootView == null || rootView.getChildCount() == 0 ? null : rootView.getChildAt(rootView.getChildCount() - 1);
     }
 

@@ -13,6 +13,7 @@
 
             <TextView
                 android:layout_marginLeft="10dp"
+                android:visibility="gone"
                 android:id="@+id/dialog_oversize_cancel"
                 android:textStyle="bold"
                 android:layout_gravity="right|center_vertical"
@@ -27,8 +28,9 @@
                 android:layout_gravity="right|center_vertical"
                 android:textColor="@color/mk_white"
                 android:text="写入设备"
-                android:padding="1dp"
-                android:background="@drawable/dialog_message_bt_select"
+                android:textSize="22sp"
+                android:padding="3dp"
+                android:background="@drawable/configbutton"
                 android:layout_marginLeft="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -40,8 +42,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:background="@drawable/dialog_message_bt_select"
+                android:background="@drawable/configbutton"
                 android:text="点击我跳转到压枪设置"
+                android:padding="3dp"
+                android:textSize="22sp"
                 android:textColor="@color/mk_white" />
         </LinearLayout>
 

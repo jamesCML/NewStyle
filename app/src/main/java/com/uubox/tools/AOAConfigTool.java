@@ -89,6 +89,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                 config.mContent = key;
                 Map.Entry<String, ?> obj2 = it.next();
                 String subKey = obj2.getKey();
+                config.setmTabKey(subKey);
                 if (subKey.contains("default")) {
                     continue;
                 }
@@ -99,7 +100,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
 
                 //SimpleUtil.log("游戏 "+subKey+":"+subValue);
                 String[] sp = subValue.split("#Z%W#", -1);
-                config.configSha = sp[2];
+                config.mTabValue = sp[2];
                 config.setDeleted((Boolean) SimpleUtil.getFromShare(mContext, sp[2], "isDelete", boolean.class, false));
                 SimpleUtil.log("配置 " + sp[1] + "         +++++++++++++++++++++++++ " + index);
                 config.mConfigName = sp[1];
@@ -284,7 +285,6 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                         SimpleUtil.log("请求错误！" + Hex.toString(mReq.mReqResult) + "," + false);
                         SimpleUtil.resetWaitTop();
                         SimpleUtil.addMsgBottomToTop(mContext, "配置写入失败！", true);
-                        SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
                         return;
                     }
 
@@ -309,20 +309,25 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
 
     }
 
-    public void AnysLeftRihgtConfigs(List<Config> configsLeftData, List<Config> configsRightData) {
-        final List<AOAConfigTool.Config> mConfigs = AOAConfigTool.getInstance(mContext).loadConfigs();
-        byte[] d0 = AOAConfigTool.getInstance(mContext).getDeviceConfigD0();
-        SimpleUtil.log("get d0:" + Hex.toString(d0));
-        //final byte[] d0 = Hex.parse("A5 14 D0 01 04 07 05 09 02 E2 00 00 00 00 00 00 00 00 00 87");
-        if (d0 == null) {
-            SimpleUtil.addMsgBottomToTop(mContext, "读取设备配置信息失败！", true);
-            String configsorderbytes = (String) SimpleUtil.getFromShare(mContext, "ini", "configsorderbytes", String.class, "");
-            if (!configsorderbytes.isEmpty()) {
-                SimpleUtil.log("get lib d0:" + configsorderbytes);
-                d0 = Hex.parse(configsorderbytes);
-            }
+    public void writeDefaultConfigs() {
+        List<Config> configsRightData = new ArrayList<>();
+        AnysLeftRihgtConfigs(null, configsRightData);
+        writeManyConfigs(configsRightData);
+    }
 
+    public boolean AnysLeftRihgtConfigs(List<Config> configsLeftData, List<Config> configsRightData) {
+        final List<AOAConfigTool.Config> mConfigs = loadConfigs();
+        byte[] d0 = getDeviceConfigD0();
+        String configsorderbytes = (String) SimpleUtil.getFromShare(mContext, "ini", "configsorderbytes", String.class, null);
+        byte[] d1 = Hex.parse(configsorderbytes);
+        SimpleUtil.log("get d0:\n" + Hex.toString(d0) + "get d1:\n" + configsorderbytes);
+        //final byte[] d0 = Hex.parse("A5 14 D0 01 04 07 05 09 02 E2 00 00 00 00 00 00 00 00 00 87");
+        if (d0 == null) {//为了排序，只能暂时获取来自存储的排序
+            SimpleUtil.addMsgBottomToTop(mContext, "读取设备配置信息失败！", true);
+            SimpleUtil.log("get lib d0:" + configsorderbytes);
+            d0 = Hex.parse(configsorderbytes);
         }
+
 
         AOAConfigTool.Config[] rightOrder = new AOAConfigTool.Config[4];
         for (AOAConfigTool.Config config : mConfigs) {
@@ -339,7 +344,12 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                 }
                 if (!isFind) {
                     config.setDeleted(true);
-                    configsLeftData.add(config);
+                    if (configsLeftData != null) {
+                        if (config.getmConfigName().endsWith("[官方]"))
+                            configsLeftData.add(0, config);
+                        else
+                            configsLeftData.add(config);
+                    }
                 }
                 continue;
             } else {
@@ -350,7 +360,12 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                 } else {
                     config.setmIsUsed(false);
                     config.setDeleted(true);
-                    configsLeftData.add(config);
+                    if (configsLeftData != null) {
+                        if (config.getmConfigName().endsWith("[官方]"))
+                            configsLeftData.add(0, config);
+                        else
+                            configsLeftData.add(config);
+                    }
                 }
             }
 
@@ -363,7 +378,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                     configsRightData.add(one);
             }
         }
-
+        return Arrays.equals(d0, d1);
     }
 
     public boolean openOrCloseRecKeycode(boolean open) {
@@ -676,16 +691,16 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
         MP_TOUCH_MULT,          //  多功能
     }
 
-    public class Config {
+    public class Config implements Cloneable {
         private String mContent;
         private String mConfigName;
         private ByteArrayList mData;
         private boolean mIsUsed;
         private int mSize;
         private boolean mIsDeleted;
-        private String configSha;
+        private String mTabValue;
         private byte mConfigid;
-
+        private String mTabKey;
         public String getmContent() {
             return mContent;
         }
@@ -718,8 +733,8 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
             this.mData = mData;
         }
 
-        public String getConfigSha() {
-            return configSha;
+        public String getmTabValue() {
+            return mTabValue;
         }
 
         public void setDeleted(boolean flag) {
@@ -734,11 +749,30 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
             this.mConfigid = mConfigid;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            return mConfigName.equals(((Config) obj).mConfigName);
+        public String getmTabKey() {
+            return mTabKey;
         }
 
+        public void setmTabKey(String mTabKey) {
+            this.mTabKey = mTabKey;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            Config right = ((Config) obj);
+            return mTabValue.equals(right.mTabValue);
+        }
+
+        @Override
+        public Object clone() {
+            Config config = null;
+            try {
+                config = (Config) super.clone();
+            } catch (CloneNotSupportedException e) {
+                e.printStackTrace();
+            }
+            return config;
+        }
     }
 
 

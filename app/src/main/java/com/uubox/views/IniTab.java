@@ -34,7 +34,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import com.uubox.adapters.MoveConfigAdapter;
 import com.uubox.padtool.R;
-import com.uubox.tools.AES;
 import com.uubox.tools.AOAConfigTool;
 import com.uubox.tools.BigKeyConfigAd;
 import com.uubox.tools.ByteArrayList;
@@ -109,6 +108,7 @@ public class IniTab {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    SimpleUtil.notifyall_(10014, null);//通知我要关闭设置窗口了
                     KeyboardEditWindowManager.getInstance().removeTop();
                 }
                 return true;
@@ -144,374 +144,6 @@ public class IniTab {
         void back(int type, Object carryData);
     }
 
-    private void addKeyInit() {
-
-        //加载allKeyConfigstable
-        //按键配置
-        final ViewGroup button_ini_content = (ViewGroup) LayoutInflater.from(mContext).inflate(R.layout.menu_buttonini, null);
-        final TextView title = button_ini_content.findViewById(R.id.inibt_title);
-        final ListView listView = button_ini_content.findViewById(R.id.inibt_list);
-        final TextView inibt_cur = button_ini_content.findViewById(R.id.inibt_cur);
-        title.setText("按键配置");
-        button_ini_content.findViewById(R.id.inibt_close).setVisibility(View.GONE);
-
-        //检查是否有使用的全局配置
-        String gloabkeyconfig = (String) SimpleUtil.getFromShare(mContext, "ini", "gloabkeyconfig", String.class, "");
-        SimpleUtil.log("gloabkeyconfig:" + gloabkeyconfig);
-        String curIniName = "";
-        if (gloabkeyconfig.isEmpty()) {
-            inibt_cur.setTextColor(Color.RED);
-            inibt_cur.setText("当前没有使用任何配置");
-        } else {
-            curIniName = gloabkeyconfig.split("#Z%W#", -1)[1];
-            inibt_cur.setTextColor(Color.YELLOW);
-            InjectUtil.setComfirGame(gloabkeyconfig.split("#Z%W#", -1)[3]);
-            inibt_cur.setText("当前使用:" + InjectUtil.getComfirGame() + "/" + curIniName);
-
-        }
-
-
-        SharedPreferences allKeysConfigsTable = mContext.getSharedPreferences("KeysConfigs", 0);
-        Iterator<String> allIt = allKeysConfigsTable.getAll().keySet().iterator();
-
-        final List<BigKeyConfigAd.BigKeyConfigItemObj> allKeysConfigList = new ArrayList<>();
-        final BigKeyConfigAd allKeysConfigAd = new BigKeyConfigAd(mContext, allKeysConfigList);
-        while (allIt.hasNext()) {
-
-            BigKeyConfigAd.BigKeyConfigItemObj obj = new BigKeyConfigAd.BigKeyConfigItemObj();
-            obj.mTv = allIt.next();
-            List<IniAdapter.IniObj> subAllConfigs = new ArrayList<>();
-
-            SharedPreferences allSubConfigs = mContext.getSharedPreferences(obj.mTv + "_table", 0);
-            Iterator<? extends Map.Entry<String, ?>> it = allSubConfigs.getAll().entrySet().iterator();
-            IniAdapter.IniObj guanfangObj = null;
-            while (it.hasNext()) {
-                Map.Entry<String, ?> obj2 = it.next();
-                String key = obj2.getKey();
-                String value = (String) obj2.getValue();
-
-                //byte[] value_int_s = SimpleUtil.getAES().decrypt(value.getBytes());
-                //value = new String(value_int_s);
-                SimpleUtil.log("normal-mapini:" + key + "    " + value + "\n\n\n");
-                if (!key.equals("default")) {
-                    SimpleUtil.log("add-mapini:" + key + "    " + value + "\n\n\n");
-                    String[] sp = value.split("#Z%W#", -1);
-                    IniAdapter.IniObj iniObj = new IniAdapter.IniObj();
-                    iniObj.name = sp[1];
-                    iniObj.whole = value;
-                    iniObj.state = InjectUtil.getComfirGame().equals(obj.mTv) && curIniName.equals(iniObj.name) ? "[使用中]" : null;
-
-                    if (iniObj.name.endsWith("[官方]")) {
-                        guanfangObj = iniObj;
-                        continue;
-                    }
-                    if (iniObj.state != null) {
-                        subAllConfigs.add(0, iniObj);
-                    } else {
-                        subAllConfigs.add(iniObj);
-                    }
-                }
-
-            }
-            if (guanfangObj != null) {
-                subAllConfigs.add(0, guanfangObj);
-            }
-            obj.mSubData = subAllConfigs;
-            allKeysConfigList.add(obj);
-
-            SimpleUtil.log("sub:" + obj.mTv + "  " + obj.mSubData.size());
-
-        }
-        listView.setAdapter(allKeysConfigAd);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-
-                SimpleUtil.log("subsize:" + allKeysConfigList.get(position).mSubData.size());
-                allKeysConfigList.get(position).mImgState = !allKeysConfigList.get(position).mImgState;
-                allKeysConfigAd.notifyDataSetChanged();
-
-
-            }
-        });
-
-        final String finalCurIniName = curIniName;
-        allKeysConfigAd.setmIBigKeyConfigClick(new BigKeyConfigAd.IBigKeyConfigClick() {
-            @Override
-            public void onItemClick(final int mainPosition, final int subPosition, final IniAdapter adapter) {
-                SimpleUtil.log("rec callback:" + mainPosition + "," + subPosition);
-                ///start
-
-               /* if (KeyboardEditWindowManager.getInstance().rootViewChildCount() >= 3) {
-                    return;
-                }*/
-                //加载 重命名 删除
-                List<String> items = new ArrayList<>();
-                items.add("使用");
-                items.add("重命名");
-                items.add("删除");
-                //items.add("测试");
-                //--------------
-                List<Runnable> runnables = new ArrayList<>();
-                runnables.add(new Runnable() {
-                    @Override
-                    public void run() {
-                        SimpleUtil.log("使用:" + allKeysConfigList.get(mainPosition).mSubData.get(subPosition).whole);
-                        String[] sp = allKeysConfigList.get(mainPosition).mSubData.get(subPosition).whole.split("#Z%W#", -1);
-                        // SimpleUtil.saveToShare(mContext, InjectUtil.getComfirGameTab(), "default", "default#Z%W#" + sp[1] + "#Z%W#" + sp[2]+ "#Z%W#" +allKeysConfigList.get(mainPosition).mTv);
-                        SimpleUtil.saveToShare(mContext, "ini", "gloabkeyconfig", "default#Z%W#" + sp[1] + "#Z%W#" + sp[2] + "#Z%W#" + allKeysConfigList.get(mainPosition).mTv);
-                        InjectUtil.setComfirGame(allKeysConfigList.get(mainPosition).mTv);
-                        InjectUtil.loadBtnParamsFromPrefs(mContext);
-                        mKeyboardView.loadUi();
-                        for (IniAdapter.IniObj obj : allKeysConfigList.get(mainPosition).mSubData) {
-                            if (obj.state != null) {
-                                obj.state = null;
-                                break;
-                            }
-                        }
-                        allKeysConfigList.get(mainPosition).mSubData.get(subPosition).state = "[使用中]";
-                        inibt_cur.setText("当前使用:" + allKeysConfigList.get(mainPosition).mSubData.get(subPosition).name);
-                        adapter.notifyDataSetChanged();
-                        KeyboardEditWindowManager.getInstance().close();
-                        SimpleUtil.notifyall_(10003, null);
-                    }
-                });
-                runnables.add(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (allKeysConfigList.get(mainPosition).mSubData.get(subPosition).name.endsWith("[官方]")) {
-                            SimpleUtil.toastTop(mContext, "不能重命名到官方配置");
-                            return;
-                        }
-                        LinkedHashMap<String, String> items = new LinkedHashMap<>();
-                        items.put("新的名称", null);
-                        SimpleUtil.addEditToTop(mContext, "保存配置", items, null, null, new SimpleUtil.INormalBack() {
-                            @Override
-                            public void back(int id, Object obj) {
-                                if (id != 2) {
-                                    return;
-                                }
-                                List<String> backTexts = (List<String>) obj;
-                                String newIniName = backTexts.get(0);
-                                if (!InjectUtil.canSaveIniToXml(mContext, newIniName)) {
-                                    SimpleUtil.toastTop(mContext, "【" + newIniName + "】已经存在！");
-                                    return;
-                                }
-                                if (newIniName == null || newIniName.isEmpty()) {
-                                    SimpleUtil.toastTop(mContext, "新名称不能为空！");
-                                    return;
-                                }
-                                if (allKeysConfigList.get(mainPosition).mSubData.contains(newIniName)) {
-                                    SimpleUtil.toastTop(mContext, newIniName + "已经存在！");
-                                    return;
-                                }
-                                if (newIniName.endsWith("[官方]")) {
-                                    SimpleUtil.toastTop(mContext, newIniName + "包含敏感词汇！");
-                                    return;
-                                }
-                                //查看是否正在使用
-                                String gloabkeyconfig = (String) SimpleUtil.getFromShare(mContext, "ini", "gloabkeyconfig", String.class, "");
-                                String select = allKeysConfigList.get(mainPosition).mSubData.get(subPosition).whole;
-                                String[] sp1 = gloabkeyconfig.split("#Z%W#", -1);
-
-                                if (allKeysConfigList.get(mainPosition).mTv.equals(sp1[3]) && finalCurIniName.equals(allKeysConfigList.get(mainPosition).mSubData.get(subPosition).name)) {
-                                    SimpleUtil.log("You want ro rename the ini is used current!");
-                                    inibt_cur.setText("当前使用: " + newIniName);
-                                    SimpleUtil.saveToShare(mContext, "ini", "gloabkeyconfig", "default#Z%W#" + newIniName + "#Z%W#" + (allKeysConfigList.get(mainPosition).mSubData.get(subPosition).whole.split("#Z%W#", -1))[2] + "#Z%W#" + allKeysConfigList.get(mainPosition).mTv);
-                                }
-                                String[] sp = allKeysConfigList.get(mainPosition).mSubData.get(subPosition).whole.split("#Z%W#", -1);
-                                SimpleUtil.saveToShare(mContext, allKeysConfigList.get(mainPosition).mTv + "_table", sp[0], sp[0] + "#Z%W#" + newIniName + "#Z%W#" + (allKeysConfigList.get(mainPosition).mSubData.get(subPosition).whole.split("#Z%W#", -1))[2]);
-
-
-                                allKeysConfigList.get(mainPosition).mSubData.get(subPosition).name = newIniName;
-                                allKeysConfigList.get(mainPosition).mSubData.get(subPosition).whole = sp[0] + "#Z%W#" + newIniName + "#Z%W#" + (allKeysConfigList.get(mainPosition).mSubData.get(subPosition).whole.split("#Z%W#", -1))[2];
-                                adapter.notifyDataSetChanged();
-                                KeyboardEditWindowManager.getInstance().close();
-
-                                SimpleUtil.removeINormalCallback(this);
-                            }
-                        });
-                    }
-                });
-                runnables.add(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (allKeysConfigList.get(mainPosition).mSubData.get(subPosition).name.endsWith("[官方]")) {
-                            SimpleUtil.toastTop(mContext, "[官方配置]不能删除！");
-                            return;
-                        }
-                        String curIni = (String) SimpleUtil.getFromShare(mContext, "ini", "gloabkeyconfig", String.class, "");
-                        String select = allKeysConfigList.get(mainPosition).mSubData.get(subPosition).whole;
-                        String[] sp1 = curIni.split("#Z%W#", -1);
-                        if (allKeysConfigList.get(mainPosition).mTv.equals(sp1[3]) && finalCurIniName.equals(allKeysConfigList.get(mainPosition).mSubData.get(subPosition).name)) {
-                            SimpleUtil.toastTop(mContext, "[" + allKeysConfigList.get(mainPosition).mSubData.get(subPosition).name + "]正在使用中，不能删除！");
-                            return;
-                        }
-
-                        //先处理ID
-                        String configIDs = (String) SimpleUtil.getFromShare(mContext, "ini", "configsID", String.class, "");
-
-                        int configID_ = (Integer) SimpleUtil.getFromShare(mContext, (allKeysConfigList.get(mainPosition).mSubData.get(subPosition).whole.split("#Z%W#", -1))[2], "configID", int.class);
-
-                        byte[] ids = Hex.parse(configIDs);
-                        for (int i = 0; i < 100; i++) {
-                            if (ids[i] == configID_) {
-                                ids[i] = 0;
-                                SimpleUtil.saveToShare(mContext, "ini", "configsID", Hex.toString(ids));
-                                //SimpleUtil.saveToShare(mContext,mSpFileName,"configID",(int)ids[i]);
-                                break;
-                            }
-                        }
-
-
-                        String spName = allKeysConfigList.get(mainPosition).mTv;
-                        SharedPreferences shareLib = mContext.getSharedPreferences(spName + "_table", 0);
-                        String key = (allKeysConfigList.get(mainPosition).mSubData.get(subPosition).whole.split("#Z%W#", -1))[0];
-                        boolean res = shareLib.edit().remove(key).commit();
-                        SimpleUtil.log("delete iniconfig result:" + res);
-                        Toast.makeText(mContext, "删除 " + (res ? "成功" : "失败"), Toast.LENGTH_SHORT).show();
-                        allKeysConfigList.get(mainPosition).mSubData.remove(subPosition);
-
-                        //如果已经全部删除则删除游戏目录
-                        if (allKeysConfigList.get(mainPosition).mSubData.size() == 0) {
-                            allKeysConfigList.remove(mainPosition);
-                            File file = new File("/data/data/" + CommonUtils.getAppPkgName(mContext) + "/shared_prefs", spName + "_table.xml");
-                            if (file.exists()) {
-                                file.delete();
-                                SimpleUtil.delFromShare(mContext, "KeysConfigs", spName);
-                                Toast.makeText(mContext, "目录已清除", Toast.LENGTH_LONG).show();
-                                SimpleUtil.log("have delete the content " + spName);
-                            }
-                        }
-
-                        allKeysConfigAd.notifyDataSetChanged();
-                        //KeyboardEditWindowManager.getInstance().close();
-                        SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
-                        SimpleUtil.notifyall_(10003, null);
-                    }
-                });
-
-                runnables.add(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        //KeyboardEditWindowManager.getInstance().close();
-
-                        final String backupUse = (String) SimpleUtil.getFromShare(mContext, "ini", "gloabkeyconfig", String.class, "");
-                        InjectUtil.setComfirGame(allKeysConfigList.get(mainPosition).mTv);
-                        String[] sp = allKeysConfigList.get(mainPosition).mSubData.get(subPosition).whole.split("#Z%W#", -1);
-                        SimpleUtil.saveToShare(mContext, "ini", "gloabkeyconfig", "default#Z%W#" + sp[1] + "#Z%W#" + sp[2] + "#Z%W#" + InjectUtil.getComfirGame());
-                        InjectUtil.loadBtnParamsFromPrefs(mContext);
-                        mKeyboardView.loadUi();
-                        for (IniAdapter.IniObj obj : allKeysConfigList.get(mainPosition).mSubData) {
-                            if (obj.state != null) {
-                                obj.state = null;
-                                break;
-                            }
-                        }
-                        allKeysConfigList.get(mainPosition).mSubData.get(subPosition).state = "[测试中]";
-                        inibt_cur.setText("当前使用: " + allKeysConfigList.get(mainPosition).mSubData.get(subPosition).name);
-                        allKeysConfigAd.notifyDataSetChanged();
-
-
-                        FrameLayout frameLayout = new FrameLayout(mContext);
-
-                        LinearLayout linearLayout = new LinearLayout(mContext);
-
-                        int id = (int) System.currentTimeMillis();
-                        Button use = new Button(mContext);
-                        use.setText("使用");
-                        use.setTextSize(16);
-                        use.setTextColor(Color.BLUE);
-                        use.setId(id);
-                        Button exit = new Button(mContext);
-                        exit.setText("离开");
-                        exit.setTextSize(16);
-                        exit.setTextColor(Color.BLUE);
-                        exit.setId(id + 0x1111);
-
-                        TextView tv = new TextView(mContext);
-                        tv.setTextSize(12);
-                        tv.setTextColor(Color.GREEN);
-                        tv.setId(id + 0x2222);
-                        tv.setText("正在测试: " + sp[1]);
-
-                        use.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                KeyboardEditWindowManager.getInstance().close();
-                            }
-                        });
-
-                        exit.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-
-                                allKeysConfigList.get(mainPosition).mSubData.get(subPosition).state = null;
-                                inibt_cur.setText("当前使用: " + backupUse.split("#Z%W#", -1)[1]);
-
-                                SimpleUtil.saveToShare(mContext, "ini", "gloabkeyconfig", backupUse);
-                                InjectUtil.loadBtnParamsFromPrefs(mContext);
-                                mKeyboardView.loadUi();
-
-                                KeyboardEditWindowManager.getInstance().removeTop();
-                                InjectUtil.disableInjection();
-                                allKeysConfigAd.notifyDataSetChanged();
-                            }
-                        });
-                        SimpleUtil.addINormalCallback(new SimpleUtil.INormalBack() {
-                            @Override
-                            public void back(int id, Object obj) {
-                                if (id != 4) {
-                                    return;
-                                }
-
-                                SimpleUtil.saveToShare(mContext, "ini", "gloabkeyconfig", backupUse);
-                                InjectUtil.loadBtnParamsFromPrefs(mContext);
-                                mKeyboardView.loadUi();
-
-                                KeyboardEditWindowManager.getInstance().removeTop();
-                                InjectUtil.disableInjection();
-
-                                SimpleUtil.removeINormalCallback(this);
-
-                            }
-                        });
-
-                        linearLayout.setOrientation(LinearLayout.HORIZONTAL);
-
-                        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                        param.gravity = Gravity.CENTER;
-                        linearLayout.addView(use, param);
-                        linearLayout.addView(exit, param);
-                        linearLayout.addView(tv, param);
-                        FrameLayout.LayoutParams buttonBarParam = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                        buttonBarParam.gravity = Gravity.TOP;
-
-                        InjectTestView injectTestView = new InjectTestView(mContext);
-                        FrameLayout.LayoutParams testViewParam = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-
-                        frameLayout.addView(injectTestView, testViewParam);
-                        frameLayout.addView(linearLayout, buttonBarParam);
-
-                        KeyboardEditWindowManager.getInstance().addView(frameLayout, SimpleUtil.zoomy, SimpleUtil.zoomx).show();
-                        InjectUtil.enableInjection();
-
-                    }
-                });
-
-                SimpleUtil.addRadioGrouptoTop(mContext, "保存", items, runnables, null, null);
-
-                ///end
-
-            }
-        });
-
-
-        addItem("按键配置");
-        mViewPageList.add(button_ini_content);
-    }
 
     private void WriteConfigs() {
 
@@ -523,7 +155,20 @@ public class IniTab {
         final View gunPar = view.findViewById(R.id.dialog_oversize_gun_par);
         final List<AOAConfigTool.Config> configsLeftData = new ArrayList<>();
         final List<AOAConfigTool.Config> configsRightData = new ArrayList<>();
-        AOAConfigTool.getInstance(mContext).AnysLeftRihgtConfigs(configsLeftData, configsRightData);
+        final List<AOAConfigTool.Config> configCopyRight = new ArrayList<>();
+        boolean isMatch = AOAConfigTool.getInstance(mContext).AnysLeftRihgtConfigs(configsLeftData, configsRightData);
+        for (AOAConfigTool.Config config : configsRightData) {
+            configCopyRight.add((AOAConfigTool.Config) config.clone());
+        }
+        if (!isMatch) {
+            SimpleUtil.addMsgBottomToTop(mContext, "当前配置与设备配置不匹配！请重新写入配置！", true);
+        }
+        for (AOAConfigTool.Config config : configsRightData) {
+            if (config.getIsUsed()) {
+                SimpleUtil.notifyall_(10013, config);
+                break;
+            }
+        }
         SimpleUtil.log(configsRightData.size() + "");
         final int[] rightSize = {0};
 
@@ -550,30 +195,55 @@ public class IniTab {
                     }
                 }
 
-                String gamesha = configsRightData.get(position).getConfigSha();
+                String gamesha = configsRightData.get(position).getmTabValue();
                 SimpleUtil.log("item select:" + gamesha);
-                // SimpleUtil.saveToShare(mContext, InjectUtil.getComfirGameTab(), "default", "default#Z%W#" + sp[1] + "#Z%W#" + sp[2]+ "#Z%W#" +allKeysConfigList.get(mainPosition).mTv);
-                //setUse(configsRightData.get(position));
                 configsRightData.get(position).setmIsUsed(true);
                 adapterRight.notifyDataSetChanged();
-               /* for (IniAdapter.IniObj obj : allKeysConfigList.get(mainPosition).mSubData) {
-                    if (obj.state != null) {
-                        obj.state = null;
+            }
+        });
+        listLeft.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                if (configsLeftData.get(position).getmConfigName().endsWith("[官方]")) {
+                    SimpleUtil.addMsgBottomToTop(mContext, "不能删除官方配置", true);
+                    return true;
+                }
+
+                String configIDs = (String) SimpleUtil.getFromShare(mContext, "ini", "configsID", String.class, "");
+
+                int configID_ = (Integer) SimpleUtil.getFromShare(mContext, configsLeftData.get(position).getmTabValue(), "configID", int.class);
+                byte[] ids = Hex.parse(configIDs);
+                for (int i = 0; i < 100; i++) {
+                    if (ids[i] == configID_) {
+                        ids[i] = 0;
+                        SimpleUtil.saveToShare(mContext, "ini", "configsID", Hex.toString(ids));
+                        //SimpleUtil.saveToShare(mContext,mSpFileName,"configID",(int)ids[i]);
                         break;
                     }
                 }
-                allKeysConfigList.get(mainPosition).mSubData.get(subPosition).state = "[使用中]";
-                inibt_cur.setText("当前使用:" + allKeysConfigList.get(mainPosition).mSubData.get(subPosition).name);
-                adapter.notifyDataSetChanged();*/
-                //KeyboardEditWindowManager.getInstance().close();
-                // SimpleUtil.notifyall_(10003, null);
+
+
+                SharedPreferences shareLib = mContext.getSharedPreferences(configsLeftData.get(position).getmContent() + "_table", 0);
+                boolean res = shareLib.edit().remove(configsLeftData.get(position).getmTabKey()).commit();
+                SimpleUtil.log("delete iniconfig result:" + res);
+                SimpleUtil.addMsgBottomToTop(mContext, "删除" + (res ? "成功" : "失败"), !res);
+
+                //如果已经全部删除则删除游戏目录
+
+                if (shareLib.getAll().size() == 0) {
+                    File file = new File("/data/data/" + CommonUtils.getAppPkgName(mContext) + "/shared_prefs", configsLeftData.get(position).getmContent() + "_table.xml");
+                    if (file.exists()) {
+                        file.delete();
+                        SimpleUtil.delFromShare(mContext, "KeysConfigs", configsLeftData.get(position).getmContent());
+                        SimpleUtil.addMsgBottomToTop(mContext, "目录[" + configsLeftData.get(position).getmContent() + "]已清除", false);
+                        SimpleUtil.log("have delete the content " + configsLeftData.get(position).getmContent());
+                    }
+                }
+                configsLeftData.remove(position);
+                adapterleft.notifyDataSetChanged();
+                return true;
             }
-        });
-        listLeft.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                SimpleUtil.addMsgBottomToTop(mContext, "不能使用未选中的配置！", true);
-            }
+
         });
         final TextView changeGunTv = view.findViewById(R.id.dialog_oversize_changetv);
         changeGunTv.setOnClickListener(new View.OnClickListener() {
@@ -595,8 +265,15 @@ public class IniTab {
         final SimpleUtil.INormalBack iNormalBack = new SimpleUtil.INormalBack() {
             @Override
             public void back(int id, final Object obj) {
+                if (id < 10007 && id > 10014) {
+                    return;
+                }
                 if (!AOAConfigTool.getInstance(mContext).isAOAConnect()) {
-                    SimpleUtil.addMsgBottomToTop(mContext, "请先连接设备再调整配置！", true);
+                    if (id == 10014) {
+                        SimpleUtil.removeINormalCallback(this);
+                    } else {
+                        SimpleUtil.addMsgBottomToTop(mContext, "请先连接设备再调整配置！", true);
+                    }
                     return;
                 }
                 if (id == 10007) {//取消一个配置
@@ -606,7 +283,7 @@ public class IniTab {
                         SimpleUtil.addMsgBottomToTop(mContext, "正在使用的配置不能取消！", true);
                         return;
                     }
-                    SimpleUtil.saveToShare(mContext, config.getConfigSha(), "isDelete", true);
+                    SimpleUtil.saveToShare(mContext, config.getmTabValue(), "isDelete", true);
                     config.setDeleted(true);
                     configsLeftData.add(config);
                     configsRightData.remove(obj);
@@ -621,7 +298,7 @@ public class IniTab {
                     }
                     AOAConfigTool.Config config = (AOAConfigTool.Config) obj;
                     config.setDeleted(false);
-                    SimpleUtil.saveToShare(mContext, config.getConfigSha(), "isDelete", false);
+                    SimpleUtil.saveToShare(mContext, config.getmTabValue(), "isDelete", false);
                     configsRightData.add(config);
                     configsLeftData.remove(obj);
                     rightSize[0] += config.getmSize();
@@ -655,15 +332,30 @@ public class IniTab {
                     adapterRight.notifyDataSetChanged();
                 } else if (id == 10012)//配置写入完成通知结果
                 {
+                    SimpleUtil.removeINormalCallback(this);
                     SimpleUtil.runOnUIThread(new Runnable() {
                         @Override
                         public void run() {
                             byte[] c0Data = (byte[]) obj;
-                            setUse(configsRightData.get(c0Data[3] - 1));
+                            SimpleUtil.notifyall_(10013, configsRightData.get(c0Data[3] - 1));
                             KeyboardEditWindowManager.getInstance().close();
 
                         }
                     });
+
+                } else if (id == 10014) {
+                    if (configCopyRight.size() != configsRightData.size()) {
+                        SimpleUtil.addMsgBottomToTop(mContext, "检测到配置更新！自动写入！", false);
+                        view.findViewById(R.id.dialog_oversize_write).performClick();
+                    } else {
+                        for (int i = 0; i < configCopyRight.size(); i++) {
+                            if (!configCopyRight.get(i).equals(configsRightData.get(i)) || configCopyRight.get(i).getIsUsed() != configsRightData.get(i).getIsUsed()) {
+                                SimpleUtil.addMsgBottomToTop(mContext, "检测到配置更新！自动写入！", false);
+                                view.findViewById(R.id.dialog_oversize_write).performClick();
+                                break;
+                            }
+                        }
+                    }
                     SimpleUtil.removeINormalCallback(this);
                 }
 
@@ -768,12 +460,6 @@ public class IniTab {
         //KeyboardEditWindowManager.getInstance().init(mContext).addView(view, (7 * SimpleUtil.zoomy) / 8, (7 * SimpleUtil.zoomx) / 8);
     }
 
-    private void setUse(AOAConfigTool.Config config) {
-        SimpleUtil.saveToShare(mContext, "ini", "gloabkeyconfig", "default#Z%W#" + config.getmConfigName() + "#Z%W#" + config.getConfigSha() + "#Z%W#" + config.getmContent());
-        InjectUtil.setComfirGame(config.getmContent());
-        InjectUtil.loadBtnParamsFromPrefs(mContext);
-        mKeyboardView.loadUi();
-    }
     private void addHelper() {
         ViewGroup helperitem = (ViewGroup) LayoutInflater.from(mContext).inflate(R.layout.dialog_titlelist, null);
         ((View) helperitem.findViewById(R.id.dialogmsgyes).getParent()).setVisibility(View.GONE);

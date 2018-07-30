@@ -11,14 +11,11 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -37,7 +34,6 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import com.uubox.adapters.MoveConfigAdapter;
-import com.uubox.adapters.OverSizeAdapter;
 import com.uubox.padtool.R;
 import com.uubox.views.KeyboardEditWindowManager;
 import com.uubox.views.WrapFloat;
@@ -233,7 +229,9 @@ public class SimpleUtil {
      * @param callback 回调接口
      */
     public static void addINormalCallback(INormalBack callback) {
-        mCallBacks.add(callback);
+        if (!mCallBacks.contains(callback)) {
+            mCallBacks.add(callback);
+        }
     }
 
     public static void removeINormalCallback(INormalBack callback) {
@@ -396,7 +394,7 @@ public class SimpleUtil {
                 //KeyboardEditWindowManager.getInstance().recycle();
             }
         });
-        KeyboardEditWindowManager.getInstance().addView(view, (2 * SimpleUtil.zoomy) / 3, (2 * SimpleUtil.zoomx) / 3);
+        KeyboardEditWindowManager.getInstance().init(context).addView(view, (2 * SimpleUtil.zoomy) / 3, (2 * SimpleUtil.zoomx) / 3);
     }
 
     public static void runOnThread(Runnable runnable) {
@@ -549,7 +547,7 @@ public class SimpleUtil {
                         addMsgBottomToTop(context, "正在使用的配置不能取消！", true);
                         return;
                     }
-                    SimpleUtil.saveToShare(context, config.getConfigSha(), "isDelete", true);
+                    SimpleUtil.saveToShare(context, config.getmTabValue(), "isDelete", true);
                     config.setDeleted(true);
                     configsLeftData.add(config);
                     configsRightData.remove(obj);
@@ -569,7 +567,7 @@ public class SimpleUtil {
                     }
                     AOAConfigTool.Config config = (AOAConfigTool.Config) obj;
                     config.setDeleted(false);
-                    SimpleUtil.saveToShare(context, config.getConfigSha(), "isDelete", false);
+                    SimpleUtil.saveToShare(context, config.getmTabValue(), "isDelete", false);
                     configsRightData.add(config);
                     configsLeftData.remove(obj);
                     rightSize[0] += config.getmSize();
