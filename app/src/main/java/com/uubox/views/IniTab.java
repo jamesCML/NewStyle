@@ -160,7 +160,7 @@ public class IniTab {
         for (AOAConfigTool.Config config : configsRightData) {
             configCopyRight.add((AOAConfigTool.Config) config.clone());
         }
-        if (!isMatch) {
+        if (!isMatch && AOAConfigTool.getInstance(mContext).isAOAConnect()) {
             SimpleUtil.addMsgBottomToTop(mContext, "当前配置与设备配置不匹配！请重新写入配置！", true);
         }
         for (AOAConfigTool.Config config : configsRightData) {

@@ -512,10 +512,6 @@ public class KeyboardView extends FrameLayout
 
             SimpleUtil.log("preare to save comfirgame:" + InjectUtil.getComfirGame());
             if (InjectUtil.getComfirGame() == null) {
-
-                // SimpleUtil.addMsgtoTop(getContext(),"温馨提示");
-
-
                 InjectUtil.setComfirGame(iniName);
                 SimpleUtil.log("preare to save setcomfirgame:" + iniName);
             }
@@ -537,7 +533,6 @@ public class KeyboardView extends FrameLayout
             tasks.add(new Runnable() {
                 @Override
                 public void run() {
-
                     LinkedHashMap<String, String> items = new LinkedHashMap<>();
                     items.put("目录名", "");
                     SimpleUtil.addEditToTop(getContext(), "新建配置目录", items, null, new Runnable() {

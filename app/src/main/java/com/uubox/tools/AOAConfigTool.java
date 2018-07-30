@@ -318,6 +318,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
     public boolean AnysLeftRihgtConfigs(List<Config> configsLeftData, List<Config> configsRightData) {
         final List<AOAConfigTool.Config> mConfigs = loadConfigs();
         byte[] d0 = getDeviceConfigD0();
+        //byte[] d0 = Hex.parse("A5 14 D0 04 04 03 07 0C 02 CE 00 00 00 00 00 00 00 00 00 77");
         String configsorderbytes = (String) SimpleUtil.getFromShare(mContext, "ini", "configsorderbytes", String.class, null);
         byte[] d1 = Hex.parse(configsorderbytes);
         SimpleUtil.log("get d0:\n" + Hex.toString(d0) + "get d1:\n" + configsorderbytes);
@@ -371,14 +372,15 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
 
         }
 
-        if (d0 != null) {
+        if (d0 != null && rightOrder[d0[3] - 1] != null) {
             rightOrder[d0[3] - 1].setmIsUsed(true);
             for (AOAConfigTool.Config one : rightOrder) {
                 if (one != null)
                     configsRightData.add(one);
             }
         }
-        return Arrays.equals(d0, d1);
+        //SimpleUtil.log("device order use is null:"+(rightOrder[d0[3] - 1]==null));
+        return d0 != null && d1 != null && Arrays.equals(d0, d1) && rightOrder[d0[3] - 1] != null;
     }
 
     public boolean openOrCloseRecKeycode(boolean open) {
