@@ -21,9 +21,10 @@ public class BtnDialogActivity implements View.OnClickListener, SeekBar.OnSeekBa
 
     private static final String TAG = "BtnDialogActivity";
     /**
-     * 鼠标灵敏度 X,Y 轴
+     * <p>鼠标灵敏度 X,Y 轴</p>
+     * <p>mSeekBarY,mSeekBarX 改用 mSeekBarMouse 代替</p>
      */
-    private SeekBar mSeekBarX, mSeekBarY, mSeekBarW;
+    private SeekBar mSeekBarMouse, mSeekBarY, mSeekBarW;
     /**
      * 鼠标灵敏度-文本 X,Y 轴
      */
@@ -31,9 +32,9 @@ public class BtnDialogActivity implements View.OnClickListener, SeekBar.OnSeekBa
 
 
     /**
-     * 记录调节时的鼠标灵敏度 X
+     * 记录调节时的鼠标灵敏度
      */
-    private int mouseXxxTemp = 0;
+    private int mouseTemp = 0;
     /**
      * 记录调节时的鼠标灵敏度 Y
      */
@@ -71,7 +72,7 @@ public class BtnDialogActivity implements View.OnClickListener, SeekBar.OnSeekBa
         int tmpW = (Integer) SimpleUtil.getFromShare(mContext, "ini", "mMouseProgressW", int.class, 50);
 
         Log.e(TAG, "initView: tmpX=" + tmpX + ", tmpY=" + tmpY + ", tmpW=" + tmpW);
-        mSeekBarX.setProgress(tmpX);
+        mSeekBarMouse.setProgress(tmpX);
         mSeekBarY.setProgress(tmpY);
         mSeekBarW.setProgress(tmpW);
         mTextMouseSensitivityX.setText(mContext.getString(R.string.horizontal) + tmpX);
@@ -85,7 +86,7 @@ public class BtnDialogActivity implements View.OnClickListener, SeekBar.OnSeekBa
     }
 
     private void initRockView() {
-        mSeekBarX = mView.findViewById(R.id.sbar_mouse_sensitivity_x);
+        mSeekBarMouse = mView.findViewById(R.id.sbar_mouse_sensitivity_x);
         mTextMouseSensitivityX = mView.findViewById(R.id.tv_mouse_sensitivity_x);
         mSeekBarY = mView.findViewById(R.id.sbar_mouse_sensitivity_y);
         mTextMouseSensitivityY = mView.findViewById(R.id.tv_mouse_sensitivity_y);
@@ -97,7 +98,7 @@ public class BtnDialogActivity implements View.OnClickListener, SeekBar.OnSeekBa
     }
 
     private void setRockListener() {
-        mSeekBarX.setOnSeekBarChangeListener(this);
+        mSeekBarMouse.setOnSeekBarChangeListener(this);
         mSeekBarY.setOnSeekBarChangeListener(this);
         mSeekBarW.setOnSeekBarChangeListener(this);
         mIsMouseIn.setOnCheckedChangeListener(this);
@@ -111,11 +112,9 @@ public class BtnDialogActivity implements View.OnClickListener, SeekBar.OnSeekBa
         switch (v.getId()) {
 
             case R.id.rbn_mouse_save:
-                mouseXxxTemp = mouseXxxTemp;
-                mouseYyyTemp = mouseYyyTemp;
+                mouseTemp = mouseTemp;
                 mouseWwwTemp = mouseWwwTemp;
-                SimpleUtil.saveToShare(mContext, "ini", "mMouseProgressX", mouseXxxTemp);
-                SimpleUtil.saveToShare(mContext, "ini", "mMouseProgressY", mouseYyyTemp);
+                SimpleUtil.saveToShare(mContext, "ini", "mMouseProgress", mouseTemp);
                 SimpleUtil.saveToShare(mContext, "ini", "mMouseProgressW", mouseWwwTemp);
                 KeyboardEditWindowManager.getInstance().hideOrShowBottomUIMenu(true);
                 KeyboardEditWindowManager.getInstance().removeTop();
@@ -128,8 +127,8 @@ public class BtnDialogActivity implements View.OnClickListener, SeekBar.OnSeekBa
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         switch (seekBar.getId()) {
             case R.id.sbar_mouse_sensitivity_x:
-                mouseXxxTemp = progress;
-                mTextMouseSensitivityX.setText(mContext.getString(R.string.horizontal) + Integer.toString(mouseXxxTemp));
+                mouseTemp = progress;
+                mTextMouseSensitivityX.setText(mContext.getString(R.string.mouse_string) + Integer.toString(mouseTemp));
                 break;
             case R.id.sbar_mouse_sensitivity_y:
                 mouseYyyTemp = progress;

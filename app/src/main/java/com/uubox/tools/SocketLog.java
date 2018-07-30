@@ -6,9 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 public class SocketLog extends Thread {
     private BufferedWriter mBufferWriter;
@@ -16,7 +14,7 @@ public class SocketLog extends Thread {
     @Override
     public void run() {
         try {
-            Socket socket = new Socket("192.168.18.198", 12600);
+            Socket socket = new Socket("192.168.18.234", 10087);
             mBufferWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
 
 

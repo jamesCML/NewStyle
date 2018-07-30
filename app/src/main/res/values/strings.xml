@@ -6,6 +6,7 @@
     <string name="vertical">垂直：</string>
     <string name="horizontal">水平：</string>
     <string name="wheel">滚轮：</string>
+    <string name="mouse_string">鼠标：</string>
 
     <string-array name="menu_ini_help_items">
         <item>《映射按键设置》</item>
