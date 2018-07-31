@@ -14,7 +14,7 @@ public class SocketLog extends Thread {
     @Override
     public void run() {
         try {
-            Socket socket = new Socket("192.168.18.234", 10087);
+            Socket socket = new Socket("192.168.18.198", 10086);
 
             mBufferWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
 

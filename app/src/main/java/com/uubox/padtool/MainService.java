@@ -270,6 +270,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
 
 
     private void requestUsbAccessoryPermission(UsbAccessory usbAccessory) {
+        SimpleUtil.log("request the aoapermission!!!!!!!!");
         mHandler.removeMessages(HANDLE_SCAN_AOA);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(
                 ACCUSBPERMISSION), 0);

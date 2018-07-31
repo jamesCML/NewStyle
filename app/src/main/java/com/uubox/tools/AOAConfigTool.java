@@ -133,7 +133,8 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
 
 
                 BtnParams mouse = xmlConfig.get(KeyboardView.Btn.R);
-                cj_cfg_t.add((byte) 0x01);
+                int mouse_step = (Integer) SimpleUtil.getFromShare(mContext, "ini", "mousesrcollsen", int.class, 10);
+                cj_cfg_t.add((byte) mouse_step);
                 cj_cfg_t.add(Hex.fromShortB((short) (OAODEVICE_Y - turnY(mouse.getY()))));
                 cj_cfg_t.add(Hex.fromShortB((short) turnX(mouse.getX())));
 
@@ -143,14 +144,14 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                 cj_cfg_t.add(Hex.fromShortB((short) turnX(alterLeft.getX())));
 
 
-                int gunlun_step = (Integer) SimpleUtil.getFromShare(mContext, "ini", "mMouseProgressW", int.class, 50);
+                int gunlun_step = (Integer) SimpleUtil.getFromShare(mContext, "ini", "mousesrcollsen", int.class, 20);
                 cj_cfg_t.add((byte) gunlun_step);//wheel radio
                 BtnParams gunlun = xmlConfig.get(KeyboardView.Btn.KEY_H);
                 cj_cfg_t.add(Hex.fromShortB((short) (OAODEVICE_Y - turnY(gunlun.getY()))));
                 cj_cfg_t.add(Hex.fromShortB((short) turnX(gunlun.getX())));
 
                 //开始索引：33
-                byte[] tempContainer = new byte[10];
+                byte[] tempContainer = new byte[18];
 
 
                 //添加游戏ID
@@ -166,6 +167,9 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                 tempContainer[3] = (byte) configID_;
                 config.setmConfigid(tempContainer[3]);
                 SimpleUtil.log("configID:" + sp[2] + "   " + tempContainer[3]);
+
+                int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "defaultgun", int.class, 0);
+                tempContainer[4] = (byte) defaultgun;
                 cj_cfg_t.add(tempContainer);
 
                 ByteArrayList keyPoints = new ByteArrayList();
@@ -244,11 +248,15 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                         int bqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "bqNum", int.class, 25);
                         int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "cfqNum", int.class, 19);
                         int akNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "akNum", int.class, 28);
-                        SimpleUtil.log("压枪灵敏度：" + bqNum + "," + cfqNum + "," + akNum);
+                        int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "defaultgun", int.class, 0);
+
+                        SimpleUtil.log("重新调整一下压枪灵敏度、压枪：" + bqNum + "," + cfqNum + "," + akNum + "," + defaultgun);
                         byte[] data = config.getmData().all2Bytes();
                         data[32] = (byte) bqNum;
                         data[33] = (byte) cfqNum;
                         data[34] = (byte) akNum;
+                        //[35]正在使用的gameid
+                        data[36] = (byte) defaultgun;//压枪设置，如开启、使用哪一把枪等
                         byte[] data2 = Arrays.copyOfRange(data, 1, data.length);
                         ByteArrayList bytes = new ByteArrayList();
                         bytes.add(SimpleUtil.sumCheck(data2));
@@ -422,7 +430,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
 
         }
 
-        if (d0 != null && d0[3] - 1 >= 0 && rightOrder[d0[3] - 1] != null) {//匹配不上
+        if (d0 != null && d0[3] - 1 >= 0 && d0[3] - 1 < 4 && rightOrder[d0[3] - 1] != null) {//匹配不上
             rightOrder[d0[3] - 1].setmIsUsed(true);
             for (AOAConfigTool.Config one : rightOrder) {
                 if (one != null)
@@ -433,13 +441,20 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                 if (one != null)
                     configsRightData.add(one);
             }
-            int i = 0;
-            while (configsRightData.size() != 4) {
-                Config leftOne = configsLeftData.get(i);
-                leftOne.setDeleted(false);
-                configsRightData.add(leftOne);
-                configsLeftData.remove(i++);
+
+
+            Iterator<Config> it = configsLeftData.iterator();
+            while (it.hasNext()) {
+                Config leftOne = it.next();
+                if (configsRightData.size() != 4) {
+                    if (leftOne.mConfigName.contains("刺激战场") || leftOne.mConfigName.contains("全军出击") || leftOne.mConfigName.contains("荒野行动") || leftOne.mConfigName.contains("光荣使命")) {
+                        leftOne.setDeleted(false);
+                        configsRightData.add(leftOne);
+                        it.remove();
+                    }
+                }
             }
+
             configsRightData.get(0).setmIsUsed(true);
 
         }
@@ -589,10 +604,10 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
         {
             if (data[3] == 0x00) {
                 SimpleUtil.mAOAInjectEable = true;
-                SimpleUtil.addMsgBottomToTop(mContext, "已关闭按键配置调整", true);
+                //SimpleUtil.addMsgBottomToTop(mContext, "已关闭按键配置调整", true);
             } else if (data[3] == 0x01) {
                 SimpleUtil.mAOAInjectEable = false;
-                SimpleUtil.addMsgBottomToTop(mContext, "已开启按键配置调整", false);
+                //SimpleUtil.addMsgBottomToTop(mContext, "已开启按键配置调整", false);
             }
             resetReq();
         } else if (!SimpleUtil.mAOAInjectEable) {

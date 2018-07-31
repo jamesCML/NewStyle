@@ -18,6 +18,8 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import com.uubox.adapters.GunQaAdapter;
 import com.uubox.adapters.MoveConfigAdapter;
 import com.uubox.padtool.R;
 import com.uubox.tools.AOAConfigTool;
@@ -257,10 +260,12 @@ public class IniTab {
             @Override
             public void onClick(View v) {
                 if (changeGunTv.getText().toString().contains("压枪")) {
+                    view.findViewById(R.id.dialog_oversize_bar).setVisibility(View.GONE);
                     listPar.setVisibility(View.GONE);
                     gunPar.setVisibility(View.VISIBLE);
                     changeGunTv.setText("点击我跳转到配置选择列表");
                 } else {
+                    view.findViewById(R.id.dialog_oversize_bar).setVisibility(View.VISIBLE);
                     listPar.setVisibility(View.VISIBLE);
                     gunPar.setVisibility(View.GONE);
                     changeGunTv.setText("点击我跳转到压枪设置");
@@ -351,7 +356,7 @@ public class IniTab {
                     });
 
                 } else if (id == 10014) {
-                    if (configCopyRight.size() != configsRightData.size()) {
+                    if (configCopyRight.size() != configsRightData.size() || (Boolean) SimpleUtil.getFromShare(mContext, "ini", "configschange", boolean.class)) {
                         SimpleUtil.addMsgBottomToTop(mContext, "检测到配置更新！自动写入！", false);
                         view.findViewById(R.id.dialog_oversize_write).performClick();
                     } else {
@@ -363,7 +368,7 @@ public class IniTab {
                             }
                         }
                     }
-                    SimpleUtil.removeINormalCallback(this);
+                    //SimpleUtil.removeINormalCallback(this);
                 }
 
             }
@@ -377,7 +382,7 @@ public class IniTab {
                     SimpleUtil.addMsgBottomToTop(mContext, "配置过大！", true);
                     return;
                 }
-
+                SimpleUtil.log("dialog_oversize_write==>");
                 AOAConfigTool.getInstance(mContext).writeManyConfigs(configsRightData);
 
             }
@@ -400,15 +405,15 @@ public class IniTab {
                 switch (seekBar.getId()) {
 
                     case R.id.dialog_oversize_gun_bq:
-                        bq.setText("类型:步枪  开启快捷键:F1+1  关闭快捷键:Esc+1 灵敏度:" + progress);
+                        bq.setText("类型:步枪   快捷键:1/2+F2,关闭压枪1/2+ESC 灵敏度:" + progress);
                         SimpleUtil.saveToShare(mContext, sp0[2], "bqNum", progress);
                         break;
                     case R.id.dialog_oversize_gun_cfq:
-                        cfq.setText("类型:冲锋枪  开启快捷键:F2+1  关闭快捷键:Esc+2 灵敏度:" + progress);
+                        cfq.setText("类型:冲锋枪(默认) 快捷键:1/2+F1,关闭压枪1/2+ESC 灵敏度:" + progress);
                         SimpleUtil.saveToShare(mContext, sp0[2], "cfqNum", progress);
                         break;
                     case R.id.dialog_oversize_gun_ak:
-                        ak.setText("类型:AK47  开启快捷键:F3+1  关闭快捷键:Esc+3 灵敏度:" + progress);
+                        ak.setText("类型:AK47   快捷键:1/2+F3,关闭压枪1/2+ESC 灵敏度:" + progress);
                         SimpleUtil.saveToShare(mContext, sp0[2], "akNum", progress);
                         break;
                 }
@@ -421,7 +426,8 @@ public class IniTab {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                SimpleUtil.addMsgBottomToTop(mContext, "修改成功", false);
+                SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
             }
         };
         SeekBar cfqBar = view.findViewById(R.id.dialog_oversize_gun_cfq);
@@ -437,10 +443,64 @@ public class IniTab {
         bqBar.setProgress(bqNum - 1);
         cfqBar.setProgress(cfqNum - 1);
         akBar.setProgress(akNum - 1);
-        bq.setText("类型:步枪  开启快捷键:F1+1  关闭快捷键:Esc+1 灵敏度:" + bqNum);
-        cfq.setText("类型:冲锋枪  开启快捷键:F2+1  关闭快捷键:Esc+2 灵敏度:" + cfqNum);
-        ak.setText("类型:AK47  开启快捷键:F3+1  关闭快捷键:Esc+3 灵敏度:" + akNum);
+        bq.setText("类型:步枪   快捷键:1/2+F2,关闭压枪1/2+ESC 灵敏度:" + bqNum);
+        cfq.setText("类型:冲锋枪(默认) 快捷键:1/2+F1,关闭压枪1/2+ESC 灵敏度:" + cfqNum);
+        ak.setText("类型:AK47   快捷键:1/2+F3,关闭压枪1/2+ESC 灵敏度:" + akNum);
 
+        RadioGroup radioGroup = (RadioGroup) view.findViewById(R.id.dialog_oversize_gun_rg);
+        int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "defaultgun", int.class, 0);
+        ((RadioButton) radioGroup.getChildAt(defaultgun)).setChecked(true);
+
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                RadioButton radioButton = group.findViewById(checkedId);
+                String text = radioButton.getText().toString();
+                SimpleUtil.log("checkedId:" + text);
+                if (text.contains("压枪")) {
+                    SimpleUtil.saveToShare(mContext, sp0[2], "defaultgun", 0);
+                } else if (text.contains("冲锋枪")) {
+                    SimpleUtil.saveToShare(mContext, sp0[2], "defaultgun", 1);
+                } else if (text.contains("步枪")) {
+                    SimpleUtil.saveToShare(mContext, sp0[2], "defaultgun", 2);
+                } else if (text.contains("AK")) {
+                    SimpleUtil.saveToShare(mContext, sp0[2], "defaultgun", 3);
+                }
+                SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
+            }
+        });
+
+        ListView qaList = view.findViewById(R.id.dialog_oversize_gun_qa);
+        final List<GunQaAdapter.QAItem> qaData = new ArrayList<>();
+        GunQaAdapter qaAdapter = new GunQaAdapter(mContext, qaData);
+        String[] questionArr = mContext.getResources().getStringArray(R.array.gunqaitems);
+        for (String que : questionArr) {
+            String[] queSp = que.split("`");
+            GunQaAdapter.QAItem qaItem = new GunQaAdapter.QAItem();
+            qaItem.mQueston = queSp[0];
+            qaItem.mAnswer = queSp[1];
+            qaData.add(qaItem);
+        }
+        qaList.setAdapter(qaAdapter);
+
+        int height = 0;
+        int count = qaAdapter.getCount();
+        for (int i = 0; i < count; i++) {
+            View temp = qaAdapter.getView(i, null, qaList);
+            temp.measure(0, 0);
+            height += temp.getMeasuredHeight();
+        }
+        ViewGroup.LayoutParams params = qaList.getLayoutParams();
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        params.height = height;
+        qaList.setLayoutParams(params);
+
+        qaList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                SimpleUtil.addMsgtoTop(mContext, "帮助信息", "问:" + qaData.get(position).mQueston + "\n\n答:" + qaData.get(position).mAnswer, null, null, true);
+            }
+        });
         addItem("写入配置");
         mViewPageList.add(view);
 

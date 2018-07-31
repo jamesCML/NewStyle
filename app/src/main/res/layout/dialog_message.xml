@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/parent_4"
-    android:background="@drawable/dialog_message_box">
+    android:background="@mipmap/gunqabox">
 
     <TextView
         android:id="@+id/dialogmsgtitle"

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -16,7 +17,7 @@ import com.uubox.tools.SimpleUtil;
  * 摇杆模式
  * Created by Yj on 2015/8/19.
  */
-public class BtnDialogActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, CompoundButton.OnCheckedChangeListener {
+public class BtnDialogActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
 
     private static final String TAG = "BtnDialogActivity";
@@ -24,30 +25,12 @@ public class BtnDialogActivity implements View.OnClickListener, SeekBar.OnSeekBa
      * <p>鼠标灵敏度 X,Y 轴</p>
      * <p>mSeekBarY,mSeekBarX 改用 mSeekBarMouse 代替</p>
      */
-    private SeekBar mSeekBarMouse, mSeekBarY, mSeekBarW;
+    private SeekBar mSeekBarMouse, mSeekBarW;
     /**
      * 鼠标灵敏度-文本 X,Y 轴
      */
-    private TextView mTextMouseSensitivityX, mTextMouseSensitivityY, mTextMouseSensitivityW;
+    private TextView mTextMouseSensitivityX, mTextMouseSensitivityW;
 
-
-    /**
-     * 记录调节时的鼠标灵敏度
-     */
-    private int mouseTemp = 0;
-    /**
-     * 记录调节时的鼠标灵敏度 Y
-     */
-    private int mouseYyyTemp = 0;
-    /**
-     * 记录调节时的滚轮灵敏度 W
-     */
-    private int mouseWwwTemp = 0;
-
-    /**
-     * 选择使用鼠标中键调出鼠标指针(is:鼠标中键，no:鼠标右键)
-     */
-    private RadioButton mIsMouseIn;
     /**
      * 选择使用鼠标右键跳出鼠标指针(Is: 右键 ，No：中键)
      */
@@ -67,42 +50,29 @@ public class BtnDialogActivity implements View.OnClickListener, SeekBar.OnSeekBa
     private void initView() {
         initRockView();
         setRockListener();
-        int tmpX = (Integer) SimpleUtil.getFromShare(mContext, "ini", "mMouseProgressX", int.class, 5);
-        int tmpY = (Integer) SimpleUtil.getFromShare(mContext, "ini", "mMouseProgressY", int.class, 5);
-        int tmpW = (Integer) SimpleUtil.getFromShare(mContext, "ini", "mMouseProgressW", int.class, 50);
+        int tmpX = (Integer) SimpleUtil.getFromShare(mContext, "ini", "mousesen", int.class, 10);
+        int tmpW = (Integer) SimpleUtil.getFromShare(mContext, "ini", "mousesrcollsen", int.class, 20);
 
-        Log.e(TAG, "initView: tmpX=" + tmpX + ", tmpY=" + tmpY + ", tmpW=" + tmpW);
         mSeekBarMouse.setProgress(tmpX);
-        mSeekBarY.setProgress(tmpY);
         mSeekBarW.setProgress(tmpW);
-        mTextMouseSensitivityX.setText(mContext.getString(R.string.horizontal) + tmpX);
-        mTextMouseSensitivityY.setText(mContext.getString(R.string.vertical) + tmpY);
-        mTextMouseSensitivityW.setText(mContext.getString(R.string.wheel) + tmpW);
-        boolean isMouseMidel = false;
-        isMouseMidel = (boolean) SimpleUtil.getFromShare(mContext, "ini", "isMouseMidle", boolean.class);
-        mIsMouseIn.setChecked(isMouseMidel);
-        mIsMouseRight.setChecked(!isMouseMidel);
+        mTextMouseSensitivityX.setText("鼠标灵敏度:" + tmpX);
+        mTextMouseSensitivityW.setText("滚轮灵敏度:" + tmpW);
+
 
     }
 
     private void initRockView() {
         mSeekBarMouse = mView.findViewById(R.id.sbar_mouse_sensitivity_x);
         mTextMouseSensitivityX = mView.findViewById(R.id.tv_mouse_sensitivity_x);
-        mSeekBarY = mView.findViewById(R.id.sbar_mouse_sensitivity_y);
-        mTextMouseSensitivityY = mView.findViewById(R.id.tv_mouse_sensitivity_y);
         mSeekBarW = mView.findViewById(R.id.sbar_mouse_Wheel);
         mTextMouseSensitivityW = mView.findViewById(R.id.tv_mouse_wheel);
-
-        mIsMouseIn = mView.findViewById(R.id.rbn_mouse_in);
         mIsMouseRight = mView.findViewById(R.id.rbn_mouse_right);
+
     }
 
     private void setRockListener() {
         mSeekBarMouse.setOnSeekBarChangeListener(this);
-        mSeekBarY.setOnSeekBarChangeListener(this);
         mSeekBarW.setOnSeekBarChangeListener(this);
-        mIsMouseIn.setOnCheckedChangeListener(this);
-        mIsMouseRight.setOnCheckedChangeListener(this);
         mView.findViewById(R.id.rbn_mouse_save).setOnClickListener(this);
 
     }
@@ -112,12 +82,9 @@ public class BtnDialogActivity implements View.OnClickListener, SeekBar.OnSeekBa
         switch (v.getId()) {
 
             case R.id.rbn_mouse_save:
-                mouseTemp = mouseTemp;
-                mouseWwwTemp = mouseWwwTemp;
-                SimpleUtil.saveToShare(mContext, "ini", "mMouseProgress", mouseTemp);
-                SimpleUtil.saveToShare(mContext, "ini", "mMouseProgressW", mouseWwwTemp);
                 KeyboardEditWindowManager.getInstance().hideOrShowBottomUIMenu(true);
                 KeyboardEditWindowManager.getInstance().removeTop();
+                SimpleUtil.notifyall_(10003, null);
                 break;
         }
 
@@ -127,16 +94,10 @@ public class BtnDialogActivity implements View.OnClickListener, SeekBar.OnSeekBa
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         switch (seekBar.getId()) {
             case R.id.sbar_mouse_sensitivity_x:
-                mouseTemp = progress;
-                mTextMouseSensitivityX.setText(mContext.getString(R.string.mouse_string) + Integer.toString(mouseTemp));
-                break;
-            case R.id.sbar_mouse_sensitivity_y:
-                mouseYyyTemp = progress;
-                mTextMouseSensitivityY.setText(mContext.getString(R.string.vertical) + Integer.toString(mouseYyyTemp));
+                mTextMouseSensitivityX.setText("鼠标灵敏度:" + progress);
                 break;
             case R.id.sbar_mouse_Wheel:
-                mouseWwwTemp = progress;
-                mTextMouseSensitivityW.setText(mContext.getString(R.string.wheel) + Integer.toString(mouseWwwTemp));
+                mTextMouseSensitivityW.setText("滚轮灵敏度:" + progress);
                 break;
 
         }
@@ -150,18 +111,11 @@ public class BtnDialogActivity implements View.OnClickListener, SeekBar.OnSeekBa
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
+        SimpleUtil.saveToShare(mContext, "ini", "mousesen", mSeekBarMouse.getProgress());
+        SimpleUtil.saveToShare(mContext, "ini", "mousesrcollsen", mSeekBarW.getProgress());
+        SimpleUtil.addMsgBottomToTop(mContext, "修改成功！", false);
     }
 
-    @Override
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        switch (buttonView.getId()) {
-            case R.id.rbn_mouse_in:
-                boolean b = SimpleUtil.saveToShare(mContext, "ini", "isMouseMidle", isChecked);
-                break;
-            default:
-                break;
-        }
-    }
 
 
 }

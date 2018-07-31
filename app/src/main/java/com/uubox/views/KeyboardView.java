@@ -1087,7 +1087,7 @@ public class KeyboardView extends FrameLayout
             return;
         }
 
-        KeyboardEditWindowManager.getInstance().addView(new BtnDialogActivity().create(getContext()), LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        KeyboardEditWindowManager.getInstance().addView(new BtnDialogActivity().create(getContext()), SimpleUtil.zoomy / 2, SimpleUtil.zoomx / 2);
     }
 
     @Override
@@ -1171,7 +1171,7 @@ public class KeyboardView extends FrameLayout
                     v.getLocationInWindow(position);
                     FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(64, 64);
                     params.leftMargin = SimpleUtil.zoomy / 2;
-                    params.topMargin = SimpleUtil.zoomx / 3;
+                    params.topMargin = SimpleUtil.zoomx / 2;
 
                     mFlMain.addView(whatImg, params);
 
