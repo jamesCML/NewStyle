@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.uubox.padtool.R;
 import com.uubox.views.BtnParams;
 import com.uubox.views.KeyboardView;
 
@@ -72,8 +73,8 @@ public class InjectUtil {
             btnParam.setBelongBtn(key);
             setParam(btnParam, element, zoomx, zoomy);
             mBtnParams.put(key, btnParam);
-            //需要加载子案件
-            if (btnParam.getKeyRepeatType() != 0) {
+            //需要加载子按键
+            if (btnParam.iHaveChild()) {
                 BtnParams subParam = new BtnParams();
                 subParam.setBelongBtn(key);
                 setParam(subParam, element.getFirstChild(), zoomx, zoomy);
@@ -93,13 +94,13 @@ public class InjectUtil {
     }
 
     private static void setParam(BtnParams btnParam, XmlPugiElement element, int zoomx, int zoomy) {
+
         btnParam.setFrequency(Integer.parseInt(element.getAttr("frequency")));
         btnParam.setBelongButton(Boolean.valueOf(element.getAttr("isBelongButton")));
         btnParam.setKeyRepeatSwitch(Boolean.valueOf(element.getAttr("keyRepeatSwitch")));
         btnParam.setKeyRepeatType(Integer.parseInt(element.getAttr("keyRepeatType")));
         btnParam.setMode(Integer.parseInt(element.getAttr("mode")));
         btnParam.setStep(Integer.parseInt(element.getAttr("step")));
-
 
         btnParam.setR((int) ((SimpleUtil.zoomy * Integer.parseInt(element.getAttr("r"))) / (zoomy * 1.0f)));
         btnParam.setX((int) ((Integer.parseInt(element.getAttr("x")) * SimpleUtil.zoomy) / (1.0f * zoomy)));
@@ -260,7 +261,7 @@ public class InjectUtil {
 
 
             //有附属按键需要加载
-            if (params.getKeyRepeatType() != 0) {
+            if (params.iHaveChild()) {
                 BtnParams subParams = new BtnParams();
                 subParams.setBelongBtn(btn);
                 subParams.setBelongButton(true);
@@ -320,7 +321,7 @@ public class InjectUtil {
 
 
             //有附属按键需要加载
-            if (params.getKeyRepeatType() != 0) {
+            if (params.iHaveChild()) {
                 BtnParams subParams = new BtnParams();
                 subParams.setBelongBtn(btn);
                 subParams.setBelongButton(true);
@@ -467,7 +468,7 @@ public class InjectUtil {
             SimpleUtil.editSaveToShare(editor, btn.getPrefSwitch(), getBtnRepeatSwitch(btn));
 
             //该按键有附属按键，需要进行保存
-            if (getBtnRepeatType(btn) != 0) {
+            if (isBtnHasChild(btn)) {
                 BtnParams param = getBtnRepeatBtn2(btn);
                 SimpleUtil.editSaveToShare(editor, btn.getPrefY() + "_2", param.getY());
                 SimpleUtil.editSaveToShare(editor, btn.getPrefR() + "_2", param.getR());
@@ -554,7 +555,7 @@ public class InjectUtil {
             XmlPugiElement addNode = mainNode.addNode(key.name(), "", attrs);
 
             //有附属按键，则需要增加子节点
-            if (param.getKeyRepeatType() != 0) {
+            if (param.iHaveChild()) {
                 saveXmlNode(addNode, key, param.btn2);
             }
 
@@ -571,6 +572,26 @@ public class InjectUtil {
         return mBtnParams.get(btn).getKeyRepeatType();
     }
 
+    public static boolean isBtnHasChild(final KeyboardView.Btn btn) {
+        if (btn == null || mBtnParams == null || !mBtnParams.containsKey(btn)) {
+            return false;
+        }
+
+        return mBtnParams.get(btn).getKeyRepeatType() == 1 || mBtnParams.get(btn).getKeyRepeatType() == 2;
+    }
+
+    public static int getBtnBelongColor(final BtnParams params) {
+
+        switch (params.getKeyRepeatType()) {
+            case 1:
+                return R.mipmap.circle_liandong;
+            case 2:
+                return R.mipmap.circle_huchi;
+            case 3:
+                return R.mipmap.circle_key;
+        }
+        return 0;
+    }
     public static void setBtnRepeatType(final KeyboardView.Btn btn, final int type) {
         if (btn == null || mBtnParams == null || !mBtnParams.containsKey(btn)) {
             return;

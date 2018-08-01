@@ -51,6 +51,21 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         new SocketLog().start();
+
+        Point point = new Point();
+        getWindowManager().getDefaultDisplay().getRealSize(point);
+        SimpleUtil.zoomx = point.y;
+        SimpleUtil.zoomy = point.x;
+        SimpleUtil.log("pixreal XY:" + SimpleUtil.zoomx + "," + SimpleUtil.zoomy);
+        getWindowManager().getDefaultDisplay().getSize(point);
+        SimpleUtil.log("pixvirtual XY:" + point.x + "," + point.y);
+        if (SimpleUtil.zoomy - point.x != 0) {
+            SimpleUtil.log("检测到刘海屏");
+            SimpleUtil.LIUHAI = getStatusBarHeight();
+        }
+        SimpleUtil.log("Liuhai:" + SimpleUtil.LIUHAI + " bar height:" + getStatusBarHeight());
+
+
         mProgress = findViewById(R.id.loading_pro);
         mLoadMsg = findViewById(R.id.loading_msg);
         mButton = findViewById(R.id.loading_bt);
@@ -99,18 +114,7 @@ public class MainActivity extends Activity {
         alphaAnimation.setRepeatMode(Animation.REVERSE);
         mButton.startAnimation(alphaAnimation);
 
-        Point point = new Point();
-        getWindowManager().getDefaultDisplay().getRealSize(point);
-        SimpleUtil.zoomx = point.y;
-        SimpleUtil.zoomy = point.x;
-        SimpleUtil.log("pixreal XY:" + SimpleUtil.zoomx + "," + SimpleUtil.zoomy);
-        getWindowManager().getDefaultDisplay().getSize(point);
-        SimpleUtil.log("pixvirtual XY:" + point.x + "," + point.y);
-        if (SimpleUtil.zoomy - point.x != 0) {
-            SimpleUtil.log("检测到刘海屏");
-            SimpleUtil.LIUHAI = getStatusBarHeight();
-        }
-        SimpleUtil.log("Liuhai:" + SimpleUtil.LIUHAI + " bar height:" + getStatusBarHeight());
+
     }
 
     private int getStatusBarHeight() {

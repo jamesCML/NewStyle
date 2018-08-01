@@ -76,8 +76,8 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
     @Override
     public void onCreate() {
         super.onCreate();
-        SimpleUtil.zoomx = (Integer) SimpleUtil.getFromShare(getBaseContext(), "ini", "zoomx", int.class);
-        SimpleUtil.zoomy = (Integer) SimpleUtil.getFromShare(getBaseContext(), "ini", "zoomy", int.class);
+        // SimpleUtil.zoomx = (Integer) SimpleUtil.getFromShare(getBaseContext(), "ini", "zoomx", int.class);
+        // SimpleUtil.zoomy = (Integer) SimpleUtil.getFromShare(getBaseContext(), "ini", "zoomy", int.class);
         initWindowOnlyOnce();
         SimpleUtil.addINormalCallback(this);
         mAOAConfigTool = AOAConfigTool.getInstance(this);

@@ -50,12 +50,13 @@ public class BtnParams implements Serializable {
      */
     private int keyRepeatType;
     private boolean isBelongButton;
-
+    private int mSpecilType;
     private KeyboardView.Btn belongBtn;
 
     public KeyboardView.Btn getBelongBtn() {
         return belongBtn;
     }
+
 
     public void setBelongBtn(KeyboardView.Btn belongBtn) {
         this.belongBtn = belongBtn;
@@ -89,6 +90,9 @@ public class BtnParams implements Serializable {
         return keyRepeatType;
     }
 
+    public boolean iHaveChild() {
+        return keyRepeatType == 1 || keyRepeatType == 2;
+    }
     /**
      * 0：没有附属按键
      * 1：联动按键

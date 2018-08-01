@@ -645,92 +645,26 @@ public class KeyboardView extends FrameLayout
         //第二次映射
         if (InjectUtil.getBtnNormalBtn(btn).img != null) {
             List<String> items = new ArrayList<>();
-            //items.add("联动");
-            //items.add("交替");
+            items.add("联动");
+            // items.add("交替");
             items.add("清除 " + btn);
             List<Runnable> runnables = new ArrayList<>();
+            /*runnables.add(new Runnable() {
+                @Override
+                public void run() {
+                    addSecFucButton(btn,3);
+                }
+            });*/
             runnables.add(new Runnable() {
                 @Override
                 public void run() {
-                    dialogShow = false;
-                    if (InjectUtil.getBtnRepeatBtn2(btn) != null) {
-                        mFlMain.removeView(InjectUtil.getBtnRepeatBtn2(btn).img);
-                    }
-
-                    InjectUtil.setBtnRepeatType(btn, 1);
-
-                    //设置btn2
-                    BtnParams params = new BtnParams();
-                    //设置主节点，表示该参数是从属
-                    params.setBelongButton(true);
-                    params.setBelongBtn(btn);
-
-                    drawable = getBtnDrawable(params);
-                    if (drawable != null) {
-                        whatImg.setImageDrawable(drawable);
-                    }
-
-
-                    whatImg.setTag(params);
-
-                    params.setX(
-                            (int) whatImg.getX() + whatImg.getWidth() / 2);
-                    params.setY(
-                            (int) whatImg.getY() + whatImg.getHeight() / 2);
-                    params.setR(whatImg.getWidth() / 2);
-
-                    params.img = whatImg;
-                    params.img.setBackgroundColor(Color.parseColor("#8833cc33"));
-                    whatImg = null;
-                    InjectUtil.setBtnRepeatBtn2(btn, params);
-
-                    HashMap<String, Object> obj = new HashMap<>();
-                    obj.put("btn", btn);
-                    //是否属于第二模式
-                    obj.put("isSecond", true);
-                    addingBtns.add(obj);
+                    addSecFucButton(btn, 1);
                 }
             });
             runnables.add(new Runnable() {
                 @Override
                 public void run() {
-                    dialogShow = false;
-                    if (InjectUtil.getBtnRepeatBtn2(btn) != null) {
-                        mFlMain.removeView(InjectUtil.getBtnRepeatBtn2(btn).img);
-                    }
-
-                    InjectUtil.setBtnRepeatType(btn, 2);
-
-                    //设置btn2
-                    BtnParams params = new BtnParams();
-                    //设置主节点，表示该参数是从属
-                    params.setBelongButton(true);
-                    params.setBelongBtn(btn);
-
-                    drawable = getBtnDrawable(params);
-                    if (drawable != null) {
-                        whatImg.setImageDrawable(drawable);
-                    }
-
-
-                    whatImg.setTag(params);
-
-                    params.setX(
-                            (int) whatImg.getX() + whatImg.getWidth() / 2);
-                    params.setY(
-                            (int) whatImg.getY() + whatImg.getHeight() / 2);
-                    params.setR(whatImg.getWidth() / 2);
-
-                    params.img = whatImg;
-                    params.img.setBackgroundColor(Color.parseColor("#88FF4081"));
-                    whatImg = null;
-                    InjectUtil.setBtnRepeatBtn2(btn, params);
-
-                    HashMap<String, Object> obj = new HashMap<>();
-                    obj.put("btn", btn);
-                    //是否属于第二模式
-                    obj.put("isSecond", true);
-                    addingBtns.add(obj);
+                    addSecFucButton(btn, 2);
                 }
 
             });
@@ -785,6 +719,44 @@ public class KeyboardView extends FrameLayout
         whatImg = null;
     }
 
+    private void addSecFucButton(Btn btn, int type) {
+        dialogShow = false;
+        if (InjectUtil.getBtnRepeatBtn2(btn) != null) {
+            mFlMain.removeView(InjectUtil.getBtnRepeatBtn2(btn).img);
+        }
+
+        InjectUtil.setBtnRepeatType(btn, type);
+
+        //设置btn2
+        BtnParams params = new BtnParams();
+        //设置主节点，表示该参数是从属
+        params.setBelongButton(true);
+        params.setBelongBtn(btn);
+
+        drawable = getBtnDrawable(params);
+        if (drawable != null) {
+            whatImg.setImageDrawable(drawable);
+        }
+
+
+        whatImg.setTag(params);
+
+        params.setX(
+                (int) whatImg.getX() + whatImg.getWidth() / 2);
+        params.setY(
+                (int) whatImg.getY() + whatImg.getHeight() / 2);
+        params.setR(whatImg.getWidth() / 2);
+
+        params.img = whatImg;
+        whatImg = null;
+        InjectUtil.setBtnRepeatBtn2(btn, params);
+
+        HashMap<String, Object> obj = new HashMap<>();
+        obj.put("btn", btn);
+        //是否属于第二模式
+        obj.put("isSecond", true);
+        addingBtns.add(obj);
+    }
     /**
      * @return 按钮对应图片资源
      */
@@ -826,7 +798,12 @@ public class KeyboardView extends FrameLayout
                 mFlMain.removeView(v);
                 whatImg = null;
             } else {
-                removeBtn((BtnParams) v.getTag());
+                BtnParams params = (BtnParams) v.getTag();
+                if (params.getKeyRepeatType() == 3) {
+                    SimpleUtil.addMsgBottomToTop(getContext(), "固定按键不能移除！", true);
+                    return;
+                }
+                removeBtn(params);
 
                 Log.w(TAG, "onDragFinish: getId()=" + v.getId() + "getTag()=" + v.getTag());
 
@@ -984,6 +961,9 @@ public class KeyboardView extends FrameLayout
         layoutParams.topMargin = y - ivHeight / 2;
         iv.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN);
+
+        iv.setBackgroundResource(InjectUtil.getBtnBelongColor(params));
+
         allView.add(iv);
         mFlMain.addView(iv, layoutParams);
         if (btn == Btn.L) {
@@ -1072,7 +1052,7 @@ public class KeyboardView extends FrameLayout
             btnParams.img = null;
 
             //还有附属按键，则一起死！！！！！！
-            if (btnParams.getKeyRepeatType() != 0) {
+            if (btnParams.iHaveChild()) {
                 BtnParams subParams = btnParams.getBtn2();
                 mFlMain.removeView(subParams.img);
                 InjectUtil.resetRepeatBtnParams(subParams.getBelongBtn());
@@ -1132,7 +1112,7 @@ public class KeyboardView extends FrameLayout
                 break;
             case R:
                 showBtnDialog(((BtnParams) v.getTag()).getBelongBtn());
-                break;
+                return;
             case UP:
                 break;
             case DOWN:
@@ -1146,6 +1126,30 @@ public class KeyboardView extends FrameLayout
             default:
                 break;
         }
+
+        List<String> items = new ArrayList<>();
+        items.add("设定为按键类型");
+        items.add("删除 " + btnParams.getBelongBtn());
+        List<Runnable> runnables = new ArrayList<>();
+        runnables.add(new Runnable() {
+            @Override
+            public void run() {
+                btnParams.setKeyRepeatType(3);
+            }
+        });
+        runnables.add(new Runnable() {
+            @Override
+            public void run() {
+                removeBtn(btnParams);
+            }
+        });
+        SimpleUtil.addRadioGrouptoTop(getContext(), "按键操作", items, runnables, new Runnable() {
+            @Override
+            public void run() {
+                InjectUtil.setBtnParamsChanged(true);
+            }
+        }, null);
+
     }
 
     private DragImageView whatImg;
@@ -1425,6 +1429,9 @@ public class KeyboardView extends FrameLayout
             return "pref_" + this.name + "_r";
         }
 
+        public String getSpecilType() {
+            return "pref_" + this.name + "_spe";
+        }
         public String getPrefX() {
             return "pref_" + this.name + "_x";
         }

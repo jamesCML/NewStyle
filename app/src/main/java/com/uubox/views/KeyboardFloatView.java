@@ -11,6 +11,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 
+import com.uubox.padtool.R;
 import com.uubox.tools.BtnUtil;
 import com.uubox.tools.InjectUtil;
 import com.uubox.tools.SimpleUtil;
@@ -122,6 +123,8 @@ public class KeyboardFloatView extends FrameLayout {
 
             // 因为悬浮窗口的绘制区域不包含状态栏，所以需要减去状态栏的高度
             //layoutParams.topMargin -= mStatusBarHight;
+
+            //iv.setBackgroundResource(InjectUtil.getBtnBelongColor(params));
             addView(iv, layoutParams);
             mIvBtns[btn.ordinal()] = iv;
         }
