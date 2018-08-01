@@ -645,8 +645,8 @@ public class KeyboardView extends FrameLayout
         //第二次映射
         if (InjectUtil.getBtnNormalBtn(btn).img != null) {
             List<String> items = new ArrayList<>();
-            items.add("联动");
-            items.add("交替");
+            //items.add("联动");
+            //items.add("交替");
             items.add("清除 " + btn);
             List<Runnable> runnables = new ArrayList<>();
             runnables.add(new Runnable() {
@@ -807,6 +807,7 @@ public class KeyboardView extends FrameLayout
         mIvMenu.setImageDrawable(getResources().getDrawable(R.mipmap.del));
     }
 
+    static String sss = "";
     /**
      * 拖动完成时
      *
@@ -840,12 +841,18 @@ public class KeyboardView extends FrameLayout
         // 松开位置位于其他区域，保存按钮坐标
         else {
             if (!(v.getTag() instanceof Integer)) {
-                final int x = (int) v.getX() + v.getWidth() / 2;
-                final int y = (int) v.getY() + v.getHeight() / 2;
+                int[] position = new int[2];
+                v.getLocationOnScreen(position);
+                final int x = position[0] + v.getWidth() / 2;
+                final int y = position[1] + v.getHeight() / 2;
+                //final int x = (int) v.getX() + v.getWidth() / 2+SimpleUtil.LIUHAI;
+                //final int y = (int) v.getY() + v.getHeight() / 2;
                 BtnParams params = (BtnParams) v.getTag();
                 if (params.getX() != x || params.getY() != y) {
                     params.setX(x);
                     params.setY(y);
+                    SimpleUtil.log("save the XY:" + x + "," + y + " LIUHAI:" + SimpleUtil.LIUHAI + "  hash:" + params.hashCode());
+                    sss = x + "," + y;
                     InjectUtil.setBtnParamsChanged(true);
                 }
 
@@ -938,9 +945,11 @@ public class KeyboardView extends FrameLayout
     private List<View> allView = new ArrayList<>();
 
     private void makeButtonView(final Btn btn, final BtnParams params, boolean isBelong) {
-        int x = params.getX();
+
+        int x = params.getX() - SimpleUtil.LIUHAI;
         int y = params.getY();
         int rd = params.getR();
+
         DragImageView iv = (DragImageView) params.img;
         if ((x <= 0 && y <= 0 && rd <= 0) || iv != null) {
             return;
@@ -956,28 +965,27 @@ public class KeyboardView extends FrameLayout
         iv.setDragListener(this);
         iv.setScaleListener(this);
         iv.setClickListener(this);
-        LayoutParams layoutParams =
+        final LayoutParams layoutParams =
                 new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         //按钮试图的位置
         int r = params.getR();
         iv.setLayoutParams(layoutParams);
         iv.measure(0, 0);
-        int hhh = iv.getMeasuredHeight();
-        int www = iv.getMeasuredWidth();
-        if (r != www && r > 0) {
+        int ivHeight = iv.getMeasuredHeight();
+        int ivWith = iv.getMeasuredWidth();
+        if (r != ivWith && r > 0) {
             layoutParams.width = 2 * r;
             layoutParams.height = 2 * r;
-            www = layoutParams.width;
-            hhh = layoutParams.height;
+            ivWith = layoutParams.width;
+            ivHeight = layoutParams.height;
         }
 
-        layoutParams.leftMargin = x - www / 2;
-        layoutParams.topMargin = y - hhh / 2;
+        layoutParams.leftMargin = x - ivWith / 2;
+        layoutParams.topMargin = y - ivHeight / 2;
         iv.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN);
         allView.add(iv);
         mFlMain.addView(iv, layoutParams);
-
         if (btn == Btn.L) {
             mIvMenuBtnL.setVisibility(GONE);
             GuiStep.getInstance().addToGui(iv, "控制方向按键，如果您觉得按下【W】键人物不能疾跑，建议将该按键放大以达到效果");
@@ -1001,10 +1009,10 @@ public class KeyboardView extends FrameLayout
         }
 
 
-        //表示该按钮参数有附属，则需要递归一次
-        if (params.getKeyRepeatType() != 0) {
+        //表示该按钮参数有附属，则需要递归一次,暂时不支持
+        /*if (params.getKeyRepeatType() != 0) {
             makeButtonView(btn, InjectUtil.getBtnNormalBtn(btn).btn2, true);
-        }
+        }*/
         //SimpleUtil.log(btn.name + "   " + x + "," + y + "," + layoutParams.leftMargin + "," + layoutParams.topMargin);
     }
 

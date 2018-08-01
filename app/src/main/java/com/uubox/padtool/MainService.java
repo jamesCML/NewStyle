@@ -87,8 +87,6 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
     public int onStartCommand(Intent intent, int flags, int startId) {
         HomeWatcherReceiver homeReceiver = new HomeWatcherReceiver();
         registerReceiver(homeReceiver, new IntentFilter("android.intent.action.CLOSE_SYSTEM_DIALOGS"));
-        SimpleUtil.zoomx = (Integer) SimpleUtil.getFromShare(getBaseContext(), "ini", "zoomx", int.class);
-        SimpleUtil.zoomy = (Integer) SimpleUtil.getFromShare(getBaseContext(), "ini", "zoomy", int.class);
         mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 1000);
         return super.onStartCommand(intent, flags, startId);
     }

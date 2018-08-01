@@ -89,7 +89,7 @@ public class KeyboardFloatView extends FrameLayout {
         int x;
         int y;
         for (KeyboardView.Btn btn : KeyboardView.Btn.values()) {
-            x = InjectUtil.getBtnPositionX(btn);
+            x = InjectUtil.getBtnPositionX(btn) - SimpleUtil.LIUHAI;
             y = InjectUtil.getBtnPositionY(btn);
             ImageView iv = mIvBtns[btn.ordinal()];
             if ((x <= 0 && y <= 0 && InjectUtil.getBtnRadius(btn) <= 0) || iv != null
@@ -157,8 +157,6 @@ public class KeyboardFloatView extends FrameLayout {
         }
         try {
             mWindowManager.addView(this, mLayoutParams);
-            int[] location = new int[2];
-            getLocationInWindow(location);
         } catch (Exception e) {
             e.printStackTrace();
         }

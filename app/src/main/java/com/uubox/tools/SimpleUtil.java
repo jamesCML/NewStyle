@@ -43,10 +43,10 @@ public class SimpleUtil {
     public static int zoomx;
     public static int zoomy;
     public static int versionCode = 10;
-    public static boolean isSaveToXml = false;
+    public static boolean isSaveToXml = true;
     public static boolean screenstate;
     public static boolean mAOAInjectEable;
-
+    public static int LIUHAI;
     public static byte[] getAssertSmallFile(Context context, String path) {
         try {
             InputStream stream = context.getAssets().open(path);
@@ -168,9 +168,9 @@ public class SimpleUtil {
 
     public static void log(String msg) {
 
-        if (!DEBUG) {
+        /*if (!DEBUG) {
             return;
-        }
+        }*/
         Log.i("CJLOG", msg);
     }
 

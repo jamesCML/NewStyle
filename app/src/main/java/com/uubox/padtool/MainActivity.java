@@ -50,6 +50,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        new SocketLog().start();
         mProgress = findViewById(R.id.loading_pro);
         mLoadMsg = findViewById(R.id.loading_msg);
         mButton = findViewById(R.id.loading_bt);
@@ -57,7 +58,6 @@ public class MainActivity extends Activity {
         mCheckBox = findViewById(R.id.loading_cb);
         SimpleUtil.log("MainActivity-------------create------------" + hashCode());
         SimpleUtil.DEBUG = CommonUtils.getAppVersionName(this).contains("debug");
-
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -98,8 +98,29 @@ public class MainActivity extends Activity {
         alphaAnimation.setRepeatCount(Animation.INFINITE);
         alphaAnimation.setRepeatMode(Animation.REVERSE);
         mButton.startAnimation(alphaAnimation);
+
+        Point point = new Point();
+        getWindowManager().getDefaultDisplay().getRealSize(point);
+        SimpleUtil.zoomx = point.y;
+        SimpleUtil.zoomy = point.x;
+        SimpleUtil.log("pixreal XY:" + SimpleUtil.zoomx + "," + SimpleUtil.zoomy);
+        getWindowManager().getDefaultDisplay().getSize(point);
+        SimpleUtil.log("pixvirtual XY:" + point.x + "," + point.y);
+        if (SimpleUtil.zoomy - point.x != 0) {
+            SimpleUtil.log("检测到刘海屏");
+            SimpleUtil.LIUHAI = getStatusBarHeight();
+        }
+        SimpleUtil.log("Liuhai:" + SimpleUtil.LIUHAI + " bar height:" + getStatusBarHeight());
     }
 
+    private int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
+    }
     @Override
     protected void onResume() {
         super.onResume();
@@ -221,19 +242,6 @@ public class MainActivity extends Activity {
             mProgress.setVisibility(View.VISIBLE);
             mButton.clearAnimation();
             mButton.setVisibility(View.GONE);
-            SimpleUtil.runOnUIThread(new Runnable() {
-                @Override
-                public void run() {
-                    Point point = new Point();
-                    //getWindowManager().getDefaultDisplay().getSize(point);
-                    getWindowManager().getDefaultDisplay().getRealSize(point);
-                    SimpleUtil.zoomx = Math.min(point.x, point.y);
-                    SimpleUtil.zoomy = Math.max(point.x, point.y);
-                    SimpleUtil.saveToShare(MainActivity.this, "ini", "zoomx", SimpleUtil.zoomx);
-                    SimpleUtil.saveToShare(MainActivity.this, "ini", "zoomy", SimpleUtil.zoomy);
-                    //SimpleUtil.toast(MainActivity.this, SimpleUtil.zoomx + "," + SimpleUtil.zoomy);
-                }
-            }, 200);
         }
 
         @Override
@@ -245,7 +253,6 @@ public class MainActivity extends Activity {
                 SimpleUtil.sleep(500);
                 String use = null;
                 for (String ini : keyConfigFiles) {
-                    SimpleUtil.log("asyhash:" + hashCode());
                     if (ini.contains("刺激战场")) {
                         use = ini;
                         continue;

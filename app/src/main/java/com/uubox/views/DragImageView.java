@@ -241,7 +241,7 @@ public class DragImageView extends android.support.v7.widget.AppCompatImageView 
             ((FrameLayout.LayoutParams) params).leftMargin = beforep[0] + distx;
             ((FrameLayout.LayoutParams) params).topMargin = beforep[1] + disty;
             setLayoutParams(params);
-            SimpleUtil.log("position:" + ((FrameLayout.LayoutParams) params).leftMargin + "," + ((FrameLayout.LayoutParams) params).topMargin);
+            //SimpleUtil.log("position:" + ((FrameLayout.LayoutParams) params).leftMargin + "," + ((FrameLayout.LayoutParams) params).topMargin);
 
 
             mCurrentX = (int) event.getRawX();

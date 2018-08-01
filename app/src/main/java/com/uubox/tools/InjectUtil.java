@@ -517,7 +517,7 @@ public class InjectUtil {
     }
 
     private static void saveBtnParamsObjs() {
-        XmlPugiElement ini_xml = XmlPugiElement.createXml("/sdcard/Zhiwan/ini_button_xxx.xml", "Root", true);
+        XmlPugiElement ini_xml = XmlPugiElement.createXml("/sdcard/Zhiwan/ini_button_" + comfirGame + ".xml", "Root", true);
         XmlPugiElement zoom = ini_xml.addNode("ZOOM");
         zoom.addAttr("zoomx", SimpleUtil.zoomx + "");
         zoom.addAttr("zoomy", SimpleUtil.zoomy + "");
