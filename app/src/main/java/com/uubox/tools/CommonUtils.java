@@ -24,7 +24,7 @@ import java.security.MessageDigest;
 import java.util.List;
 
 import com.uubox.padtool.R;
-import com.uubox.views.BtnDialogActivity;
+import com.uubox.views.MouseAdjestDialog;
 
 /**
  * 通用工具类，放置一些通用的函数接口。
@@ -213,7 +213,7 @@ public class CommonUtils {
         List<ActivityManager.RunningTaskInfo> taskInfo = activityManager.getRunningTasks(1);
         ComponentName componentName = taskInfo.get(0).topActivity;
         String classname = componentName.getClassName();
-        if (classname.equals(BtnDialogActivity.class.getName()) || classname
+        if (classname.equals(MouseAdjestDialog.class.getName()) || classname
                 .equals("Activity已经移除")) {
 
             foreground = false;
@@ -241,7 +241,7 @@ public class CommonUtils {
                 (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningTaskInfo> am = activityManager.getRunningTasks(1);
         String classname = am.get(0).topActivity.getClassName();
-        if (classname.equals(BtnDialogActivity.class.getName())) {
+        if (classname.equals(MouseAdjestDialog.class.getName())) {
             foreground = true;
         }
         return foreground;

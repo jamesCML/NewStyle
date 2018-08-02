@@ -11,10 +11,12 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 
-import com.uubox.padtool.R;
 import com.uubox.tools.BtnUtil;
-import com.uubox.tools.InjectUtil;
+import com.uubox.tools.BtnParamTool;
 import com.uubox.tools.SimpleUtil;
+
+import java.util.Iterator;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static android.content.Context.WINDOW_SERVICE;
 
@@ -29,10 +31,6 @@ public class KeyboardFloatView extends FrameLayout {
     private static final int BTN_COUNT = KeyboardView.Btn.values().length;
     private static KeyboardFloatView mInstance;
     /**
-     * 状态栏高度
-     */
-    private static int mStatusBarHight;
-    /**
      * 预防重复添加或移除
      */
     private boolean mIsAdded = false;
@@ -41,7 +39,6 @@ public class KeyboardFloatView extends FrameLayout {
     /**
      * 保存创建的全部按钮，按钮具有唯一性
      */
-    private ImageView[] mIvBtns = new ImageView[BTN_COUNT];
 
     private KeyboardFloatView(@NonNull Context context) {
         super(context);
@@ -50,7 +47,6 @@ public class KeyboardFloatView extends FrameLayout {
     public static KeyboardFloatView getInstance(Context context) {
         if (mInstance == null) {
             mInstance = new KeyboardFloatView(context.getApplicationContext());
-            mStatusBarHight = 50;//yf_error
         }
         return mInstance;
     }
@@ -60,7 +56,7 @@ public class KeyboardFloatView extends FrameLayout {
             return;
         }
         // 重新载入按钮参数
-        //InjectUtil.loadBtnParamsFromPrefs(getContext());
+        //BtnParamTool.loadBtnParamsFromPrefs(getContext());
         SimpleUtil.log("keymanager show");
         loadUi();
         addToWM();
@@ -82,57 +78,57 @@ public class KeyboardFloatView extends FrameLayout {
     }
 
 
-    /**
-     * 载入之前保存的UI，如果之前有保存按钮的参数，则将创建该按钮并将其坐标和半径设置为保存的值。
-     */
     private void loadUi() {
-        Context context = getContext();
-        int x;
-        int y;
-        for (KeyboardView.Btn btn : KeyboardView.Btn.values()) {
-            x = InjectUtil.getBtnPositionX(btn) - SimpleUtil.LIUHAI;
-            y = InjectUtil.getBtnPositionY(btn);
-            ImageView iv = mIvBtns[btn.ordinal()];
-            if ((x <= 0 && y <= 0 && InjectUtil.getBtnRadius(btn) <= 0) || iv != null
-                    // 不显示方向键和鼠标
-                    || btn == KeyboardView.Btn.L || btn == KeyboardView.Btn.R) {
-                continue;
-            }
-            iv = new ImageView(context);
-            Drawable drawable = BtnUtil.getBtnDrawable(btn, context);
-            if (drawable != null) {
-                iv.setImageDrawable(drawable);
-            }
-            iv.setTag(btn);
-            LayoutParams layoutParams =
-                    new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-            layoutParams.leftMargin = x;
-            layoutParams.topMargin = y;
-            int r = InjectUtil.getBtnRadius(btn);
-            if (r > 0) {
-                layoutParams.width = 2 * r;
-                layoutParams.height = layoutParams.width;
-                layoutParams.leftMargin -= r;
-                layoutParams.topMargin -= r;
-            } else {
-                iv.setLayoutParams(layoutParams);
-                iv.measure(0, 0);
-                layoutParams.leftMargin -= iv.getMeasuredWidth() / 2;
-                layoutParams.topMargin -= iv.getMeasuredHeight() / 2;
-            }
+        ConcurrentHashMap<KeyboardView.Btn, BtnParams> buttons = BtnParamTool.getmBtnParams();
+        Iterator<KeyboardView.Btn> it = buttons.keySet().iterator();
+        while (it.hasNext()) {
+            KeyboardView.Btn btn = it.next();
+            BtnParams params = buttons.get(btn);
+            addView(params, btn);
 
-            // 因为悬浮窗口的绘制区域不包含状态栏，所以需要减去状态栏的高度
-            //layoutParams.topMargin -= mStatusBarHight;
-
-            //iv.setBackgroundResource(InjectUtil.getBtnBelongColor(params));
-            addView(iv, layoutParams);
-            mIvBtns[btn.ordinal()] = iv;
         }
+
     }
 
+    private void addView(BtnParams params, KeyboardView.Btn btn) {
+        int x = params.getX() - SimpleUtil.LIUHAI;
+        int y = params.getY();
+        ImageView iv = new ImageView(getContext());
+        if ((x <= 0 && y <= 0 && BtnParamTool.getBtnRadius(btn) <= 0)
+                // 不显示方向键和鼠标
+                || btn == KeyboardView.Btn.L || btn == KeyboardView.Btn.R) {
+            return;
+        }
+        iv = new ImageView(getContext());
+        Drawable drawable = BtnUtil.getBtnDrawable(btn, getContext());
+        if (drawable != null) {
+            iv.setImageDrawable(drawable);
+        }
+        iv.setTag(btn);
+        LayoutParams layoutParams =
+                new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        layoutParams.leftMargin = x;
+        layoutParams.topMargin = y;
+        int r = BtnParamTool.getBtnRadius(btn);
+        if (r > 0) {
+            layoutParams.width = 2 * r;
+            layoutParams.height = layoutParams.width;
+            layoutParams.leftMargin -= r;
+            layoutParams.topMargin -= r;
+        } else {
+            iv.setLayoutParams(layoutParams);
+            iv.measure(0, 0);
+            layoutParams.leftMargin -= iv.getMeasuredWidth() / 2;
+            layoutParams.topMargin -= iv.getMeasuredHeight() / 2;
+        }
+        iv.setBackgroundResource(BtnParamTool.getBtnBelongColor(params));
+        addView(iv, layoutParams);
+        if (params.iHaveChild()) {
+            addView(params.getBtn2(), btn);
+        }
+    }
     private void clearUI() {
         removeAllViews();
-        mIvBtns = new ImageView[BTN_COUNT];
     }
 
     /**

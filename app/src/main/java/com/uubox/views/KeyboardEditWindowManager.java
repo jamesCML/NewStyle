@@ -1,17 +1,14 @@
 package com.uubox.views;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
-import com.uubox.padtool.R;
-import com.uubox.tools.InjectUtil;
+import com.uubox.tools.BtnParamTool;
 import com.uubox.tools.SimpleUtil;
 
 import static android.content.Context.WINDOW_SERVICE;
@@ -84,7 +81,7 @@ public class KeyboardEditWindowManager {
                 if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
                     SimpleUtil.log("windManager,key1:" + event);
                     SimpleUtil.notifyall_(4, null);
-                    boolean changed = InjectUtil.hasBtnParamsChanged();
+                    boolean changed = BtnParamTool.hasBtnParamsChanged();
                     // 退出映射界面
                     if (changed && rootView.getChildCount() == 1) {
                         KeyboardView keyboardView = (KeyboardView) rootView.getChildAt(0);
@@ -106,7 +103,7 @@ public class KeyboardEditWindowManager {
                 return true;
             }
         });*/
-        InjectUtil.disableInjection();
+        BtnParamTool.disableInjection();
         try {
             mLayoutParams.gravity = Gravity.TOP;
             mWindowManager.addView(rootView, mLayoutParams);
@@ -233,7 +230,7 @@ public class KeyboardEditWindowManager {
     }
 
     public void close(boolean rightnow) {
-        InjectUtil.enableInjection();
+        BtnParamTool.enableInjection();
 
         try {
             if (rootView != null) {
@@ -257,12 +254,13 @@ public class KeyboardEditWindowManager {
         }
 
 
-        if (InjectUtil.isShowKbFloatView(mContext)) {
+        if (BtnParamTool.isShowKbFloatView(mContext)) {
             KeyboardFloatView.getInstance(mContext).show();
         }
 
         if (!SimpleUtil.mAOAInjectEable) {
             SimpleUtil.log("notifyall_ 10004");
+
             SimpleUtil.notifyall_(10004, null);
         }
     }

@@ -48,9 +48,8 @@ public class BtnParams implements Serializable {
     /**
      * 复次的按钮类型
      */
-    private int keyRepeatType;
-    private boolean isBelongButton;
-    private int mSpecilType;
+    private int mKeyType;
+    private boolean mIsParent;
     private KeyboardView.Btn belongBtn;
 
     public KeyboardView.Btn getBelongBtn() {
@@ -62,12 +61,12 @@ public class BtnParams implements Serializable {
         this.belongBtn = belongBtn;
     }
 
-    public boolean isBelongButton() {
-        return isBelongButton;
+    public boolean isParent() {
+        return mIsParent;
     }
 
-    public void setBelongButton(boolean belongButton) {
-        isBelongButton = belongButton;
+    public void doParent(boolean mIsParent) {
+        this.mIsParent = mIsParent;
     }
 
     public BtnParams getBtn2() {
@@ -86,20 +85,24 @@ public class BtnParams implements Serializable {
         this.keyRepeatSwitch = keyRepeatSwitch;
     }
 
-    public int getKeyRepeatType() {
-        return keyRepeatType;
+    public int getKeyType() {
+        return mKeyType;
     }
 
     public boolean iHaveChild() {
-        return keyRepeatType == 1 || keyRepeatType == 2;
+        return isParent();
+    }
+
+    public boolean iAnChild() {
+        return mKeyType == 1 || mKeyType == 2;
     }
     /**
      * 0：没有附属按键
      * 1：联动按键
      * 2：互斥按键
      */
-    public void setKeyRepeatType(int keyRepeatType) {
-        this.keyRepeatType = keyRepeatType;
+    public void setKeyType(int mKeyType) {
+        this.mKeyType = mKeyType;
     }
 
     public int getR() {
@@ -152,7 +155,7 @@ public class BtnParams implements Serializable {
 
     @Override
     public String toString() {
-        return "BtnParams(x: " + x + ", y: " + y + ", r: " + r + ", mode: " + mode + ", step: "
-                + step + ", frequency: " + frequency + ")";
+        return belongBtn + "(x: " + x + ", y: " + y + ", r: " + r + ", mKeyType: " + mKeyType + ", step: "
+                + step + ", mIsParent: " + mIsParent + ")";
     }
 }

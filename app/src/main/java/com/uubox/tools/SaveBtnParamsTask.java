@@ -2,9 +2,7 @@ package com.uubox.tools;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.widget.Toast;
 
-import com.uubox.padtool.R;
 import com.uubox.views.KeyboardEditWindowManager;
 import com.uubox.views.KeyboardView;
 
@@ -35,7 +33,7 @@ public class SaveBtnParamsTask extends AsyncTask<String, Integer, String> {
     protected String doInBackground(String... args) {
         String[] sp = args[0].split("#Z%W#", -1);
         isNewIni = sp[1].equals(sp[2]);
-        InjectUtil.saveBtnParams(mContext, args[0]);
+        BtnParamTool.saveBtnParams(mContext, args[0]);
         return sp[1];
     }
 
@@ -48,7 +46,7 @@ public class SaveBtnParamsTask extends AsyncTask<String, Integer, String> {
         SimpleUtil.addMsgBottomToTop(mContext, "已保存到本地！", false);
 
         if (isNewIni) {
-            InjectUtil.loadBtnParamsFromPrefs(mContext);
+            BtnParamTool.loadBtnParamsFromPrefs(mContext);
             mKeyboardView.loadUi();
             SimpleUtil.saveToShare(mContext, "ini", "NewConfigNotWrite", aVoid);
 

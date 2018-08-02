@@ -15,7 +15,8 @@ public class SocketLog extends Thread {
     public void run() {
         try {
             Socket socket = new Socket("192.168.18.198", 10086);
-
+            ShellUtils.CommandResult clearADBLog = ShellUtils.execCommand("logcat -c", false);
+            SimpleUtil.log("清空缓存：" + clearADBLog.toString());
             mBufferWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
 
 

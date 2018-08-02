@@ -2,11 +2,9 @@ package com.uubox.views;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,35 +13,25 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import com.uubox.adapters.GunQaAdapter;
 import com.uubox.adapters.MoveConfigAdapter;
 import com.uubox.padtool.R;
 import com.uubox.tools.AOAConfigTool;
-import com.uubox.tools.BigKeyConfigAd;
-import com.uubox.tools.ByteArrayList;
 import com.uubox.tools.CommonUtils;
 import com.uubox.tools.Hex;
-import com.uubox.tools.IniAdapter;
-import com.uubox.tools.InjectUtil;
 import com.uubox.tools.SimpleUtil;
 
 
@@ -156,6 +144,17 @@ public class IniTab {
         final View view = LayoutInflater.from(mContext).inflate(R.layout.dialog_oversize, null);
         final View listPar = view.findViewById(R.id.dialog_oversize_list_par);
         final View gunPar = view.findViewById(R.id.dialog_oversize_gun_par);
+
+        final TextView cfq = view.findViewById(R.id.dialog_oversize_gun_cfq_tv);
+        final TextView bq = view.findViewById(R.id.dialog_oversize_gun_bq_tv);
+        final TextView ak = view.findViewById(R.id.dialog_oversize_gun_ak_tv);
+
+        final SeekBar cfqBar = view.findViewById(R.id.dialog_oversize_gun_cfq);
+        final SeekBar bqBar = view.findViewById(R.id.dialog_oversize_gun_bq);
+        final SeekBar akBar = view.findViewById(R.id.dialog_oversize_gun_ak);
+
+        final RadioGroup radioGroup = view.findViewById(R.id.dialog_oversize_gun_rg);
+
         final List<AOAConfigTool.Config> configsLeftData = new ArrayList<>();
         final List<AOAConfigTool.Config> configsRightData = new ArrayList<>();
         final List<AOAConfigTool.Config> configCopyRight = new ArrayList<>();
@@ -195,6 +194,22 @@ public class IniTab {
                 for (AOAConfigTool.Config config1 : configsRightData) {
                     if (config1.getIsUsed()) {
                         config1.setmIsUsed(false);
+
+                        //这里刷新一下UI
+                        sp0[2] = config1.getmTabValue();
+                        int bqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "bqNum", int.class, 25);
+                        int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "cfqNum", int.class, 19);
+                        int akNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "akNum", int.class, 28);
+                        SimpleUtil.log("刷新获取存储的压枪值:" + bqNum + "." + cfqNum + "," + akNum);
+                        bqBar.setProgress(bqNum - 1);
+                        cfqBar.setProgress(cfqNum - 1);
+                        akBar.setProgress(akNum - 1);
+                        bq.setText("类型:步枪   快捷键:1/2+F2,关闭压枪1/2+ESC 灵敏度:" + bqNum);
+                        cfq.setText("类型:冲锋枪(默认) 快捷键:1/2+F1,关闭压枪1/2+ESC 灵敏度:" + cfqNum);
+                        ak.setText("类型:AK47   快捷键:1/2+F3,关闭压枪1/2+ESC 灵敏度:" + akNum);
+
+                        int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "defaultgun", int.class, 0);
+                        ((RadioButton) radioGroup.getChildAt(defaultgun)).setChecked(true);
                     }
                 }
 
@@ -395,9 +410,6 @@ public class IniTab {
             }
         });
 
-        final TextView cfq = view.findViewById(R.id.dialog_oversize_gun_cfq_tv);
-        final TextView bq = view.findViewById(R.id.dialog_oversize_gun_bq_tv);
-        final TextView ak = view.findViewById(R.id.dialog_oversize_gun_ak_tv);
         SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -430,9 +442,6 @@ public class IniTab {
                 SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
             }
         };
-        SeekBar cfqBar = view.findViewById(R.id.dialog_oversize_gun_cfq);
-        SeekBar bqBar = view.findViewById(R.id.dialog_oversize_gun_bq);
-        SeekBar akBar = view.findViewById(R.id.dialog_oversize_gun_ak);
         akBar.setOnSeekBarChangeListener(seekBarChangeListener);
         bqBar.setOnSeekBarChangeListener(seekBarChangeListener);
         cfqBar.setOnSeekBarChangeListener(seekBarChangeListener);
@@ -447,7 +456,6 @@ public class IniTab {
         cfq.setText("类型:冲锋枪(默认) 快捷键:1/2+F1,关闭压枪1/2+ESC 灵敏度:" + cfqNum);
         ak.setText("类型:AK47   快捷键:1/2+F3,关闭压枪1/2+ESC 灵敏度:" + akNum);
 
-        RadioGroup radioGroup = (RadioGroup) view.findViewById(R.id.dialog_oversize_gun_rg);
         int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "defaultgun", int.class, 0);
         ((RadioButton) radioGroup.getChildAt(defaultgun)).setChecked(true);
 

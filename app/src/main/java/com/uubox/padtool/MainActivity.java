@@ -1,11 +1,8 @@
 package com.uubox.padtool;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.AppOpsManager;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
@@ -14,12 +11,9 @@ import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.os.Process;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,8 +29,8 @@ import android.widget.Toast;
 
 import java.lang.reflect.Method;
 
+import com.uubox.tools.BtnParamTool;
 import com.uubox.tools.CommonUtils;
-import com.uubox.tools.InjectUtil;
 import com.uubox.tools.SimpleUtil;
 import com.uubox.tools.SocketLog;
 
@@ -261,13 +255,13 @@ public class MainActivity extends Activity {
                         use = ini;
                         continue;
                     }
-                    InjectUtil.setComfirGame(ini);
-                    InjectUtil.loadBtnParamsFromPrefs(MainActivity.this, false);
+                    BtnParamTool.setComfirGame(ini);
+                    BtnParamTool.loadBtnParamsFromPrefs(MainActivity.this, false);
                     proc++;
                     publishProgress(proc, keyConfigFiles.length);
                 }
-                InjectUtil.setComfirGame(use);
-                InjectUtil.loadBtnParamsFromPrefs(MainActivity.this, false);
+                BtnParamTool.setComfirGame(use);
+                BtnParamTool.loadBtnParamsFromPrefs(MainActivity.this, false);
                 publishProgress(keyConfigFiles.length, keyConfigFiles.length);
 
             } catch (Exception e) {

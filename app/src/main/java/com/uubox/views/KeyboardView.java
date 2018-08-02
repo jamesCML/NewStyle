@@ -39,9 +39,9 @@ import java.util.concurrent.ConcurrentMap;
 import com.uubox.padtool.MainService;
 import com.uubox.padtool.R;
 import com.uubox.tools.AOAConfigTool;
+import com.uubox.tools.BtnParamTool;
 import com.uubox.tools.BtnUtil;
 import com.uubox.tools.IniAdapter;
-import com.uubox.tools.InjectUtil;
 import com.uubox.tools.SaveBtnParamsTask;
 import com.uubox.tools.SimpleUtil;
 
@@ -150,7 +150,7 @@ public class KeyboardView extends FrameLayout
     private Drawable drawable;
     private boolean dialogShow;
     private Vibrator vibrator;
-    private BtnDialogActivity btnDialogActivity;
+    private MouseAdjestDialog btnDialogActivity;
 
     @SuppressLint("ResourceType")
     public KeyboardView(Context context) {
@@ -163,7 +163,7 @@ public class KeyboardView extends FrameLayout
         initViews();
         initScreenParams();
         // 重新载入按钮参数
-        InjectUtil.loadBtnParamsFromPrefs(getContext());
+        BtnParamTool.loadBtnParamsFromPrefs(getContext());
         loadUi();
 
     }
@@ -178,7 +178,7 @@ public class KeyboardView extends FrameLayout
         initViews();
         initScreenParams();
         // 重新载入按钮参数
-        InjectUtil.loadBtnParamsFromPrefs(getContext());
+        BtnParamTool.loadBtnParamsFromPrefs(getContext());
         loadUi();
 
     }
@@ -265,25 +265,25 @@ public class KeyboardView extends FrameLayout
                  */
                 int btnRadius = mCopyingBtn.getWidth() / 2;
                 DragImageView iv = new DragImageView(getContext());
-                InjectUtil.getBtnNormalBtn(Btn.Q).setBelongBtn(Btn.Q);
-                iv.setTag(InjectUtil.getBtnNormalBtn(Btn.Q));
+                BtnParamTool.getBtnNormalBtn(Btn.Q).setBelongBtn(Btn.Q);
+                iv.setTag(BtnParamTool.getBtnNormalBtn(Btn.Q));
                 if (mCopyingBtn == mBarWhat) {
-                    InjectUtil.getBtnNormalBtn(Btn.Q).img = iv;
+                    BtnParamTool.getBtnNormalBtn(Btn.Q).img = iv;
                 } else if (mCopyingBtn == mIvMenuBtnL) {
-                    iv.setTag(InjectUtil.getBtnNormalBtn(Btn.L));
-                    InjectUtil.getBtnNormalBtn(Btn.L).img = iv;
+                    iv.setTag(BtnParamTool.getBtnNormalBtn(Btn.L));
+                    BtnParamTool.getBtnNormalBtn(Btn.L).img = iv;
                     btnRadius = mIvJoystick.getWidth() / 2;
-                    InjectUtil.setBtnPositionX(Btn.L, (int) event.getX());
-                    InjectUtil.setBtnPositionY(Btn.L, (int) event.getY());
-                    InjectUtil.setBtnRadius(Btn.L, mIvJoystick.getWidth() / 2);
+                    BtnParamTool.setBtnPositionX(Btn.L, (int) event.getX());
+                    BtnParamTool.setBtnPositionY(Btn.L, (int) event.getY());
+                    BtnParamTool.setBtnRadius(Btn.L, mIvJoystick.getWidth() / 2);
                 } else if (mCopyingBtn == mIvMenuBtnR) {
-                    iv.setTag(InjectUtil.getBtnNormalBtn(Btn.R));
-                    InjectUtil.getBtnNormalBtn(Btn.R).img = iv;
+                    iv.setTag(BtnParamTool.getBtnNormalBtn(Btn.R));
+                    BtnParamTool.getBtnNormalBtn(Btn.R).img = iv;
                     btnRadius = mIvJoystick.getWidth() / 2;
                     SimpleUtil.log("ACTION_DROP:" + (int) event.getX() + "," + (int) event.getY());
-                    InjectUtil.setBtnPositionX(Btn.R, (int) event.getX());
-                    InjectUtil.setBtnPositionY(Btn.R, (int) event.getY());
-                    InjectUtil.setBtnRadius(Btn.R, mIvJoystick.getWidth() / 2);
+                    BtnParamTool.setBtnPositionX(Btn.R, (int) event.getX());
+                    BtnParamTool.setBtnPositionY(Btn.R, (int) event.getY());
+                    BtnParamTool.setBtnRadius(Btn.R, mIvJoystick.getWidth() / 2);
                 }
                 Object obj = iv.getTag();
                 if (obj instanceof Integer) {
@@ -309,7 +309,7 @@ public class KeyboardView extends FrameLayout
 
     public void showSaveDialog() {
         String gloabkeyconfig = (String) SimpleUtil.getFromShare(getContext(), "ini", "gloabkeyconfig", String.class, "");
-        InjectUtil.setComfirGame(gloabkeyconfig.split("#Z%W#", -1)[3]);
+        BtnParamTool.setComfirGame(gloabkeyconfig.split("#Z%W#", -1)[3]);
         KeyboardEditWindowManager.getInstance().hideOrShowBottomUIMenu(false);
         List<String> items = new ArrayList<>();
         items.add("保存到当前配置");
@@ -329,16 +329,16 @@ public class KeyboardView extends FrameLayout
                     return;
                 }
                 if (curIni == null || curIni.isEmpty()) {
-                    String tempIni = InjectUtil.getComfirGame() + System.currentTimeMillis() + "#Z%W#" + InjectUtil.getComfirGame() + "_1#Z%W#" + InjectUtil.getComfirGame() + "_1";
+                    String tempIni = BtnParamTool.getComfirGame() + System.currentTimeMillis() + "#Z%W#" + BtnParamTool.getComfirGame() + "_1#Z%W#" + BtnParamTool.getComfirGame() + "_1";
                     SaveBtnParamsTask saveBtnParamsTask = new SaveBtnParamsTask(getContext());
                     saveBtnParamsTask.setmKeyboardView(KeyboardView.this);
                     saveBtnParamsTask.execute(tempIni);
-                    //InjectUtil.saveBtnParams(getContext(), tempIni);
+                    //BtnParamTool.saveBtnParams(getContext(), tempIni);
                 } else {
                     SaveBtnParamsTask saveBtnParamsTask = new SaveBtnParamsTask(getContext());
                     saveBtnParamsTask.setmKeyboardView(KeyboardView.this);
                     saveBtnParamsTask.execute(curIni);
-                    //InjectUtil.saveBtnParams(getContext(), curIni);
+                    //BtnParamTool.saveBtnParams(getContext(), curIni);
                 }
 
             }
@@ -369,8 +369,8 @@ public class KeyboardView extends FrameLayout
                 } else {
                     curName = gloabkeyconfig.split("#Z%W#", -1)[1];
                     inibt_cur.setTextColor(Color.YELLOW);
-                    InjectUtil.setComfirGame(gloabkeyconfig.split("#Z%W#", -1)[3]);
-                    inibt_cur.setText("当前使用:" + InjectUtil.getComfirGame() + "/" + curName);
+                    BtnParamTool.setComfirGame(gloabkeyconfig.split("#Z%W#", -1)[3]);
+                    inibt_cur.setText("当前使用:" + BtnParamTool.getComfirGame() + "/" + curName);
 
                 }
 
@@ -378,7 +378,7 @@ public class KeyboardView extends FrameLayout
                 ListView listView = button_ini_content.findViewById(R.id.inibt_list);
                 final List<IniAdapter.IniObj> iniDatas = new ArrayList<>();
                 IniAdapter adapter = new IniAdapter(getContext(), iniDatas);
-                SharedPreferences sharedPreferences2 = getContext().getSharedPreferences(InjectUtil.getComfirGameTab(), 0);
+                SharedPreferences sharedPreferences2 = getContext().getSharedPreferences(BtnParamTool.getComfirGameTab(), 0);
                 Iterator<? extends Map.Entry<String, ?>> it = sharedPreferences2.getAll().entrySet().iterator();
                 while (it.hasNext()) {
                     Map.Entry<String, ?> obj = it.next();
@@ -418,15 +418,15 @@ public class KeyboardView extends FrameLayout
                             //SimpleUtil.toast(getContext().getString(R.string.msg_a5));
                             return;
                         }
-                        InjectUtil.saveBtnParams(getContext(), iniDatas.get(position).whole);
+                        BtnParamTool.saveBtnParams(getContext(), iniDatas.get(position).whole);
                         //SimpleUtil.toast(getContext().getString(R.string.save_success));
-                        InjectUtil.setBtnParamsChanged(false);
+                        BtnParamTool.setBtnParamsChanged(false);
                         KeyboardEditWindowManager.getInstance().removeView(button_ini_content);
                         KeyboardEditWindowManager.getInstance().close();
                         //保存之后使用
                         String[] sp = iniDatas.get(position).whole.split("#Z%W#", -1);
-                        SimpleUtil.saveToShare(getContext(), "ini", "gloabkeyconfig", "default#Z%W#" + sp[1] + "#Z%W#" + sp[2] + "#Z%W#" + InjectUtil.getComfirGame());
-                        InjectUtil.loadBtnParamsFromPrefs(getContext());
+                        SimpleUtil.saveToShare(getContext(), "ini", "gloabkeyconfig", "default#Z%W#" + sp[1] + "#Z%W#" + sp[2] + "#Z%W#" + BtnParamTool.getComfirGame());
+                        BtnParamTool.loadBtnParamsFromPrefs(getContext());
                         loadUi();
                         SimpleUtil.notifyall_(10003, null);
 
@@ -442,7 +442,7 @@ public class KeyboardView extends FrameLayout
             @Override
             public void run() {
                 LinkedHashMap<String, String> items = new LinkedHashMap<>();
-                items.put("配置名称", InjectUtil.getComfirGame() + "_" + SimpleUtil.getSha1(System.currentTimeMillis() + "").substring(0, 5));
+                items.put("配置名称", BtnParamTool.getComfirGame() + "_" + SimpleUtil.getSha1(System.currentTimeMillis() + "").substring(0, 5));
 
                 SimpleUtil.addEditToTop(getContext(), "保存配置", items, null, new Runnable() {
                     @Override
@@ -467,9 +467,15 @@ public class KeyboardView extends FrameLayout
                     boolean isSecond = (Boolean) obj.get("isSecond");
 
                     if (!isSecond) {
-                        InjectUtil.resetBtnParams(btn);
+
+                        Object isKeySet = obj.get("isKeySet");
+                        if (isKeySet != null && (Boolean) isKeySet) {
+                            BtnParamTool.setBtnRepeatType(btn, (Integer) obj.get("oldkey"));
+                        } else {
+                            BtnParamTool.resetBtnParams(btn);
+                        }
                     } else {
-                        InjectUtil.resetRepeatBtnParams(btn);
+                        BtnParamTool.resetRepeatBtnParams(btn);
                     }
                 }
                 addingBtns.clear();
@@ -493,7 +499,7 @@ public class KeyboardView extends FrameLayout
             }
             List<String> backs = (List<String>) obj;
             final String iniName = backs.get(0);
-            if (!InjectUtil.canSaveIniToXml(getContext(), iniName)) {
+            if (!BtnParamTool.canSaveIniToXml(getContext(), iniName)) {
                 Toast.makeText(getContext(), "配置名称已经存在",
                         Toast.LENGTH_SHORT).show();
                 return;
@@ -510,15 +516,15 @@ public class KeyboardView extends FrameLayout
             }
 
 
-            SimpleUtil.log("preare to save comfirgame:" + InjectUtil.getComfirGame());
-            if (InjectUtil.getComfirGame() == null) {
-                InjectUtil.setComfirGame(iniName);
+            SimpleUtil.log("preare to save comfirgame:" + BtnParamTool.getComfirGame());
+            if (BtnParamTool.getComfirGame() == null) {
+                BtnParamTool.setComfirGame(iniName);
                 SimpleUtil.log("preare to save setcomfirgame:" + iniName);
             }
 
             KeyboardEditWindowManager.getInstance().removeTop();
             List<String> items = new ArrayList<>();
-            items.add("保存到目录【" + InjectUtil.getComfirGame() + "】");
+            items.add("保存到目录【" + BtnParamTool.getComfirGame() + "】");
             items.add("新建配置目录");
             List<Runnable> tasks = new ArrayList<>();
             tasks.add(new Runnable() {
@@ -526,7 +532,7 @@ public class KeyboardView extends FrameLayout
                 public void run() {
                     SaveBtnParamsTask saveBtnParamsTask = new SaveBtnParamsTask(getContext());
                     saveBtnParamsTask.setmKeyboardView(KeyboardView.this);
-                    saveBtnParamsTask.execute(InjectUtil.getComfirGame() + System.currentTimeMillis() + "#Z%W#" + iniName + "#Z%W#" + iniName);
+                    saveBtnParamsTask.execute(BtnParamTool.getComfirGame() + System.currentTimeMillis() + "#Z%W#" + iniName + "#Z%W#" + iniName);
                     SimpleUtil.removeINormalCallback(newinietback);
                 }
             });
@@ -563,10 +569,10 @@ public class KeyboardView extends FrameLayout
                                     return;
                                 }
                             }
-                            InjectUtil.setComfirGame(newIniContentName);
+                            BtnParamTool.setComfirGame(newIniContentName);
                             SaveBtnParamsTask saveBtnParamsTask = new SaveBtnParamsTask(getContext());
                             saveBtnParamsTask.setmKeyboardView(KeyboardView.this);
-                            saveBtnParamsTask.execute(InjectUtil.getComfirGame() + System.currentTimeMillis() + "#Z%W#" + iniName + "#Z%W#" + iniName);
+                            saveBtnParamsTask.execute(BtnParamTool.getComfirGame() + System.currentTimeMillis() + "#Z%W#" + iniName + "#Z%W#" + iniName);
                             SimpleUtil.removeINormalCallback(newinietback);
 
                         }
@@ -605,7 +611,7 @@ public class KeyboardView extends FrameLayout
             if (KeyboardEditWindowManager.getInstance().rootViewChildCount() > 1) {
                 return;
             }
-            boolean changed = InjectUtil.hasBtnParamsChanged();
+            boolean changed = BtnParamTool.hasBtnParamsChanged();
             if (changed) {
                 //确认保存对话框
                 showSaveDialog();
@@ -643,18 +649,17 @@ public class KeyboardView extends FrameLayout
             return;
         }
         //第二次映射
-        if (InjectUtil.getBtnNormalBtn(btn).img != null) {
+        if (BtnParamTool.getBtnNormalBtn(btn).getKeyType() == 3) {
+            SimpleUtil.addMsgBottomToTop(getContext(), "key不能添加附属按键按键!", true);
+            return;
+        }
+        if (BtnParamTool.getBtnNormalBtn(btn).img != null) {
             List<String> items = new ArrayList<>();
             items.add("联动");
             // items.add("交替");
             items.add("清除 " + btn);
             List<Runnable> runnables = new ArrayList<>();
-            /*runnables.add(new Runnable() {
-                @Override
-                public void run() {
-                    addSecFucButton(btn,3);
-                }
-            });*/
+
             runnables.add(new Runnable() {
                 @Override
                 public void run() {
@@ -664,15 +669,8 @@ public class KeyboardView extends FrameLayout
             runnables.add(new Runnable() {
                 @Override
                 public void run() {
-                    addSecFucButton(btn, 2);
-                }
-
-            });
-            runnables.add(new Runnable() {
-                @Override
-                public void run() {
                     dialogShow = false;
-                    removeBtn(InjectUtil.getBtnNormalBtn(btn));
+                    removeBtn(BtnParamTool.getBtnNormalBtn(btn));
                     mFlMain.removeView(whatImg);
                     whatImg = null;
                 }
@@ -693,8 +691,8 @@ public class KeyboardView extends FrameLayout
 
             return;
         } else {
-//            btn.setKeyRepeatType(0);
-            drawable = getBtnDrawable(InjectUtil.getBtnNormalBtn(btn));
+//            btn.setKeyType(0);
+            drawable = getBtnDrawable(BtnParamTool.getBtnNormalBtn(btn));
         }
 
         if (drawable != null) {
@@ -706,38 +704,37 @@ public class KeyboardView extends FrameLayout
         obj.put("isSecond", false);
         addingBtns.add(obj);
 
-        whatImg.setTag(InjectUtil.getBtnNormalBtn(btn));
+        whatImg.setTag(BtnParamTool.getBtnNormalBtn(btn));
 
-        InjectUtil.setBtnPositionX(btn,
+        BtnParamTool.setBtnPositionX(btn,
                 (int) whatImg.getX() + whatImg.getWidth() / 2);
-        InjectUtil.setBtnPositionY(btn,
+        BtnParamTool.setBtnPositionY(btn,
                 (int) whatImg.getY() + whatImg.getHeight() / 2);
-        InjectUtil.setBtnRadius(btn, whatImg.getWidth() / 2);
+        BtnParamTool.setBtnRadius(btn, whatImg.getWidth() / 2);
 
-        InjectUtil.getBtnNormalBtn(btn).img = whatImg;
-        InjectUtil.getBtnNormalBtn(btn).setBelongBtn(btn);
+        BtnParamTool.getBtnNormalBtn(btn).img = whatImg;
+        BtnParamTool.getBtnNormalBtn(btn).setBelongBtn(btn);
         whatImg = null;
     }
 
     private void addSecFucButton(Btn btn, int type) {
         dialogShow = false;
-        if (InjectUtil.getBtnRepeatBtn2(btn) != null) {
-            mFlMain.removeView(InjectUtil.getBtnRepeatBtn2(btn).img);
+        if (BtnParamTool.getBtnRepeatBtn2(btn) != null) {
+            mFlMain.removeView(BtnParamTool.getBtnRepeatBtn2(btn).img);
         }
 
-        InjectUtil.setBtnRepeatType(btn, type);
-
+        BtnParamTool.getBtnNormalBtn(btn).doParent(true);
         //设置btn2
         BtnParams params = new BtnParams();
         //设置主节点，表示该参数是从属
-        params.setBelongButton(true);
+        params.doParent(false);
         params.setBelongBtn(btn);
-
+        params.setKeyType(type);
         drawable = getBtnDrawable(params);
         if (drawable != null) {
             whatImg.setImageDrawable(drawable);
         }
-
+        whatImg.setBackgroundResource(BtnParamTool.getBtnBelongColor(params));
 
         whatImg.setTag(params);
 
@@ -749,7 +746,7 @@ public class KeyboardView extends FrameLayout
 
         params.img = whatImg;
         whatImg = null;
-        InjectUtil.setBtnRepeatBtn2(btn, params);
+        BtnParamTool.setBtnRepeatBtn2(btn, params);
 
         HashMap<String, Object> obj = new HashMap<>();
         obj.put("btn", btn);
@@ -772,7 +769,7 @@ public class KeyboardView extends FrameLayout
      */
     @Override
     public void onDragStart(View v) {
-        View vv = InjectUtil.getBtnNormalBtn(Btn.R).img;
+        View vv = BtnParamTool.getBtnNormalBtn(Btn.R).img;
         SimpleUtil.log("vv3:" + vv);
         Log.i(TAG, "onDragStart: 在拖动开始" + v.toString());
         // 显示删除按钮
@@ -799,7 +796,7 @@ public class KeyboardView extends FrameLayout
                 whatImg = null;
             } else {
                 BtnParams params = (BtnParams) v.getTag();
-                if (params.getKeyRepeatType() == 3) {
+                if (params.getKeyType() == 3) {
                     SimpleUtil.addMsgBottomToTop(getContext(), "固定按键不能移除！", true);
                     return;
                 }
@@ -830,7 +827,7 @@ public class KeyboardView extends FrameLayout
                     params.setY(y);
                     SimpleUtil.log("save the XY:" + x + "," + y + " LIUHAI:" + SimpleUtil.LIUHAI + "  hash:" + params.hashCode());
                     sss = x + "," + y;
-                    InjectUtil.setBtnParamsChanged(true);
+                    BtnParamTool.setBtnParamsChanged(true);
                 }
 
             }
@@ -859,12 +856,12 @@ public class KeyboardView extends FrameLayout
             return;
         }
         BtnParams params = (BtnParams) v.getTag();
-        if (params.isBelongButton()) {
-            InjectUtil.setBtnRadius2(params.getBelongBtn(), v.getWidth() / 2);
+        if (params.isParent()) {
+            BtnParamTool.setBtnRadius2(params.getBelongBtn(), v.getWidth() / 2);
         } else {
-            InjectUtil.setBtnRadius(params.getBelongBtn(), v.getWidth() / 2);
+            BtnParamTool.setBtnRadius(params.getBelongBtn(), v.getWidth() / 2);
         }
-        InjectUtil.setBtnParamsChanged(true);
+        BtnParamTool.setBtnParamsChanged(true);
     }
 
     /**
@@ -879,7 +876,7 @@ public class KeyboardView extends FrameLayout
     }
 
     private void clearAllView() {
-        ConcurrentMap<Btn, BtnParams> buttons = InjectUtil.getmBtnParams();
+        ConcurrentMap<Btn, BtnParams> buttons = BtnParamTool.getmBtnParams();
         Iterator<Btn> it = buttons.keySet().iterator();
         while (it.hasNext()) {
             Btn btn = it.next();
@@ -893,20 +890,17 @@ public class KeyboardView extends FrameLayout
         }
     }
 
-    /**
-     * 载入之前保存的UI，如果之前有保存按钮的参数，则将创建该按钮并将其坐标和半径设置为保存的值。
-     */
     public void loadUi() {
         Log.i(TAG, "loadUi:   载入之前保存的UI，如果之前有保存按钮的参数，则将创建该按钮并将其坐标和半径设置为保存的值");
         int childCount = allView.size();
         for (int i = 0; i < childCount; i++) {
             mFlMain.removeView(allView.get(i));
         }
-        ConcurrentMap<Btn, BtnParams> buttons = InjectUtil.getmBtnParams();
+        ConcurrentMap<Btn, BtnParams> buttons = BtnParamTool.getmBtnParams();
         Iterator<Btn> it = buttons.keySet().iterator();
         while (it.hasNext()) {
             Btn btn = it.next();
-            makeButtonView(btn, buttons.get(btn), false);
+            makeButtonView(btn, buttons.get(btn));
         }
         GuiStep.getInstance().pushBuffToGui("key_union", "联动按钮，绿色标记，按钮同时触发");
         GuiStep.getInstance().pushBuffToGui("key_reflect", "互斥按钮，红色标记，按钮交替触发");
@@ -921,8 +915,9 @@ public class KeyboardView extends FrameLayout
     //奇怪，用帧布局移除老是只移除基数的角标,增加一个列表保存所有的View
     private List<View> allView = new ArrayList<>();
 
-    private void makeButtonView(final Btn btn, final BtnParams params, boolean isBelong) {
-
+    private void makeButtonView(final Btn btn, final BtnParams params) {
+        if (btn == Btn.KEY_F)
+            SimpleUtil.log("makeButtonView:" + params.toString());
         int x = params.getX() - SimpleUtil.LIUHAI;
         int y = params.getY();
         int rd = params.getR();
@@ -962,7 +957,7 @@ public class KeyboardView extends FrameLayout
         iv.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN);
 
-        iv.setBackgroundResource(InjectUtil.getBtnBelongColor(params));
+        iv.setBackgroundResource(BtnParamTool.getBtnBelongColor(params));
 
         allView.add(iv);
         mFlMain.addView(iv, layoutParams);
@@ -972,10 +967,8 @@ public class KeyboardView extends FrameLayout
         } else if (btn == Btn.R) {
             mIvMenuBtnR.setVisibility(GONE);
             GuiStep.getInstance().addToGui(iv, "鼠标位置，可以通过点击打开【鼠标设置】界面，可以调节鼠标灵敏度和鼠标呼出方式");
-        } else if (!isBelong) {
-            GuiStep.getInstance().addtToBuff("key_normal", iv);
         } else {
-            if (InjectUtil.getBtnNormalBtn(btn).getKeyRepeatType() == 1) {
+            if (BtnParamTool.getBtnNormalBtn(btn).getKeyType() == 1) {
                 GuiStep.getInstance().addtToBuff("key_union", iv);
             } else {
                 GuiStep.getInstance().addtToBuff("key_reflect", iv);
@@ -983,15 +976,11 @@ public class KeyboardView extends FrameLayout
         }
 
         params.img = iv;
-        if (isBelong) {
-            params.setBelongButton(true);
+
+        //表示该按钮参数有附属，则需要递归一次
+        if (params.iHaveChild()) {
+            makeButtonView(btn, params.btn2);
         }
-
-
-        //表示该按钮参数有附属，则需要递归一次,暂时不支持
-        /*if (params.getKeyRepeatType() != 0) {
-            makeButtonView(btn, InjectUtil.getBtnNormalBtn(btn).btn2, true);
-        }*/
         //SimpleUtil.log(btn.name + "   " + x + "," + y + "," + layoutParams.leftMargin + "," + layoutParams.topMargin);
     }
 
@@ -1040,23 +1029,23 @@ public class KeyboardView extends FrameLayout
             return;
         }
 
-        //该按钮使附属按钮
-        if (btnParams.isBelongButton()) {
+        if (btnParams.iAnChild()) {
             mFlMain.removeView(btnParams.img);
-            InjectUtil.resetRepeatBtnParams(btnParams.getBelongBtn());
+            BtnParamTool.resetRepeatBtnParams(btnParams.getBelongBtn());
             btnParams.img = null;
         } else {//常规按钮
             mFlMain.removeView(btnParams.img);
-            InjectUtil.resetBtnParams(btnParams.getBelongBtn());
-            btnParams.img = null;
-
             //还有附属按键，则一起死！！！！！！
             if (btnParams.iHaveChild()) {
                 BtnParams subParams = btnParams.getBtn2();
                 mFlMain.removeView(subParams.img);
-                InjectUtil.resetRepeatBtnParams(subParams.getBelongBtn());
+                BtnParamTool.resetRepeatBtnParams(subParams.getBelongBtn());
                 subParams.img = null;
             }
+            BtnParamTool.resetBtnParams(btnParams.getBelongBtn());
+            btnParams.img = null;
+
+
 
         }
 
@@ -1074,11 +1063,11 @@ public class KeyboardView extends FrameLayout
             return;
         }
 
-        KeyboardEditWindowManager.getInstance().addView(new BtnDialogActivity().create(getContext()), SimpleUtil.zoomy / 2, SimpleUtil.zoomx / 2);
+        KeyboardEditWindowManager.getInstance().addView(new MouseAdjestDialog().create(getContext()), SimpleUtil.zoomy / 2, SimpleUtil.zoomx / 2);
     }
 
     @Override
-    public void onDragImageViewClick(View v) {
+    public void onDragImageViewClick(final View v) {
         Log.i(TAG, "onDragImageViewClick: v=" + v.toString());
         if (v.getTag() == null) {
             return;
@@ -1125,7 +1114,10 @@ public class KeyboardView extends FrameLayout
             default:
                 break;
         }
-
+        if (btnParams.iHaveChild() || btnParams.iAnChild()) {
+            SimpleUtil.addMsgBottomToTop(getContext(), "key只能只有一个按键!", true);
+            return;
+        }
         List<String> items = new ArrayList<>();
         items.add("设定为按键类型");
         items.add("删除 " + btnParams.getBelongBtn());
@@ -1133,7 +1125,18 @@ public class KeyboardView extends FrameLayout
         runnables.add(new Runnable() {
             @Override
             public void run() {
-                btnParams.setKeyRepeatType(3);
+
+                HashMap<String, Object> obj = new HashMap<>();
+                obj.put("btn", btnParams.getBelongBtn());
+                //是否属于第二模式
+                obj.put("isSecond", false);
+                obj.put("isKeySet", true);
+                obj.put("oldkey", btnParams.getKeyType());
+                addingBtns.add(obj);
+
+                btnParams.setKeyType(3);
+
+                v.setBackgroundResource(BtnParamTool.getBtnBelongColor(btnParams));
             }
         });
         runnables.add(new Runnable() {
@@ -1145,7 +1148,7 @@ public class KeyboardView extends FrameLayout
         SimpleUtil.addRadioGrouptoTop(getContext(), "按键操作", items, runnables, new Runnable() {
             @Override
             public void run() {
-                InjectUtil.setBtnParamsChanged(true);
+                BtnParamTool.setBtnParamsChanged(true);
             }
         }, null);
 
@@ -1158,7 +1161,7 @@ public class KeyboardView extends FrameLayout
         Log.d("touch event", "getX=" + event.getX() + ",getY=" + event.getY());
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             if (v == mBarWhat) {
-                if (InjectUtil.getBtnNormalBtn(Btn.Q).img != null) {
+                if (BtnParamTool.getBtnNormalBtn(Btn.Q).img != null) {
                     SimpleUtil.addMsgBottomToTop(getContext(), "已经有一个自定义按钮", true);
                     return true;
                 }
@@ -1198,14 +1201,14 @@ public class KeyboardView extends FrameLayout
 
             } else if (v == mIvMenuBtnL) {
 
-                if (InjectUtil.getBtnNormalBtn(Btn.L).img != null) {
+                if (BtnParamTool.getBtnNormalBtn(Btn.L).img != null) {
                     Toast.makeText(getContext(), "已经存在",
                             Toast.LENGTH_SHORT).show();
                     return true;
                 }
 
             } else if (v == mIvMenuBtnR) {
-                if (InjectUtil.getBtnNormalBtn(Btn.R).img != null) {
+                if (BtnParamTool.getBtnNormalBtn(Btn.R).img != null) {
                     Toast.makeText(getContext(), "已经存在",
                             Toast.LENGTH_SHORT).show();
                     return true;
@@ -1236,7 +1239,7 @@ public class KeyboardView extends FrameLayout
             public void back(int type, Object carryData) {
                 if (type == 0) {
                     clearAllView();
-                    InjectUtil.loadBtnParamsFromPrefs(getContext(), true);
+                    BtnParamTool.loadBtnParamsFromPrefs(getContext(), true);
                     loadUi();
                     IniTab.getInstance().removeNotify(this);
                 }
@@ -1244,7 +1247,7 @@ public class KeyboardView extends FrameLayout
         });
     }
     private void initEyes() {
-        if (InjectUtil.isShowKbFloatView(getContext())) {
+        if (BtnParamTool.isShowKbFloatView(getContext())) {
             mIvKeymap.setImageResource(R.mipmap.keymap_show);
             mTvKeymap.setText("显示");
             KeyboardFloatView.getInstance(getContext()).show();
@@ -1260,12 +1263,12 @@ public class KeyboardView extends FrameLayout
         if (mTvKeymap.getText().equals("显示")) {
             mIvKeymap.setImageResource(R.mipmap.keymap_dismiss);
             mTvKeymap.setText("隐藏");
-            InjectUtil.setIsShowKbFloatView(getContext(), false);
+            BtnParamTool.setIsShowKbFloatView(getContext(), false);
             KeyboardFloatView.getInstance(getContext()).dismiss();
         } else {
             mIvKeymap.setImageResource(R.mipmap.keymap_show);
             mTvKeymap.setText("显示");
-            InjectUtil.setIsShowKbFloatView(getContext(), true);
+            BtnParamTool.setIsShowKbFloatView(getContext(), true);
             KeyboardFloatView.getInstance(getContext()).show();
         }
 
@@ -1282,8 +1285,8 @@ public class KeyboardView extends FrameLayout
 
     private void setUse(AOAConfigTool.Config config) {
         SimpleUtil.saveToShare(getContext(), "ini", "gloabkeyconfig", "default#Z%W#" + config.getmConfigName() + "#Z%W#" + config.getmTabValue() + "#Z%W#" + config.getmContent());
-        InjectUtil.setComfirGame(config.getmContent());
-        InjectUtil.loadBtnParamsFromPrefs(getContext());
+        BtnParamTool.setComfirGame(config.getmContent());
+        BtnParamTool.loadBtnParamsFromPrefs(getContext());
         loadUi();
     }
     /**
@@ -1428,8 +1431,8 @@ public class KeyboardView extends FrameLayout
             return "pref_" + this.name + "_r";
         }
 
-        public String getSpecilType() {
-            return "pref_" + this.name + "_spe";
+        public String getParent() {
+            return "pref_" + this.name + "_parent";
         }
         public String getPrefX() {
             return "pref_" + this.name + "_x";

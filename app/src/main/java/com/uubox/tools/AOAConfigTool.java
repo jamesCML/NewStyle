@@ -22,7 +22,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
     private Context mContext;
     private static AOAConfigTool mInstance;
     private static Object lock = new Object();
-
+    private boolean isNeedToCloseKeySet;
     private AOAConfigTool(Context context) {
 
         mContext = context;
@@ -38,6 +38,11 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
             }
             return mInstance;
         }
+    }
+
+
+    public void setNeedToCloseKeySet(boolean needToCloseKeySet) {
+        isNeedToCloseKeySet = needToCloseKeySet;
     }
 
     public byte[] getDeviceConfigD0() {
@@ -111,7 +116,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
 
                 index++;
                 long t1 = System.currentTimeMillis();
-                LinkedHashMap<KeyboardView.Btn, BtnParams> xmlConfig = InjectUtil.getButtonParamsFromXML(mContext, sp[2]);
+                LinkedHashMap<KeyboardView.Btn, BtnParams> xmlConfig = BtnParamTool.getButtonParamsFromXML(mContext, sp[2]);
                 SimpleUtil.log("getButtonParamsFromXML:" + (System.currentTimeMillis() - t1));
                 ByteArrayList cj_cfg_t = new ByteArrayList();
                 cj_cfg_t.add((byte) 0x35);//show mouse board key,暂时鼠标中建，可能键码不对
@@ -133,7 +138,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
 
 
                 BtnParams mouse = xmlConfig.get(KeyboardView.Btn.R);
-                int mouse_step = (Integer) SimpleUtil.getFromShare(mContext, "ini", "mousesrcollsen", int.class, 10);
+                int mouse_step = (Integer) SimpleUtil.getFromShare(mContext, "ini", "mousesen", int.class, 10);
                 cj_cfg_t.add((byte) mouse_step);
                 cj_cfg_t.add(Hex.fromShortB((short) (OAODEVICE_Y - turnY(mouse.getY()))));
                 cj_cfg_t.add(Hex.fromShortB((short) turnX(mouse.getX())));
@@ -185,11 +190,17 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                         continue;
                     } else if (btnParams.getX() > 0 && btnParams.getY() > 0 && mBtMap.get(key2) != null) {
                         keyPoints.add(packKeyData2(mBtMap.get(key2), 0, OAODEVICE_Y - turnY(btnParams.getY()), turnX(btnParams.getX()), KEYMODE.MP_TOUCH));
+                        SimpleUtil.log(sp[1] + ":" + btnParams.toString());
                         if (btnParams.iHaveChild())
                         {
+
                             BtnParams btnParams2 = btnParams.getBtn2();
-                            if (btnParams.getKeyRepeatType() == 1)
+                            SimpleUtil.log("我有子按键按键:" + btnParams2.toString());
+                            if (btnParams2.getKeyType() == 1) {
+                                SimpleUtil.log("添加联动按键:" + btnParams2.toString());
                                 keyPoints.add(packKeyData2(mBtMap.get(key2), 0, OAODEVICE_Y - turnY(btnParams2.getY()), turnX(btnParams2.getX()), KEYMODE.MP_TOUCH));
+                            }
+
                         }
                     }
 
@@ -335,6 +346,9 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                     SimpleUtil.addMsgBottomToTop(mContext, "配置写入失败！", true);
                 }
                 SimpleUtil.notifyall_(10012, d0data);
+                if (isNeedToCloseKeySet) {
+                    openOrCloseRecKeycode(false);
+                }
 
             }
         });
@@ -379,13 +393,24 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
         String configsorderbytes = (String) SimpleUtil.getFromShare(mContext, "ini", "configsorderbytes", String.class, null);
         byte[] d1 = Hex.parse(configsorderbytes);
         SimpleUtil.log("get d0:\n" + Hex.toString(d0) + "\nget d1:\n" + configsorderbytes);
+        boolean isOrderEqual = false;
+        if (d0 != null && d1 != null) {
+            isOrderEqual = Arrays.equals(Arrays.copyOfRange(d0, 4, 8), Arrays.copyOfRange(d1, 4, 8));
+        }
+        if (isOrderEqual) {
+            if (d1[3] != d0[3]) {
+                SimpleUtil.log("检测到配置切换:" + d1[3] + "-->" + d0[3]);
+                d1[3] = d0[3];
+                SimpleUtil.saveToShare(mContext, "ini", "configsorderbytes", Hex.toString(d1));
+            }
+        }
+
         //final byte[] d0 = Hex.parse("A5 14 D0 01 04 07 05 09 02 E2 00 00 00 00 00 00 00 00 00 87");
         if (d0 == null) {//为了排序，只能暂时获取来自存储的排序
             SimpleUtil.addMsgBottomToTop(mContext, "读取设备配置信息失败！", true);
             SimpleUtil.log("get lib d0:" + configsorderbytes);
             d0 = Hex.parse(configsorderbytes);
         }
-
 
         AOAConfigTool.Config[] rightOrder = new AOAConfigTool.Config[4];
         for (AOAConfigTool.Config config : mConfigs) {
@@ -458,7 +483,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
 
         }
         //SimpleUtil.log("device order use is null:"+(rightOrder[d0[3] - 1]==null));
-        return d0 != null && d1 != null && d0[3] - 1 >= 0 && Arrays.equals(d0, d1) && rightOrder[d0[3] - 1] != null;
+        return d0 != null && d1 != null && d0[3] - 1 >= 0 && isOrderEqual && rightOrder[d0[3] - 1] != null;
     }
 
     public boolean openOrCloseRecKeycode(boolean open) {

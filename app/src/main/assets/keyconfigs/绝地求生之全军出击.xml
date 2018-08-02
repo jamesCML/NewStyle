@@ -1,191 +1,191 @@
 <?xml version="1.0"?>
 <Root>
     <ZOOM zoomx="1080" zoomy="1920"></ZOOM>
-    <KEY_J frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <KEY_J frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></KEY_J>
-    <SHIFT_LEFT frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0"
+    <SHIFT_LEFT frequency="-1" isParent="false" switch="true" keyType="0"
         mode="-1" r="32" step="-1" x="1605" y="325"></SHIFT_LEFT>
-    <KEY_MAOHAO frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0"
+    <KEY_MAOHAO frequency="-1" isParent="false" switch="true" keyType="0"
         mode="-1" r="0" step="-1" x="0" y="-1"></KEY_MAOHAO>
-    <R1 frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <R1 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></R1>
-    <KEY_K frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <KEY_K frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="32" step="-1" x="1698" y="163"></KEY_K>
-    <KEY_RIGHT_END frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0"
+    <KEY_RIGHT_END frequency="-1" isParent="false" switch="true" keyType="0"
         mode="-1" r="0" step="-1" x="0" y="-1"></KEY_RIGHT_END>
-    <F11 frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <F11 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></F11>
-    <TAB frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <TAB frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="32" step="-1" x="421" y="1031"></TAB>
-    <F7 frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <F7 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></F7>
-    <NUM_7 frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <NUM_7 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></NUM_7>
-    <NUM_4 frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <NUM_4 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="32" step="-1" x="1857" y="440"></NUM_4>
-    <NUM_3 frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <NUM_3 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="32" step="-1" x="601" y="1028"></NUM_3>
-    <ENTER frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <ENTER frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="-1" step="-1" x="-1" y="-1"></ENTER>
-    <F3 frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <F3 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></F3>
-    <NUM_9 frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <NUM_9 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></NUM_9>
-    <CTRL_LEFT frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0"
+    <CTRL_LEFT frequency="-1" isParent="false" switch="true" keyType="0"
         mode="-1" r="0" step="-1" x="0" y="-1"></CTRL_LEFT>
-    <F6 frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <F6 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></F6>
-    <START frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <START frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></START>
-    <X frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <X frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></X>
-    <CAPS frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <CAPS frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></CAPS>
-    <KEY_A frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <KEY_A frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></KEY_A>
-    <KEY_FANXIEGANG frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0"
+    <KEY_FANXIEGANG frequency="-1" isParent="false" switch="true" keyType="0"
         mode="-1" r="0" step="-1" x="0" y="-1"></KEY_FANXIEGANG>
-    <KEY_B frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <KEY_B frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="32" step="-1" x="735" y="959"></KEY_B>
-    <KEY_W frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <KEY_W frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></KEY_W>
-    <KEY_R frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <KEY_R frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="32" step="-1" x="1361" y="1005"></KEY_R>
-    <SHIFT_RIGHT frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0"
+    <SHIFT_RIGHT frequency="-1" isParent="false" switch="true" keyType="0"
         mode="-1" r="0" step="-1" x="0" y="-1"></SHIFT_RIGHT>
-    <KEY_V frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <KEY_V frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="32" step="-1" x="1156" y="376"></KEY_V>
-    <NUM_0 frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <NUM_0 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></NUM_0>
-    <L1 frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <L1 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></L1>
-    <KEY_O frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <KEY_O frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="-1" step="-1" x="-1" y="-1"></KEY_O>
-    <KEY_L frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <KEY_L frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></KEY_L>
-    <KEY_JUHAO frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0"
+    <KEY_JUHAO frequency="-1" isParent="false" switch="true" keyType="0"
         mode="-1" r="0" step="-1" x="0" y="-1"></KEY_JUHAO>
-    <DOWN frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <DOWN frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="-1" step="-1" x="-1" y="-1"></DOWN>
-    <ALT_RIGHT frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0"
+    <ALT_RIGHT frequency="-1" isParent="false" switch="true" keyType="0"
         mode="-1" r="0" step="-1" x="0" y="-1"></ALT_RIGHT>
-    <Y frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <Y frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></Y>
-    <R2 frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <R2 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></R2>
-    <SPACES frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <SPACES frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="32" step="-1" x="1835" y="825"></SPACES>
-    <NUM_2 frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <NUM_2 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="32" step="-1" x="1092" y="957"></NUM_2>
-    <F9 frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <F9 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></F9>
-    <NUM_5 frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <NUM_5 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></NUM_5>
-    <THUMBL frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <THUMBL frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></THUMBL>
-    <WIN frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <WIN frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></WIN>
-    <KEY_C frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <KEY_C frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="32" step="-1" x="1542" y="1010"></KEY_C>
-    <ADD frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <ADD frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="32" step="-1" x="1610" y="325"></ADD>
-    <KEY_E frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <KEY_E frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="32" step="-1" x="522" y="777"></KEY_E>
-    <KEY_F frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="1" mode="-1"
+    <KEY_F frequency="-1" isParent="true" switch="true" keyType="0" mode="-1"
         r="32" step="-1" x="1347" y="385">
-        <KEY_F frequency="0" isBelongButton="true" keyRepeatSwitch="true" keyRepeatType="0" mode="0"
+        <KEY_F frequency="0" isParent="false" switch="true" keyType="1" mode="0"
             r="32" step="0" x="1268" y="728"></KEY_F>
     </KEY_F>
-    <KEY_Z frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <KEY_Z frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="32" step="-1" x="1745" y="1009"></KEY_Z>
-    <KEY_DOUHAO frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0"
+    <KEY_DOUHAO frequency="-1" isParent="false" switch="true" keyType="0"
         mode="-1" r="0" step="-1" x="0" y="-1"></KEY_DOUHAO>
-    <KEY_H frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <KEY_H frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="32" step="-1" x="1350" y="608"></KEY_H>
-    <KEY_YINHAO frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0"
+    <KEY_YINHAO frequency="-1" isParent="false" switch="true" keyType="0"
         mode="-1" r="0" step="-1" x="0" y="-1"></KEY_YINHAO>
-    <NUM_8 frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <NUM_8 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></NUM_8>
-    <ALT_LEFT frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0"
+    <ALT_LEFT frequency="-1" isParent="false" switch="true" keyType="0"
         mode="-1" r="32" step="-1" x="1416" y="359"></ALT_LEFT>
-    <KEY_LEFT_BEGIN frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0"
+    <KEY_LEFT_BEGIN frequency="-1" isParent="false" switch="true" keyType="0"
         mode="-1" r="0" step="-1" x="0" y="-1"></KEY_LEFT_BEGIN>
-    <NUM_1 frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <NUM_1 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="32" step="-1" x="876" y="958"></NUM_1>
-    <SUB frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <SUB frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></SUB>
-    <Q frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <Q frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="-1" step="-1" x="-1" y="-1"></Q>
-    <F2 frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <F2 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></F2>
-    <KEY_XIEGANG frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0"
+    <KEY_XIEGANG frequency="-1" isParent="false" switch="true" keyType="0"
         mode="-1" r="0" step="-1" x="0" y="-1"></KEY_XIEGANG>
-    <KEY_U frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <KEY_U frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></KEY_U>
-    <F8 frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <F8 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></F8>
-    <F12 frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <F12 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></F12>
-    <KEY_I frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <KEY_I frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></KEY_I>
-    <R frequency="30" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="0" r="0"
+    <R frequency="30" isParent="false" switch="true" keyType="0" mode="0" r="0"
         step="15" x="999" y="570"></R>
-    <KEY_Q frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <KEY_Q frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="32" step="-1" x="89" y="771"></KEY_Q>
-    <L2 frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <L2 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></L2>
-    <KEY_G frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <KEY_G frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="32" step="-1" x="1351" y="483"></KEY_G>
-    <MOUSE_LEFT frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0"
+    <MOUSE_LEFT frequency="-1" isParent="false" switch="true" keyType="0"
         mode="-1" r="32" step="-1" x="124" y="561"></MOUSE_LEFT>
-    <KEY_X frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <KEY_X frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="-1" step="-1" x="-1" y="-1"></KEY_X>
-    <A frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <A frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></A>
-    <F5 frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <F5 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></F5>
-    <LEFT frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <LEFT frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="-1" step="-1" x="-1" y="-1"></LEFT>
-    <KEY_T frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <KEY_T frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="32" step="-1" x="1525" y="224"></KEY_T>
-    <F4 frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <F4 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></F4>
-    <RIGHT frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <RIGHT frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="-1" step="-1" x="-1" y="-1"></RIGHT>
-    <F1 frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <F1 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></F1>
-    <L frequency="30" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="0"
+    <L frequency="30" isParent="false" switch="true" keyType="0" mode="0"
         r="80" step="15" x="300" y="781"></L>
-    <NUM_6 frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <NUM_6 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></NUM_6>
-    <KEY_P frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <KEY_P frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></KEY_P>
-    <B frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <B frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></B>
-    <KEY_D frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <KEY_D frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></KEY_D>
-    <UP frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <UP frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="-1" step="-1" x="-1" y="-1"></UP>
-    <KEY_N frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <KEY_N frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></KEY_N>
-    <CTRL_RGHT frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0"
+    <CTRL_RGHT frequency="-1" isParent="false" switch="true" keyType="0"
         mode="-1" r="0" step="-1" x="0" y="-1"></CTRL_RGHT>
-    <ESC frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <ESC frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></ESC>
-    <MOUSE_IN frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0"
+    <MOUSE_IN frequency="-1" isParent="false" switch="true" keyType="0"
         mode="-1" r="0" step="-1" x="0" y="-1"></MOUSE_IN>
-    <THUMBR frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <THUMBR frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></THUMBR>
-    <F10 frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <F10 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></F10>
-    <BACK frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <BACK frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></BACK>
-    <KEY_S frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <KEY_S frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></KEY_S>
-    <MOUSE_RIGHT frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0"
+    <MOUSE_RIGHT frequency="-1" isParent="false" switch="true" keyType="0"
         mode="-1" r="32" step="-1" x="1847" y="647"></MOUSE_RIGHT>
-    <KEY_Y frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <KEY_Y frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="0" step="-1" x="0" y="-1"></KEY_Y>
-    <KEY_M frequency="-1" isBelongButton="false" keyRepeatSwitch="true" keyRepeatType="0" mode="-1"
+    <KEY_M frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
         r="32" step="-1" x="1858" y="63"></KEY_M>
 </Root>

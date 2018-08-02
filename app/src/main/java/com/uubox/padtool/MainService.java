@@ -40,15 +40,10 @@ import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 
 import com.uubox.threads.AccInputThread;
 import com.uubox.tools.AOAConfigTool;
-import com.uubox.tools.AOAConfigTool;
-import com.uubox.tools.InjectUtil;
+import com.uubox.tools.BtnParamTool;
 import com.uubox.tools.SimpleUtil;
 import com.uubox.views.GuiStep;
 import com.uubox.views.KeyboardEditWindowManager;
@@ -495,7 +490,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         try {
             mWindowManager.addView(mlayout, wmParams);
             KeyboardEditWindowManager.getInstance().displayRootView();
-            if (InjectUtil.isShowKbFloatView(getBaseContext())) {
+            if (BtnParamTool.isShowKbFloatView(getBaseContext())) {
                 KeyboardFloatView.getInstance(getApplicationContext()).show();
             }
         } catch (Exception e) {
@@ -630,7 +625,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
     public void back(int id, final Object obj) {
         SimpleUtil.log("MainService getnotify id:" + id);
         if (id == 1) {
-            boolean changed = InjectUtil.hasBtnParamsChanged();
+            boolean changed = BtnParamTool.hasBtnParamsChanged();
             if (changed) {
                 KeyboardEditWindowManager.getInstance().close();
             } else {
@@ -655,7 +650,12 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             SimpleUtil.saveToShare(getBaseContext(), "ini", "configschange", true);
             mAOAConfigTool.writeDefaultConfigs();
         } else if (id == 10004) {
-            mAOAConfigTool.openOrCloseRecKeycode(false);
+            boolean ischange = (Boolean) SimpleUtil.getFromShare(getBaseContext(), "ini", "configschange", boolean.class);
+            if (!ischange) {
+                mAOAConfigTool.openOrCloseRecKeycode(false);
+            } else {//需要写完配置之后自己关闭
+                mAOAConfigTool.setNeedToCloseKeySet(true);
+            }
 
         } else if (id == 10005)//按键btn返回
         {
@@ -751,7 +751,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
                 mHandler.sendMessageDelayed(Message.obtain(mHandler, MSG_HIDE_ENTER_GAME), 1000);
                 return true;
             }*/
-            if (!isMove && InjectUtil.getPressFloatable()) {
+            if (!isMove && BtnParamTool.getPressFloatable()) {
                 KeyboardEditWindowManager.getInstance().init(getApplicationContext());
 
                 initViews();
