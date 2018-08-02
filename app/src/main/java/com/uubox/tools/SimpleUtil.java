@@ -168,9 +168,10 @@ public class SimpleUtil {
 
     public static void log(String msg) {
 
-        /*if (!DEBUG) {
+        if (!DEBUG) {
             return;
-        }*/
+        }
+        //SocketLogEx.getInstance().sendLog(msg);
         Log.i("CJLOG", msg);
     }
 

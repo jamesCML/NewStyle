@@ -576,7 +576,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         mfloatingIv.setOnTouchListener(new FloatingListener());
         // 启动自动移动到左侧延时
         resetMoveToLeftSideDelay();
-        //loadTest();
+
     }
 
     /**
@@ -752,8 +752,8 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
                 return true;
             }*/
             if (!isMove && BtnParamTool.getPressFloatable()) {
-                KeyboardEditWindowManager.getInstance().init(getApplicationContext());
 
+                KeyboardEditWindowManager.getInstance().init(getApplicationContext());
                 initViews();
                 GuiStep.getInstance().show(false, true);
                 // 键位菜单界面不显示小图标

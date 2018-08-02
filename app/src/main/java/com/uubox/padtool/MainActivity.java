@@ -12,6 +12,7 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Process;
+import android.os.StrictMode;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.view.Menu;
@@ -44,21 +45,45 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        new SocketLog().start();
-
+        //new SocketLog().start();
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
+        SimpleUtil.DEBUG = CommonUtils.getAppVersionName(this).contains("debug");
         Point point = new Point();
         getWindowManager().getDefaultDisplay().getRealSize(point);
         SimpleUtil.zoomx = point.y;
         SimpleUtil.zoomy = point.x;
         SimpleUtil.log("pixreal XY:" + SimpleUtil.zoomx + "," + SimpleUtil.zoomy);
-        getWindowManager().getDefaultDisplay().getSize(point);
+        /*getWindowManager().getDefaultDisplay().getSize(point);
         SimpleUtil.log("pixvirtual XY:" + point.x + "," + point.y);
         if (SimpleUtil.zoomy - point.x != 0) {
             SimpleUtil.log("检测到刘海屏");
             SimpleUtil.LIUHAI = getStatusBarHeight();
         }
-        SimpleUtil.log("Liuhai:" + SimpleUtil.LIUHAI + " bar height:" + getStatusBarHeight());
-
+        SimpleUtil.log("Liuhai:" + SimpleUtil.LIUHAI + " bar height:" + getStatusBarHeight());*/
+        int saveLH = (Integer) SimpleUtil.getFromShare(this, "ini", "LH", int.class, -1);
+        if (saveLH != -1) {
+            SimpleUtil.LIUHAI = saveLH;
+        } else {
+            SimpleUtil.runOnUIThread(new Runnable() {
+                @Override
+                public void run() {
+                    int[] position = new int[2];
+                    findViewById(R.id.main_parent).getLocationOnScreen(position);
+                    SimpleUtil.log("检测到停靠屏幕位置为:" + position[0]);
+                    if (position[0] != 0)//有刘海屏
+                    {
+                        SimpleUtil.log("检测到刘海屏");
+                        SimpleUtil.LIUHAI = getStatusBarHeight();
+                        SimpleUtil.saveToShare(MainActivity.this, "ini", "LH", SimpleUtil.LIUHAI);
+                        SimpleUtil.log("Liuhai:" + SimpleUtil.LIUHAI);
+                    }
+                }
+            }, 500);
+        }
+        SimpleUtil.log("Liuhai:" + SimpleUtil.LIUHAI);
 
         mProgress = findViewById(R.id.loading_pro);
         mLoadMsg = findViewById(R.id.loading_msg);
@@ -66,7 +91,6 @@ public class MainActivity extends Activity {
         mParent = findViewById(R.id.main_parent);
         mCheckBox = findViewById(R.id.loading_cb);
         SimpleUtil.log("MainActivity-------------create------------" + hashCode());
-        SimpleUtil.DEBUG = CommonUtils.getAppVersionName(this).contains("debug");
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
