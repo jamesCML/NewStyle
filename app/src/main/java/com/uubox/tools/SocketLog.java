@@ -31,19 +31,16 @@ public class SocketLog extends Thread {
             String line;
             int curMinutes = Calendar.getInstance().getTime().getMinutes();
             while ((line = bufferedReader.readLine()) != null) {
-
-                String[] sp = line.split(":", -1);
-                if (sp.length >= 2) {
-                    int fen = Integer.parseInt(sp[1]);
+                //String[] sp = line.split(":", -1);
+                //if (sp.length >= 2) {
+                //int fen = Integer.parseInt(sp[1]);
                     // SimpleUtil.log("curMinutes:" + curMinutes + ".fen:" + fen);
-                    if (fen >= curMinutes && !write(line)) {
+                if (!write(line)) {
                         SimpleUtil.log("XXXXXXXXXXXXXXXXXXXXXXXXX socket log write error!");
                         break;
                     }
-                }
-
+                //}
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }

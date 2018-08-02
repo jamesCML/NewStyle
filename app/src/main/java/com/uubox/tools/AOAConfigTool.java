@@ -185,9 +185,8 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                         continue;
                     } else if (btnParams.getX() > 0 && btnParams.getY() > 0 && mBtMap.get(key2) != null) {
                         keyPoints.add(packKeyData2(mBtMap.get(key2), 0, OAODEVICE_Y - turnY(btnParams.getY()), turnX(btnParams.getX()), KEYMODE.MP_TOUCH));
-                        if (btnParams.getKeyRepeatType() != 0)//有附属按钮,暂时不支持
+                        if (btnParams.iHaveChild())
                         {
-
                             BtnParams btnParams2 = btnParams.getBtn2();
                             if (btnParams.getKeyRepeatType() == 1)
                                 keyPoints.add(packKeyData2(mBtMap.get(key2), 0, OAODEVICE_Y - turnY(btnParams2.getY()), turnX(btnParams2.getX()), KEYMODE.MP_TOUCH));

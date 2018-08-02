@@ -985,7 +985,6 @@ public class KeyboardView extends FrameLayout
         params.img = iv;
         if (isBelong) {
             params.setBelongButton(true);
-            params.img.setBackgroundColor(InjectUtil.getBtnNormalBtn(btn).getKeyRepeatType() == 2 ? Color.parseColor("#77FF4081") : Color.parseColor("#7733cc33"));
         }
 
 
