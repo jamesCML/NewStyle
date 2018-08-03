@@ -149,6 +149,7 @@
             <SeekBar
                 android:layout_marginTop="5dp"
                 android:layout_width="200dp"
+                style="@style/gunpress_seek"
                 android:id="@+id/dialog_oversize_gun_cfq"
                 android:min="1"
                 android:max="99"
@@ -166,6 +167,7 @@
                 android:id="@+id/dialog_oversize_gun_bq"
                 android:layout_marginTop="5dp"
                 android:layout_width="200dp"
+                style="@style/gunpress_seek"
                 android:min="1"
                 android:max="99"
                 android:layout_height="wrap_content" />
@@ -182,6 +184,7 @@
                 android:id="@+id/dialog_oversize_gun_ak"
                 android:layout_marginTop="5dp"
                 android:layout_width="200dp"
+                style="@style/gunpress_seek"
                 android:min="1"
                 android:max="99"
                 android:layout_height="wrap_content" />

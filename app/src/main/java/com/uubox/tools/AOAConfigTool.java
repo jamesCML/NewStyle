@@ -83,7 +83,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
         byte index = 0;
         while (allIt.hasNext()) {
             String key = allIt.next();
-            SimpleUtil.log("目录:" + key);
+            SimpleUtil.log("游戏:" + key);
 
 
             SharedPreferences allSubConfigs = mContext.getSharedPreferences(key + "_table", 0);

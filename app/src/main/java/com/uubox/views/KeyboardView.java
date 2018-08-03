@@ -325,7 +325,23 @@ public class KeyboardView extends FrameLayout
                     iniName = curIni.split("#Z%W#", -1)[1];
                 }
                 if (iniName.endsWith("[官方]")) {
-                    SimpleUtil.toastTop(getContext(), "不能保存到官方配置");
+
+                    LinkedHashMap<String, String> items = new LinkedHashMap<>();
+                    items.put("配置名称", BtnParamTool.getComfirGame() + "_" + SimpleUtil.getSha1(System.currentTimeMillis() + "").substring(0, 5));
+
+                    SimpleUtil.addEditToTop(getContext(), "保存配置", items, null, new Runnable() {
+                        @Override
+                        public void run() {
+                            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    KeyboardEditWindowManager.getInstance().close();
+                                }
+                            }, 100);
+
+                        }
+                    }, newinietback);
+                    SimpleUtil.addMsgBottomToTop(getContext(), "当前使用官方配置,默认新建一个配置",true);
                     return;
                 }
                 if (curIni == null || curIni.isEmpty()) {
@@ -524,8 +540,8 @@ public class KeyboardView extends FrameLayout
 
             KeyboardEditWindowManager.getInstance().removeTop();
             List<String> items = new ArrayList<>();
-            items.add("保存到目录【" + BtnParamTool.getComfirGame() + "】");
-            items.add("新建配置目录");
+            items.add("保存到游戏【" + BtnParamTool.getComfirGame() + "】");
+            items.add("新建游戏");
             List<Runnable> tasks = new ArrayList<>();
             tasks.add(new Runnable() {
                 @Override
@@ -540,8 +556,8 @@ public class KeyboardView extends FrameLayout
                 @Override
                 public void run() {
                     LinkedHashMap<String, String> items = new LinkedHashMap<>();
-                    items.put("目录名", "");
-                    SimpleUtil.addEditToTop(getContext(), "新建配置目录", items, null, new Runnable() {
+                    items.put("游戏名", "");
+                    SimpleUtil.addEditToTop(getContext(), "新建游戏", items, null, new Runnable() {
                         @Override
                         public void run() {
                             KeyboardEditWindowManager.getInstance().close();
@@ -556,7 +572,7 @@ public class KeyboardView extends FrameLayout
                             final String newIniContentName = backs.get(0);
 
                             if (newIniContentName == null || newIniContentName.isEmpty()) {
-                                Toast.makeText(getContext(), "目录名称不能为空！",
+                                Toast.makeText(getContext(), "游戏名称不能为空！",
                                         Toast.LENGTH_SHORT).show();
                                 return;
                             }
@@ -564,7 +580,7 @@ public class KeyboardView extends FrameLayout
                             Iterator<String> allIt = allKeysConfigsTable.getAll().keySet().iterator();
                             while (allIt.hasNext()) {
                                 if (allIt.next().equals(newIniContentName)) {
-                                    Toast.makeText(getContext(), "目录名称已存在！",
+                                    Toast.makeText(getContext(), "游戏名称已存在！",
                                             Toast.LENGTH_SHORT).show();
                                     return;
                                 }

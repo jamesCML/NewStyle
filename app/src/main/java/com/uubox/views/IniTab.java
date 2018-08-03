@@ -260,7 +260,7 @@ public class IniTab {
                     if (file.exists()) {
                         file.delete();
                         SimpleUtil.delFromShare(mContext, "KeysConfigs", configsLeftData.get(position).getmContent());
-                        SimpleUtil.addMsgBottomToTop(mContext, "目录[" + configsLeftData.get(position).getmContent() + "]已清除", false);
+                        SimpleUtil.addMsgBottomToTop(mContext, "游戏[" + configsLeftData.get(position).getmContent() + "]已清除", false);
                         SimpleUtil.log("have delete the content " + configsLeftData.get(position).getmContent());
                     }
                 }
@@ -438,7 +438,7 @@ public class IniTab {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                SimpleUtil.addMsgBottomToTop(mContext, "修改成功", false);
+                //SimpleUtil.addMsgBottomToTop(mContext, "修改成功", false);
                 SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
             }
         };

@@ -54,7 +54,7 @@ public class OverSizeAdapter extends BaseAdapter {
             holder = (Holder) view.getTag();
         }
         holder.mDeleted.setVisibility(mConfigs.get(position).getIsDeleted() ? View.VISIBLE : View.GONE);
-        holder.mContent.setText("目录:" + mConfigs.get(position).getmContent());
+        holder.mContent.setText("游戏:" + mConfigs.get(position).getmContent());
         holder.mName.setText("配置:" + mConfigs.get(position).getmConfigName());
         holder.mSize.setText("大小:" + mConfigs.get(position).getmSize());
         return view;

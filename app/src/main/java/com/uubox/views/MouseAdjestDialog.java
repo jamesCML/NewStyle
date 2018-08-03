@@ -31,10 +31,6 @@ public class MouseAdjestDialog implements View.OnClickListener, SeekBar.OnSeekBa
      */
     private TextView mTextMouseSensitivityX, mTextMouseSensitivityW;
 
-    /**
-     * 选择使用鼠标右键跳出鼠标指针(Is: 右键 ，No：中键)
-     */
-    private RadioButton mIsMouseRight;
 
     private View mView;
     private Context mContext;
@@ -69,7 +65,6 @@ public class MouseAdjestDialog implements View.OnClickListener, SeekBar.OnSeekBa
         mTextMouseSensitivityX = mView.findViewById(R.id.tv_mouse_sensitivity_x);
         mSeekBarW = mView.findViewById(R.id.sbar_mouse_Wheel);
         mTextMouseSensitivityW = mView.findViewById(R.id.tv_mouse_wheel);
-        mIsMouseRight = mView.findViewById(R.id.rbn_mouse_right);
 
     }
 
@@ -120,7 +115,7 @@ public class MouseAdjestDialog implements View.OnClickListener, SeekBar.OnSeekBa
     public void onStopTrackingTouch(SeekBar seekBar) {
         SimpleUtil.saveToShare(mContext, "ini", "mousesen", mSeekBarMouse.getProgress());
         SimpleUtil.saveToShare(mContext, "ini", "mousesrcollsen", mSeekBarW.getProgress());
-        SimpleUtil.addMsgBottomToTop(mContext, "修改成功！", false);
+        //SimpleUtil.addMsgBottomToTop(mContext, "修改成功！", false);
     }
 
 

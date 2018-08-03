@@ -9,7 +9,6 @@
         android:visibility="gone"
         android:id="@+id/moveconfig_item_left"
         android:layout_gravity="center"
-        android:adjustViewBounds="true"
         android:src="@mipmap/item_left_arrow"
         android:layout_width="0dp"
         android:layout_weight="1"
@@ -28,7 +27,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:text="目录"
+                android:text="游戏"
                 android:id="@+id/moveconfig_item_content"
                 android:textSize="16sp"
                 android:singleLine="true"
@@ -56,7 +55,7 @@
                 android:textColor="#bbffffff"
                 android:id="@+id/moveconfig_item_size"
                 android:textSize="16sp"
-                android:visibility="visible"
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -88,32 +87,34 @@
     <ImageView
         android:id="@+id/moveconfig_item_right"
         android:layout_gravity="center"
-        android:adjustViewBounds="true"
         android:src="@mipmap/item_right_arrow"
         android:layout_width="0dp"
         android:layout_weight="1"
         android:visibility="gone"
         android:layout_height="wrap_content" />
 
-    <LinearLayout
+    <FrameLayout
         android:visibility="visible"
         android:id="@+id/moveconfig_item_shang_par"
         android:layout_gravity="center"
-        android:orientation="vertical"
         android:layout_width="0dp"
         android:layout_weight="1"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <ImageView
+            android:layout_marginTop="10dp"
             android:id="@+id/moveconfig_item_shang"
             android:src="@mipmap/item_shang_arrow"
-            android:layout_width="34dp"
-            android:layout_height="34dp" />
+            android:layout_gravity="top|center_horizontal"
+            android:layout_width="32dp"
+            android:layout_height="32dp" />
 
         <ImageView
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="bottom|center_horizontal"
             android:id="@+id/moveconfig_item_xia"
             android:src="@mipmap/item_xia_arrow"
-            android:layout_width="34dp"
-            android:layout_height="34dp" />
-    </LinearLayout>
+            android:layout_width="32dp"
+            android:layout_height="32dp" />
+    </FrameLayout>
 </LinearLayout>

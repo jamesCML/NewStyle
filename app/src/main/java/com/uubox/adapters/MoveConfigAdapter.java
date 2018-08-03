@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -62,7 +63,7 @@ public class MoveConfigAdapter extends BaseAdapter {
         } else {
             holder = (Holder) view.getTag();
         }
-        holder.mContent.setText("目录:" + mConfigs.get(position).getmContent());
+        holder.mContent.setText("游戏:" + mConfigs.get(position).getmContent());
         if (!mConfigs.get(position).getmConfigName().endsWith("[官方]")) {
             holder.mName.setText("配置:" + mConfigs.get(position).getmConfigName());
         } else {
@@ -119,7 +120,7 @@ public class MoveConfigAdapter extends BaseAdapter {
         ImageView mRightArrow;
         ImageView mShangArrow;
         ImageView mXiaArrow;
-        LinearLayout mOriPar;
+        FrameLayout mOriPar;
     }
 
 }
