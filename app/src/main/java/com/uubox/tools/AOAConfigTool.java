@@ -262,8 +262,8 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
 
                         SimpleUtil.log("重新调整一下压枪灵敏度、压枪：" + bqNum + "," + cfqNum + "," + akNum + "," + defaultgun);
                         byte[] data = config.getmData().all2Bytes();
-                        data[32] = (byte) bqNum;
-                        data[33] = (byte) cfqNum;
+                        data[32] = (byte) cfqNum;
+                        data[33] = (byte) bqNum;
                         data[34] = (byte) akNum;
                         //[35]正在使用的gameid
                         data[36] = (byte) defaultgun;//压枪设置，如开启、使用哪一把枪等

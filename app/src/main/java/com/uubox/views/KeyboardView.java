@@ -722,10 +722,15 @@ public class KeyboardView extends FrameLayout
 
         whatImg.setTag(BtnParamTool.getBtnNormalBtn(btn));
 
+        int[] position = new int[2];
+        whatImg.getLocationOnScreen(position);
+        final int x = position[0] + whatImg.getWidth() / 2;
+        final int y = position[1] + whatImg.getHeight() / 2;
+
         BtnParamTool.setBtnPositionX(btn,
-                (int) whatImg.getX() + whatImg.getWidth() / 2);
+                x);
         BtnParamTool.setBtnPositionY(btn,
-                (int) whatImg.getY() + whatImg.getHeight() / 2);
+                y);
         BtnParamTool.setBtnRadius(btn, whatImg.getWidth() / 2);
 
         BtnParamTool.getBtnNormalBtn(btn).img = whatImg;

@@ -1,5 +1,7 @@
 package com.uubox.tools;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -32,7 +34,7 @@ public class SocketLogEx {
 
     public void sendLog(String msg) {
         if (!write(msg)) {
-            SimpleUtil.log("XXXXXXXXXXXXXXXXXXXXXXXXX socket log write error!");
+            Log.e("CJLOG", "XXXXXXXXXXXXXXXXXXXXXXXXX socket log write error!");
         }
     }
 

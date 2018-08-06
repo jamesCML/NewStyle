@@ -6,8 +6,8 @@ android {
         applicationId "com.uubox.padtool"
         minSdkVersion 21
         targetSdkVersion 22
-        versionCode 12
-        versionName "2.1.6"
+        versionCode 14
+        versionName "2.1.7"
         flavorDimensions "versionCode"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }

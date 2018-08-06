@@ -167,11 +167,10 @@ public class SimpleUtil {
     }
 
     public static void log(String msg) {
-
+        SocketLogEx.getInstance().sendLog(msg);
         if (!DEBUG) {
             return;
         }
-        //SocketLogEx.getInstance().sendLog(msg);
         Log.i("CJLOG", msg);
     }
 

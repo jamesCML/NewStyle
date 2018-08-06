@@ -197,8 +197,8 @@ public class IniTab {
 
                         //这里刷新一下UI
                         sp0[2] = config1.getmTabValue();
-                        int bqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "bqNum", int.class, 25);
                         int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "cfqNum", int.class, 19);
+                        int bqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "bqNum", int.class, 25);
                         int akNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "akNum", int.class, 28);
                         SimpleUtil.log("刷新获取存储的压枪值:" + bqNum + "." + cfqNum + "," + akNum);
                         bqBar.setProgress(bqNum - 1);
@@ -414,15 +414,18 @@ public class IniTab {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 progress += 1;
+                if (progress >= 100) {
+                    progress = 99;
+                }
                 switch (seekBar.getId()) {
 
-                    case R.id.dialog_oversize_gun_bq:
-                        bq.setText("类型:步枪   快捷键:1/2+F2,关闭压枪1/2+ESC 灵敏度:" + progress);
-                        SimpleUtil.saveToShare(mContext, sp0[2], "bqNum", progress);
-                        break;
                     case R.id.dialog_oversize_gun_cfq:
                         cfq.setText("类型:冲锋枪(默认) 快捷键:1/2+F1,关闭压枪1/2+ESC 灵敏度:" + progress);
                         SimpleUtil.saveToShare(mContext, sp0[2], "cfqNum", progress);
+                        break;
+                    case R.id.dialog_oversize_gun_bq:
+                        bq.setText("类型:步枪   快捷键:1/2+F2,关闭压枪1/2+ESC 灵敏度:" + progress);
+                        SimpleUtil.saveToShare(mContext, sp0[2], "bqNum", progress);
                         break;
                     case R.id.dialog_oversize_gun_ak:
                         ak.setText("类型:AK47   快捷键:1/2+F3,关闭压枪1/2+ESC 灵敏度:" + progress);
@@ -445,8 +448,8 @@ public class IniTab {
         akBar.setOnSeekBarChangeListener(seekBarChangeListener);
         bqBar.setOnSeekBarChangeListener(seekBarChangeListener);
         cfqBar.setOnSeekBarChangeListener(seekBarChangeListener);
-        int bqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "bqNum", int.class, 25);
         int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "cfqNum", int.class, 19);
+        int bqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "bqNum", int.class, 25);
         int akNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "akNum", int.class, 28);
         SimpleUtil.log("获取存储的压枪值:" + bqNum + "." + cfqNum + "," + akNum);
         bqBar.setProgress(bqNum - 1);
