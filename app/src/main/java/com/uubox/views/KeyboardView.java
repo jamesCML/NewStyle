@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.os.Vibrator;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -19,6 +20,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -34,6 +37,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import com.uubox.padtool.MainService;
@@ -132,30 +136,62 @@ public class KeyboardView extends FrameLayout
     /**
      * 测试界面提示语
      */
-    private TextView mTvTip;
     /**
      * 模式变化监听
      */
-    private OnModeChangeListener mOnModeChangeListener;
     /**
      * 记录菜单按钮的点击次数
      */
-    private int mIvMenuClickCount = 0;
     /**
      * 用于计算菜单按钮的5次连按是否在5秒内完成
      */
-    private long mCurrentTimeMillis = 0;
     private Object tag;
     private float temp;
     private Drawable drawable;
     private boolean dialogShow;
     private Vibrator vibrator;
-    private MouseAdjestDialog btnDialogActivity;
-
+    private Handler mHandler;
+    private final int HANDLE_ADDWHAT = 1;
     @SuppressLint("ResourceType")
     public KeyboardView(Context context) {
         super(context);
         Log.i(TAG, "KeyboardView: ");
+        mHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case HANDLE_ADDWHAT:
+                        if (whatImg != null) {
+                            mFlMain.removeView(whatImg);
+                            whatImg = null;
+                        }
+                        whatImg = new DragImageView(getContext());
+                        whatImg.setTag(-1);
+
+                        BtnParams param = new BtnParams();
+                        param.setBelongBtn(Btn.Q);
+                        Drawable drawable = getBtnDrawable(param);
+                        if (drawable != null) {
+                            whatImg.setImageDrawable(drawable);
+                        }
+                        whatImg.setDragListener(KeyboardView.this);
+                        whatImg.setScaleListener(KeyboardView.this);
+                        whatImg.setClickListener(KeyboardView.this);
+
+
+                        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(64, 64);
+                        params.leftMargin = msg.arg1 - 32;
+                        params.topMargin = msg.arg2 - 32;
+                        mFlMain.addView(whatImg, params);
+
+
+                        ScaleAnimation scaleAnimation_show = new ScaleAnimation(6f, 1f, 6f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                        scaleAnimation_show.setDuration(300);
+                        whatImg.startAnimation(scaleAnimation_show);
+                        break;
+                }
+            }
+        };
         SimpleUtil.addINormalCallback(this);
         GuiStep.getInstance().init(context, "skip_note");
         LayoutInflater.from(context).inflate(R.layout.view_keyboard, this, true);
@@ -204,7 +240,6 @@ public class KeyboardView extends FrameLayout
         mIvMenuBtnL.setVisibility(VISIBLE);
         mIvMenuBtnR.setVisibility(VISIBLE);
         // FIXME: 2017/9/18  测试页面 和 提示语  后续版本添加
-        mTvTip = this.findViewById(R.id.tv_tip);
 
         mImgExit = findViewById(R.id.iv_menu_btn_exit);
         /**
@@ -234,9 +269,9 @@ public class KeyboardView extends FrameLayout
          * 背景半透效果
          */
         mFlMain.getBackground().setAlpha(0);
-        mFlMain.setOnDragListener(this);
+        //mFlMain.setOnDragListener(this);
         mFlMain.setOnClickListener(this);
-
+        mFlMain.setOnTouchListener(this);
         mIvMenu.setOnClickListener(this);
         mTvSave.setOnClickListener(this);
         mLlClose.setOnClickListener(this);
@@ -478,24 +513,14 @@ public class KeyboardView extends FrameLayout
         SimpleUtil.addRadioGrouptoTop(getContext(), "保存", items, runnables, null, new Runnable() {
             @Override
             public void run() {
-                for (HashMap<String, Object> obj : addingBtns) {
-                    Btn btn = (Btn) obj.get("btn");
-                    boolean isSecond = (Boolean) obj.get("isSecond");
-
-                    if (!isSecond) {
-
-                        Object isKeySet = obj.get("isKeySet");
-                        if (isKeySet != null && (Boolean) isKeySet) {
-                            BtnParamTool.setBtnRepeatType(btn, (Integer) obj.get("oldkey"));
-                        } else {
-                            BtnParamTool.resetBtnParams(btn);
-                        }
-                    } else {
-                        BtnParamTool.resetRepeatBtnParams(btn);
-                    }
+                /*ConcurrentHashMap<Btn, BtnParams> params = BtnParamTool.getmBtnParams();
+                for (BtnParams btnParam: addingBtns) {
+                     // btnParam.backupAssignTo();
+                      params.replace(btnParam.getBelongBtn(),btnParam);
                 }
-                addingBtns.clear();
-
+                addingBtns.clear();*/
+                BtnParamTool.loadBtnParamsFromPrefs(getContext());
+                loadUi();
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -653,8 +678,6 @@ public class KeyboardView extends FrameLayout
     }
 
 
-    private ArrayList<HashMap<String, Object>> addingBtns = new ArrayList<>();
-
     /**
      * 设置新按钮的按键类型
      *
@@ -711,7 +734,7 @@ public class KeyboardView extends FrameLayout
             drawable = getBtnDrawable(BtnParamTool.getBtnNormalBtn(btn));
         }
 
-        if (drawable != null) {
+      /*  if (drawable != null) {
             whatImg.setImageDrawable(drawable);
         }
         HashMap<String, Object> obj = new HashMap<>();
@@ -735,7 +758,7 @@ public class KeyboardView extends FrameLayout
 
         BtnParamTool.getBtnNormalBtn(btn).img = whatImg;
         BtnParamTool.getBtnNormalBtn(btn).setBelongBtn(btn);
-        whatImg = null;
+        whatImg = null;*/
     }
 
     private void addSecFucButton(Btn btn, int type) {
@@ -747,6 +770,7 @@ public class KeyboardView extends FrameLayout
         BtnParamTool.getBtnNormalBtn(btn).doParent(true);
         //设置btn2
         BtnParams params = new BtnParams();
+        // params.setmBackup(params.clone());
         //设置主节点，表示该参数是从属
         params.doParent(false);
         params.setBelongBtn(btn);
@@ -769,11 +793,7 @@ public class KeyboardView extends FrameLayout
         whatImg = null;
         BtnParamTool.setBtnRepeatBtn2(btn, params);
 
-        HashMap<String, Object> obj = new HashMap<>();
-        obj.put("btn", btn);
-        //是否属于第二模式
-        obj.put("isSecond", true);
-        addingBtns.add(obj);
+        //addingBtns.add(params.clone());
     }
     /**
      * @return 按钮对应图片资源
@@ -821,6 +841,9 @@ public class KeyboardView extends FrameLayout
                     SimpleUtil.addMsgBottomToTop(getContext(), "固定按键不能移除！", true);
                     return;
                 }
+                // params.setmBackup(params.clone());
+
+                //addingBtns.add(params.clone());
                 removeBtn(params);
 
                 Log.w(TAG, "onDragFinish: getId()=" + v.getId() + "getTag()=" + v.getTag());
@@ -843,6 +866,8 @@ public class KeyboardView extends FrameLayout
                 //final int x = (int) v.getX() + v.getWidth() / 2+SimpleUtil.LIUHAI;
                 //final int y = (int) v.getY() + v.getHeight() / 2;
                 BtnParams params = (BtnParams) v.getTag();
+                //params.setmBackup(params.clone());
+                //addingBtns.add(params.clone());
                 if (params.getX() != x || params.getY() != y) {
                     params.setX(x);
                     params.setY(y);
@@ -854,6 +879,7 @@ public class KeyboardView extends FrameLayout
             }
 
         }
+
         // 显示添加按钮
         mIvMenu.setImageDrawable(getResources().getDrawable(R.mipmap.icon_edit));
     }
@@ -1176,7 +1202,7 @@ public class KeyboardView extends FrameLayout
     }
 
     private DragImageView whatImg;
-
+    private long mWhatAddTime;
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         Log.d("touch event", "getX=" + event.getX() + ",getY=" + event.getY());
@@ -1186,38 +1212,6 @@ public class KeyboardView extends FrameLayout
                     SimpleUtil.addMsgBottomToTop(getContext(), "已经有一个自定义按钮", true);
                     return true;
                 }
-                // TODO: 2018/7/25 拖出自定义按钮  1. 触摸出现坐标; 2. 直接拖出
-                if (whatImg == null) {
-                    whatImg = new DragImageView(getContext());
-                    whatImg.setTag(-1);
-
-                    BtnParams param = new BtnParams();
-                    param.setBelongBtn(Btn.Q);
-                    Drawable drawable = getBtnDrawable(param);
-                    if (drawable != null) {
-                        whatImg.setImageDrawable(drawable);
-                    }
-                    whatImg.setDragListener(this);
-                    whatImg.setScaleListener(this);
-                    whatImg.setClickListener(this);
-
-
-                    int[] position = new int[2];
-                    v.getLocationInWindow(position);
-                    FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(64, 64);
-                    params.leftMargin = SimpleUtil.zoomy / 2;
-                    params.topMargin = SimpleUtil.zoomx / 2;
-
-                    mFlMain.addView(whatImg, params);
-
-
-                } else {
-                    //whatImg.setLayoutParams(layoutParams);
-                    //mFlMain.postInvalidate();
-                }
-
-
-                Log.i("touch event", "onTouch: event=" + event.toString());
                 return true;
 
             } else if (v == mIvMenuBtnL) {
@@ -1237,8 +1231,16 @@ public class KeyboardView extends FrameLayout
             } else if (v == mIvMenuBtnSetting) {
                 showTab();
                 return true;
+            } else if (v == mFlMain) {
+                SimpleUtil.log("Fmain按下了");
+                mWhatAddTime = System.currentTimeMillis();
+                Message message = new Message();
+                message.what = HANDLE_ADDWHAT;
+                message.arg1 = (int) event.getX();
+                message.arg2 = (int) event.getY();
+                mHandler.sendMessageDelayed(message, 500);
+                return true;
             }
-
             DragShadowBuilder mysBuilder = new DragShadowBuilder(v);
             v.startDrag(null, mysBuilder, null, 0);
             mCopyingBtn = v;
@@ -1248,6 +1250,11 @@ public class KeyboardView extends FrameLayout
                 vibrator.vibrate(30);
             } else {
             }
+        } else if (event.getAction() == MotionEvent.ACTION_UP) {
+            if (System.currentTimeMillis() - mWhatAddTime < 400) {
+                mHandler.removeMessages(HANDLE_ADDWHAT);
+            }
+            mWhatAddTime = 0;
         }
         return false;
 
@@ -1496,37 +1503,6 @@ public class KeyboardView extends FrameLayout
         public String getPrefSwitch() {
             return "pref_" + this.name + "_switch";
         }
-    }
-
-    /**
-     * @created by mk on 2017/12/2 18:33
-     */
-
-
-    /**
-     * 回调接口
-     */
-    public interface KeyboardViewCallback {
-        /**
-         * 返回按钮点击
-         */
-        boolean onBackBtnClick();
-    }
-
-    /**
-     * 模式变化监听
-     */
-    public interface OnModeChangeListener {
-
-        /**
-         * 进入测试模式
-         */
-        void enterTestMode();
-
-        /**
-         * 退出测试模式
-         */
-        void exitTestMode();
     }
 
 

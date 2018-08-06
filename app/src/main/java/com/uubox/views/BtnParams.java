@@ -2,6 +2,8 @@ package com.uubox.views;
 
 import android.widget.ImageView;
 
+import com.uubox.tools.SimpleUtil;
+
 import java.io.Serializable;
 
 /**
@@ -11,7 +13,7 @@ import java.io.Serializable;
  * @date 2015/8/26
  * @time 16:18
  */
-public class BtnParams implements Serializable {
+public class BtnParams implements Serializable, Cloneable {
     /**
      * 复次按钮
      */
@@ -52,6 +54,7 @@ public class BtnParams implements Serializable {
     private boolean mIsParent;
     private KeyboardView.Btn belongBtn;
 
+    // private BtnParams mBackup;
     public KeyboardView.Btn getBelongBtn() {
         return belongBtn;
     }
@@ -153,9 +156,57 @@ public class BtnParams implements Serializable {
         this.step = step;
     }
 
+   /* public BtnParams getmBackup() {
+        return mBackup;
+    }
+
+    public void setmBackup(BtnParams mBackup) {
+        if(this.mBackup!=null)
+        {
+            SimpleUtil.loge("只能有一个按键参数备份！！！");
+            return;
+        }
+        this.mBackup = mBackup;
+    }*/
+
+    /* public void backupAssignTo()
+     {
+         if(mBackup==null)
+         {
+             SimpleUtil.loge("按键参数备份是空的!!!!");
+             return;
+         }
+          this.x = mBackup.x;
+          this.y = mBackup.y;
+          this.r = mBackup.r;
+          this.step = mBackup.step;
+          this.frequency = mBackup.frequency;
+          this.mode = mBackup.mode;
+          this.keyRepeatSwitch = mBackup.keyRepeatSwitch;
+          this.mKeyType = mBackup.mKeyType;
+          this.btn2 = mBackup.btn2;
+          this.mIsParent = mBackup.mIsParent;
+          mBackup = null;
+     }*/
     @Override
     public String toString() {
         return belongBtn + "(x: " + x + ", y: " + y + ", r: " + r + ", mKeyType: " + mKeyType + ", step: "
                 + step + ", mIsParent: " + mIsParent + ")";
     }
+
+   /* @Override
+    protected BtnParams clone()  {
+        BtnParams btnParams = null;
+        try {
+            btnParams = (BtnParams)super.clone();
+            if(btnParams.mIsParent)
+            {
+                BtnParams sub = btnParams.btn2.clone();
+                btnParams.btn2 = sub;
+            }
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        return btnParams;
+    }*/
 }
