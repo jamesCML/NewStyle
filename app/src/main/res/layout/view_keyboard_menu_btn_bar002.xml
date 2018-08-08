@@ -44,7 +44,7 @@
             android:id="@+id/iv_menu_btn_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="visible"
+            android:visibility="gone"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="20dp"
             android:longClickable="true"

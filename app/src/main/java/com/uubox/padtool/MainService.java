@@ -29,6 +29,7 @@ import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -745,12 +746,10 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         public boolean onSingleTapConfirmed(MotionEvent e) {
             //点击悬浮窗未拖动，则打开按键编辑页面(增加：加载过程中不允许点击)
 
-            /*if (!SimpleUtil.screenstate) {
-                //mfloatingentergame.setVisibility(View.VISIBLE);
-                mHandler.removeMessages(MSG_HIDE_ENTER_GAME);
-                mHandler.sendMessageDelayed(Message.obtain(mHandler, MSG_HIDE_ENTER_GAME), 1000);
+            if (mWindowManager.getDefaultDisplay().getRotation() * Surface.ROTATION_90 == 0) {
+                SimpleUtil.addMsgBottomToTop(getBaseContext(), "请先进入游戏！", true);
                 return true;
-            }*/
+            }
             if (!isMove && BtnParamTool.getPressFloatable()) {
 
                 KeyboardEditWindowManager.getInstance().init(getApplicationContext());

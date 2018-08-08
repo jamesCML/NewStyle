@@ -733,7 +733,20 @@ public class KeyboardView extends FrameLayout
 //            btn.setKeyType(0);
             drawable = getBtnDrawable(BtnParamTool.getBtnNormalBtn(btn));
         }
+        if (drawable != null) {
+            whatImg.setImageDrawable(drawable);
+        }
+        whatImg.setTag(BtnParamTool.getBtnNormalBtn(btn));
 
+        BtnParamTool.setBtnPositionX(btn,
+                (int) whatImg.getX() + whatImg.getWidth() / 2);
+        BtnParamTool.setBtnPositionY(btn,
+                (int) whatImg.getY() + whatImg.getHeight() / 2);
+        BtnParamTool.setBtnRadius(btn, whatImg.getWidth() / 2);
+
+        BtnParamTool.getBtnNormalBtn(btn).img = whatImg;
+        BtnParamTool.getBtnNormalBtn(btn).setBelongBtn(btn);
+        whatImg = null;
       /*  if (drawable != null) {
             whatImg.setImageDrawable(drawable);
         }
@@ -759,6 +772,8 @@ public class KeyboardView extends FrameLayout
         BtnParamTool.getBtnNormalBtn(btn).img = whatImg;
         BtnParamTool.getBtnNormalBtn(btn).setBelongBtn(btn);
         whatImg = null;*/
+
+
     }
 
     private void addSecFucButton(Btn btn, int type) {
@@ -1161,7 +1176,7 @@ public class KeyboardView extends FrameLayout
             default:
                 break;
         }
-       /* if (btnParams.iHaveChild() || btnParams.iAnChild()) {
+        if (btnParams.iHaveChild() || btnParams.iAnChild()) {
             SimpleUtil.addMsgBottomToTop(getContext(), "key只能只有一个按键!", true);
             return;
         }
@@ -1172,17 +1187,7 @@ public class KeyboardView extends FrameLayout
         runnables.add(new Runnable() {
             @Override
             public void run() {
-
-                HashMap<String, Object> obj = new HashMap<>();
-                obj.put("btn", btnParams.getBelongBtn());
-                //是否属于第二模式
-                obj.put("isSecond", false);
-                obj.put("isKeySet", true);
-                obj.put("oldkey", btnParams.getKeyType());
-                addingBtns.add(obj);
-
                 btnParams.setKeyType(3);
-
                 v.setBackgroundResource(BtnParamTool.getBtnBelongColor(btnParams));
             }
         });
@@ -1197,7 +1202,7 @@ public class KeyboardView extends FrameLayout
             public void run() {
                 BtnParamTool.setBtnParamsChanged(true);
             }
-        }, null);*/
+        }, null);
 
     }
 
@@ -1232,13 +1237,12 @@ public class KeyboardView extends FrameLayout
                 showTab();
                 return true;
             } else if (v == mFlMain) {
-                SimpleUtil.log("Fmain按下了");
                 mWhatAddTime = System.currentTimeMillis();
                 Message message = new Message();
                 message.what = HANDLE_ADDWHAT;
                 message.arg1 = (int) event.getX();
                 message.arg2 = (int) event.getY();
-                mHandler.sendMessageDelayed(message, 500);
+                mHandler.sendMessageDelayed(message, 800);
                 return true;
             }
             DragShadowBuilder mysBuilder = new DragShadowBuilder(v);
@@ -1251,7 +1255,7 @@ public class KeyboardView extends FrameLayout
             } else {
             }
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
-            if (System.currentTimeMillis() - mWhatAddTime < 400) {
+            if (System.currentTimeMillis() - mWhatAddTime < 700) {
                 mHandler.removeMessages(HANDLE_ADDWHAT);
             }
             mWhatAddTime = 0;

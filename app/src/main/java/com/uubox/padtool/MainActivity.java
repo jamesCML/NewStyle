@@ -5,6 +5,7 @@ import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -17,13 +18,11 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Surface;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,140 +34,105 @@ import com.uubox.tools.CommonUtils;
 import com.uubox.tools.SimpleUtil;
 import com.uubox.tools.SocketLog;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements View.OnClickListener {
     private ProgressBar mProgress;
     private TextView mLoadMsg;
     private Button mButton;
-    private FrameLayout mParent;
-    private CheckBox mCheckBox;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SimpleUtil.DEBUG = CommonUtils.getAppVersionName(this).contains("debug");
+        SimpleUtil.log("MainActivity-------------create------------" + hashCode());
         setContentView(R.layout.activity_main);
-        //new SocketLog().start();
         if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
-        SimpleUtil.DEBUG = CommonUtils.getAppVersionName(this).contains("debug");
         Point point = new Point();
         getWindowManager().getDefaultDisplay().getRealSize(point);
-        SimpleUtil.zoomx = point.y;
-        SimpleUtil.zoomy = point.x;
+        SimpleUtil.zoomx = Math.min(point.x, point.y);
+        SimpleUtil.zoomy = Math.max(point.x, point.y);
         SimpleUtil.log("pixreal XY:" + SimpleUtil.zoomx + "," + SimpleUtil.zoomy);
-        /*getWindowManager().getDefaultDisplay().getSize(point);
-        SimpleUtil.log("pixvirtual XY:" + point.x + "," + point.y);
-        if (SimpleUtil.zoomy - point.x != 0) {
-            SimpleUtil.log("检测到刘海屏");
-            SimpleUtil.LIUHAI = getStatusBarHeight();
-        }
-        SimpleUtil.log("Liuhai:" + SimpleUtil.LIUHAI + " bar height:" + getStatusBarHeight());*/
-        int saveLH = (Integer) SimpleUtil.getFromShare(this, "ini", "LH", int.class, -1);
-        if (saveLH != -1) {
-            SimpleUtil.LIUHAI = saveLH;
-        } else {
-            SimpleUtil.runOnUIThread(new Runnable() {
-                @Override
-                public void run() {
-                    int[] position = new int[2];
-                    findViewById(R.id.main_parent).getLocationOnScreen(position);
-                    SimpleUtil.log("检测到停靠屏幕位置为:" + position[0]);
-                    if (position[0] != 0)//有刘海屏
-                    {
-                        SimpleUtil.log("检测到刘海屏");
-                        SimpleUtil.LIUHAI = getStatusBarHeight();
-                        SimpleUtil.saveToShare(MainActivity.this, "ini", "LH", SimpleUtil.LIUHAI);
-                        SimpleUtil.log("Liuhai:" + SimpleUtil.LIUHAI);
-                    }
-                }
-            }, 500);
-        }
-        SimpleUtil.log("Liuhai:" + SimpleUtil.LIUHAI);
 
         mProgress = findViewById(R.id.loading_pro);
         mLoadMsg = findViewById(R.id.loading_msg);
         mButton = findViewById(R.id.loading_bt);
-        mParent = findViewById(R.id.main_parent);
-        mCheckBox = findViewById(R.id.loading_cb);
-        SimpleUtil.log("MainActivity-------------create------------" + hashCode());
-        mButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mLoadMsg.getText().toString().contains("悬浮窗")) {
-                    if (Build.VERSION.SDK_INT >= 23) {
-                        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                                Uri.parse("package:" + getPackageName()));
-                        startActivityForResult(intent, 789);
-                    } else {
-                        Toast.makeText(MainActivity.this, "请打开悬浮窗", Toast.LENGTH_LONG).show();
-                    }
-                    return;
-                }
+        mButton.setOnClickListener(this);
 
+        if (getWindowManager().getDefaultDisplay().getRotation() * Surface.ROTATION_90 == 1)//检测到横屏状态
+        {
+            SimpleUtil.log("启动检测到横屏");
+            if ((Boolean) SimpleUtil.getFromShare(this, "ini", "init", boolean.class))//已经初始化则直接进入
+            {
+                SimpleUtil.log("已经初始化，直接进入");
                 Intent intent = new Intent(MainActivity.this, MainService.class);
                 startService(intent);
                 finish();
+                return;
             }
-        });
-
-        if (!(Boolean) SimpleUtil.getFromShare(MainActivity.this, "ini", "loading", boolean.class) && (Boolean) SimpleUtil.getFromShare(this, "ini", "init", boolean.class)) {
-            mLoadMsg.setText("进入游戏会自动显示游戏键位图！");
-            mProgress.setProgress(mProgress.getMax());
-            mButton.setVisibility(View.VISIBLE);
-        } else {
-            mLoadMsg.setText("进入游戏会自动显示游戏键位图!");
+            mButton.setText("点击我后台运行");
         }
-        mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                SimpleUtil.log("ischeck:" + isChecked);
-                SimpleUtil.saveToShare(MainActivity.this, "ini", "showloading", !isChecked);
-            }
-        });
 
         AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0);
         alphaAnimation.setDuration(300);
         alphaAnimation.setRepeatCount(Animation.INFINITE);
         alphaAnimation.setRepeatMode(Animation.REVERSE);
         mButton.startAnimation(alphaAnimation);
-
-
+        SimpleUtil.log("MainActivity-------------create over------------" + hashCode());
+        
     }
 
-    private int getStatusBarHeight() {
-        int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
-    }
     @Override
     protected void onResume() {
         super.onResume();
         SimpleUtil.log("MainActivity-------------resume------------" + hashCode() + " pid:" + Process.myPid());
+
+        int jLH = (Integer) SimpleUtil.getFromShare(this, "ini", "LH", int.class, -1);
+        //jLH = -1;
+        if (jLH == -1)//需要判断一下刘海屏
+        {
+            startActivityForResult(new Intent(this, InitActivity.class), 11111);
+            return;
+        }
+        SimpleUtil.LIUHAI = jLH;
+        SimpleUtil.log("resume Liuhai:" + SimpleUtil.LIUHAI);
         if (isFloatPermissionOK()) {
+            SimpleUtil.log("isFloatPermissionOK");
+            mLoadMsg.setText("进入游戏会自动显示游戏键位图!");
+            runInit();
+        } else {
+            SimpleUtil.log("isFloatPermissionnotok");
+        }
+        SimpleUtil.log("MainActivity-------------resume over------------" + hashCode() + " pid:" + Process.myPid());
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+     /*   SimpleUtil.log("onActivityResult:"+requestCode+","+resultCode+","+data);
+        if (isFloatPermissionOK()) {
+            SimpleUtil.log("isFloatPermissionOK");
             mLoadMsg.setText("进入游戏会自动显示游戏键位图!");
             runInit();
         }
+        else{
+            SimpleUtil.log("isFloatPermissionnotok");
+        }*/
     }
 
     private void runInit() {
 
         if (!(Boolean) SimpleUtil.getFromShare(this, "ini", "init", boolean.class)) {
+            SimpleUtil.log("runInit initask execute");
             new IniTask().execute();
         } else {
-
-            if (!(Boolean) SimpleUtil.getFromShare(this, "ini", "showloading", boolean.class, true)) {
-                Intent intent = new Intent(MainActivity.this, MainService.class);
-                startService(intent);
-                finish();
-                return;
-            }
-
+            mButton.setText("点击我后台运行");
             mButton.setVisibility(View.VISIBLE);
-            mButton.setText("好的");
-            mCheckBox.setVisibility(View.VISIBLE);
+            AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0);
+            alphaAnimation.setDuration(300);
+            alphaAnimation.setRepeatCount(Animation.INFINITE);
+            alphaAnimation.setRepeatMode(Animation.REVERSE);
+            mButton.startAnimation(alphaAnimation);
         }
     }
 
@@ -254,13 +218,33 @@ public class MainActivity extends Activity {
         return false;
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.loading_bt:
+                if (mLoadMsg.getText().toString().contains("悬浮窗")) {
+                    if (Build.VERSION.SDK_INT >= 23) {
+                        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                Uri.parse("package:" + getPackageName()));
+                        startActivityForResult(intent, 789);
+                    } else {
+                        Toast.makeText(MainActivity.this, "请打开悬浮窗", Toast.LENGTH_LONG).show();
+                    }
+                    return;
+                }
+
+                Intent intent = new Intent(MainActivity.this, MainService.class);
+                startService(intent);
+                finish();
+                break;
+        }
+    }
+
     class IniTask extends AsyncTask<Void, Integer, Void> {
         @Override
         protected void onPreExecute() {
 
-        /*Intent intent = new Intent(MainActivity.this,MainService.class);
-        startService(intent);
-        MainActivity.this.finish();*/
+            SimpleUtil.log("IniTask onPreExecute");
             mProgress.setVisibility(View.VISIBLE);
             mButton.clearAnimation();
             mButton.setVisibility(View.GONE);
@@ -304,16 +288,24 @@ public class MainActivity extends Activity {
         @Override
         protected void onPostExecute(Void aVoid) {
             SimpleUtil.saveToShare(MainActivity.this, "ini", "init", true);
+            SimpleUtil.log("第一次初始化需要手动进入");
+           /* if(getWindowManager().getDefaultDisplay().getRotation() * Surface.ROTATION_90==1)//检测到横屏状态
+            {
+                SimpleUtil.log("已经初始化，直接进入");
+                Intent intent = new Intent(MainActivity.this, MainService.class);
+                startService(intent);
+                finish();
+                return;
+            }*/
             mLoadMsg.setText("初始化完成！进入游戏会自动显示游戏键位图！");
             mProgress.setVisibility(View.GONE);
-            mButton.setText("好的");
+            mButton.setText("点击我后台运行");
             mButton.setVisibility(View.VISIBLE);
             AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0);
             alphaAnimation.setDuration(300);
             alphaAnimation.setRepeatCount(Animation.INFINITE);
             alphaAnimation.setRepeatMode(Animation.REVERSE);
             mButton.startAnimation(alphaAnimation);
-            mCheckBox.setVisibility(View.VISIBLE);
 
         }
     }
