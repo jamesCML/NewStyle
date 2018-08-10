@@ -1308,6 +1308,8 @@ public class KeyboardView extends FrameLayout
             setUse((AOAConfigTool.Config) obj);
         } else if (id == 10014) {
             mEnableSetting = true;
+        } else if (id == 10015) {
+            SimpleUtil.log("映射界面收到按键更改通知:" + (byte) obj);
         }
     }
 

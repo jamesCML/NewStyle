@@ -617,6 +617,21 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                         SimpleUtil.log("符合请求码，返回数据");
                         mReq.mReqResult = data;
                     }
+                } else {
+                    SimpleUtil.log("没有请求码:" + Hex.toString(data));
+                    if (data[2] == (byte) 0xd0)//检测到配置切换
+                    {
+                        String configsorderbytes = (String) SimpleUtil.getFromShare(mContext, "ini", "configsorderbytes", String.class, null);
+                        byte[] libOrder = Hex.parse(configsorderbytes);
+                        if (libOrder == null) {
+                            return;
+                        }
+                        SimpleUtil.log("liborder:" + configsorderbytes);
+                        if (libOrder[3] != data[3]) {
+                            SimpleUtil.notifyall_(10015, data);
+                        }
+
+                    }
                 }
             }
 

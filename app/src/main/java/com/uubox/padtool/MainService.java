@@ -850,16 +850,24 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
 
 
     private void setUpAsForeground(String text) {
-        Notification notification = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
-            notification = new Notification.Builder(this)
-                    .setContentTitle(getString(R.string.app_name))
-                    .setContentText(text)
-                    .setTicker(text)
-                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.app_icon0805001))
-                    .build();
+        if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.P) {
+            return;
         }
-        startForeground(1, notification);
+        try {
+
+            Notification notification = null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                notification = new Notification.Builder(this)
+                        .setContentTitle(getString(R.string.app_name))
+                        .setContentText(text)
+                        .setTicker(text)
+                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.app_icon0805001))
+                        .build();
+            }
+            startForeground(1, notification);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

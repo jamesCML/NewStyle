@@ -26,7 +26,7 @@ import static android.content.Context.WINDOW_SERVICE;
  * @author 李剑波
  * @date 18/1/4
  */
-public class KeyboardFloatView extends FrameLayout {
+public class KeyboardFloatView extends FrameLayout implements SimpleUtil.INormalBack {
 
     private static final int BTN_COUNT = KeyboardView.Btn.values().length;
     private static KeyboardFloatView mInstance;
@@ -42,6 +42,7 @@ public class KeyboardFloatView extends FrameLayout {
 
     private KeyboardFloatView(@NonNull Context context) {
         super(context);
+        SimpleUtil.addINormalCallback(this);
     }
 
     public static KeyboardFloatView getInstance(Context context) {
@@ -170,5 +171,16 @@ public class KeyboardFloatView extends FrameLayout {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void back(int id, Object obj) {
+        if (id == 10015) {
+            SimpleUtil.log("小健位收到按键更改通知");
+        }
+    }
+
+    private void update(byte[] data) {
+
     }
 }
