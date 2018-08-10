@@ -228,14 +228,20 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
 
     private Req mReq = new Req();
 
-    private void writeWaitResult(byte type, byte[] data, long timeout) {
+    public byte[] writeWaitResult(byte type, byte[] data, long timeout) {
         long time = System.currentTimeMillis();
         resetReq();
         mReq.mReqType = type;
         mAccInputThread.writeAcc(data);
         while ((System.currentTimeMillis() - time) < timeout && mReq.mReqResult == null) ;
+        return mReq.mReqResult;
     }
 
+    public void setReq(byte reqType, byte[] result) {
+        resetReq();
+        mReq.mReqType = reqType;
+        mReq.mReqResult = result;
+    }
     public void writeManyConfigs(final List<Config> allConfigs) {
         if (!isAOAConnect()) {
             SimpleUtil.log("aoa not connrct!writeManyConfigs fail!");

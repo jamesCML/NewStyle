@@ -72,8 +72,8 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
     @Override
     public void onCreate() {
         super.onCreate();
-        // SimpleUtil.zoomx = (Integer) SimpleUtil.getFromShare(getBaseContext(), "ini", "zoomx", int.class);
-        // SimpleUtil.zoomy = (Integer) SimpleUtil.getFromShare(getBaseContext(), "ini", "zoomy", int.class);
+        SimpleUtil.zoomx = (Integer) SimpleUtil.getFromShare(getBaseContext(), "ini", "zoomx", int.class);
+        SimpleUtil.zoomy = (Integer) SimpleUtil.getFromShare(getBaseContext(), "ini", "zoomy", int.class);
         initWindowOnlyOnce();
         SimpleUtil.addINormalCallback(this);
         mAOAConfigTool = AOAConfigTool.getInstance(this);
@@ -199,7 +199,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         UsbAccessory[] usbAccessories = mUSBManager.getAccessoryList();
 
         if (usbAccessories == null) {
-            //SimpleUtil.log("return usbAccessories list is null!!!!!!");
+            SimpleUtil.log("return usbAccessories list is null!!!!!!");
             mfloatingIv.setImageResource((Integer) mfloatingIv.getTag() == 1 ? R.mipmap.app_icon0805001_gray : R.mipmap.app_icon0805001_half_gray);
             mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 1000);
             return;
@@ -237,6 +237,13 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         mAccInputThread.start();
         mAOAConfigTool.startConnect(mAccInputThread);
         SimpleUtil.log("openUsbAccessory sucessful!!!!!");
+        byte[] result = mAOAConfigTool.writeWaitResult((byte) 0xb3, new byte[]{(byte) 0xa5, (byte) 0x04, (byte) 0xb3, (byte) 0x5c}, 3000);
+        if (result == null) {
+            SimpleUtil.log("读取版本信息出错");
+        } else {
+            SimpleUtil.mDeviceVersion = result[3] & 0xff;
+            SimpleUtil.log("获取版本信息:" + SimpleUtil.mDeviceVersion);
+        }
         mHandler.removeMessages(HANDLE_SCAN_AOA);
         mfloatingIv.setImageResource((Integer) mfloatingIv.getTag() == 1 ? R.mipmap.app_icon0805001 : R.mipmap.app_icon0805001_half);
 
@@ -688,7 +695,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
                             e.printStackTrace();
                         }
                     }
-                    //System.exit(0);
+                    System.exit(0);
                     mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 200);
 
                 }

@@ -61,12 +61,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         SimpleUtil.zoomx = Math.min(point.x, point.y);
         SimpleUtil.zoomy = Math.max(point.x, point.y);
-
+        SimpleUtil.saveToShare(this, "ini", "zoomx", SimpleUtil.zoomx);
+        SimpleUtil.saveToShare(this, "ini", "zoomy", SimpleUtil.zoomy);
        /* Display display = getWindowManager().getDefaultDisplay();
         System.out.println("width-display :" + display.getWidth());
         System.out.println("heigth-display :" + display.getHeight());*/
 
-        SimpleUtil.toast(this, "pixreal XY:" + SimpleUtil.zoomx + "," + SimpleUtil.zoomy);
+        // SimpleUtil.toast(this, "pixreal XY:" + SimpleUtil.zoomx + "," + SimpleUtil.zoomy);
 
         mProgress = findViewById(R.id.loading_pro);
         mLoadMsg = findViewById(R.id.loading_msg);

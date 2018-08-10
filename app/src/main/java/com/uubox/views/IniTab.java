@@ -43,7 +43,6 @@ public class IniTab {
     private List<View> mViewPageList;
     private int mIndex;
     private Button mLastPress;
-
     public IniTab(Context context) {
         init(context);
     }
@@ -60,6 +59,7 @@ public class IniTab {
 
         //addKeyInit();
         WriteConfigs();
+        addAbout();
         addHelper();
         mViewPage.setAdapter(pagerAdapter);
         mViewPage.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -541,6 +541,13 @@ public class IniTab {
 
     }
 
+    private void addAbout() {
+        View view = LayoutInflater.from(mContext).inflate(R.layout.iniabout, null);
+        ((TextView) (view.findViewById(R.id.iniabout_appver))).setText("应用版本:" + CommonUtils.getAppVersionName(mContext));
+        ((TextView) (view.findViewById(R.id.iniabout_devver))).setText("设备版本:" + SimpleUtil.mDeviceVersion);
+        addItem("版本信息");
+        mViewPageList.add(view);
+    }
     private void addItem(final String item) {
         final Button button = new Button(mContext);
         button.setBackgroundColor(mContext.getResources().getColor(R.color.transparent));

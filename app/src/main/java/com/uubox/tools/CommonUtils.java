@@ -257,8 +257,7 @@ public class CommonUtils {
         try {
             PackageManager pm = context.getPackageManager();
             PackageInfo pi = pm.getPackageInfo(context.getPackageName(), 0);
-            SimpleUtil.versionCode = pi.versionCode;
-            return "v" + pi.versionName;
+            return pi.versionName;
         } catch (Exception e) {
             e.printStackTrace();
             return "";

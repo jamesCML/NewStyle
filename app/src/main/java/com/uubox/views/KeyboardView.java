@@ -1208,6 +1208,7 @@ public class KeyboardView extends FrameLayout
 
     private DragImageView whatImg;
     private long mWhatAddTime;
+    private boolean mEnableSetting = true;
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         Log.d("touch event", "getX=" + event.getX() + ",getY=" + event.getY());
@@ -1265,6 +1266,10 @@ public class KeyboardView extends FrameLayout
     }
 
     private void showTab() {
+        if (!mEnableSetting) {
+            return;
+        }
+        mEnableSetting = false;
         new IniTab(getContext()).show();
     }
     private void initEyes() {
@@ -1301,6 +1306,8 @@ public class KeyboardView extends FrameLayout
             SimpleUtil.removeINormalCallback(this);
         } else if (id == 10013) {
             setUse((AOAConfigTool.Config) obj);
+        } else if (id == 10014) {
+            mEnableSetting = true;
         }
     }
 

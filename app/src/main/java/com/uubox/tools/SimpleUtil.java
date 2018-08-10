@@ -42,11 +42,11 @@ public class SimpleUtil {
     public static boolean DEBUG;
     public static int zoomx;
     public static int zoomy;
-    public static int versionCode = 10;
     public static boolean isSaveToXml = false;
     public static boolean screenstate;
     public static boolean mAOAInjectEable;
     public static int LIUHAI;
+    public static int mDeviceVersion;
     public static byte[] getAssertSmallFile(Context context, String path) {
         try {
             InputStream stream = context.getAssets().open(path);
