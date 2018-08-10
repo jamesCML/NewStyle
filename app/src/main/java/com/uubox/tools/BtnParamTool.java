@@ -72,7 +72,7 @@ public class BtnParamTool {
             BtnParams btnParam = new BtnParams();
             btnParam.setBelongBtn(key);
             setParam(btnParam, element, zoomx, zoomy);
-            SimpleUtil.log(btnParam.toString());
+            //SimpleUtil.log(btnParam.toString());
             mBtnParams.put(key, btnParam);
             //需要加载子按键
             if (btnParam.iHaveChild()) {
@@ -136,89 +136,25 @@ public class BtnParamTool {
         mouseYyy = (Integer) SimpleUtil.getFromShare(context, "ini", "mMouseProgressY", int.class, 5);
         mouseWww = (Integer) SimpleUtil.getFromShare(context, "ini", "mMouseProgressW", int.class, 50);
 
-        Log.e(TAG, "loadBtnParamsFromPrefs playgame:" + comfirGame);
+        SimpleUtil.log("loadBtnParamsFromPrefs playgame:" + comfirGame);
         mBtnParams.clear();
-        // 读取之前保存的文件名（防止游戏过程手柄助手进程因内存问题被系统回收导致mSpFileName复位
 
-        String assertFile = "";
-        boolean isFirstOpen = true;
-        if (SimpleUtil.versionCode == 0) {
-            CommonUtils.getAppVersionName(context);
+        if (comfirGame.contains("丛林法则") || comfirGame.contains("光荣使命") ||
+                comfirGame.contains("小米枪战") || comfirGame.contains("穿越火线") || comfirGame.contains("终结者")
+                || comfirGame.contains("全军出击") || comfirGame.contains("刺激战场") || comfirGame.contains("荒野行动")) {
+            SimpleUtil.log("[预加载官方配置]");
+            loadIniFile(context, comfirGame + ".xml", comfirGame + "[官方]#Z%W#" + comfirGame + "[官方]");
+            mBtnParams.clear();
         }
-        //由于当前的配置保存只有官方和用户，不能强制更新保存，应该由用户自己点击按钮更新
-        int lastVersion = 0;
-        if (comfirGame.contains("荒野行动")) {
-            assertFile = "荒野行动.xml";
-            comfirGame = "荒野行动";
-            isFirstOpen = (lastVersion = (Integer) SimpleUtil.getFromShare(context, "ini", "hyxd_ini_", int.class, 0)) < SimpleUtil.versionCode;
-        } else if (comfirGame.contains("光荣使命")) {
-            assertFile = "光荣使命.xml";
-            comfirGame = "光荣使命";
-            isFirstOpen = (lastVersion = (Integer) SimpleUtil.getFromShare(context, "ini", "grsm_ini_", int.class, 0)) < SimpleUtil.versionCode;
-        } else if (comfirGame.contains("终结者")) {
-            assertFile = "终结者.xml";
-            comfirGame = "终结者";
-            isFirstOpen = (lastVersion = (Integer) SimpleUtil.getFromShare(context, "ini", "zjz_ini_", int.class, 0)) < SimpleUtil.versionCode;
-        } else if (comfirGame.contains("小米枪战")) {
-            assertFile = "小米枪战.xml";
-            comfirGame = "小米枪战";
-            isFirstOpen = (lastVersion = (Integer) SimpleUtil.getFromShare(context, "ini", "xmqz_ini_", int.class, 0)) < SimpleUtil.versionCode;
-        } else if (comfirGame.contains("穿越火线")) {
-            assertFile = "穿越火线.xml";
-            comfirGame = "穿越火线";
-            isFirstOpen = (lastVersion = (Integer) SimpleUtil.getFromShare(context, "ini", "cyhx_ini_", int.class, 0)) < SimpleUtil.versionCode;
-        } else if (comfirGame.contains("丛林法则")) {
-            assertFile = "丛林法则.xml";
-            comfirGame = "丛林法则";
-            isFirstOpen = (lastVersion = (Integer) SimpleUtil.getFromShare(context, "ini", "clfz_ini_", int.class, 0)) < SimpleUtil.versionCode;
-        } else if (comfirGame.contains("全军出击")) {
-            assertFile = "绝地求生之全军出击.xml";
-            comfirGame = "绝地求生之全军出击";
-            isFirstOpen = (lastVersion = (Integer) SimpleUtil.getFromShare(context, "ini", "qjcj_ini_", int.class, 0)) < SimpleUtil.versionCode;
-        } else if (comfirGame.contains("刺激战场")) {
-            assertFile = "绝地求生之刺激战场.xml";
-            comfirGame = "绝地求生之刺激战场";
-            isFirstOpen = (lastVersion = (Integer) SimpleUtil.getFromShare(context, "ini", "cjzc_ini_", int.class, 0)) < SimpleUtil.versionCode;
-        }
-        //配置文件默认
-        String mSpFileName = null;
-        //第一次或者是点击更新按钮，铁定加载
-        //同一个手机想要加载配置想要加上：  ||(!assertFile.isEmpty() &&getPrefInt(context, mSpFileName, KeyboardView.Btn.L.getPrefR(), -1)==-1)  这个条件
-        if ((lastVersion == 0 || iniReset) && ((iniReset && !assertFile.isEmpty()) || (!assertFile.isEmpty() && isFirstOpen)))//还没有配置则配置
-        {
-            loadIniFile(context, assertFile, comfirGame + "[官方]#Z%W#" + comfirGame + "[官方]");
-            mHasBtnParamsChanged = false;
-            if (comfirGame.contains("荒野行动")) {
-                SimpleUtil.saveToShare(context, "ini", "hyxd_ini_", SimpleUtil.versionCode);
-            } else if (comfirGame.contains("光荣使命")) {
-                SimpleUtil.saveToShare(context, "ini", "grsm_ini_", SimpleUtil.versionCode);
-            } else if (comfirGame.contains("终结者")) {
-                SimpleUtil.saveToShare(context, "ini", "zjz_ini_", SimpleUtil.versionCode);
-            } else if (comfirGame.contains("小米枪战")) {
-                SimpleUtil.saveToShare(context, "ini", "xmqz_ini_", SimpleUtil.versionCode);
-            } else if (comfirGame.contains("穿越火线")) {
-                SimpleUtil.saveToShare(context, "ini", "cyhx_ini_", SimpleUtil.versionCode);
-            } else if (comfirGame.contains("丛林法则")) {
-                SimpleUtil.saveToShare(context, "ini", "clfz_ini_", SimpleUtil.versionCode);
-            } else if (comfirGame.contains("刺激战场")) {
-                SimpleUtil.saveToShare(context, "ini", "cjzc_ini_", SimpleUtil.versionCode);
-            } else if (comfirGame.contains("全军出击")) {
-                SimpleUtil.saveToShare(context, "ini", "qjcj_ini_", SimpleUtil.versionCode);
-            }
+        mHasBtnParamsChanged = false;
+        String gloabkeyconfig = (String) SimpleUtil.getFromShare(context, "ini", "gloabkeyconfig", String.class, "");
+        SimpleUtil.log("默认使用==>" + gloabkeyconfig);
+        String[] sp = gloabkeyconfig.split("#Z%W#", -1);
+        if (sp.length < 2) {
             return;
-        } else //默认配置加载选定的配置
-        {
-
-            String gloabkeyconfig = (String) SimpleUtil.getFromShare(context, "ini", "gloabkeyconfig", String.class, "");
-            if (gloabkeyconfig != null && !gloabkeyconfig.isEmpty()) {
-                String[] sp = gloabkeyconfig.split("#Z%W#", -1);
-                mSpFileName = sp[2];
-            }
-
         }
-
-        SimpleUtil.log("loadBtnParamsFromPrefs: now start to init the button params===>" + mSpFileName);
-        SharedPreferences lib = context.getSharedPreferences(mSpFileName, 0);
+        SimpleUtil.log("加载配置文件到内存==>" + sp[2]);
+        SharedPreferences lib = context.getSharedPreferences(sp[2], 0);
         for (KeyboardView.Btn btn : KeyboardView.Btn.values()) {
             BtnParams params = new BtnParams();
             params.setBelongBtn(btn);
@@ -227,7 +163,7 @@ public class BtnParamTool {
             params.setR((Integer) SimpleUtil.getFromShare(lib, btn.getPrefR(), int.class, -1));
 
             params.setKeyType((Integer) SimpleUtil.getFromShare(lib, btn.getPrefType(), int.class, 0));
-            params.setKeyRepeatSwitch((Boolean) SimpleUtil.getFromShare(context, mSpFileName, btn.getPrefSwitch(), boolean.class));
+            params.setKeyRepeatSwitch((Boolean) SimpleUtil.getFromShare(context, sp[2], btn.getPrefSwitch(), boolean.class));
 
 
             if (btn == KeyboardView.Btn.L || btn == KeyboardView.Btn.R) {
@@ -273,7 +209,6 @@ public class BtnParamTool {
 
             mBtnParams.put(btn, params);
         }
-        mHasBtnParamsChanged = false;
     }
 
     public static LinkedHashMap<KeyboardView.Btn, BtnParams> getButtonParamsFromXML(Context context, String db_xml) {
@@ -412,38 +347,59 @@ public class BtnParamTool {
             return false;
         }*/
 
-        String mSpFileName;
-
+        String mSpFileName = null;
+        boolean isFind = false;
         //保存到新的配置
         if (sp[1].equals(sp[2])) {
-            mSpFileName = SimpleUtil.getSha1(sp[2] + sp[0]);
-            SimpleUtil.log("it is a new config===>" + mSpFileName);
+            SimpleUtil.log("检测到有新的配置需要保存！");
+            //查一下是否已经存在，主要防止官方配置重新加载
+            SharedPreferences sharedPreferences = context.getSharedPreferences(comfirGame + "_table", 0);
+            Map<String, ?> map = sharedPreferences.getAll();
+            Iterator<String> tableit = map.keySet().iterator();
 
-            String configIDs = (String) SimpleUtil.getFromShare(context, "ini", "configsID", String.class, "");
-            if (configIDs.isEmpty()) {
-                byte[] ids = new byte[100];
-                ids[0] = 0x01;
-                SimpleUtil.saveToShare(context, "ini", "configsID", Hex.toString(ids));
-                SimpleUtil.saveToShare(context, mSpFileName, "configID", 1);
-            } else {
-                byte[] ids = Hex.parse(configIDs);
-                for (int i = 0; i < 100; i++) {
-                    if (ids[i] == 0) {
-                        ids[i] = (byte) (ids[i - 1] + 1);
-                        SimpleUtil.saveToShare(context, "ini", "configsID", Hex.toString(ids));
-                        SimpleUtil.saveToShare(context, mSpFileName, "configID", (int) ids[i]);
-                        break;
-                    }
+            while (tableit.hasNext()) {
+                String key = tableit.next();
+                String value = (String) map.get(key);
+                SimpleUtil.log("key:" + key + ",value:" + value);
+                String[] valuesp = value.split("#Z%W#");
+                if (valuesp[1].equals(sp[1])) {
+                    SimpleUtil.log("已经存在了一个配置了，则直接保存进去即可！");
+                    mSpFileName = valuesp[2];
+                    isFind = true;
+                    break;
                 }
             }
-            SimpleUtil.log("保存新的配置ID到xml:" + mSpFileName);
+            if (!isFind) {
+                mSpFileName = SimpleUtil.getSha1(sp[2] + sp[0]);
+                SimpleUtil.log("it is a new config===>" + mSpFileName);
+
+                String configIDs = (String) SimpleUtil.getFromShare(context, "ini", "configsID", String.class, "");
+                if (configIDs.isEmpty()) {
+                    byte[] ids = new byte[100];
+                    ids[0] = 0x01;
+                    SimpleUtil.saveToShare(context, "ini", "configsID", Hex.toString(ids));
+                    SimpleUtil.saveToShare(context, mSpFileName, "configID", 1);
+                } else {
+                    byte[] ids = Hex.parse(configIDs);
+                    for (int i = 0; i < 100; i++) {
+                        if (ids[i] == 0) {
+                            ids[i] = (byte) (ids[i - 1] + 1);
+                            SimpleUtil.saveToShare(context, "ini", "configsID", Hex.toString(ids));
+                            SimpleUtil.saveToShare(context, mSpFileName, "configID", (int) ids[i]);
+                            break;
+                        }
+                    }
+                }
+                SimpleUtil.log("保存新的配置ID到xml:" + mSpFileName);
+            }
+
         } else {//保存到已有配置
             mSpFileName = sp[2];
         }
         SharedPreferences lib = context.getSharedPreferences(mSpFileName, 0);
         SharedPreferences.Editor editor = lib.edit();
         saveT0LocalXMLLib(editor);
-        if (sp[1].endsWith("[官方]")) {
+        if (sp[1].endsWith("[官方]") && !isFind) {
             if (!sp[1].contains("刺激战场") && !sp[1].contains("全军出击") && !sp[1].contains("荒野行动") && !sp[1].contains("光荣使命")) {
                 SimpleUtil.editSaveToShare(editor, "isDelete", true);
             }
@@ -454,7 +410,10 @@ public class BtnParamTool {
         if (SimpleUtil.isSaveToXml) {
             saveBtnParamsObjs();
         }
-
+        if (isFind) {
+            pressFloatable = true;
+            return true;
+        }
         //第一次，则需要建立映射表
         wholeName = sp[0] + "#Z%W#" + sp[1] + "#Z%W#" + (sp[1].equals(sp[2]) ? SimpleUtil.getSha1(sp[2] + sp[0]) : sp[2]);
         if (mSpFileName != null) {

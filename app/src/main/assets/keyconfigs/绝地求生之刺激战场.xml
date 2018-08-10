@@ -1,197 +1,211 @@
 <?xml version="1.0"?>
 <Root>
-    <ZOOM zoomx="1080" zoomy="1920"></ZOOM>
-    <NUM_6 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></NUM_6>
-    <A frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></A>
-    <NUM_2 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="32" step="-1" x="1088" y="954"></NUM_2>
-    <KEY_H frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="32" step="-1" x="1267" y="611"></KEY_H>
-    <CTRL_LEFT frequency="-1" isParent="false" switch="true" keyType="0"
-        mode="-1" r="32" step="-1" x="1753" y="418"></CTRL_LEFT>
-    <NUM_8 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></NUM_8>
-    <NUM_4 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="32" step="-1" x="597" y="1011"></NUM_4>
-    <MOUSE_IN frequency="-1" isParent="false" switch="true" keyType="0"
-        mode="-1" r="0" step="-1" x="0" y="-1"></MOUSE_IN>
-    <KEY_R frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="32" step="-1" x="1461" y="1016"></KEY_R>
-    <F8 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></F8>
-    <KEY_O frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="-1" step="-1" x="-1" y="-1"></KEY_O>
-    <MOUSE_LEFT frequency="-1" isParent="false" switch="true" keyType="0"
-        mode="-1" r="32" step="-1" x="1664" y="793"></MOUSE_LEFT>
-    <DOWN frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="32" step="-1" x="1618" y="873"></DOWN>
-    <KEY_M frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="32" step="-1" x="1858" y="63"></KEY_M>
-    <F7 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></F7>
-    <KEY_D frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></KEY_D>
-    <KEY_C frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="32" step="-1" x="1625" y="1006"></KEY_C>
-    <KEY_XIEGANG frequency="-1" isParent="false" switch="true" keyType="0"
-        mode="-1" r="0" step="-1" x="0" y="-1"></KEY_XIEGANG>
-    <TAB frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="32" step="-1" x="137" y="982"></TAB>
-    <Q frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="-1" step="-1" x="-1" y="-1"></Q>
-    <LEFT frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="-1" step="-1" x="-1" y="-1"></LEFT>
-    <KEY_A frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></KEY_A>
-    <KEY_S frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></KEY_S>
-    <R2 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></R2>
-    <WIN frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></WIN>
-    <KEY_W frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></KEY_W>
-    <KEY_G frequency="-1" isParent="true" switch="true" keyType="0" mode="-1"
-        r="32" step="-1" x="1276" y="497">
-        <KEY_G frequency="0" isParent="false" switch="true" keyType="1" mode="0"
-            r="32" step="0" x="944" y="601"></KEY_G>
+    <ZOOM zoomx="1080" zoomy="2160"></ZOOM>
+    <NUM_1 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="36" step="-1"
+        x="955" y="978"></NUM_1>
+    <NUM_3 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="36" step="-1"
+        x="1441" y="1009"></NUM_3>
+    <NUM_7 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></NUM_7>
+    <KEY_W frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></KEY_W>
+    <F2 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="32" step="-1"
+        x="1618" y="272"></F2>
+    <KEY_T frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="-1" step="-1"
+        x="-1" y="-1"></KEY_T>
+    <NUM_8 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></NUM_8>
+    <KEY_Y frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="36" step="-1"
+        x="1855" y="206"></KEY_Y>
+    <L1 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></L1>
+    <ESC frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="-1" step="-1" x="-1"
+        y="-1"></ESC>
+    <TAB frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="36" step="-1"
+        x="137" y="983"></TAB>
+    <Y frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></Y>
+    <KEY_H frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="36" step="-1"
+        x="1496" y="624"></KEY_H>
+    <KEY_J frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="32" step="-1"
+        x="1079" y="678"></KEY_J>
+    <KEY_A frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></KEY_A>
+    <KEY_C frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="36" step="-1"
+        x="1863" y="1004"></KEY_C>
+    <RIGHT frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="-1" step="-1"
+        x="-1" y="-1"></RIGHT>
+    <KEY_LEFT_BEGIN frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0"
+        step="-1" x="0" y="-1"></KEY_LEFT_BEGIN>
+    <THUMBR frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1"
+        x="0" y="-1"></THUMBR>
+    <KEY_I frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="32" step="-1"
+        x="1859" y="129"></KEY_I>
+    <KEY_Z frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="36" step="-1"
+        x="2051" y="966"></KEY_Z>
+    <KEY_V frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="36" step="-1"
+        x="1497" y="743"></KEY_V>
+    <KEY_M frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="36" step="-1"
+        x="2090" y="63"></KEY_M>
+    <KEY_FANXIEGANG frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0"
+        step="-1" x="0" y="-1"></KEY_FANXIEGANG>
+    <WIN frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></WIN>
+    <F7 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></F7>
+    <KEY_G frequency="-1" isParent="true" switch="true" keyType="0" mode="-1" r="36" step="-1"
+        x="1502" y="490">
+        <KEY_G frequency="0" isParent="false" switch="true" keyType="1" mode="0" r="36" step="0"
+            x="1152" y="620"></KEY_G>
     </KEY_G>
-    <R frequency="30" isParent="false" switch="true" keyType="0" mode="0" r="0"
-        step="15" x="1129" y="73"></R>
-    <F4 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="32" step="-1" x="1476" y="48"></F4>
-    <THUMBL frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></THUMBL>
-    <ADD frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="32" step="-1" x="1616" y="284"></ADD>
-    <F5 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></F5>
-    <KEY_N frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></KEY_N>
-    <R1 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></R1>
-    <KEY_RIGHT_END frequency="-1" isParent="false" switch="true" keyType="0"
-        mode="-1" r="0" step="-1" x="0" y="-1"></KEY_RIGHT_END>
-    <NUM_1 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="32" step="-1" x="840" y="967"></NUM_1>
-    <Y frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></Y>
-    <F12 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></F12>
-    <KEY_MAOHAO frequency="-1" isParent="false" switch="true" keyType="0"
-        mode="-1" r="0" step="-1" x="0" y="-1"></KEY_MAOHAO>
-    <RIGHT frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="-1" step="-1" x="-1" y="-1"></RIGHT>
-    <F10 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></F10>
-    <B frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></B>
-    <L frequency="30" isParent="false" switch="true" keyType="0" mode="0"
-        r="80" step="15" x="302" y="814"></L>
-    <KEY_JUHAO frequency="-1" isParent="false" switch="true" keyType="0"
-        mode="-1" r="0" step="-1" x="0" y="-1"></KEY_JUHAO>
-    <F6 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></F6>
-    <ALT_LEFT frequency="-1" isParent="false" switch="true" keyType="0"
-        mode="-1" r="32" step="-1" x="1483" y="340"></ALT_LEFT>
-    <CTRL_RGHT frequency="-1" isParent="false" switch="true" keyType="0"
-        mode="-1" r="0" step="-1" x="0" y="-1"></CTRL_RGHT>
-    <KEY_U frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></KEY_U>
-    <KEY_LEFT_BEGIN frequency="-1" isParent="false" switch="true" keyType="0"
-        mode="-1" r="0" step="-1" x="0" y="-1"></KEY_LEFT_BEGIN>
-    <KEY_Y frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="32" step="-1" x="1610" y="222"></KEY_Y>
-    <KEY_K frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></KEY_K>
-    <F11 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></F11>
-    <SHIFT_LEFT frequency="-1" isParent="false" switch="true" keyType="0"
-        mode="-1" r="32" step="-1" x="1616" y="284"></SHIFT_LEFT>
-    <NUM_5 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></NUM_5>
-    <SUB frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></SUB>
-    <ALT_RIGHT frequency="-1" isParent="false" switch="true" keyType="0"
-        mode="-1" r="0" step="-1" x="0" y="-1"></ALT_RIGHT>
-    <F9 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></F9>
-    <CAPS frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></CAPS>
-    <KEY_DOUHAO frequency="-1" isParent="false" switch="true" keyType="0"
-        mode="-1" r="0" step="-1" x="0" y="-1"></KEY_DOUHAO>
-    <KEY_YINHAO frequency="-1" isParent="false" switch="true" keyType="0"
-        mode="-1" r="0" step="-1" x="0" y="-1"></KEY_YINHAO>
-    <KEY_X frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="32" step="-1" x="1294" y="265"></KEY_X>
-    <THUMBR frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></THUMBR>
-    <MOUSE_RIGHT frequency="-1" isParent="false" switch="true" keyType="0"
-        mode="-1" r="32" step="-1" x="1840" y="564"></MOUSE_RIGHT>
-    <KEY_Q frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="32" step="-1" x="266" y="400"></KEY_Q>
-    <KEY_P frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></KEY_P>
-    <KEY_B frequency="-1" isParent="true" switch="true" keyType="0" mode="-1"
-        r="32" step="-1" x="1080" y="899">
-        <KEY_B frequency="0" isParent="false" switch="true" keyType="1" mode="0"
-            r="32" step="0" x="851" y="891"></KEY_B>
-    </KEY_B>
-    <BACK frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></BACK>
-    <NUM_7 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></NUM_7>
-    <KEY_Z frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="32" step="-1" x="1805" y="971"></KEY_Z>
-    <F1 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></F1>
-    <X frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></X>
-    <UP frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="32" step="-1" x="1598" y="647"></UP>
-    <START frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></START>
-    <KEY_T frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="32" step="-1" x="1610" y="132"></KEY_T>
-    <SHIFT_RIGHT frequency="-1" isParent="false" switch="true" keyType="0"
-        mode="-1" r="0" step="-1" x="0" y="-1"></SHIFT_RIGHT>
-    <F3 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></F3>
-    <NUM_9 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="-1" step="-1" x="-1" y="-1"></NUM_9>
-    <KEY_V frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="32" step="-1" x="1312" y="743"></KEY_V>
-    <KEY_F frequency="-1" isParent="true" switch="true" keyType="0" mode="-1"
-        r="32" step="-1" x="1286" y="370">
-        <KEY_F frequency="0" isParent="false" switch="true" keyType="1" mode="0"
-            r="32" step="0" x="583" y="617"></KEY_F>
+    <F11 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></F11>
+    <KEY_Q frequency="-1" isParent="true" switch="true" keyType="0" mode="-1" r="36" step="-1"
+        x="267" y="392">
+        <KEY_Q frequency="30" isParent="false" switch="true" keyType="0" mode="0" r="-1" step="15"
+            x="-1" y="-1"></KEY_Q>
+    </KEY_Q>
+    <KEY_R frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="36" step="-1"
+        x="1705" y="1009"></KEY_R>
+    <F12 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></F12>
+    <A frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></A>
+    <MOUSE_RIGHT frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="36"
+        step="-1" x="2083" y="560"></MOUSE_RIGHT>
+    <SHIFT_LEFT frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="36" step="-1"
+        x="1854" y="290"></SHIFT_LEFT>
+    <KEY_RIGHT_END frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0"
+        step="-1" x="0" y="-1"></KEY_RIGHT_END>
+    <THUMBL frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1"
+        x="0" y="-1"></THUMBL>
+    <F10 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></F10>
+    <NUM_6 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></NUM_6>
+    <GUNLUN frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="-1" step="-1"
+        x="-1" y="-1"></GUNLUN>
+    <R1 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></R1>
+    <Q frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="-1" step="-1" x="-1"
+        y="-1"></Q>
+    <NUM_5 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="32" step="-1"
+        x="1440" y="932"></NUM_5>
+    <KEY_JUHAO frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1"
+        x="0" y="-1"></KEY_JUHAO>
+    <KEY_XIEGANG frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1"
+        x="0" y="-1"></KEY_XIEGANG>
+    <F5 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></F5>
+    <F1 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="32" step="-1"
+        x="1536" y="270"></F1>
+    <L2 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></L2>
+    <KEY_N frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></KEY_N>
+    <LEFT frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="-1" step="-1"
+        x="-1" y="-1"></LEFT>
+    <CAPS frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></CAPS>
+    <KEY_S frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></KEY_S>
+    <SHIFT_RIGHT frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1"
+        x="0" y="-1"></SHIFT_RIGHT>
+    <ADD frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="36" step="-1"
+        x="1852" y="291"></ADD>
+    <KEY_YINHAO frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1"
+        x="0" y="-1"></KEY_YINHAO>
+    <F9 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></F9>
+    <KEY_O frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="-1" step="-1"
+        x="-1" y="-1"></KEY_O>
+    <SPACES frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="36" step="-1"
+        x="2079" y="754"></SPACES>
+    <NUM_4 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="36" step="-1"
+        x="719" y="1011"></NUM_4>
+    <B frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></B>
+    <ENTER frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></ENTER>
+    <CTRL_LEFT frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="-1" step="-1"
+        x="-1" y="-1"></CTRL_LEFT>
+    <MOUSE_LEFT frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="36" step="-1"
+        x="1872" y="811"></MOUSE_LEFT>
+    <F6 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></F6>
+    <START frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></START>
+    <F3 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></F3>
+    <ALT_RIGHT frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1"
+        x="0" y="-1"></ALT_RIGHT>
+    <UP frequency="-1" isParent="true" switch="true" keyType="0" mode="-1" r="36" step="-1" x="1860"
+        y="649">
+        <UP frequency="0" isParent="false" switch="true" keyType="1" mode="0" r="32" step="0"
+            x="1785" y="558"></UP>
+    </UP>
+    <KEY_E frequency="-1" isParent="true" switch="true" keyType="0" mode="-1" r="36" step="-1"
+        x="423" y="394">
+        <KEY_E frequency="30" isParent="false" switch="true" keyType="0" mode="0" r="-1" step="15"
+            x="-1" y="-1"></KEY_E>
+    </KEY_E>
+    <KEY_F frequency="-1" isParent="true" switch="true" keyType="0" mode="-1" r="36" step="-1"
+        x="1503" y="373">
+        <KEY_F frequency="0" isParent="false" switch="true" keyType="1" mode="0" r="32" step="0"
+            x="843" y="619"></KEY_F>
     </KEY_F>
-    <ENTER frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></ENTER>
-    <KEY_I frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></KEY_I>
-    <F2 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></F2>
-    <KEY_FANXIEGANG frequency="-1" isParent="false" switch="true" keyType="0"
-        mode="-1" r="0" step="-1" x="0" y="-1"></KEY_FANXIEGANG>
-    <KEY_E frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="32" step="-1" x="424" y="397"></KEY_E>
-    <KEY_L frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></KEY_L>
-    <L1 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></L1>
-    <L2 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></L2>
-    <KEY_J frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="0" step="-1" x="0" y="-1"></KEY_J>
-    <ESC frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="32" step="-1" x="1376" y="276"></ESC>
-    <SPACES frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="32" step="-1" x="1839" y="759"></SPACES>
-    <NUM_3 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="32" step="-1" x="1313" y="1008"></NUM_3>
-    <NUM_0 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1"
-        r="32" step="-1" x="1314" y="931"></NUM_0>
+    <KEY_D frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></KEY_D>
+    <KEY_U frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="32" step="-1"
+        x="2103" y="359"></KEY_U>
+    <KEY_MAOHAO frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1"
+        x="0" y="-1"></KEY_MAOHAO>
+    <ALT_LEFT frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="36" step="-1"
+        x="1727" y="337"></ALT_LEFT>
+    <L frequency="30" isParent="false" switch="true" keyType="0" mode="0" r="166" step="15" x="344"
+        y="812"></L>
+    <F4 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="36" step="-1"
+        x="1702" y="47"></F4>
+    <SUB frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></SUB>
+    <KEY_X frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="32" step="-1"
+        x="2000" y="419"></KEY_X>
+    <NUM_9 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="-1" step="-1"
+        x="-1" y="-1"></NUM_9>
+    <KEY_DOUHAO frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1"
+        x="0" y="-1"></KEY_DOUHAO>
+    <R2 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></R2>
+    <F8 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></F8>
+    <KEY_B frequency="-1" isParent="true" switch="true" keyType="0" mode="-1" r="36" step="-1"
+        x="1205" y="899">
+        <KEY_B frequency="0" isParent="false" switch="true" keyType="1" mode="0" r="36" step="0"
+            x="953" y="896"></KEY_B>
+    </KEY_B>
+    <MOUSE_IN frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1"
+        x="0" y="-1"></MOUSE_IN>
+    <NUM_2 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="36" step="-1"
+        x="1204" y="978"></NUM_2>
+    <R frequency="30" isParent="false" switch="true" keyType="0" mode="0" r="0" step="15" x="1806"
+        y="455"></R>
+    <BACK frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></BACK>
+    <KEY_L frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></KEY_L>
+    <DOWN frequency="-1" isParent="true" switch="true" keyType="0" mode="-1" r="36" step="-1"
+        x="1853" y="919">
+        <DOWN frequency="0" isParent="false" switch="true" keyType="1" mode="0" r="32" step="0"
+            x="1607" y="549"></DOWN>
+    </DOWN>
+    <CTRL_RGHT frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1"
+        x="0" y="-1"></CTRL_RGHT>
+    <NUM_0 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="-1" step="-1"
+        x="-1" y="-1"></NUM_0>
+    <KEY_K frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></KEY_K>
+    <KEY_P frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></KEY_P>
+    <X frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
+        y="-1"></X>
 </Root>

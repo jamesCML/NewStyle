@@ -8,23 +8,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.Vector;
 
-public class SocketLogEx {
-    private BufferedWriter mBufferWriter;
+public class SocketLogEx extends Thread {
+    private static BufferedWriter mBufferWriter;
     private static SocketLogEx mInstance;
-    private static Object object = new Object();
-
+    private volatile Vector<String> mBuffer = new Vector<>();
     private SocketLogEx() {
-        try {
-            Socket socket = new Socket("192.168.18.198", 10086);
-            mBufferWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        start();
     }
 
     public static SocketLogEx getInstance() {
-        synchronized (object) {
+        synchronized (SocketLogEx.class) {
             if (mInstance == null) {
                 mInstance = new SocketLogEx();
             }
@@ -32,10 +27,32 @@ public class SocketLogEx {
         }
     }
 
-    public void sendLog(String msg) {
-        if (!write(msg)) {
-            Log.e("CJLOG", "XXXXXXXXXXXXXXXXXXXXXXXXX socket log write error!");
+    @Override
+    public void run() {
+        while (true) {
+
+            if (mBufferWriter == null) {
+                try {
+                    Socket socket = new Socket("192.168.18.198", 10086);
+                    mBufferWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else if (mBuffer.size() != 0) {
+                if (!write(mBuffer.get(0))) {
+                    mBufferWriter = null;
+                    // Log.e("CJLOG", "XXXXXXXXXXXXXXXXXXXXXXXXX socket log write error!");
+                }
+                mBuffer.remove(0);
+            }
         }
+    }
+
+    public void sendLog(String msg) {
+        if (mBuffer == null) {
+            return;
+        }
+        mBuffer.add(msg);
     }
 
     private boolean write(String line) {

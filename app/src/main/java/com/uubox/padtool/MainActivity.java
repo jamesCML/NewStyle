@@ -16,10 +16,14 @@ import android.os.Process;
 import android.os.StrictMode;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
@@ -38,21 +42,31 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private ProgressBar mProgress;
     private TextView mLoadMsg;
     private Button mButton;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SimpleUtil.DEBUG = CommonUtils.getAppVersionName(this).contains("debug");
         SimpleUtil.log("MainActivity-------------create------------" + hashCode());
         setContentView(R.layout.activity_main);
-        if (android.os.Build.VERSION.SDK_INT > 9) {
+        /*if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
-        }
+        }*/
+
+
         Point point = new Point();
         getWindowManager().getDefaultDisplay().getRealSize(point);
+
         SimpleUtil.zoomx = Math.min(point.x, point.y);
         SimpleUtil.zoomy = Math.max(point.x, point.y);
-        SimpleUtil.log("pixreal XY:" + SimpleUtil.zoomx + "," + SimpleUtil.zoomy);
+
+       /* Display display = getWindowManager().getDefaultDisplay();
+        System.out.println("width-display :" + display.getWidth());
+        System.out.println("heigth-display :" + display.getHeight());*/
+
+        SimpleUtil.toast(this, "pixreal XY:" + SimpleUtil.zoomx + "," + SimpleUtil.zoomy);
 
         mProgress = findViewById(R.id.loading_pro);
         mLoadMsg = findViewById(R.id.loading_msg);
@@ -65,6 +79,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             if ((Boolean) SimpleUtil.getFromShare(this, "ini", "init", boolean.class))//已经初始化则直接进入
             {
                 SimpleUtil.log("已经初始化，直接进入");
+                SimpleUtil.LIUHAI = (Integer) SimpleUtil.getFromShare(this, "ini", "LH", int.class, -1);
                 Intent intent = new Intent(MainActivity.this, MainService.class);
                 startService(intent);
                 finish();
@@ -79,7 +94,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         alphaAnimation.setRepeatMode(Animation.REVERSE);
         mButton.startAnimation(alphaAnimation);
         SimpleUtil.log("MainActivity-------------create over------------" + hashCode());
-        
+
     }
 
     @Override
@@ -263,12 +278,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         use = ini;
                         continue;
                     }
-                    BtnParamTool.setComfirGame(ini);
+                    BtnParamTool.setComfirGame(ini.substring(0, ini.length() - 4));
                     BtnParamTool.loadBtnParamsFromPrefs(MainActivity.this, false);
                     proc++;
                     publishProgress(proc, keyConfigFiles.length);
                 }
-                BtnParamTool.setComfirGame(use);
+                BtnParamTool.setComfirGame(use.substring(0, use.length() - 4));
                 BtnParamTool.loadBtnParamsFromPrefs(MainActivity.this, false);
                 publishProgress(keyConfigFiles.length, keyConfigFiles.length);
 
@@ -330,7 +345,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
                             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         }
     }
-
     @Override
     public void onBackPressed() {
         System.exit(0);

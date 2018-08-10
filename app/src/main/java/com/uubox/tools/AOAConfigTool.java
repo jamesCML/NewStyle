@@ -183,10 +183,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                 while (it2.hasNext()) {
                     KeyboardView.Btn key2 = it2.next();
                     BtnParams btnParams = xmlConfig.get(key2);
-                    if (key2 == KeyboardView.Btn.MOUSE_LEFT || key2 == KeyboardView.Btn.MOUSE_RIGHT || key2 == KeyboardView.Btn.MOUSE_IN) //得到鼠标按键
-                    {
-                        keyPoints.add(packKeyData2(mBtMap.get(key2), 0, OAODEVICE_Y - turnY(btnParams.getY()), turnX(btnParams.getX()), btnParams.getKeyType() == 3 ? KEYMODE.MP_KEY : KEYMODE.MP_TOUCH));
-                    } else if (key2 == KeyboardView.Btn.L || key2 == KeyboardView.Btn.R) {
+                    if (key2 == KeyboardView.Btn.L || key2 == KeyboardView.Btn.R) {
                         continue;
                     } else if (btnParams.getX() > 0 && btnParams.getY() > 0 && mBtMap.get(key2) != null) {
                         keyPoints.add(packKeyData2(mBtMap.get(key2), 0, OAODEVICE_Y - turnY(btnParams.getY()), turnX(btnParams.getX()), btnParams.getKeyType() == 3 ? KEYMODE.MP_KEY : KEYMODE.MP_TOUCH));
@@ -194,9 +191,9 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                         if (btnParams.iHaveChild())
                         {
                             BtnParams btnParams2 = btnParams.getBtn2();
-                            SimpleUtil.log("我有子按键按键:" + btnParams2.toString());
+                            //SimpleUtil.log("我有子按键按键:" + btnParams2.toString());
                             if (btnParams2.getKeyType() == 1) {
-                                SimpleUtil.log("添加联动按键:" + btnParams2.toString());
+                                //SimpleUtil.log("添加联动按键:" + btnParams2.toString());
                                 keyPoints.add(packKeyData2(mBtMap.get(key2), 0, OAODEVICE_Y - turnY(btnParams2.getY()), turnX(btnParams2.getX()), btnParams.getKeyType() == 3 ? KEYMODE.MP_KEY : KEYMODE.MP_TOUCH));
                             }
 

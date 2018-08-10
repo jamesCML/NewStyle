@@ -1,6 +1,7 @@
 package com.uubox.padtool;
 
 import android.app.Activity;
+import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;

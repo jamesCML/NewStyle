@@ -43,7 +43,7 @@ public class SimpleUtil {
     public static int zoomx;
     public static int zoomy;
     public static int versionCode = 10;
-    public static boolean isSaveToXml = true;
+    public static boolean isSaveToXml = false;
     public static boolean screenstate;
     public static boolean mAOAInjectEable;
     public static int LIUHAI;
@@ -167,7 +167,7 @@ public class SimpleUtil {
     }
 
     public static void log(String msg) {
-        SocketLogEx.getInstance().sendLog(msg);
+        //SocketLogEx.getInstance().sendLog(msg);
         if (!DEBUG) {
             return;
         }

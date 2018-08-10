@@ -1176,7 +1176,7 @@ public class KeyboardView extends FrameLayout
             default:
                 break;
         }
-        if (btnParams.iHaveChild() || btnParams.iAnChild()) {
+       /* if (btnParams.iHaveChild() || btnParams.iAnChild()) {
             SimpleUtil.addMsgBottomToTop(getContext(), "key只能只有一个按键!", true);
             return;
         }
@@ -1202,7 +1202,7 @@ public class KeyboardView extends FrameLayout
             public void run() {
                 BtnParamTool.setBtnParamsChanged(true);
             }
-        }, null);
+        }, null);*/
 
     }
 
