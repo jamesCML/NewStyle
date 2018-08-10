@@ -15,6 +15,7 @@
 
     <TextView
         android:text="ddd"
+        android:textColor="@color/configitem"
         android:id="@+id/gunqaitem_question"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="5dp"

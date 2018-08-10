@@ -1265,18 +1265,7 @@ public class KeyboardView extends FrameLayout
     }
 
     private void showTab() {
-        IniTab.getInstance().init(getContext(), this).show();
-        IniTab.getInstance().addNotify(new IniTab.IButtonMenuCallback() {
-            @Override
-            public void back(int type, Object carryData) {
-                if (type == 0) {
-                    clearAllView();
-                    BtnParamTool.loadBtnParamsFromPrefs(getContext(), true);
-                    loadUi();
-                    IniTab.getInstance().removeNotify(this);
-                }
-            }
-        });
+        new IniTab(getContext()).show();
     }
     private void initEyes() {
         if (BtnParamTool.isShowKbFloatView(getContext())) {

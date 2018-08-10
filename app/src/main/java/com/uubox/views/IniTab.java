@@ -38,30 +38,18 @@ import com.uubox.tools.SimpleUtil;
 public class IniTab {
     private Context mContext;
     private View parent;
-    private KeyboardView mKeyboardView;
-    private CopyOnWriteArraySet<IButtonMenuCallback> mCallbacks = new CopyOnWriteArraySet<>();
     private ViewPager mViewPage;
     private LinearLayout mBTBar;
     private List<View> mViewPageList;
     private int mIndex;
     private Button mLastPress;
-    private IniTab() {
 
+    public IniTab(Context context) {
+        init(context);
     }
 
-    public static final IniTab getInstance() {
-
-        return IniTab.Holder.INI_MENU;
-    }
-
-    private static class Holder {
-        private static final IniTab INI_MENU = new IniTab();
-    }
-
-    public IniTab init(Context context, KeyboardView keyboardView) {
-
+    public void init(Context context) {
         mContext = context;
-        mKeyboardView = keyboardView;
         mViewPageList = new ArrayList<>();
         mViewPageList.clear();
         mIndex = 0;
@@ -105,7 +93,6 @@ public class IniTab {
                 return true;
             }
         });
-        return Holder.INI_MENU;
     }
 
     public void show() {
@@ -114,7 +101,7 @@ public class IniTab {
         KeyboardEditWindowManager.getInstance().addView(parent, (7 * SimpleUtil.zoomy) / 8, (7 * SimpleUtil.zoomx) / 8);
     }
 
-    public void addNotify(IniTab.IButtonMenuCallback iButtonMenuCallback) {
+   /* public void addNotify(IniTab.IButtonMenuCallback iButtonMenuCallback) {
         mCallbacks.add(iButtonMenuCallback);
     }
 
@@ -126,7 +113,7 @@ public class IniTab {
         for (IniTab.IButtonMenuCallback callback : mCallbacks) {
             callback.back(type, carryData);
         }
-    }
+    }*/
 
     /**
      * 0:回调回复默认配置
@@ -512,7 +499,7 @@ public class IniTab {
                 SimpleUtil.addMsgtoTop(mContext, "帮助信息", "问:" + qaData.get(position).mQueston + "\n\n答:" + qaData.get(position).mAnswer, null, null, true);
             }
         });
-        addItem("写入配置");
+        addItem("我的配置");
         mViewPageList.add(view);
 
         //KeyboardEditWindowManager.getInstance().init(mContext).addView(view, (7 * SimpleUtil.zoomy) / 8, (7 * SimpleUtil.zoomx) / 8);

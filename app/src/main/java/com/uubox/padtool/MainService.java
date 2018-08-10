@@ -688,7 +688,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
                             e.printStackTrace();
                         }
                     }
-                    System.exit(0);
+                    //System.exit(0);
                     mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 200);
 
                 }
