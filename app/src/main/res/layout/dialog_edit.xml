@@ -52,7 +52,7 @@
             android:layout_marginRight="20dp"
             android:minHeight="40dp"
             android:minWidth="80dp"
-            android:text="yes" />
+            android:text="确定" />
 
         <Button
             android:id="@+id/dialogmsgno"
@@ -62,6 +62,6 @@
             android:layout_marginLeft="20dp"
             android:minHeight="40dp"
             android:minWidth="80dp"
-            android:text="no" />
+            android:text="取消" />
     </LinearLayout>
 </LinearLayout>

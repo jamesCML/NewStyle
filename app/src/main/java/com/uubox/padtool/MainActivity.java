@@ -1,5 +1,6 @@
 package com.uubox.padtool;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AppOpsManager;
 import android.content.Context;
@@ -17,6 +18,7 @@ import android.os.StrictMode;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.Menu;
@@ -33,6 +35,10 @@ import android.widget.Toast;
 
 import java.lang.reflect.Method;
 
+import com.pgyersdk.update.DownloadFileListener;
+import com.pgyersdk.update.PgyUpdateManager;
+import com.pgyersdk.update.UpdateManagerListener;
+import com.pgyersdk.update.javabean.AppBean;
 import com.uubox.tools.BtnParamTool;
 import com.uubox.tools.CommonUtils;
 import com.uubox.tools.SimpleUtil;
@@ -42,20 +48,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private ProgressBar mProgress;
     private TextView mLoadMsg;
     private Button mButton;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SimpleUtil.DEBUG = CommonUtils.getAppVersionName(this).contains("debug");
-        SimpleUtil.log("MainActivity-------------create------------" + hashCode());
+        //SimpleUtil.log("MainActivity-------------create------------" + hashCode());
         setContentView(R.layout.activity_main);
-        /*if (android.os.Build.VERSION.SDK_INT > 9) {
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
-        }*/
-
-
         Point point = new Point();
         getWindowManager().getDefaultDisplay().getRealSize(point);
 
@@ -63,12 +61,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         SimpleUtil.zoomy = Math.max(point.x, point.y);
         SimpleUtil.saveToShare(this, "ini", "zoomx", SimpleUtil.zoomx);
         SimpleUtil.saveToShare(this, "ini", "zoomy", SimpleUtil.zoomy);
-       /* Display display = getWindowManager().getDefaultDisplay();
-        System.out.println("width-display :" + display.getWidth());
-        System.out.println("heigth-display :" + display.getHeight());*/
-
-        // SimpleUtil.toast(this, "pixreal XY:" + SimpleUtil.zoomx + "," + SimpleUtil.zoomy);
-
+        SimpleUtil.log("屏幕分辨率:" + SimpleUtil.zoomx + "," + SimpleUtil.zoomy);
         mProgress = findViewById(R.id.loading_pro);
         mLoadMsg = findViewById(R.id.loading_msg);
         mButton = findViewById(R.id.loading_bt);
@@ -95,6 +88,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
         alphaAnimation.setRepeatMode(Animation.REVERSE);
         mButton.startAnimation(alphaAnimation);
         SimpleUtil.log("MainActivity-------------create over------------" + hashCode());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 79009);
+            }
+        }
 
     }
 
@@ -123,21 +121,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-     /*   SimpleUtil.log("onActivityResult:"+requestCode+","+resultCode+","+data);
-        if (isFloatPermissionOK()) {
-            SimpleUtil.log("isFloatPermissionOK");
-            mLoadMsg.setText("进入游戏会自动显示游戏键位图!");
-            runInit();
-        }
-        else{
-            SimpleUtil.log("isFloatPermissionnotok");
-        }*/
-    }
-
     private void runInit() {
-
         if (!(Boolean) SimpleUtil.getFromShare(this, "ini", "init", boolean.class)) {
             SimpleUtil.log("runInit initask execute");
             new IniTask().execute();
@@ -182,6 +166,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     runInit();
                 } else {
                     System.exit(0);
+                }
+                break;
+            case 79009:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    SimpleUtil.log("赋予存储权限OK");
+                } else {
+                    SimpleUtil.log("赋予存储权限fail");
                 }
                 break;
         }

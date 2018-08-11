@@ -199,7 +199,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         UsbAccessory[] usbAccessories = mUSBManager.getAccessoryList();
 
         if (usbAccessories == null) {
-            SimpleUtil.log("return usbAccessories list is null!!!!!!");
+            //SimpleUtil.log("return usbAccessories list is null!!!!!!");
             mfloatingIv.setImageResource((Integer) mfloatingIv.getTag() == 1 ? R.mipmap.app_icon0805001_gray : R.mipmap.app_icon0805001_half_gray);
             mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 1000);
             return;

@@ -1,5 +1,7 @@
 package com.uubox.tools;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -11,9 +13,11 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -256,42 +260,99 @@ public class SimpleUtil {
         }
     }
 
-    public static void addMsgtoTop(Context context, String title, String msg, final Runnable okTask, final Runnable noTask, boolean isHideNo) {
-        final View view = LayoutInflater.from(context).inflate(R.layout.dialog_message, null);
-        ((TextView) view.findViewById(R.id.dialogmsgtitle)).setText(title);
-        ((TextView) view.findViewById(R.id.dialogmsgmsg)).setText(msg);
-
-
-        view.findViewById(R.id.dialogmsgyes).setOnClickListener(new View.OnClickListener() {
+    public static void popWindow(final Context context, final String title, final String msg, final Runnable okTask, final Runnable noTask, final String ok, final String no, final boolean isHideno, int boundColor) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
-            public void onClick(View v) {
-
-                if (okTask != null) {
-                    new Handler(Looper.getMainLooper()).post(okTask);
+            public void run() {
+                final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+                final View view = LayoutInflater.from(context).inflate(R.layout.dialog_message, null);
+                ((TextView) view.findViewById(R.id.dialogmsgtitle)).setText(title);
+                ((TextView) view.findViewById(R.id.dialogmsgmsg)).setText(msg);
+                alertDialog.setCanceledOnTouchOutside(false);
+                alertDialog.setCancelable(false);
+                if (ok != null) {
+                    ((Button) view.findViewById(R.id.dialogmsgyes)).setText(ok);
                 }
-                KeyboardEditWindowManager.getInstance().removeView(view);
+                if (no != null) {
+                    ((Button) view.findViewById(R.id.dialogmsgno)).setText(no);
+                }
+                if (isHideno) {
+                    view.findViewById(R.id.dialogmsgno).setVisibility(View.GONE);
+                }
 
+                view.setBackgroundResource(R.mipmap.bg_black);
+                view.findViewById(R.id.dialogmsgyes).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        alertDialog.dismiss();
+                        if (okTask == null) {
+                            return;
+                        }
+                        ((Activity) context).runOnUiThread(okTask);
+                    }
+                });
+                view.findViewById(R.id.dialogmsgno).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        alertDialog.dismiss();
+                        if (noTask == null) {
+                            return;
+                        }
+                        ((Activity) context).runOnUiThread(noTask);
+                    }
+                });
+                alertDialog.getWindow().setWindowAnimations(R.style.popwindow);
+                alertDialog.show();
+                Window window = alertDialog.getWindow();
+                window.setBackgroundDrawableResource(android.R.color.transparent);
 
+                window.setLayout(9 * zoomy / 20, zoomx / 2);
+                window.setContentView(view);
             }
         });
+    }
 
-        if (isHideNo) {
-            view.findViewById(R.id.dialogmsgno).setVisibility(View.GONE);
-        }
-
-        view.findViewById(R.id.dialogmsgno).setOnClickListener(new View.OnClickListener() {
+    public static void addMsgtoTop(final Context context, final String title, final String msg, final Runnable okTask, final Runnable noTask, final boolean isHideNo) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
-            public void onClick(View v) {
-                if (noTask != null) {
-                    new Handler(Looper.getMainLooper()).post(noTask);
+            public void run() {
+                final View view = LayoutInflater.from(context).inflate(R.layout.dialog_message, null);
+                ((TextView) view.findViewById(R.id.dialogmsgtitle)).setText(title);
+                ((TextView) view.findViewById(R.id.dialogmsgmsg)).setText(msg);
+
+
+                view.findViewById(R.id.dialogmsgyes).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        if (okTask != null) {
+                            new Handler(Looper.getMainLooper()).post(okTask);
+                        }
+                        KeyboardEditWindowManager.getInstance().removeView(view);
+
+
+                    }
+                });
+
+                if (isHideNo) {
+                    view.findViewById(R.id.dialogmsgno).setVisibility(View.GONE);
                 }
-                KeyboardEditWindowManager.getInstance().removeView(view);
+
+                view.findViewById(R.id.dialogmsgno).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (noTask != null) {
+                            new Handler(Looper.getMainLooper()).post(noTask);
+                        }
+                        KeyboardEditWindowManager.getInstance().removeView(view);
 
 
+                    }
+                });
+
+                KeyboardEditWindowManager.getInstance().init(context).addView(view, (1 * SimpleUtil.zoomy) / 3, (2 * SimpleUtil.zoomx) / 3);
             }
         });
-
-        KeyboardEditWindowManager.getInstance().init(context).addView(view, (2 * SimpleUtil.zoomy) / 3, (2 * SimpleUtil.zoomx) / 3);
     }
 
     public static void toastTop(Context context, String msg) {
@@ -846,5 +907,63 @@ public class SimpleUtil {
                 waittingMsg = null;
             }
         });
+    }
+
+    private static AlertDialog waiting;
+
+    public static void showWaiting(final Context context, final String message) {
+        if (waiting != null || !(context instanceof Activity)) {
+            return;
+        }
+
+        ((Activity) context).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                final View view = LayoutInflater.from(context).inflate(R.layout.waiting, null);
+                view.setBackgroundResource(R.mipmap.bg_black);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(zoomy / 3, 4 * (zoomx / 5));
+                view.setLayoutParams(layoutParams);
+                waittingMsg = view.findViewById(R.id.waitingmsg);
+                waittingMsg.setText(message);
+                waiting = new AlertDialog.Builder(context, R.style.dialog2).create();
+                waiting.setCanceledOnTouchOutside(false);
+                waiting.setCancelable(false);
+
+                waiting.show();
+                Window window = waiting.getWindow();
+                window.setBackgroundDrawableResource(android.R.color.transparent);
+                window.setLayout(9 * zoomy / 20, zoomx / 2);
+                window.setContentView(view);
+            }
+        });
+
+
+    }
+
+    public static void updateWaiting(Activity activity, final String msg) {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (waiting == null || !waiting.isShowing() || waittingMsg == null) {
+                    return;
+                }
+                waittingMsg.setText(msg);
+            }
+        });
+
+    }
+
+    public static void closeDialog(Activity activity) {
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (waiting != null && waiting.isShowing()) {
+                    waiting.dismiss();
+                    waittingMsg = null;
+                    waiting = null;
+                }
+            }
+        });
+
     }
 }

@@ -59,7 +59,7 @@
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:background="@drawable/dialog_message_bt_select"
-            android:text="yes" />
+            android:text="确定" />
 
         <Button
             android:id="@+id/dialogmsgno"
@@ -71,6 +71,6 @@
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
             android:background="@drawable/dialog_message_bt_select"
-            android:text="no" />
+            android:text="取消" />
     </LinearLayout>
 </RelativeLayout>

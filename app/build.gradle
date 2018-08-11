@@ -1,13 +1,12 @@
 apply plugin: 'com.android.application'
-
 android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.uubox.padtool"
         minSdkVersion 19
-        targetSdkVersion 28
-        versionCode 18
-        versionName "2.2.0"
+        targetSdkVersion 22
+        versionCode 17
+        versionName "2.2.1"
         flavorDimensions "versionCode"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -58,6 +57,7 @@ repositories {
         url 'https://maven.google.com/'
         name 'Google'
     }
+    maven { url "https://raw.githubusercontent.com/Pgyer/mvn_repo_pgyer/master" }
 }
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -69,4 +69,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation files('libs/pad-server-v3.0.8.jar')
     implementation(name: 'xml-debug', ext: 'aar')
+    implementation 'com.pgyersdk:sdk:3.0.0'
 }

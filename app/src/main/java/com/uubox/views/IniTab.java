@@ -1,10 +1,15 @@
 package com.uubox.views;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -26,8 +31,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import com.pgyersdk.update.DownloadFileListener;
+import com.pgyersdk.update.PgyUpdateManager;
+import com.pgyersdk.update.UpdateManagerListener;
+import com.pgyersdk.update.javabean.AppBean;
 import com.uubox.adapters.GunQaAdapter;
 import com.uubox.adapters.MoveConfigAdapter;
+import com.uubox.padtool.MainActivity;
 import com.uubox.padtool.R;
 import com.uubox.tools.AOAConfigTool;
 import com.uubox.tools.CommonUtils;
@@ -94,34 +104,88 @@ public class IniTab {
             }
         });
     }
-
     public void show() {
         SimpleUtil.log("show the Initab");
         KeyboardEditWindowManager.getInstance().hideOrShowBottomUIMenu(false);
         KeyboardEditWindowManager.getInstance().addView(parent, (7 * SimpleUtil.zoomy) / 8, (7 * SimpleUtil.zoomx) / 8);
+        checkUpdate(1000);
     }
 
-   /* public void addNotify(IniTab.IButtonMenuCallback iButtonMenuCallback) {
-        mCallbacks.add(iButtonMenuCallback);
+    private void checkUpdate(int delay) {
+        SimpleUtil.runOnUIThread(new Runnable() {
+            @Override
+            public void run() {
+                new PgyUpdateManager.Builder()
+                        .setForced(true)
+                        .setUserCanRetry(false)
+                        .setDeleteHistroyApk(true)
+                        .setUpdateManagerListener(new UpdateManagerListener() {
+                            @Override
+                            public void onNoUpdateAvailable() {
+                                //没有更新是回调此方法
+                                SimpleUtil.log("there is no new version");
+                            }
+
+                            @Override
+                            public void onUpdateAvailable(final AppBean appBean) {
+                                SimpleUtil.addMsgtoTop(mContext, "版本更新", "发现新版本[" + appBean.getVersionName() + "]可更新\n当前应用版本[" + CommonUtils.getAppVersionName(mContext) + "]",
+                                        new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                                    SimpleUtil.addMsgBottomToTop(mContext, "应用【存储权限】未打开，升级失败！", true);
+                                                    return;
+                                                }
+                                                SimpleUtil.addMsgBottomToTop(mContext, "开始下载...", false);
+                                                PgyUpdateManager.downLoadApk(appBean.getDownloadURL());
+                                            }
+                                        }, null, false);
+                                //PgyUpdateManager.downLoadApk(appBean.getDownloadURL());
+                            }
+
+                            @Override
+                            public void checkUpdateFailed(Exception e) {
+                                //更新检测失败回调
+                                e.printStackTrace();
+                                //  SimpleUtil.log("check update failed ");
+                            }
+                        })
+                        //注意 ：
+                        //下载方法调用 PgyUpdateManager.downLoadApk(appBean.getDownloadURL()); 此回调才有效
+                        //此方法是方便用户自己实现下载进度和状态的 UI 提供的回调
+                        //想要使用蒲公英的默认下载进度的UI则不设置此方法
+                        .setDownloadFileListener(new DownloadFileListener() {
+                            @Override
+                            public void downloadFailed() {
+                                //下载失败
+                                // SimpleUtil.closeDialog(mContext);
+                                //SimpleUtil.toast(MainActivity.this,"下载异常，升级失败！");
+                                SimpleUtil.addMsgBottomToTop(mContext, "下载异常，升级失败！", true);
+
+                            }
+
+                            @Override
+                            public void downloadSuccessful(final Uri uri) {
+                                SimpleUtil.log("download apk ok");
+                                // 使用蒲公英提供的安装方法提示用户 安装apk
+                                SimpleUtil.addMsgBottomToTop(mContext, "新版本下载成功！准备安装！", false);
+                                SimpleUtil.runOnUIThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        PgyUpdateManager.installApk(uri);
+                                    }
+                                }, 2000);
+                            }
+
+                            @Override
+                            public void onProgressUpdate(Integer... integers) {
+                                SimpleUtil.log("apkupdate download apk progress" + integers[0]);
+                                //SimpleUtil.updateWaiting(MainActivity.this,"升级中 "+integers[0]+"/100");
+                            }
+                        }).register();
+            }
+        }, delay);
     }
-
-    public void removeNotify(IniTab.IButtonMenuCallback iButtonMenuCallback) {
-        mCallbacks.remove(iButtonMenuCallback);
-    }
-
-    public void notifyAllEx(int type, Object carryData) {
-        for (IniTab.IButtonMenuCallback callback : mCallbacks) {
-            callback.back(type, carryData);
-        }
-    }*/
-
-    /**
-     * 0:回调回复默认配置
-     */
-    public interface IButtonMenuCallback {
-        void back(int type, Object carryData);
-    }
-
 
     private void WriteConfigs() {
 
