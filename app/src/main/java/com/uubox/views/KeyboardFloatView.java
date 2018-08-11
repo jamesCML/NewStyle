@@ -1,6 +1,7 @@
 package com.uubox.views;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -11,11 +12,16 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 
+import com.uubox.tools.AOAConfigTool;
 import com.uubox.tools.BtnUtil;
 import com.uubox.tools.BtnParamTool;
+import com.uubox.tools.ByteArrayList;
+import com.uubox.tools.Hex;
 import com.uubox.tools.SimpleUtil;
 
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static android.content.Context.WINDOW_SERVICE;
@@ -177,10 +183,44 @@ public class KeyboardFloatView extends FrameLayout implements SimpleUtil.INormal
     public void back(int id, Object obj) {
         if (id == 10015) {
             SimpleUtil.log("小健位收到按键更改通知");
+            update((byte[]) obj);
         }
     }
 
     private void update(byte[] data) {
-
+        SharedPreferences allKeysConfigsTable = getContext().getSharedPreferences("KeysConfigs", 0);
+        Map<String, ?> maps = allKeysConfigsTable.getAll();
+        Iterator<String> allIt = maps.keySet().iterator();
+        while (allIt.hasNext()) {
+            String key = allIt.next();
+            SimpleUtil.log("游戏:" + key);
+            SharedPreferences allSubConfigs = getContext().getSharedPreferences(key + "_table", 0);
+            Iterator<? extends Map.Entry<String, ?>> it = allSubConfigs.getAll().entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String, ?> obj2 = it.next();
+                String subKey = obj2.getKey();
+                if (subKey.contains("default")) {
+                    continue;
+                }
+                String subValue = (String) obj2.getValue();
+                String[] sp = subValue.split("#Z%W#", -1);
+                int configID_ = (Integer) SimpleUtil.getFromShare(getContext(), sp[2], "configID", int.class);
+                if ((byte) configID_ == data[3]) {
+                    SimpleUtil.log("找到配置 " + data[3]);
+                    SimpleUtil.saveToShare(getContext(), "ini", "gloabkeyconfig", "default#Z%W#" + sp[1] + "#Z%W#" + sp[2] + "#Z%W#" + key);
+                    BtnParamTool.loadBtnParamsFromPrefs(getContext());
+                    SimpleUtil.saveToShare(getContext(), "ini", "configsorderbytes", Hex.toString(data));
+                    SimpleUtil.runOnUIThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (BtnParamTool.isShowKbFloatView(getContext())) {
+                                dismiss();
+                                show();
+                            }
+                        }
+                    });
+                }
+            }
+        }
     }
 }
