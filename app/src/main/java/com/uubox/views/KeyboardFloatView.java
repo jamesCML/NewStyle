@@ -205,9 +205,11 @@ public class KeyboardFloatView extends FrameLayout implements SimpleUtil.INormal
                 String subValue = (String) obj2.getValue();
                 String[] sp = subValue.split("#Z%W#", -1);
                 int configID_ = (Integer) SimpleUtil.getFromShare(getContext(), sp[2], "configID", int.class);
-                if ((byte) configID_ == data[3]) {
-                    SimpleUtil.log("找到配置 " + data[3]);
+                if ((byte) configID_ == data[data[3] + 3]) {
+                    SimpleUtil.log("找到配置 " + configID_);
+                    BtnParamTool.setComfirGame(key);
                     SimpleUtil.saveToShare(getContext(), "ini", "gloabkeyconfig", "default#Z%W#" + sp[1] + "#Z%W#" + sp[2] + "#Z%W#" + key);
+                    SimpleUtil.log("刷新小健位:" + "default#Z%W#" + sp[1] + "#Z%W#" + sp[2] + "#Z%W#" + key);
                     BtnParamTool.loadBtnParamsFromPrefs(getContext());
                     SimpleUtil.saveToShare(getContext(), "ini", "configsorderbytes", Hex.toString(data));
                     SimpleUtil.runOnUIThread(new Runnable() {
