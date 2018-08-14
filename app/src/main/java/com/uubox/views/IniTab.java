@@ -128,6 +128,7 @@ public class IniTab {
 
                             @Override
                             public void onUpdateAvailable(final AppBean appBean) {
+                                SimpleUtil.log("蒲公英版本:" + appBean.getVersionCode());
                                 SimpleUtil.addMsgtoTop(mContext, "版本更新", "发现新版本[" + appBean.getVersionName() + "]可更新\n当前应用版本[" + CommonUtils.getAppVersionName(mContext) + "]",
                                         new Runnable() {
                                             @Override
@@ -599,7 +600,7 @@ public class IniTab {
             }
         });
 
-        addItem("帮助");
+        addItem("帮助文档");
         mViewPageList.add(helperitem);
 
 

@@ -25,6 +25,13 @@
     <uses-permission
         android:name="android.permission.CHANGE_CONFIGURATION"
         tools:ignore="ProtectedPermissions" />
+
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:resizeable="true"
+        android:smallScreens="true" />
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -102,6 +109,9 @@
         <meta-data
             android:name="PGYER_APPID"
             android:value="84b6fb903f7085609d7aa3077f47379c" />
+        <meta-data
+            android:name="android.max_aspect"
+            android:value="2.1" />
     </application>
 
 </manifest>

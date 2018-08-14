@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Point;
@@ -52,6 +53,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SimpleUtil.DEBUG = CommonUtils.getAppVersionName(this).contains("debug");
+        new SocketLog().start();
         //SimpleUtil.log("MainActivity-------------create------------" + hashCode());
         setContentView(R.layout.activity_main);
         Point point = new Point();
@@ -93,9 +95,25 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 79009);
             }
         }
-
+        //setMaxAspect();
     }
 
+    /* public void setMaxAspect() {
+         ApplicationInfo applicationInfo = null;
+         try {
+             SimpleUtil.log("设置全面屏参数1");
+             applicationInfo = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
+             SimpleUtil.log("设置全面屏参数2");
+         } catch (PackageManager.NameNotFoundException e) {
+             e.printStackTrace();
+         }
+         if(applicationInfo == null){
+             SimpleUtil.log("设置全面屏参数失败");
+             throw new IllegalArgumentException(" get application info = null, has no meta data! ");
+         }
+         SimpleUtil.log("设置全面屏参数成功");
+         applicationInfo.metaData.putString("android.max_aspect", "3.2");
+     }*/
     @Override
     protected void onResume() {
         super.onResume();

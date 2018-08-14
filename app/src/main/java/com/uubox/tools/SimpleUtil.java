@@ -171,7 +171,7 @@ public class SimpleUtil {
     }
 
     public static void log(String msg) {
-        //SocketLogEx.getInstance().sendLog(msg);
+        SocketLogEx.getInstance().sendLog(msg);
         if (!DEBUG) {
             return;
         }
