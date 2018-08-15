@@ -87,6 +87,7 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
     <LinearLayout
+        android:layout_margin="2dp"
         android:id="@+id/dialog_oversize_list_par"
         android:visibility="visible"
         android:orientation="horizontal"
@@ -94,7 +95,7 @@
         android:layout_height="wrap_content">
 
         <ListView
-            android:layout_margin="2dp"
+            android:layout_margin="4dp"
             android:id="@+id/dialog_oversize_left"
             android:scrollbars="none"
             android:background="@drawable/dialog_message_box_b_deep"
@@ -111,7 +112,7 @@
             android:layout_weight="1"
             android:layout_height="wrap_content" />
         <ListView
-            android:layout_margin="2dp"
+            android:layout_margin="4dp"
             android:background="@drawable/dialog_message_box_b_deep"
             android:scrollbars="none"
             android:id="@+id/dialog_oversize_right"

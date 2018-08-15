@@ -235,10 +235,10 @@ public class BtnUtil {
                 drawableId = R.mipmap.key_f10;
                 break;
             case F11:
-                drawableId = R.mipmap.key_11;
+                drawableId = R.mipmap.key_f11;
                 break;
             case F12:
-                drawableId = R.mipmap.key_12;
+                drawableId = R.mipmap.key_f12;
                 break;
             case NUM_8:
                 drawableId = R.mipmap.key_8;

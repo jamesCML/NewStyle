@@ -61,20 +61,6 @@ public class KeyboardView extends FrameLayout
         DragImageView.ScaleListener, View.OnClickListener, DragImageView.ClickListener, View.OnTouchListener, SimpleUtil.INormalBack {
 
     public static final String TAG = "KeyboardView";
-
-    /**
-     * 配置（SharedPreferences）文件名
-     */
-    private static final String SP_FILE_NAME = "keyboard";
-    /**
-     * 按钮总数量
-     */
-    private static final int BTN_COUNT = Btn.values().length + 1;
-
-    /**
-     * 屏幕高度
-     */
-    private static int mScreenHeight_ = -1;
     static private ArrayList keys;
     /**
      * 菜单栏
@@ -125,28 +111,7 @@ public class KeyboardView extends FrameLayout
     View mRlMenuBar;
 
     ImageView mImgExit;
-
-    /**
-     * 保存创建的全部按钮，按钮具有唯一性
-     */
-    /**
-     * 容器
-     */
     private FrameLayout mFlMain;
-    /**
-     * 测试界面提示语
-     */
-    /**
-     * 模式变化监听
-     */
-    /**
-     * 记录菜单按钮的点击次数
-     */
-    /**
-     * 用于计算菜单按钮的5次连按是否在5秒内完成
-     */
-    private Object tag;
-    private float temp;
     private Drawable drawable;
     private boolean dialogShow;
     private Vibrator vibrator;
@@ -197,7 +162,6 @@ public class KeyboardView extends FrameLayout
         LayoutInflater.from(context).inflate(R.layout.view_keyboard, this, true);
         findViews();
         initViews();
-        initScreenParams();
         // 重新载入按钮参数
         BtnParamTool.loadBtnParamsFromPrefs(getContext());
         loadUi();
@@ -212,7 +176,6 @@ public class KeyboardView extends FrameLayout
         LayoutInflater.from(context).inflate(R.layout.view_keyboard, this, true);
         findViews();
         initViews();
-        initScreenParams();
         // 重新载入按钮参数
         BtnParamTool.loadBtnParamsFromPrefs(getContext());
         loadUi();
@@ -747,33 +710,6 @@ public class KeyboardView extends FrameLayout
         BtnParamTool.getBtnNormalBtn(btn).img = whatImg;
         BtnParamTool.getBtnNormalBtn(btn).setBelongBtn(btn);
         whatImg = null;
-      /*  if (drawable != null) {
-            whatImg.setImageDrawable(drawable);
-        }
-        HashMap<String, Object> obj = new HashMap<>();
-        obj.put("btn", btn);
-        //是否属于第二模式
-        obj.put("isSecond", false);
-        addingBtns.add(obj);
-
-        whatImg.setTag(BtnParamTool.getBtnNormalBtn(btn));
-
-        int[] position = new int[2];
-        whatImg.getLocationOnScreen(position);
-        final int x = position[0] + whatImg.getWidth() / 2;
-        final int y = position[1] + whatImg.getHeight() / 2;
-
-        BtnParamTool.setBtnPositionX(btn,
-                x);
-        BtnParamTool.setBtnPositionY(btn,
-                y);
-        BtnParamTool.setBtnRadius(btn, whatImg.getWidth() / 2);
-
-        BtnParamTool.getBtnNormalBtn(btn).img = whatImg;
-        BtnParamTool.getBtnNormalBtn(btn).setBelongBtn(btn);
-        whatImg = null;*/
-
-
     }
 
     private void addSecFucButton(Btn btn, int type) {
@@ -864,11 +800,11 @@ public class KeyboardView extends FrameLayout
                 Log.w(TAG, "onDragFinish: getId()=" + v.getId() + "getTag()=" + v.getTag());
 
                 // FIXME: 2017/9/18 删除按钮后再编辑页面显示按钮
-                tag = v.getTag();
+                //tag = v.getTag();
 
 //            setVisible(tag);
 
-                tag = null;
+                // tag = null;
             }
         }
         // 松开位置位于其他区域，保存按钮坐标
@@ -924,32 +860,6 @@ public class KeyboardView extends FrameLayout
             BtnParamTool.setBtnRadius(params.getBelongBtn(), v.getWidth() / 2);
         }
         BtnParamTool.setBtnParamsChanged(true);
-    }
-
-    /**
-     * 初始化屏幕的宽度和高度
-     */
-    private void initScreenParams() {
-
-        /*
-      屏幕宽度
-     */
-        mScreenHeight_ = SimpleUtil.zoomx;
-    }
-
-    private void clearAllView() {
-        ConcurrentMap<Btn, BtnParams> buttons = BtnParamTool.getmBtnParams();
-        Iterator<Btn> it = buttons.keySet().iterator();
-        while (it.hasNext()) {
-            Btn btn = it.next();
-            BtnParams btnParams = buttons.get(btn);
-            if (btnParams.img != null) {
-                mFlMain.removeView(btnParams.img);
-            }
-            if (btnParams.btn2 != null && btnParams.btn2.img != null) {
-                mFlMain.removeView(btnParams.btn2.img);
-            }
-        }
     }
 
     public void loadUi() {

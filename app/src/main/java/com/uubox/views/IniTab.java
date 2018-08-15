@@ -573,7 +573,7 @@ public class IniTab {
     private void addHelper() {
         ViewGroup helperitem = (ViewGroup) LayoutInflater.from(mContext).inflate(R.layout.dialog_titlelist, null);
         ((View) helperitem.findViewById(R.id.dialogmsgyes).getParent()).setVisibility(View.GONE);
-        ((TextView) helperitem.findViewById(R.id.titlelist_title)).setText("帮助文档(" + CommonUtils.getAppVersionName(mContext) + ")");
+        ((TextView) helperitem.findViewById(R.id.titlelist_title)).setText("帮助文档");
         ListView listView = helperitem.findViewById(R.id.titlelist_list);
         String[] items = mContext.getResources().getStringArray(R.array.menu_ini_help_items);
         final List<String> data = new ArrayList<>();

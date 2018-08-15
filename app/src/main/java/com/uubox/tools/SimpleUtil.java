@@ -350,7 +350,7 @@ public class SimpleUtil {
                     }
                 });
 
-                KeyboardEditWindowManager.getInstance().init(context).addView(view, (1 * SimpleUtil.zoomy) / 3, (2 * SimpleUtil.zoomx) / 3);
+                KeyboardEditWindowManager.getInstance().init(context).addView(view, (2 * SimpleUtil.zoomy) / 3, (2 * SimpleUtil.zoomx) / 3);
             }
         });
     }
