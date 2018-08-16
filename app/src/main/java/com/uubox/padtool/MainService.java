@@ -41,6 +41,7 @@ import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 
 import com.uubox.threads.AccInputThread;
 import com.uubox.tools.AOAConfigTool;
@@ -199,7 +200,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         UsbAccessory[] usbAccessories = mUSBManager.getAccessoryList();
 
         if (usbAccessories == null) {
-            //SimpleUtil.log("return usbAccessories list is null!!!!!!");
+            SimpleUtil.log("return usbAccessories list is null!!!!!!");
             mfloatingIv.setImageResource((Integer) mfloatingIv.getTag() == 1 ? R.mipmap.app_icon0805001_gray : R.mipmap.app_icon0805001_half_gray);
             mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 1000);
             return;
@@ -271,7 +272,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
 
 
     private void requestUsbAccessoryPermission(UsbAccessory usbAccessory) {
-        SimpleUtil.log("request the aoapermission!!!!!!!!");
+        SimpleUtil.log("开始申请AOA权限");
         mHandler.removeMessages(HANDLE_SCAN_AOA);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, new Intent(
                 ACCUSBPERMISSION), 0);
@@ -647,6 +648,9 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             mfloatingIv.setImageResource((Integer) mfloatingIv.getTag() == 1 ? R.mipmap.app_icon0805001_gray : R.mipmap.app_icon0805001_half_gray);
             mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 1000);
         } else if (id == 10001) {
+            if (obj == null) {
+                return;
+            }
             openUsbAccessory((UsbAccessory) obj);
         } else if (id == 10002) {
             //SimpleUtil.log("MainService rec:"+Hex.toString((byte[])obj));

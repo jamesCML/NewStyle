@@ -30,8 +30,10 @@ import android.widget.Toast;
 
 import java.io.InputStream;
 import java.security.MessageDigest;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -171,7 +173,7 @@ public class SimpleUtil {
     }
 
     public static void log(String msg) {
-        SocketLogEx.getInstance().sendLog(msg);
+        SocketLogEx.getInstance().sendLog(getCurTime() + "  " + msg);
         if (!DEBUG) {
             return;
         }
@@ -355,6 +357,10 @@ public class SimpleUtil {
         });
     }
 
+    public static String getCurTime() {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss.SSS");
+        return simpleDateFormat.format(new Date());
+    }
     public static void toastTop(Context context, String msg) {
         addMsgBottomToTop(context, msg, true);
     }

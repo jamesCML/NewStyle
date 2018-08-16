@@ -22,12 +22,13 @@ public class SocketLog extends Thread {
                     SimpleUtil.log("清空缓存：" + clearADBLog.toString());
                     mBufferWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
 
-                    String[] commandLine = new String[5];
+                    String[] commandLine = new String[6];
                     commandLine[0] = ("logcat");
                     commandLine[1] = ("-d");
                     commandLine[2] = ("-v");
-                    commandLine[3] = ("time");
-                    commandLine[4] = ("-f");
+                    commandLine[3] = ("-i");
+                    commandLine[4] = ("time");
+                    commandLine[5] = ("-f");
 
                     Process process = Runtime.getRuntime().exec("logcat | grep \"(" + android.os.Process.myPid() + ")\"");
                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));

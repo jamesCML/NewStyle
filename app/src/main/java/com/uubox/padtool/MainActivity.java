@@ -45,6 +45,9 @@ import com.uubox.tools.CommonUtils;
 import com.uubox.tools.SimpleUtil;
 import com.uubox.tools.SocketLog;
 
+/**
+ * 1.处理未获得权限时APK崩溃
+ */
 public class MainActivity extends Activity implements View.OnClickListener {
     private ProgressBar mProgress;
     private TextView mLoadMsg;
@@ -54,7 +57,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         SimpleUtil.DEBUG = CommonUtils.getAppVersionName(this).contains("debug");
         new SocketLog().start();
-        //SimpleUtil.log("MainActivity-------------create------------" + hashCode());
+        SimpleUtil.log("MainActivity-------------create------------" + hashCode());
         setContentView(R.layout.activity_main);
         Point point = new Point();
         getWindowManager().getDefaultDisplay().getRealSize(point);
