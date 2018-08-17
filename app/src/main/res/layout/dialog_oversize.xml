@@ -1,279 +1,300 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/parent_4"
-    android:orientation="vertical">
+              android:id="@+id/parent_4"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
-        <LinearLayout
-            android:minHeight="30dp"
-            android:layout_marginRight="20dp"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="20dp"
+        android:minHeight="30dp">
+
+        <TextView
+            android:id="@+id/dialog_oversize_cancel"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/dialog_message_bt_select"
+            android:padding="1dp"
+            android:text="取消"
+            android:textColor="@color/lightred"
+            android:textStyle="bold"
+            android:visibility="gone"/>
 
-            <TextView
-                android:layout_marginLeft="10dp"
-                android:visibility="gone"
-                android:id="@+id/dialog_oversize_cancel"
-                android:textStyle="bold"
-                android:layout_gravity="right|center_vertical"
-                android:textColor="@color/lightred"
-                android:text="取消"
-                android:padding="1dp"
-                android:background="@drawable/dialog_message_bt_select"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-            <TextView
-                android:id="@+id/dialog_oversize_write"
-                android:layout_gravity="right|center_vertical"
-                android:textColor="@color/mk_white"
-                android:text="写入设备"
-                android:textSize="22sp"
-                android:padding="3dp"
-                android:background="@drawable/configbutton"
-                android:layout_marginLeft="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/dialog_oversize_write"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/configbutton"
+            android:padding="3dp"
+            android:text="写入设备"
+            android:textColor="@color/mk_white"
+            android:textSize="22sp"/>
 
 
-            <TextView
-                android:layout_marginLeft="10dp"
-                android:id="@+id/dialog_oversize_changetv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@drawable/configbutton"
-                android:text="点击我跳转到压枪设置"
-                android:padding="3dp"
-                android:textSize="22sp"
-                android:textColor="@color/mk_white" />
-        </LinearLayout>
+        <TextView
+            android:id="@+id/dialog_oversize_changetv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/configbutton"
+            android:padding="3dp"
+            android:text="点击我跳转到压枪设置"
+            android:textColor="@color/mk_white"
+            android:textSize="22sp"/>
+    </LinearLayout>
 
     <View
-        android:background="@color/grey_1"
-        android:layout_margin="5dp"
         android:layout_width="match_parent"
-        android:layout_height="1dp" />
+        android:layout_height="1dp"
+        android:layout_margin="5dp"
+        android:background="@color/grey_1"/>
 
     <LinearLayout
         android:id="@+id/dialog_oversize_bar"
-        android:background="#990000ff"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="3dp"
         android:layout_marginRight="3dp"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:background="#990000ff"
+        android:orientation="horizontal">
+
         <TextView
-            android:textStyle="bold"
+            android:id="@+id/dialog_oversize_leftmsg"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_weight="1"
+            android:gravity="center"
             android:text="未选中的配置"
             android:textColor="@color/lightred"
-            android:gravity="center"
-            android:id="@+id/dialog_oversize_leftmsg"
-            android:layout_marginTop="5dp"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content" />
+            android:textStyle="bold"/>
+
         <TextView
-            android:textStyle="bold"
-            android:text="选中的配置"
-            android:gravity="center"
             android:id="@+id/dialog_oversize_rightmsg"
-            android:layout_marginTop="5dp"
-            android:textColor="@color/mk_loading"
             android:layout_width="0dp"
-            android:layout_weight="1"
-            android:padding="1dp"
+            android:layout_height="wrap_content"
             android:layout_margin="3dp"
-            android:layout_height="wrap_content" />
+            android:layout_marginTop="5dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="1dp"
+            android:text="选中的配置"
+            android:textColor="@color/mk_loading"
+            android:textStyle="bold"/>
     </LinearLayout>
+
     <LinearLayout
-        android:layout_margin="2dp"
         android:id="@+id/dialog_oversize_list_par"
-        android:visibility="visible"
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="2dp"
+        android:orientation="horizontal"
+        android:visibility="gone">
 
         <ListView
-            android:layout_margin="4dp"
             android:id="@+id/dialog_oversize_left"
-            android:scrollbars="none"
-            android:background="@drawable/dialog_message_box_b_deep"
             android:layout_width="0dp"
-            android:layout_weight="30"
             android:layout_height="match_parent"
-            android:layout_gravity="center"></ListView>
+            android:layout_gravity="center"
+            android:layout_margin="4dp"
+            android:layout_weight="30"
+            android:background="@drawable/dialog_message_box_b_deep"
+            android:scrollbars="none"></ListView>
 
         <View
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:background="@color/grey_1"
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
             android:layout_weight="1"
-            android:layout_height="wrap_content" />
+            android:background="@color/grey_1"/>
+
         <ListView
-            android:layout_margin="4dp"
-            android:background="@drawable/dialog_message_box_b_deep"
-            android:scrollbars="none"
             android:id="@+id/dialog_oversize_right"
             android:layout_width="0dp"
-            android:layout_weight="30"
             android:layout_height="match_parent"
-            android:layout_gravity="center"></ListView>
+            android:layout_gravity="center"
+            android:layout_margin="4dp"
+            android:layout_weight="30"
+            android:background="@drawable/dialog_message_box_b_deep"
+            android:scrollbars="none"></ListView>
     </LinearLayout>
 
     <ScrollView
-        android:fillViewport="true"
-        android:visibility="gone"
         android:id="@+id/dialog_oversize_gun_par"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_margin="3dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_margin="3dp"
+        android:fillViewport="true"
+        android:gravity="center"
+        android:visibility="visible">
 
         <LinearLayout
-            android:padding="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:gravity="center"
             android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:padding="10dp">
 
             <TextView
-                android:layout_gravity="left"
-                android:layout_marginTop="10dp"
-                android:textColor="@color/mk_white"
-                android:text="类型:冲锋枪(默认) 快捷键:1/2+F1,关闭压枪1/2+ESC 灵敏度:13"
+                android:id="@+id/tv_tip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="武器键(1,2键)加枪类型键(F1,F2,F3)设置不同压枪效果,两把枪可分别配置, 武器键加ESC键关闭对应压枪"/>
+
+            <TextView
                 android:id="@+id/dialog_oversize_gun_cfq_tv"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginTop="10dp"
+                android:text="F1类型:冲锋枪  灵敏度:13"
+                android:textColor="@color/mk_white"/>
 
             <SeekBar
-                android:layout_marginTop="5dp"
-                android:layout_width="200dp"
-                style="@style/gunpress_seek"
                 android:id="@+id/dialog_oversize_gun_cfq"
-                android:min="0"
+                style="@style/gunpress_seek"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:max="99"
-                android:layout_height="wrap_content" />
+                android:min="0"/>
 
             <TextView
-                android:text="类型:步枪   快捷键:1/2+F2,关闭压枪1/2+ESC 灵敏度:16"
-                android:textColor="@color/mk_white"
                 android:id="@+id/dialog_oversize_gun_bq_tv"
-                android:layout_marginTop="5dp"
-                android:layout_gravity="left"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginTop="5dp"
+                android:text="F2类型:步枪   灵敏度:16"
+                android:textColor="@color/mk_white"/>
 
             <SeekBar
                 android:id="@+id/dialog_oversize_gun_bq"
-                android:layout_marginTop="5dp"
-                android:layout_width="200dp"
                 style="@style/gunpress_seek"
-                android:min="0"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:max="99"
-                android:layout_height="wrap_content" />
+                android:min="0"/>
 
             <TextView
-                android:layout_gravity="left"
-                android:text="类型:AK47   快捷键:1/2+F3,关闭压枪1/2+ESC 灵敏度:19"
-                android:textColor="@color/mk_white"
                 android:id="@+id/dialog_oversize_gun_ak_tv"
-                android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginTop="10dp"
+                android:text="F3类型:AK47   灵敏度:20"
+                android:textColor="@color/mk_white"/>
 
             <SeekBar
                 android:id="@+id/dialog_oversize_gun_ak"
-                android:layout_marginTop="5dp"
-                android:layout_width="200dp"
                 style="@style/gunpress_seek"
-                android:min="0"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:max="99"
-                android:layout_height="wrap_content" />
+                android:min="0"/>
+
+            <Button
+                android:id="@+id/btn_reset_gun"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:text="恢复默认"
+                android:textColor="@color/b1"/>
 
             <TextView
-                android:layout_marginTop="5dp"
-                android:textColor="@color/mk_white"
-                android:text="开机默认配置选择:"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:layout_marginLeft="5dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_marginTop="5dp"
+                android:text="开机默认配置选择:"
+                android:textColor="@color/mk_white"
+                android:visibility="gone"/>
 
             <RadioGroup
-                android:background="@drawable/dialog_message_box"
-                android:padding="5dp"
-                android:layout_marginTop="5dp"
                 android:id="@+id/dialog_oversize_gun_rg"
-                android:orientation="horizontal"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/dialog_message_box"
+                android:orientation="horizontal"
+                android:padding="5dp"
+                android:visibility="gone">
 
                 <RadioButton
                     android:id="@+id/dialog_oversize_gun_rg_0"
-                    android:textColor="@color/mk_white"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginRight="6dp"
                     android:button="@drawable/correctorerror_empty"
                     android:checked="true"
                     android:text="关闭压枪"
-                    android:textSize="12sp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"></RadioButton>
+                    android:textColor="@color/mk_white"
+                    android:textSize="12sp"></RadioButton>
 
                 <RadioButton
                     android:id="@+id/dialog_oversize_gun_rg_1"
-                    android:textColor="@color/mk_white"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginRight="3dp"
                     android:button="@drawable/correctorerror_empty"
-                    android:textSize="12sp"
                     android:text="默认使用冲锋枪"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"></RadioButton>
+                    android:textColor="@color/mk_white"
+                    android:textSize="12sp"></RadioButton>
 
                 <RadioButton
                     android:id="@+id/dialog_oversize_gun_rg_2"
-                    android:textColor="@color/mk_white"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="3dp"
                     android:button="@drawable/correctorerror_empty"
-                    android:textSize="12sp"
                     android:text="默认使用步枪"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"></RadioButton>
+                    android:textColor="@color/mk_white"
+                    android:textSize="12sp"></RadioButton>
 
                 <RadioButton
                     android:id="@+id/dialog_oversize_gun_rg_30"
-                    android:textColor="@color/mk_white"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="6dp"
                     android:button="@drawable/correctorerror_empty"
-                    android:textSize="12sp"
                     android:text="默认使用AK47"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"></RadioButton>
+                    android:textColor="@color/mk_white"
+                    android:textSize="12sp"></RadioButton>
             </RadioGroup>
 
             <View
-                android:layout_margin="5dp"
-                android:background="@color/grey_1"
                 android:layout_width="match_parent"
-                android:layout_height="2px" />
+                android:layout_height="2px"
+                android:layout_margin="5dp"
+                android:background="@color/grey_1"/>
 
             <TextView
-                android:layout_marginTop="5dp"
-                android:textColor="@color/mk_white"
-                android:text="常见问题:"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:layout_marginLeft="5dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_marginTop="5dp"
+                android:text="常见问题:"
+                android:textColor="@color/mk_white"/>
 
             <ListView
-                android:background="@drawable/button_menu_box"
-                android:layout_margin="5dp"
                 android:id="@+id/dialog_oversize_gun_qa"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"></ListView>
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/button_menu_box"></ListView>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,24 +24,21 @@ import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArraySet;
-
 import com.pgyersdk.update.DownloadFileListener;
 import com.pgyersdk.update.PgyUpdateManager;
 import com.pgyersdk.update.UpdateManagerListener;
 import com.pgyersdk.update.javabean.AppBean;
 import com.uubox.adapters.GunQaAdapter;
 import com.uubox.adapters.MoveConfigAdapter;
-import com.uubox.padtool.MainActivity;
 import com.uubox.padtool.R;
 import com.uubox.tools.AOAConfigTool;
 import com.uubox.tools.CommonUtils;
 import com.uubox.tools.Hex;
 import com.uubox.tools.SimpleUtil;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class IniTab {
@@ -53,6 +49,7 @@ public class IniTab {
     private List<View> mViewPageList;
     private int mIndex;
     private Button mLastPress;
+
     public IniTab(Context context) {
         init(context);
     }
@@ -104,6 +101,7 @@ public class IniTab {
             }
         });
     }
+
     public void show() {
         SimpleUtil.log("show the Initab");
         KeyboardEditWindowManager.getInstance().hideOrShowBottomUIMenu(false);
@@ -204,6 +202,7 @@ public class IniTab {
         final SeekBar cfqBar = view.findViewById(R.id.dialog_oversize_gun_cfq);
         final SeekBar bqBar = view.findViewById(R.id.dialog_oversize_gun_bq);
         final SeekBar akBar = view.findViewById(R.id.dialog_oversize_gun_ak);
+        final Button resetBtn = view.findViewById(R.id.btn_reset_gun);
 
         final RadioGroup radioGroup = view.findViewById(R.id.dialog_oversize_gun_rg);
 
@@ -472,15 +471,15 @@ public class IniTab {
                 switch (seekBar.getId()) {
 
                     case R.id.dialog_oversize_gun_cfq:
-                        cfq.setText("类型:冲锋枪(默认) 快捷键:1/2+F1,关闭压枪1/2+ESC 灵敏度:" + progress);
+                        cfq.setText("F3类型:冲锋枪   灵敏度:" + progress);
                         SimpleUtil.saveToShare(mContext, sp0[2], "cfqNum", progress);
                         break;
                     case R.id.dialog_oversize_gun_bq:
-                        bq.setText("类型:步枪   快捷键:1/2+F2,关闭压枪1/2+ESC 灵敏度:" + progress);
+                        bq.setText("F2类型:步枪   灵敏度:" + progress);
                         SimpleUtil.saveToShare(mContext, sp0[2], "bqNum", progress);
                         break;
                     case R.id.dialog_oversize_gun_ak:
-                        ak.setText("类型:AK47   快捷键:1/2+F3,关闭压枪1/2+ESC 灵敏度:" + progress);
+                        ak.setText("F3类型:AK47   灵敏度:" + progress);
                         SimpleUtil.saveToShare(mContext, sp0[2], "akNum", progress);
                         break;
                 }
@@ -500,16 +499,26 @@ public class IniTab {
         akBar.setOnSeekBarChangeListener(seekBarChangeListener);
         bqBar.setOnSeekBarChangeListener(seekBarChangeListener);
         cfqBar.setOnSeekBarChangeListener(seekBarChangeListener);
+        resetBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cfqBar.setProgress(12);
+                bqBar.setProgress(15);
+                akBar.setProgress(19);
+                SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
+
+            }
+        });
         int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "cfqNum", int.class, 13);
         int bqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "bqNum", int.class, 16);
-        int akNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "akNum", int.class, 19);
+        int akNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "akNum", int.class, 20);
         SimpleUtil.log("获取存储的压枪值:" + bqNum + "." + cfqNum + "," + akNum);
         bqBar.setProgress(bqNum - 1);
         cfqBar.setProgress(cfqNum - 1);
         akBar.setProgress(akNum - 1);
-        bq.setText("类型:步枪   快捷键:1/2+F2,关闭压枪1/2+ESC 灵敏度:" + bqNum);
-        cfq.setText("类型:冲锋枪(默认) 快捷键:1/2+F1,关闭压枪1/2+ESC 灵敏度:" + cfqNum);
-        ak.setText("类型:AK47   快捷键:1/2+F3,关闭压枪1/2+ESC 灵敏度:" + akNum);
+        bq.setText("F2类型:步枪   灵敏度:" + bqNum);
+        cfq.setText("F1类型:冲锋枪  灵敏度:" + cfqNum);
+        ak.setText("F3类型:AK47   灵敏度:" + akNum);
 
         int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "defaultgun", int.class, 0);
         ((RadioButton) radioGroup.getChildAt(defaultgun)).setChecked(true);
@@ -613,6 +622,7 @@ public class IniTab {
         addItem("版本信息");
         mViewPageList.add(view);
     }
+
     private void addItem(final String item) {
         final Button button = new Button(mContext);
         button.setBackgroundColor(mContext.getResources().getColor(R.color.transparent));
@@ -662,5 +672,6 @@ public class IniTab {
             return mViewPageList.get(position);
         }
     };
+
 
 }

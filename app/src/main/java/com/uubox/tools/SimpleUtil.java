@@ -16,33 +16,28 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.uubox.padtool.R;
+import com.uubox.views.KeyboardEditWindowManager;
+import com.uubox.views.WrapFloat;
 
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArraySet;
-
-import com.uubox.adapters.MoveConfigAdapter;
-import com.uubox.padtool.R;
-import com.uubox.views.KeyboardEditWindowManager;
-import com.uubox.views.WrapFloat;
 
 public class SimpleUtil {
     public static boolean DEBUG;
@@ -536,243 +531,6 @@ public class SimpleUtil {
         KeyboardEditWindowManager.getInstance().addView(saveView, (2 * SimpleUtil.zoomy) / 3, (2 * SimpleUtil.zoomx) / 3);
     }
 
-    public static void test(final Context context, final List<AOAConfigTool.Config> allConfigs) {
-        String gloabkeyconfig = (String) SimpleUtil.getFromShare(context, "ini", "gloabkeyconfig", String.class, "");
-        final String[] sp0 = gloabkeyconfig.split("#Z%W#", -1);
-        SimpleUtil.log("test当前使用:" + sp0[1] + "\n" + gloabkeyconfig);
-        final View view = LayoutInflater.from(context).inflate(R.layout.dialog_oversize, null);
-        final View listPar = view.findViewById(R.id.dialog_oversize_list_par);
-        final View gunPar = view.findViewById(R.id.dialog_oversize_gun_par);
-        final TextView rightMsg = view.findViewById(R.id.dialog_oversize_rightmsg);
-        final List<AOAConfigTool.Config> configsLeftData = new ArrayList<>();
-        final List<AOAConfigTool.Config> configsRightData = new ArrayList<>();
-        final int[] rightSize = {0};
-        for (AOAConfigTool.Config config : allConfigs) {
-            if (config.getIsDeleted() && !config.getIsUsed()) {
-                configsLeftData.add(config);
-            } else {
-                if (config.getIsUsed()) {
-                    if (configsRightData.size() == 4) {
-                        config.setDeleted(true);
-                        configsLeftData.add(config);
-                        configsRightData.remove(0);
-                    }
-                    configsRightData.add(0, config);
-                    rightSize[0] += config.getmSize();
-                } else if (configsRightData.size() < 4) {
-                    configsRightData.add(config);
-                    rightSize[0] += config.getmSize();
-                }
-
-            }
-        }
-        if (rightSize[0] > 1024) {
-            rightMsg.setTextColor(Color.RED);
-            rightMsg.setText("配置过大！");
-        } else {
-            rightMsg.setTextColor(Color.GREEN);
-            rightMsg.setText("可以写入配置！");
-        }
-        ListView listLeft = view.findViewById(R.id.dialog_oversize_left);
-        ListView listRight = view.findViewById(R.id.dialog_oversize_right);
-
-        final MoveConfigAdapter adapterleft = new MoveConfigAdapter(context, configsLeftData);
-        final MoveConfigAdapter adapterRight = new MoveConfigAdapter(context, configsRightData);
-        listLeft.setAdapter(adapterleft);
-        listRight.setAdapter(adapterRight);
-        listRight.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-            }
-        });
-        final TextView changeGunTv = view.findViewById(R.id.dialog_oversize_changetv);
-        changeGunTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (changeGunTv.getText().toString().contains("压枪")) {
-                    listPar.setVisibility(View.GONE);
-                    gunPar.setVisibility(View.VISIBLE);
-                    changeGunTv.setText("点击我跳转到配置选择列表");
-                } else {
-                    listPar.setVisibility(View.VISIBLE);
-                    gunPar.setVisibility(View.GONE);
-                    changeGunTv.setText("点击我跳转到压枪设置");
-                }
-            }
-        });
-
-
-
-        final INormalBack iNormalBack = new INormalBack() {
-            @Override
-            public void back(int id, Object obj) {
-                if (id == 10007) {//取消一个配置
-                    AOAConfigTool.Config config = (AOAConfigTool.Config) obj;
-
-                    if (config.getIsUsed()) {
-                        addMsgBottomToTop(context, "正在使用的配置不能取消！", true);
-                        return;
-                    }
-                    SimpleUtil.saveToShare(context, config.getmTabValue(), "isDelete", true);
-                    config.setDeleted(true);
-                    configsLeftData.add(config);
-                    configsRightData.remove(obj);
-                    rightSize[0] -= config.getmSize();
-                    if (rightSize[0] > 1024) {
-                        rightMsg.setTextColor(Color.RED);
-                        rightMsg.setText("配置过大！");
-                    } else {
-                        rightMsg.setTextColor(Color.GREEN);
-                        rightMsg.setText("可以写入配置！");
-                    }
-
-                } else if (id == 10008) {//增加一个配置
-                    if (configsRightData.size() == 4) {
-                        addMsgBottomToTop(context, "当前最多支持写4个配置！", true);
-                        return;
-                    }
-                    AOAConfigTool.Config config = (AOAConfigTool.Config) obj;
-                    config.setDeleted(false);
-                    SimpleUtil.saveToShare(context, config.getmTabValue(), "isDelete", false);
-                    configsRightData.add(config);
-                    configsLeftData.remove(obj);
-                    rightSize[0] += config.getmSize();
-                    if (rightSize[0] > 1024) {
-                        rightMsg.setTextColor(Color.RED);
-                        rightMsg.setText("配置过大！");
-                    } else {
-                        rightMsg.setTextColor(Color.GREEN);
-                        rightMsg.setText("可以写入配置！");
-                    }
-                } else if (id == 10009) {//上
-                    int position = (Integer) obj;
-                    if (position == 0) {
-                        return;
-                    } else if (position == 1) {
-                        // addMsgBottomToTop(context, "当前使用的配置必须放在第一位！", true);
-                        // return;
-                    }
-                    SimpleUtil.log("up position:" + position);
-                    configsRightData.add(position - 1, configsRightData.get(position));
-                    configsRightData.remove(position + 1);
-                } else if (id == 10010) {//下
-                    int position = (Integer) obj;
-                    if (position == configsRightData.size() - 1) {
-                        return;
-                    } else if (position == 0) {
-                        //addMsgBottomToTop(context, "当前使用的配置必须放在第一位！", true);
-                        //return;
-                    }
-                    SimpleUtil.log("down position:" + position);
-                    configsRightData.add(position + 2, configsRightData.get(position));
-                    configsRightData.remove(position);
-                }
-                adapterleft.notifyDataSetChanged();
-                adapterRight.notifyDataSetChanged();
-            }
-        };
-        SimpleUtil.addINormalCallback(iNormalBack);
-
-        view.findViewById(R.id.dialog_oversize_write).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (rightSize[0] > 1024) {
-                    addMsgBottomToTop(context, "配置过大！", true);
-                    return;
-                }
-
-                int bqNum = (Integer) SimpleUtil.getFromShare(context, sp0[2], "bqNum", int.class, 16);
-                int cfqNum = (Integer) SimpleUtil.getFromShare(context, sp0[2], "cfqNum", int.class, 13);
-                int akNum = (Integer) SimpleUtil.getFromShare(context, sp0[2], "akNum", int.class, 19);
-                SimpleUtil.log("压枪灵敏度：" + bqNum + "," + cfqNum + "," + akNum);
-                for (AOAConfigTool.Config config : allConfigs) {
-                    if (config.getIsUsed()) {
-                        //压枪数据重新构造一下
-                        byte[] data = config.getmData().all2Bytes();
-                        data[32] = (byte) bqNum;
-                        data[33] = (byte) cfqNum;
-                        data[34] = (byte) akNum;
-                        byte[] data2 = Arrays.copyOfRange(data, 1, data.length);
-                        ByteArrayList bytes = new ByteArrayList();
-                        bytes.add(sumCheck(data2));
-                        bytes.add(data2);
-                        config.setmData(bytes);
-                        break;
-                    }
-                }
-
-                KeyboardEditWindowManager.getInstance().close();
-                Iterator<AOAConfigTool.Config> it = allConfigs.iterator();
-                while (it.hasNext()) {
-                    if (it.next().getIsDeleted()) {
-                        it.remove();
-                    }
-                }
-                SimpleUtil.notifyall_(10011, allConfigs);
-            }
-        });
-        view.findViewById(R.id.dialog_oversize_cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SimpleUtil.removeINormalCallback(iNormalBack);
-                KeyboardEditWindowManager.getInstance().close();
-            }
-        });
-
-        final TextView cfq = view.findViewById(R.id.dialog_oversize_gun_cfq_tv);
-        final TextView bq = view.findViewById(R.id.dialog_oversize_gun_bq_tv);
-        final TextView ak = view.findViewById(R.id.dialog_oversize_gun_ak_tv);
-        SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                progress += 1;
-                switch (seekBar.getId()) {
-
-                    case R.id.dialog_oversize_gun_bq:
-                        bq.setText("类型:步枪  开启快捷键:F1+1  关闭快捷键:Esc+1 灵敏度:" + progress);
-                        SimpleUtil.saveToShare(context, sp0[2], "bqNum", progress);
-                        break;
-                    case R.id.dialog_oversize_gun_cfq:
-                        cfq.setText("类型:冲锋枪  开启快捷键:F2+1  关闭快捷键:Esc+2 灵敏度:" + progress);
-                        SimpleUtil.saveToShare(context, sp0[2], "cfqNum", progress);
-                        break;
-                    case R.id.dialog_oversize_gun_ak:
-                        ak.setText("类型:AK47  开启快捷键:F3+1  关闭快捷键:Esc+3 灵敏度:" + progress);
-                        SimpleUtil.saveToShare(context, sp0[2], "akNum", progress);
-                        break;
-                }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        };
-        SeekBar cfqBar = view.findViewById(R.id.dialog_oversize_gun_cfq);
-        SeekBar bqBar = view.findViewById(R.id.dialog_oversize_gun_bq);
-        SeekBar akBar = view.findViewById(R.id.dialog_oversize_gun_ak);
-        akBar.setOnSeekBarChangeListener(seekBarChangeListener);
-        bqBar.setOnSeekBarChangeListener(seekBarChangeListener);
-        cfqBar.setOnSeekBarChangeListener(seekBarChangeListener);
-        int bqNum = (Integer) SimpleUtil.getFromShare(context, sp0[2], "bqNum", int.class, 16);
-        int cfqNum = (Integer) SimpleUtil.getFromShare(context, sp0[2], "cfqNum", int.class, 13);
-        int akNum = (Integer) SimpleUtil.getFromShare(context, sp0[2], "akNum", int.class, 19);
-        SimpleUtil.log("获取存储的压枪值:" + bqNum + "." + cfqNum + "," + akNum);
-        bqBar.setProgress(bqNum - 1);
-        cfqBar.setProgress(cfqNum - 1);
-        akBar.setProgress(akNum - 1);
-        bq.setText("类型:步枪  开启快捷键:F1+1  关闭快捷键:Esc+1 灵敏度:" + bqNum);
-        cfq.setText("类型:冲锋枪  开启快捷键:F2+1  关闭快捷键:Esc+2 灵敏度:" + cfqNum);
-        ak.setText("类型:AK47  开启快捷键:F3+1  关闭快捷键:Esc+3 灵敏度:" + akNum);
-        KeyboardEditWindowManager.getInstance().init(context).addView(view, (7 * SimpleUtil.zoomy) / 8, (7 * SimpleUtil.zoomx) / 8);
-
-    }
 
     public static void addOverSizetoTop(final Context context, final List<AOAConfigTool.Config> configs, final int size, final Runnable okTask, final Runnable noTask) {
         final View view = LayoutInflater.from(context).inflate(R.layout.dialog_oversize, null);

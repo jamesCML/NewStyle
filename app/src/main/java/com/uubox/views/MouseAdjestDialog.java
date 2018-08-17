@@ -4,9 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.CompoundButton;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -26,6 +24,7 @@ public class MouseAdjestDialog implements View.OnClickListener, SeekBar.OnSeekBa
      * <p>mSeekBarY,mSeekBarX 改用 mSeekBarMouse 代替</p>
      */
     private SeekBar mSeekBarMouse, mSeekBarW;
+    private Button mResetMouse;
     /**
      * 鼠标灵敏度-文本 X,Y 轴
      */
@@ -62,6 +61,7 @@ public class MouseAdjestDialog implements View.OnClickListener, SeekBar.OnSeekBa
 
     private void initRockView() {
         mSeekBarMouse = mView.findViewById(R.id.sbar_mouse_sensitivity_x);
+        mResetMouse = mView.findViewById(R.id.btn_reset_mousesbr);
         mTextMouseSensitivityX = mView.findViewById(R.id.tv_mouse_sensitivity_x);
         mSeekBarW = mView.findViewById(R.id.sbar_mouse_Wheel);
         mTextMouseSensitivityW = mView.findViewById(R.id.tv_mouse_wheel);
@@ -72,7 +72,7 @@ public class MouseAdjestDialog implements View.OnClickListener, SeekBar.OnSeekBa
         mSeekBarMouse.setOnSeekBarChangeListener(this);
         mSeekBarW.setOnSeekBarChangeListener(this);
         mView.findViewById(R.id.rbn_mouse_save).setOnClickListener(this);
-
+        mView.findViewById(R.id.btn_reset_mousesbr).setOnClickListener(this);
     }
 
     @Override
@@ -89,7 +89,14 @@ public class MouseAdjestDialog implements View.OnClickListener, SeekBar.OnSeekBa
                     SimpleUtil.notifyall_(10003, null);
                 }
                 break;
+            case R.id.btn_reset_mousesbr:
+                mSeekBarMouse.setProgress(10);
+                mSeekBarW.setProgress(20);
+                SimpleUtil.saveToShare(mContext, "ini", "mousesen", 10);
+                SimpleUtil.saveToShare(mContext, "ini", "mousesrcollsen", 20);
+                break;
         }
+
 
     }
 
