@@ -60,6 +60,7 @@ public class KeyboardView extends FrameLayout
         implements View.OnDragListener, DragImageView.DragListener,
         DragImageView.ScaleListener, View.OnClickListener, DragImageView.ClickListener, View.OnTouchListener, SimpleUtil.INormalBack {
 
+
     public static final String TAG = "KeyboardView";
     static private ArrayList keys;
     /**

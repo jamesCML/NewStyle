@@ -64,6 +64,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         SimpleUtil.zoomx = Math.min(point.x, point.y);
         SimpleUtil.zoomy = Math.max(point.x, point.y);
+
+        int saveX = (Integer) SimpleUtil.getFromShare(getBaseContext(), "ini", "zoomx", int.class);
+        ;
+        SimpleUtil.zoomx = Math.max(saveX, SimpleUtil.zoomx);
+
         SimpleUtil.saveToShare(this, "ini", "zoomx", SimpleUtil.zoomx);
         SimpleUtil.saveToShare(this, "ini", "zoomy", SimpleUtil.zoomy);
         SimpleUtil.log("屏幕分辨率:" + SimpleUtil.zoomx + "," + SimpleUtil.zoomy);

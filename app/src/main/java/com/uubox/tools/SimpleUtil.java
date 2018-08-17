@@ -682,9 +682,9 @@ public class SimpleUtil {
                     return;
                 }
 
-                int bqNum = (Integer) SimpleUtil.getFromShare(context, sp0[2], "bqNum", int.class, 25);
-                int cfqNum = (Integer) SimpleUtil.getFromShare(context, sp0[2], "cfqNum", int.class, 19);
-                int akNum = (Integer) SimpleUtil.getFromShare(context, sp0[2], "akNum", int.class, 28);
+                int bqNum = (Integer) SimpleUtil.getFromShare(context, sp0[2], "bqNum", int.class, 16);
+                int cfqNum = (Integer) SimpleUtil.getFromShare(context, sp0[2], "cfqNum", int.class, 13);
+                int akNum = (Integer) SimpleUtil.getFromShare(context, sp0[2], "akNum", int.class, 19);
                 SimpleUtil.log("压枪灵敏度：" + bqNum + "," + cfqNum + "," + akNum);
                 for (AOAConfigTool.Config config : allConfigs) {
                     if (config.getIsUsed()) {
@@ -760,9 +760,9 @@ public class SimpleUtil {
         akBar.setOnSeekBarChangeListener(seekBarChangeListener);
         bqBar.setOnSeekBarChangeListener(seekBarChangeListener);
         cfqBar.setOnSeekBarChangeListener(seekBarChangeListener);
-        int bqNum = (Integer) SimpleUtil.getFromShare(context, sp0[2], "bqNum", int.class, 25);
-        int cfqNum = (Integer) SimpleUtil.getFromShare(context, sp0[2], "cfqNum", int.class, 19);
-        int akNum = (Integer) SimpleUtil.getFromShare(context, sp0[2], "akNum", int.class, 28);
+        int bqNum = (Integer) SimpleUtil.getFromShare(context, sp0[2], "bqNum", int.class, 16);
+        int cfqNum = (Integer) SimpleUtil.getFromShare(context, sp0[2], "cfqNum", int.class, 13);
+        int akNum = (Integer) SimpleUtil.getFromShare(context, sp0[2], "akNum", int.class, 19);
         SimpleUtil.log("获取存储的压枪值:" + bqNum + "." + cfqNum + "," + akNum);
         bqBar.setProgress(bqNum - 1);
         cfqBar.setProgress(cfqNum - 1);

@@ -196,7 +196,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         }*/
 
         //acc方式
-
+        mUSBManager = (UsbManager) getSystemService(Context.USB_SERVICE);
         UsbAccessory[] usbAccessories = mUSBManager.getAccessoryList();
 
         if (usbAccessories == null) {
@@ -217,7 +217,6 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         SimpleUtil.log("*******************************************************");
         SimpleUtil.log(s);
         SimpleUtil.log("*******************************************************");
-
         if (mUSBManager.hasPermission(usbAccessories[0])) {
             openUsbAccessory(usbAccessories[0]);
         } else {
@@ -701,7 +700,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
                     }
                     //SimpleUtil.addMsgBottomToTop(getBaseContext(),"连接断开,2秒之后自动退出程序",true);
                     System.exit(0);
-                    //mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 200);
+                    // mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 200);
 
                 }
             });

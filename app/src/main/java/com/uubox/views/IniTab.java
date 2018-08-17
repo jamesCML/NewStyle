@@ -249,9 +249,9 @@ public class IniTab {
 
                         //这里刷新一下UI
                         sp0[2] = config1.getmTabValue();
-                        int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "cfqNum", int.class, 19);
-                        int bqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "bqNum", int.class, 25);
-                        int akNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "akNum", int.class, 28);
+                        int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "cfqNum", int.class, 13);
+                        int bqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "bqNum", int.class, 16);
+                        int akNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "akNum", int.class, 19);
                         SimpleUtil.log("刷新获取存储的压枪值:" + bqNum + "." + cfqNum + "," + akNum);
                         bqBar.setProgress(bqNum - 1);
                         cfqBar.setProgress(cfqNum - 1);
@@ -500,9 +500,9 @@ public class IniTab {
         akBar.setOnSeekBarChangeListener(seekBarChangeListener);
         bqBar.setOnSeekBarChangeListener(seekBarChangeListener);
         cfqBar.setOnSeekBarChangeListener(seekBarChangeListener);
-        int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "cfqNum", int.class, 19);
-        int bqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "bqNum", int.class, 25);
-        int akNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "akNum", int.class, 28);
+        int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "cfqNum", int.class, 13);
+        int bqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "bqNum", int.class, 16);
+        int akNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "akNum", int.class, 19);
         SimpleUtil.log("获取存储的压枪值:" + bqNum + "." + cfqNum + "," + akNum);
         bqBar.setProgress(bqNum - 1);
         cfqBar.setProgress(cfqNum - 1);

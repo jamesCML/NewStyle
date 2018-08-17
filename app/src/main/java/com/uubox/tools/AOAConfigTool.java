@@ -163,9 +163,9 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                 int configID_ = (Integer) SimpleUtil.getFromShare(mContext, sp[2], "configID", int.class);
                 //压枪灵敏度
 
-                int bqNum = (Integer) SimpleUtil.getFromShare(mContext, sp[2], "bqNum", int.class, 25);
-                int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, sp[2], "cfqNum", int.class, 19);
-                int akNum = (Integer) SimpleUtil.getFromShare(mContext, sp[2], "akNum", int.class, 28);
+                int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, sp[2], "cfqNum", int.class, 13);
+                int bqNum = (Integer) SimpleUtil.getFromShare(mContext, sp[2], "bqNum", int.class, 16);
+                int akNum = (Integer) SimpleUtil.getFromShare(mContext, sp[2], "akNum", int.class, 19);
                 tempContainer[0] = (byte) bqNum;
                 tempContainer[1] = (byte) cfqNum;
                 tempContainer[2] = (byte) akNum;
@@ -258,9 +258,9 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                 for (AOAConfigTool.Config config : allConfigs) {
                     if (config.getIsUsed()) {
                         //压枪数据重新构造一下
-                        int bqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "bqNum", int.class, 25);
-                        int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "cfqNum", int.class, 19);
-                        int akNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "akNum", int.class, 28);
+                        int bqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "bqNum", int.class, 16);
+                        int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "cfqNum", int.class, 13);
+                        int akNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "akNum", int.class, 19);
                         int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "defaultgun", int.class, 0);
 
                         SimpleUtil.log("重新调整一下压枪灵敏度、压枪：" + bqNum + "," + cfqNum + "," + akNum + "," + defaultgun);
