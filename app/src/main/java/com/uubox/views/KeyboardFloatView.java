@@ -107,7 +107,7 @@ public class KeyboardFloatView extends FrameLayout implements SimpleUtil.INormal
         int x = params.getX() - SimpleUtil.LIUHAI;
         int y = params.getY();
         ImageView iv = new ImageView(getContext());
-        if ((x <= 0 && y <= 0 && BtnParamTool.getBtnRadius(btn) <= 0)
+        if ((x <= 0 || y <= 0 || BtnParamTool.getBtnRadius(btn) <= 0)
                 // 不显示方向键和鼠标
                 || btn == KeyboardView.Btn.L || btn == KeyboardView.Btn.R) {
             return;
@@ -135,6 +135,7 @@ public class KeyboardFloatView extends FrameLayout implements SimpleUtil.INormal
             layoutParams.topMargin -= iv.getMeasuredHeight() / 2;
         }
         iv.setBackgroundResource(BtnParamTool.getBtnBelongColor(params));
+        SimpleUtil.log("小健位:" + btn + "," + layoutParams.leftMargin + "," + layoutParams.topMargin);
         addView(iv, layoutParams);
         if (params.iHaveChild()) {
             addView(params.getBtn2(), btn);
