@@ -96,7 +96,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="2dp"
         android:orientation="horizontal"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <ListView
             android:id="@+id/dialog_oversize_left"
@@ -135,7 +135,7 @@
         android:layout_margin="3dp"
         android:fillViewport="true"
         android:gravity="center"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
