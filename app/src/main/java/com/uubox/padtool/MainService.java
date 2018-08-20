@@ -4,6 +4,8 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -37,12 +39,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import java.io.FileDescriptor;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-
 import com.uubox.threads.AccInputThread;
 import com.uubox.tools.AOAConfigTool;
 import com.uubox.tools.BtnParamTool;
@@ -51,6 +47,11 @@ import com.uubox.views.GuiStep;
 import com.uubox.views.KeyboardEditWindowManager;
 import com.uubox.views.KeyboardFloatView;
 import com.uubox.views.KeyboardView;
+
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class MainService extends Service implements SimpleUtil.INormalBack {
     private UsbManager mUSBManager;
@@ -65,6 +66,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
     private ParcelFileDescriptor mParcelFileDescriptor;
     private AOAConfigTool mAOAConfigTool;
     private final int HANDLE_SCAN_AOA = 2;
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -229,6 +231,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         SimpleUtil.log("openUsbAccessory");
         mParcelFileDescriptor = mUSBManager.openAccessory(usbAccessory);
         if (mParcelFileDescriptor == null) {
+            mHandler.removeMessages(HANDLE_SCAN_AOA);
             SimpleUtil.log("already exits!");
             return;
         }
@@ -243,6 +246,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         } else {
             SimpleUtil.mDeviceVersion = result[3] & 0xff;
             SimpleUtil.log("获取版本信息:" + SimpleUtil.mDeviceVersion);
+            SimpleUtil.putOneInfoToMap("devver", SimpleUtil.mDeviceVersion + "");
         }
         mHandler.removeMessages(HANDLE_SCAN_AOA);
         mfloatingIv.setImageResource((Integer) mfloatingIv.getTag() == 1 ? R.mipmap.app_icon0805001 : R.mipmap.app_icon0805001_half);
@@ -869,9 +873,12 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
                         .build();
             }
             startForeground(1, notification);
+            SimpleUtil.log("前台服务设置成功");
         } catch (Exception e) {
             e.printStackTrace();
+            SimpleUtil.log("前台服务设置失败");
         }
     }
+
 
 }

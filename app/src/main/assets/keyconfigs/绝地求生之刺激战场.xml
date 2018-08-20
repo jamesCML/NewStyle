@@ -142,7 +142,7 @@
     <UP frequency="-1" isParent="true" switch="true" keyType="0" mode="-1" r="36" step="-1" x="1860"
         y="649">
         <UP frequency="0" isParent="false" switch="true" keyType="1" mode="0" r="32" step="0"
-            x="1785" y="558"></UP>
+            x="1607" y="549"></UP>
     </UP>
     <KEY_E frequency="-1" isParent="true" switch="true" keyType="0" mode="-1" r="36" step="-1"
         x="423" y="394">
@@ -196,7 +196,7 @@
     <DOWN frequency="-1" isParent="true" switch="true" keyType="0" mode="-1" r="36" step="-1"
         x="1853" y="919">
         <DOWN frequency="0" isParent="false" switch="true" keyType="1" mode="0" r="32" step="0"
-            x="1607" y="549"></DOWN>
+            x="1785" y="558"></DOWN>
     </DOWN>
     <CTRL_RGHT frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1"
         x="0" y="-1"></CTRL_RGHT>

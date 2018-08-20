@@ -242,30 +242,31 @@ public class IniTab {
                 if (configsRightData.get(position).getIsUsed()) {
                     return;
                 }
+                String gamesha = configsRightData.get(position).getmTabValue();
+                SimpleUtil.log("item select:" + gamesha);
                 for (AOAConfigTool.Config config1 : configsRightData) {
                     if (config1.getIsUsed()) {
                         config1.setmIsUsed(false);
-
-                        //这里刷新一下UI
-                        sp0[2] = config1.getmTabValue();
-                        int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "cfqNum", int.class, 13);
-                        int bqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "bqNum", int.class, 16);
-                        int akNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "akNum", int.class, 19);
-                        SimpleUtil.log("刷新获取存储的压枪值:" + bqNum + "." + cfqNum + "," + akNum);
-                        bqBar.setProgress(bqNum - 1);
-                        cfqBar.setProgress(cfqNum - 1);
-                        akBar.setProgress(akNum - 1);
-                        bq.setText("F2类型:步枪   灵敏度:" + bqNum);
-                        cfq.setText("F1类型:冲锋枪   灵敏度:" + cfqNum);
-                        ak.setText("F3类型:AK47   灵敏度:" + akNum);
-
-                        int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "defaultgun", int.class, 0);
-                        ((RadioButton) radioGroup.getChildAt(defaultgun)).setChecked(true);
                     }
                 }
 
-                String gamesha = configsRightData.get(position).getmTabValue();
-                SimpleUtil.log("item select:" + gamesha);
+                //这里刷新一下UI
+                sp0[2] = gamesha;
+                int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "cfqNum", int.class, 13);
+                int bqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "bqNum", int.class, 16);
+                int akNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "akNum", int.class, 19);
+                SimpleUtil.log("刷新获取存储的压枪值:" + bqNum + "." + cfqNum + "," + akNum);
+                bqBar.setProgress(bqNum - 1);
+                cfqBar.setProgress(cfqNum - 1);
+                akBar.setProgress(akNum - 1);
+                bq.setText("F2类型:步枪   灵敏度:" + bqNum);
+                cfq.setText("F1类型:冲锋枪   灵敏度:" + cfqNum);
+                ak.setText("F3类型:AK47   灵敏度:" + akNum);
+
+                int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "defaultgun", int.class, 0);
+                ((RadioButton) radioGroup.getChildAt(defaultgun)).setChecked(true);
+
+
                 configsRightData.get(position).setmIsUsed(true);
                 adapterRight.notifyDataSetChanged();
             }

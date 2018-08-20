@@ -37,6 +37,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 public class SimpleUtil {
@@ -48,6 +49,7 @@ public class SimpleUtil {
     public static boolean mAOAInjectEable;
     public static int LIUHAI;
     public static int mDeviceVersion;
+    private static ConcurrentHashMap<String, String> mInfoMap = new ConcurrentHashMap<>();
     public static byte[] getAssertSmallFile(Context context, String path) {
         try {
             InputStream stream = context.getAssets().open(path);
@@ -60,6 +62,28 @@ public class SimpleUtil {
         return null;
     }
 
+    public static void putOneInfoToMap(String key, String value) {
+      /* if(mInfoMap.containsKey(key))
+       {
+           mInfoMap.put(getCurTime()+"_"+key+"_"+getSha1(System.currentTimeMillis()+""),value);
+       }*/
+        mInfoMap.put(getCurTime() + "_" + key, value);
+    }
+
+    public static void clearInfoMap() {
+        mInfoMap.clear();
+    }
+
+    public static String getInfoMapToString() {
+        Iterator<String> it = mInfoMap.keySet().iterator();
+        StringBuilder sb = new StringBuilder();
+        while (it.hasNext()) {
+            String key = it.next();
+            sb.append("【" + key + ":" + mInfoMap.get(key) + "】");
+        }
+        clearInfoMap();
+        return sb.toString();
+    }
     /**
      * 保存数据到本地
      *

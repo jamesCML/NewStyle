@@ -335,7 +335,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                     index_++;
                     resetReq();
                 }
-
+                SimpleUtil.log("保底配置顺序，查询一下！！！");
                 //保底配置顺序，查询一下
                 byte[] d0data = getDeviceConfigD0();
                 SimpleUtil.resetWaitTop();

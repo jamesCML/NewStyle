@@ -20,22 +20,30 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
+import com.pgyersdk.feedback.PgyerFeedbackManager;
 import com.pgyersdk.update.DownloadFileListener;
 import com.pgyersdk.update.PgyUpdateManager;
 import com.pgyersdk.update.UpdateManagerListener;
@@ -65,9 +73,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
         SimpleUtil.zoomx = Math.min(point.x, point.y);
         SimpleUtil.zoomy = Math.max(point.x, point.y);
 
-        int saveX = (Integer) SimpleUtil.getFromShare(getBaseContext(), "ini", "zoomx", int.class);
-        ;
-        SimpleUtil.zoomx = Math.max(saveX, SimpleUtil.zoomx);
+        SimpleUtil.putOneInfoToMap("devpix", SimpleUtil.zoomx + "*" + SimpleUtil.zoomy);
+        SimpleUtil.putOneInfoToMap("liuhai", (Integer) SimpleUtil.getFromShare(this, "ini", "LH", int.class, -1) + "");
+        int saveY = (Integer) SimpleUtil.getFromShare(getBaseContext(), "ini", "zoomy", int.class);
+        SimpleUtil.log("readX:" + SimpleUtil.zoomy + ",saveX:" + saveY);
+        SimpleUtil.zoomy = Math.max(saveY, SimpleUtil.zoomy);
 
         SimpleUtil.saveToShare(this, "ini", "zoomx", SimpleUtil.zoomx);
         SimpleUtil.saveToShare(this, "ini", "zoomy", SimpleUtil.zoomy);
@@ -76,7 +86,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mLoadMsg = findViewById(R.id.loading_msg);
         mButton = findViewById(R.id.loading_bt);
         mButton.setOnClickListener(this);
-
+        findViewById(R.id.loading_feedback).setOnClickListener(this);
         if (getWindowManager().getDefaultDisplay().getRotation() * Surface.ROTATION_90 == 1)//检测到横屏状态
         {
             SimpleUtil.log("启动检测到横屏");
@@ -87,6 +97,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 Intent intent = new Intent(MainActivity.this, MainService.class);
                 startService(intent);
                 finish();
+                //moveTaskToBack(true);
                 return;
             }
             mButton.setText("点击我后台运行");
@@ -269,6 +280,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 Intent intent = new Intent(MainActivity.this, MainService.class);
                 startService(intent);
                 finish();
+                //moveTaskToBack(true);
+                break;
+            case R.id.loading_feedback:
+                feedback();
                 break;
         }
     }
@@ -366,5 +381,127 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     public void onBackPressed() {
         System.exit(0);
+    }
+
+    private void feedback() {
+        new PgyerFeedbackManager.PgyerFeedbackBuilder()
+                .setShakeInvoke(false)       //fasle 则不触发摇一摇，最后需要调用 invoke 方法
+                // true 设置需要调用 register 方法使摇一摇生效
+                .setDisplayType(PgyerFeedbackManager.TYPE.DIALOG_TYPE)   //设置以Dialog 的方式打开
+                .setColorDialogTitle("#ffffff")    //设置Dialog 标题栏的背景色，默认为颜色为#ffffff
+                .setColorTitleBg("#00ff00")        //设置Dialog 标题的字体颜色，默认为颜色为#2E2D2D
+                .setBarBackgroundColor("#aa0000ff")      // 设置顶部按钮和底部背景色，默认颜色为 #2E2D2D
+                .setBarButtonPressedColor("#FF0000")        //设置顶部按钮和底部按钮按下时的反馈色 默认颜色为 #383737
+                .setColorPickerBackgroundColor("#FF0000")   //设置颜色选择器的背景色,默认颜色为 #272828
+                .setMoreParam("baseinfo", SimpleUtil.getInfoMapToString())
+                .builder()
+                .invoke();                  //激活直接显示的方式
+        changeView();
+    }
+
+    private void changeView() {
+        SimpleUtil.runOnUIThread(new Runnable() {
+            @Override
+            public void run() {
+                getView2(MainActivity.this);
+            }
+        }, 10);
+    }
+
+    private EditText editpanel = null;
+
+    private void getView2(Activity activity) {
+        Object v0 = activity.getSystemService(Context.WINDOW_SERVICE);
+        try {
+            Field v2 = Class.forName("android.view.WindowManagerImpl").getDeclaredField("mGlobal");
+            v2.setAccessible(true);
+            v0 = v2.get(v0);
+            v2 = v0.getClass().getDeclaredField("mViews");
+            v2.setAccessible(true);
+            v0 = v2.get(v0);
+            if (v0 == null) {
+            }
+            if (v0 instanceof ArrayList) {
+                ArrayList<View> views = (ArrayList<View>) v0;
+                SimpleUtil.log("viwsize:" + views.size());
+                if (views.size() < 2) {
+                    changeView();
+                    return;
+                }
+
+                for (View view : views) {
+                    if (getViews(view)) {
+                        break;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private boolean getViews(View view) {
+        boolean find = false;
+        ViewGroup viewGroup = (ViewGroup) view;
+
+        for (int i = 0; i < viewGroup.getChildCount(); i++) {
+            View view2 = viewGroup.getChildAt(i);
+            if (view2 instanceof ViewGroup) {
+                getViews(view2);
+            } else {
+                SimpleUtil.log("sub-view:" + view2.toString());
+                if (view2 instanceof TextView) {
+                    find = ((TextView) view2).getText().toString().contains("反馈");
+                    if (find) {
+                        SimpleUtil.log("找到对话框");
+                    }
+                }
+                if (view2 instanceof CheckBox) {
+                    CheckBox checkBox = (CheckBox) view2;
+                    checkBox.setChecked(false);
+                    checkBox.setVisibility(View.GONE);
+                    SimpleUtil.log("禁止截图");
+                }
+                if (view2 instanceof EditText) {
+                    final EditText editText = (EditText) view2;
+                    String hint = editText.getHint().toString();
+                    if (hint.contains("...")) {
+                        SimpleUtil.log("找到编辑框");
+                        editpanel = editText;
+                        editText.setHint("请输入您的反馈，最少10个文字，谢谢!");
+                        editText.addTextChangedListener(new TextWatcher() {
+                            @Override
+                            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                            }
+
+                            @Override
+                            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                                ((Button) editText.getTag()).setEnabled(s.length() >= 10);
+                            }
+
+                            @Override
+                            public void afterTextChanged(Editable s) {
+
+                            }
+                        });
+                    }
+                }
+                if (view2 instanceof Button) {
+                    Button button = (Button) view2;
+                    if (button.getText().toString().contains("发送")) {
+                        SimpleUtil.log("找到发送按钮");
+                        editpanel.setTag(button);
+                        if (editpanel.getText().toString().length() < 10) {
+                            button.setEnabled(false);
+                        }
+                    }
+                }
+
+            }
+
+        }
+        return false;
     }
 }
