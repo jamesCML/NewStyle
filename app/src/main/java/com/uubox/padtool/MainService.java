@@ -87,6 +87,16 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         HomeWatcherReceiver homeReceiver = new HomeWatcherReceiver();
         registerReceiver(homeReceiver, new IntentFilter("android.intent.action.CLOSE_SYSTEM_DIALOGS"));
         init();
+        SimpleUtil.log("服务启动");
+        if (BtnParamTool.isShowKbFloatView(getBaseContext()) && mWindowManager.getDefaultDisplay().getRotation() * Surface.ROTATION_90 == 1) {
+            SimpleUtil.log("开启小健位");
+            SimpleUtil.runOnUIThread(new Runnable() {
+                @Override
+                public void run() {
+                    KeyboardFloatView.getInstance(getBaseContext()).show();
+                }
+            }, 1500);
+        }
         return super.onStartCommand(intent, flags, startId);
     }
 

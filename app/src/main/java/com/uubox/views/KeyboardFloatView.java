@@ -59,12 +59,13 @@ public class KeyboardFloatView extends FrameLayout implements SimpleUtil.INormal
     }
 
     public void show() {
+        SimpleUtil.log("mIsAdded:" + mIsAdded);
         if (mIsAdded) {
             return;
         }
         // 重新载入按钮参数
         //BtnParamTool.loadBtnParamsFromPrefs(getContext());
-        SimpleUtil.log("keymanager show");
+        SimpleUtil.log("keymanager show2");
         loadUi();
         addToWM();
         mIsAdded = true;
@@ -87,6 +88,11 @@ public class KeyboardFloatView extends FrameLayout implements SimpleUtil.INormal
 
     private void loadUi() {
         ConcurrentHashMap<KeyboardView.Btn, BtnParams> buttons = BtnParamTool.getmBtnParams();
+        if (buttons.size() == 0)//还没加载，则加载
+        {
+            BtnParamTool.loadBtnParamsFromPrefs(getContext());
+            buttons = BtnParamTool.getmBtnParams();
+        }
         Iterator<KeyboardView.Btn> it = buttons.keySet().iterator();
         while (it.hasNext()) {
             KeyboardView.Btn btn = it.next();
