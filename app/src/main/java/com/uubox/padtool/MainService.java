@@ -86,80 +86,12 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
     public int onStartCommand(Intent intent, int flags, int startId) {
         HomeWatcherReceiver homeReceiver = new HomeWatcherReceiver();
         registerReceiver(homeReceiver, new IntentFilter("android.intent.action.CLOSE_SYSTEM_DIALOGS"));
-        mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 1000);
+        init();
         return super.onStartCommand(intent, flags, startId);
     }
 
     Button ok;
 
-    private void loadTest() {
-        final View view = LayoutInflater.from(getBaseContext()).inflate(R.layout.test, null);
-
-        final Button red = view.findViewById(R.id.id_red);
-        final Button green = view.findViewById(R.id.id_green);
-        final Button blue = view.findViewById(R.id.id_blue);
-        final Button yellow = view.findViewById(R.id.id_yellow);
-        final Button exit = view.findViewById(R.id.id_exit);
-        final Button switchmod = view.findViewById(R.id.switchmod);
-        final View ledParent = view.findViewById(R.id.ledparent);
-        final View init = view.findViewById(R.id.id_init);
-        ok = view.findViewById(R.id.id_ok);
-        View.OnClickListener clickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (v.getId()) {
-                    case R.id.id_red:
-                        SimpleUtil.log("读取配置并写入");
-                        //mAOAConfigTool = new AOAConfigTool(getBaseContext(), new AccInputThread(null, null));
-                        SimpleUtil.runOnThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mAOAConfigTool.loadConfigs();
-                            }
-                        });
-                        break;
-                    case R.id.id_green:
-
-                        break;
-                    case R.id.id_blue:
-                        //SimpleUtil.log("读D0");
-                        // mAccInputThread.writeAcc(Hex.parse("a5 04 d0 78"));
-
-                        break;
-                    case R.id.id_yellow:
-                        //SimpleUtil.log("读D1");
-                        // mAccInputThread.writeAcc(Hex.parse("a5 05 d1 00 79"));
-                        break;
-                    case R.id.switchmod:
-                        break;
-                    case R.id.id_exit:
-                        System.exit(0);
-                        break;
-                    case R.id.id_init:
-                        init();
-                        break;
-                }
-            }
-        };
-
-
-        red.setTag(0);
-        green.setTag(0);
-        blue.setTag(0);
-        yellow.setTag(0);
-        switchmod.setTag(0);
-        red.setOnClickListener(clickListener);
-        green.setOnClickListener(clickListener);
-        blue.setOnClickListener(clickListener);
-        yellow.setOnClickListener(clickListener);
-        switchmod.setOnClickListener(clickListener);
-        exit.setOnClickListener(clickListener);
-        init.setOnClickListener(clickListener);
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-        params.gravity = Gravity.CENTER_VERTICAL | Gravity.RIGHT;
-        KeyboardEditWindowManager.getInstance().init(getBaseContext()).addView(view, params);
-        KeyboardEditWindowManager.getInstance().show();
-    }
 
     private void init() {
 
@@ -204,11 +136,13 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         if (usbAccessories == null) {
             SimpleUtil.log("return usbAccessories list is null!!!!!!");
             mfloatingIv.setImageResource((Integer) mfloatingIv.getTag() == 1 ? R.mipmap.app_icon0805001_gray : R.mipmap.app_icon0805001_half_gray);
-            mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 1000);
+            //SimpleUtil.log("HANDLE_SCAN_AOA:"+2);
+            //mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 3000);
             return;
         }
         //防止开启异常后继续扫描
-        mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 5000);
+        //SimpleUtil.log("HANDLE_SCAN_AOA:"+3);
+        //mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 5000);
         String s = "accessory：\n" +
                 "model:" + usbAccessories[0].getModel() + "\n" +
                 "Manufacturer:" + usbAccessories[0].getManufacturer() + "\n" +
@@ -645,12 +579,13 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
                 savechanged = false;
             }
             //SimpleUtil.removeINormalCallback(this);
-        } else if (id == 10000) {
+        } /*else if (id == 10000) {
             SimpleUtil.log("AOA掉线了！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！");
             closeAcc();
             mfloatingIv.setImageResource((Integer) mfloatingIv.getTag() == 1 ? R.mipmap.app_icon0805001_gray : R.mipmap.app_icon0805001_half_gray);
-            mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 1000);
-        } else if (id == 10001) {
+           // SimpleUtil.log("HANDLE_SCAN_AOA:"+4);
+            //mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 3000);
+        } */ else if (id == 10001) {
             if (obj == null) {
                 return;
             }
@@ -682,7 +617,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             });
         } else if (id == 10006)//AOA断开了
         {
-
+            SimpleUtil.log("AOA掉线了！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！");
             SimpleUtil.runOnUIThread(new Runnable() {
                 @Override
                 public void run() {
@@ -703,8 +638,9 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
                         }
                     }
                     //SimpleUtil.addMsgBottomToTop(getBaseContext(),"连接断开,2秒之后自动退出程序",true);
-                    System.exit(0);
-                    // mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 200);
+                    //System.exit(0);
+                    // SimpleUtil.log("HANDLE_SCAN_AOA:"+5);
+                    // mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 3000);
 
                 }
             });

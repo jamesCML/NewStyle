@@ -43,10 +43,13 @@ public class GloableRec extends BroadcastReceiver {
                     SimpleUtil.log(usbDevice.getVendorId() + "is permission fail");
                 }*/
         } else if (action.equals(UsbManager.ACTION_USB_ACCESSORY_DETACHED)) {
+            SimpleUtil.log("ACTION_USB_ACCESSORY_DETACHED");
             UsbAccessory accessory = intent.getParcelableExtra(UsbManager.EXTRA_ACCESSORY);
             if (accessory != null) {
-                SimpleUtil.notifyall_(10000, null);
+                SimpleUtil.notifyall_(10006, null);
             }
+        } else if (action.equals(UsbManager.ACTION_USB_ACCESSORY_ATTACHED)) {
+            SimpleUtil.log("ACTION_USB_ACCESSORY_ATTACHED");
         } else if (action.equals(ACCUSBPERMISSION)) {
             SimpleUtil.log("usb accessonry permission rec!");
 

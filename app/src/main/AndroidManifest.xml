@@ -4,9 +4,9 @@
     package="com.uubox.padtool">
 
     <uses-feature android:name="android.hardware.usb.accessory" />
-    <uses-feature
+    <!--<uses-feature
         android:name="android.hardware.usb.host"
-        android:required="true" />
+        android:required="true" />-->
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -101,6 +101,7 @@
                 <action android:name="android.hardware.usb.action.USB_DEVICE_DETACHED" />
                 <action android:name="com.uubox.newstyle.MainActivity.USBPERMISSION" />
                 <action android:name="android.hardware.usb.action.USB_ACCESSORY_DETACHED" />
+                <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
                 <action android:name="com.uubox.newstyle.MainActivity.ACCUSBPERMISSION" />
                 <action android:name="android.intent.action.SCREEN_OFF" />
                 <action android:name="android.intent.action.SCREEN_ON" />
