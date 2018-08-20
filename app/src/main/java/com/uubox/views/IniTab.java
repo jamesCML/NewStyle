@@ -255,9 +255,9 @@ public class IniTab {
                         bqBar.setProgress(bqNum - 1);
                         cfqBar.setProgress(cfqNum - 1);
                         akBar.setProgress(akNum - 1);
-                        bq.setText("类型:步枪   快捷键:1/2+F2,关闭压枪1/2+ESC 灵敏度:" + bqNum);
-                        cfq.setText("类型:冲锋枪(默认) 快捷键:1/2+F1,关闭压枪1/2+ESC 灵敏度:" + cfqNum);
-                        ak.setText("类型:AK47   快捷键:1/2+F3,关闭压枪1/2+ESC 灵敏度:" + akNum);
+                        bq.setText("F2类型:步枪   灵敏度:" + bqNum);
+                        cfq.setText("F1类型:冲锋枪   灵敏度:" + cfqNum);
+                        ak.setText("F3类型:AK47   灵敏度:" + akNum);
 
                         int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "defaultgun", int.class, 0);
                         ((RadioButton) radioGroup.getChildAt(defaultgun)).setChecked(true);
@@ -471,7 +471,7 @@ public class IniTab {
                 switch (seekBar.getId()) {
 
                     case R.id.dialog_oversize_gun_cfq:
-                        cfq.setText("F3类型:冲锋枪   灵敏度:" + progress);
+                        cfq.setText("F1类型:冲锋枪   灵敏度:" + progress);
                         SimpleUtil.saveToShare(mContext, sp0[2], "cfqNum", progress);
                         break;
                     case R.id.dialog_oversize_gun_bq:
