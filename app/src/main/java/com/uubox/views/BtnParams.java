@@ -2,8 +2,6 @@ package com.uubox.views;
 
 import android.widget.ImageView;
 
-import com.uubox.tools.SimpleUtil;
-
 import java.io.Serializable;
 
 /**
@@ -21,7 +19,7 @@ public class BtnParams implements Serializable, Cloneable {
     /**
      * 交替开关
      */
-    public boolean keyRepeatSwitch = true;
+    private boolean keyRepeatSwitch = true;
     public ImageView img;
     /**
      * x坐标

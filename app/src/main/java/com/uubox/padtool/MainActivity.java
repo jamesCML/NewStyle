@@ -5,9 +5,7 @@ import android.app.Activity;
 import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -15,21 +13,16 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Process;
-import android.os.StrictMode;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
@@ -39,19 +32,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-
 import com.pgyersdk.feedback.PgyerFeedbackManager;
-import com.pgyersdk.update.DownloadFileListener;
-import com.pgyersdk.update.PgyUpdateManager;
-import com.pgyersdk.update.UpdateManagerListener;
-import com.pgyersdk.update.javabean.AppBean;
 import com.uubox.tools.BtnParamTool;
 import com.uubox.tools.CommonUtils;
 import com.uubox.tools.SimpleUtil;
 import com.uubox.tools.SocketLog;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 /**
  * 1.处理未获得权限时APK崩溃
@@ -60,6 +49,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private ProgressBar mProgress;
     private TextView mLoadMsg;
     private Button mButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -251,10 +241,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 return false;
             }
             Object[] arrayOfObject1 = new Object[3];
-            arrayOfObject1[0] = Integer.valueOf(24);
-            arrayOfObject1[1] = Integer.valueOf(Binder.getCallingUid());
+            arrayOfObject1[0] = 24;
+            arrayOfObject1[1] = Binder.getCallingUid();
             arrayOfObject1[2] = context.getPackageName();
-            int m = ((Integer) method.invoke(object, arrayOfObject1)).intValue();
+            int m = (Integer) method.invoke(object, arrayOfObject1);
             return m == AppOpsManager.MODE_ALLOWED;
         } catch (Exception ex) {
 
@@ -378,6 +368,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                             | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         }
     }
+
     @Override
     public void onBackPressed() {
         System.exit(0);
