@@ -44,7 +44,7 @@ public class SimpleUtil {
     public static boolean DEBUG;
     public static int zoomx;
     public static int zoomy;
-    public static boolean isSaveToXml = false;
+    public static boolean isSaveToXml = true;
     public static boolean screenstate;
     public static boolean mAOAInjectEable;
     public static int LIUHAI;

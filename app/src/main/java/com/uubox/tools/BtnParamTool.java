@@ -4,14 +4,16 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.example.cgodawson.xml.XmlPugiElement;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.example.cgodawson.xml.XmlPugiElement;
 import com.uubox.padtool.R;
 import com.uubox.views.BtnParams;
 import com.uubox.views.KeyboardView;
@@ -54,12 +56,31 @@ public class BtnParamTool {
 
     private static boolean isScreenChange;
 
+    private List<XmlPugiElement> getChild(XmlPugiElement element) {
+        List<XmlPugiElement> results = new ArrayList<>();
+        String parentName = element.getName();
+        XmlPugiElement[] subs = element.getAllChild();
+
+        for (XmlPugiElement e : subs) {
+            if (e.getParent().getName().equals(parentName)) {
+                results.add(e);
+            }
+        }
+        return results;
+    }
     private static void loadIniFile(Context context, String filepath, String iniFile) {
 
         XmlPugiElement xmlPugiElement = new XmlPugiElement(SimpleUtil.getAssertSmallFile(context, "keyconfigs/" + filepath));
 
+        XmlPugiElement pixtag = xmlPugiElement.getFirstChildByName("Z" + SimpleUtil.zoomx + SimpleUtil.zoomy);
+        if (pixtag.loadSucess) {
+            SimpleUtil.log(comfirGame + " 寻找到符合的配置：" + "Z" + SimpleUtil.zoomx + SimpleUtil.zoomy);
+            xmlPugiElement = pixtag;
+        } else {//默认使用1080*1920
+            SimpleUtil.log(comfirGame + " 寻找不到符合的配置：" + "Z" + SimpleUtil.zoomx + SimpleUtil.zoomy);
+            xmlPugiElement = xmlPugiElement.getFirstChildByName("Z10802160");
+        }
         XmlPugiElement[] childs = xmlPugiElement.getAllChild();
-
         int zoomx = Integer.parseInt(childs[0].getAttr("zoomx"));
         int zoomy = Integer.parseInt(childs[0].getAttr("zoomy"));
         for (int i = 1; i < childs.length; i++) {
