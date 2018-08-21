@@ -27,9 +27,9 @@ android {
     buildTypes {
         release {
             buildConfigField "boolean", "LOG_DEBUG", "false"
-            minifyEnabled true
-            zipAlignEnabled true
-            shrinkResources true
+            minifyEnabled false
+            zipAlignEnabled false
+            shrinkResources false
 ////            applicationIDsuffix '.release'
             versionNameSuffix '-release'
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
