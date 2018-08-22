@@ -416,6 +416,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
         }
 
         AOAConfigTool.Config[] rightOrder = new AOAConfigTool.Config[4];
+        SimpleUtil.log("准备分配配置到左右，其中d0:" + Hex.toString(d0));
         for (AOAConfigTool.Config config : mConfigs) {
             if (d0 != null) {
                 boolean isFind = false;
@@ -442,11 +443,13 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                 if (!config.getIsDeleted() && configsRightData.size() < 4) {
                     config.setDeleted(false);
                     configsRightData.add(config);
+                    SimpleUtil.log("增加了一个到右边:" + config.getmConfigName());
                     //rightSize[0] += config.getmSize();
                 } else {
                     config.setmIsUsed(false);
                     config.setDeleted(true);
                     if (configsLeftData != null) {
+                        SimpleUtil.log("增加了一个到左边:" + config.getmConfigName());
                         if (config.getmConfigName().endsWith("[官方]"))
                             configsLeftData.add(0, config);
                         else
@@ -464,9 +467,12 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                     configsRightData.add(one);
             }
         } else {//只能先放一点了
+            SimpleUtil.log("匹配不上，则放一点");
             for (AOAConfigTool.Config one : rightOrder) {
-                if (one != null)
+                if (one != null) {
+                    SimpleUtil.log("符合4个的非空的先放在右边:" + one.getmConfigName());
                     configsRightData.add(one);
+                }
             }
 
 
@@ -477,6 +483,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                     if (leftOne.mConfigName.contains("刺激战场") || leftOne.mConfigName.contains("全军出击") || leftOne.mConfigName.contains("荒野行动") || leftOne.mConfigName.contains("光荣使命")) {
                         leftOne.setDeleted(false);
                         configsRightData.add(leftOne);
+                        SimpleUtil.log("把左边的一个增加到右边:" + leftOne.getmConfigName());
                         it.remove();
                     }
                 }

@@ -49,7 +49,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private ProgressBar mProgress;
     private TextView mLoadMsg;
     private Button mButton;
-
+    private boolean mIsJugeFloat;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -207,8 +207,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     public boolean isFloatPermissionOK() {
 
+        if (mIsJugeFloat) {
+            return true;
+        }
+        mIsJugeFloat = true;
         if (Build.VERSION.SDK_INT >= 23) {
-            if (!Settings.canDrawOverlays(this)) {
+            if (!Settings.canDrawOverlays(getBaseContext())) {
                 mLoadMsg.setText("为了让应用正常运行，请开启【悬浮窗权限】");
                 mButton.setText("现在开启");
                 return false;

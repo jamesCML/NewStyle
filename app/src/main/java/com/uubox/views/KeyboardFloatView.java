@@ -106,6 +106,7 @@ public class KeyboardFloatView extends FrameLayout implements SimpleUtil.INormal
     private void addView(BtnParams params, KeyboardView.Btn btn) {
         int x = params.getX() - SimpleUtil.LIUHAI;
         int y = params.getY();
+
         ImageView iv = new ImageView(getContext());
         if ((x <= 0 || y <= 0 || BtnParamTool.getBtnRadius(btn) <= 0)
                 // 不显示方向键和鼠标

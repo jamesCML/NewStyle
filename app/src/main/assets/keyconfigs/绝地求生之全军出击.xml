@@ -207,7 +207,7 @@
         <X frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="0" step="-1" x="0"
             y="-1"></X>
     </Z10802160>
-    <Z10802160>
+    <Z10801920>
         <ZOOM zoomx="1080" zoomy="1920"></ZOOM>
         <KEY_F frequency="-1" isParent="true" switch="true" keyType="0" mode="-1" r="32" step="-1"
             x="1309" y="366">
@@ -413,5 +413,5 @@
             x="0" y="-1"></NUM_7>
         <F4 frequency="-1" isParent="false" switch="true" keyType="0" mode="-1" r="28" step="-1"
             x="1525" y="131"></F4>
-    </Z10802160>
+    </Z10801920>
 </Root>

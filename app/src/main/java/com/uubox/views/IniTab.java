@@ -620,7 +620,8 @@ public class IniTab {
         View view = LayoutInflater.from(mContext).inflate(R.layout.iniabout, null);
         ((TextView) (view.findViewById(R.id.iniabout_appver))).setText("应用版本:" + CommonUtils.getAppVersionName(mContext));
         ((TextView) (view.findViewById(R.id.iniabout_devver))).setText("设备版本:" + SimpleUtil.mDeviceVersion);
-        addItem("版本信息");
+        ((TextView) (view.findViewById(R.id.iniabout_pix))).setText("分辨率:" + SimpleUtil.zoomx + "*" + SimpleUtil.zoomy);
+        addItem("基本信息");
         mViewPageList.add(view);
     }
 

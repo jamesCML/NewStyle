@@ -889,8 +889,6 @@ public class KeyboardView extends FrameLayout
     private List<View> allView = new ArrayList<>();
 
     private void makeButtonView(final Btn btn, final BtnParams params) {
-        if (btn == Btn.KEY_F)
-            SimpleUtil.log("makeButtonView:" + params.toString());
         int x = params.getX() - SimpleUtil.LIUHAI;
         int y = params.getY();
         int rd = params.getR();
@@ -931,7 +929,6 @@ public class KeyboardView extends FrameLayout
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_FULLSCREEN);
 
         iv.setBackgroundResource(BtnParamTool.getBtnBelongColor(params));
-
         allView.add(iv);
         mFlMain.addView(iv, layoutParams);
         if (btn == Btn.L) {
