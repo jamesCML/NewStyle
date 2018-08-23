@@ -54,9 +54,9 @@ public class BtnUtil {
             case R1:
                 drawableId = R.mipmap.edit_rt;
                 break;
-            case L2:
+            /*case L2:
                 drawableId = R.mipmap.edit_lb;
-                break;
+                break;*/
             case R2:
                 drawableId = R.mipmap.edit_rb;
                 break;
