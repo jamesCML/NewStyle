@@ -179,7 +179,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
 
                 ByteArrayList keyPoints = new ByteArrayList();
                 //遍历每一个配置的具体按键
-                SimpleUtil.log("看看分辨率:" + SimpleUtil.zoomx + "," + SimpleUtil.zoomy);
+                SimpleUtil.log("分辨率:" + SimpleUtil.zoomx + "," + SimpleUtil.zoomy);
                 Iterator<KeyboardView.Btn> it2 = xmlConfig.keySet().iterator();
                 while (it2.hasNext()) {
                     KeyboardView.Btn key2 = it2.next();

@@ -32,15 +32,26 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.cgodawson.xml.XmlPugiElement;
 import com.pgyersdk.feedback.PgyerFeedbackManager;
 import com.uubox.tools.BtnParamTool;
+import com.uubox.tools.ByteArrayList;
 import com.uubox.tools.CommonUtils;
 import com.uubox.tools.SimpleUtil;
 import com.uubox.tools.SocketLog;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * 1.处理未获得权限时APK崩溃
@@ -77,21 +88,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mButton = findViewById(R.id.loading_bt);
         mButton.setOnClickListener(this);
         findViewById(R.id.loading_feedback).setOnClickListener(this);
-        if (getWindowManager().getDefaultDisplay().getRotation() * Surface.ROTATION_90 == 1)//检测到横屏状态
-        {
-            SimpleUtil.log("启动检测到横屏");
-            if ((Boolean) SimpleUtil.getFromShare(this, "ini", "init", boolean.class))//已经初始化则直接进入
-            {
-                SimpleUtil.log("已经初始化，直接进入");
-                SimpleUtil.LIUHAI = (Integer) SimpleUtil.getFromShare(this, "ini", "LH", int.class, -1);
-                Intent intent = new Intent(MainActivity.this, MainService.class);
-                startService(intent);
-                finish();
-                //moveTaskToBack(true);
-                return;
-            }
-            mButton.setText("点击我后台运行");
-        }
 
         AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0);
         alphaAnimation.setDuration(300);
@@ -149,18 +145,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     private void runInit() {
-        if (!(Boolean) SimpleUtil.getFromShare(this, "ini", "init", boolean.class)) {
-            SimpleUtil.log("runInit initask execute");
-            new IniTask().execute();
-        } else {
-            mButton.setText("点击我后台运行");
-            mButton.setVisibility(View.VISIBLE);
-            AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0);
-            alphaAnimation.setDuration(300);
-            alphaAnimation.setRepeatCount(Animation.INFINITE);
-            alphaAnimation.setRepeatMode(Animation.REVERSE);
-            mButton.startAnimation(alphaAnimation);
-        }
+        SimpleUtil.log("runInit initask execute");
+        new IniTask().execute();
     }
 
     @Override
@@ -287,33 +273,82 @@ public class MainActivity extends Activity implements View.OnClickListener {
         protected void onPreExecute() {
 
             SimpleUtil.log("IniTask onPreExecute");
-            mProgress.setVisibility(View.VISIBLE);
-            mButton.clearAnimation();
-            mButton.setVisibility(View.GONE);
+
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
             try {
                 int proc = 0;
-                String[] keyConfigFiles = MainActivity.this.getAssets().list("keyconfigs");
-                publishProgress(0, keyConfigFiles.length);
-                SimpleUtil.sleep(500);
-                String use = null;
-                for (String ini : keyConfigFiles) {
-                    if (ini.contains("刺激战场")) {
-                        use = ini;
-                        continue;
+                OkHttpClient okHttpClient = new OkHttpClient();
+                Request request = new Request.Builder().url("https://usbdata.oss-cn-shenzhen.aliyuncs.com/usbconfig.xml").build();
+                Response response = okHttpClient.newCall(request).execute();
+                if (response.isSuccessful()) {
+                    InputStream inputStream = response.body().byteStream();
+                    int len = 0;
+                    ByteArrayList buffList = new ByteArrayList();
+                    byte[] buff = new byte[1024];
+                    while ((len = inputStream.read(buff)) > 0) {
+                        buffList.add(Arrays.copyOfRange(buff, 0, len));
                     }
-                    BtnParamTool.setComfirGame(ini.substring(0, ini.length() - 4));
-                    BtnParamTool.loadBtnParamsFromPrefs(MainActivity.this, false);
-                    proc++;
-                    publishProgress(proc, keyConfigFiles.length);
-                }
-                BtnParamTool.setComfirGame(use.substring(0, use.length() - 4));
-                BtnParamTool.loadBtnParamsFromPrefs(MainActivity.this, false);
-                publishProgress(keyConfigFiles.length, keyConfigFiles.length);
 
+                    XmlPugiElement config = new XmlPugiElement(SimpleUtil.getAES().decrypt(buffList.all2Bytes()));
+                    if (!config.loadSucess) {
+                        return null;
+                    }
+                    XmlPugiElement keyconfigs = config.getFirstChildByName("keyconfigs");
+
+                    int configVersion = Integer.parseInt(keyconfigs.getAttr("version"));
+
+                    int curConfigVer = (Integer) SimpleUtil.getFromShare(MainActivity.this, "ini", "configver", int.class);
+                    SimpleUtil.log("config version:" + configVersion + ",curconfigver:" + curConfigVer);
+                    if (curConfigVer >= configVersion) {
+                        return null;
+                    }
+
+                    SimpleUtil.runOnUIThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mProgress.setVisibility(View.VISIBLE);
+                            mButton.clearAnimation();
+                            mButton.setVisibility(View.GONE);
+                        }
+                    });
+                    SimpleUtil.sleep(50);
+                    XmlPugiElement[] childs = keyconfigs.getAllChild();
+                    publishProgress(0, childs.length);
+
+                    //String use = null;
+                    for (XmlPugiElement element : childs) {
+                        String ini = element.getAttr("name");
+                       /* if (ini.contains("刺激战场")) {
+                            use = ini;
+                            continue;
+                        }*/
+                        request = new Request.Builder().url(element.getValue()).build();
+                        response = okHttpClient.newCall(request).execute();
+                        if (response.isSuccessful()) {
+                            proc++;
+                            publishProgress(proc, childs.length);
+                            buffList.clear();
+                            buff = new byte[1024];
+                            inputStream = response.body().byteStream();
+                            while ((len = inputStream.read(buff)) > 0) {
+                                buffList.add(Arrays.copyOfRange(buff, 0, len));
+                            }
+                            String getmd5 = CommonUtils.getmd5(buffList.all2Bytes());
+                            String childmd5 = element.getAttr("md5");
+                            if (!getmd5.equals(childmd5)) {
+                                SimpleUtil.log(ini + " MD5校验错误！");
+                                return null;
+                            }
+                            BtnParamTool.setComfirGame(ini);
+                            BtnParamTool.updateGuanfangConfig(MainActivity.this, SimpleUtil.getAES().decrypt(buffList.all2Bytes()));
+
+                        }
+                    }
+                    SimpleUtil.saveToShare(MainActivity.this, "ini", "configver", configVersion);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -329,16 +364,17 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            SimpleUtil.saveToShare(MainActivity.this, "ini", "init", true);
-            SimpleUtil.log("第一次初始化需要手动进入");
-           /* if(getWindowManager().getDefaultDisplay().getRotation() * Surface.ROTATION_90==1)//检测到横屏状态
+            if (getWindowManager().getDefaultDisplay().getRotation() * Surface.ROTATION_90 == 1)//检测到横屏状态
             {
+                SimpleUtil.log("启动检测到横屏");
                 SimpleUtil.log("已经初始化，直接进入");
+                SimpleUtil.LIUHAI = (Integer) SimpleUtil.getFromShare(MainActivity.this, "ini", "LH", int.class, -1);
                 Intent intent = new Intent(MainActivity.this, MainService.class);
                 startService(intent);
                 finish();
                 return;
-            }*/
+            }
+
             mLoadMsg.setText("初始化完成！进入游戏会自动显示游戏键位图！");
             mProgress.setVisibility(View.GONE);
             mButton.setText("点击我后台运行");

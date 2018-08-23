@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import com.uubox.padtool.R;
@@ -445,4 +446,16 @@ public class CommonUtils {
         manager.notify(0, builder.build());
     }
 
+    public static String getmd5(byte[] buff) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+            digest.update(buff);
+            byte[] hashedBytes = digest.digest();
+            return Hex.toString(hashedBytes).replace(" ", "");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
+
+    }
 }

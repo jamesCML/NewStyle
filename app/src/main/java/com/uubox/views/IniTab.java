@@ -209,371 +209,388 @@ public class IniTab {
         final List<AOAConfigTool.Config> configsLeftData = new ArrayList<>();
         final List<AOAConfigTool.Config> configsRightData = new ArrayList<>();
         final List<AOAConfigTool.Config> configCopyRight = new ArrayList<>();
-        boolean isMatch = AOAConfigTool.getInstance(mContext).AnysLeftRihgtConfigs(configsLeftData, configsRightData);
-        for (AOAConfigTool.Config config : configsRightData) {
-            configCopyRight.add((AOAConfigTool.Config) config.clone());
-        }
-        if (!isMatch && AOAConfigTool.getInstance(mContext).isAOAConnect()) {
-            SimpleUtil.addMsgBottomToTop(mContext, "当前配置与设备配置不匹配！请重新写入配置！", true);
-        }
-        for (AOAConfigTool.Config config : configsRightData) {
-            if (config.getIsUsed()) {
-                SimpleUtil.notifyall_(10013, config);
-                break;
-            }
-        }
-        SimpleUtil.log(configsRightData.size() + "");
-        final int[] rightSize = {0};
 
-        ListView listLeft = view.findViewById(R.id.dialog_oversize_left);
-        ListView listRight = view.findViewById(R.id.dialog_oversize_right);
 
-        final MoveConfigAdapter adapterleft = new MoveConfigAdapter(mContext, configsLeftData);
-        final MoveConfigAdapter adapterRight = new MoveConfigAdapter(mContext, configsRightData);
-        listLeft.setAdapter(adapterleft);
-        listRight.setAdapter(adapterRight);
-        listRight.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        //这个地方进入线程使用
+        SimpleUtil.runOnThread(new Runnable() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (!AOAConfigTool.getInstance(mContext).isAOAConnect()) {
-                    SimpleUtil.addMsgBottomToTop(mContext, "请先连接设备再调整配置！", true);
-                    return;
-                }
-                if (configsRightData.get(position).getIsUsed()) {
-                    return;
-                }
-                String gamesha = configsRightData.get(position).getmTabValue();
-                SimpleUtil.log("item select:" + gamesha);
-                for (AOAConfigTool.Config config1 : configsRightData) {
-                    if (config1.getIsUsed()) {
-                        config1.setmIsUsed(false);
-                    }
-                }
-
-                //这里刷新一下UI
-                sp0[2] = gamesha;
-                int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "cfqNum", int.class, 13);
-                int bqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "bqNum", int.class, 16);
-                int akNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "akNum", int.class, 19);
-                SimpleUtil.log("刷新获取存储的压枪值:" + bqNum + "." + cfqNum + "," + akNum);
-                bqBar.setProgress(bqNum - 1);
-                cfqBar.setProgress(cfqNum - 1);
-                akBar.setProgress(akNum - 1);
-                bq.setText("F2类型:步枪   灵敏度:" + bqNum);
-                cfq.setText("F1类型:冲锋枪   灵敏度:" + cfqNum);
-                ak.setText("F3类型:AK47   灵敏度:" + akNum);
-
-                int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "defaultgun", int.class, 0);
-                ((RadioButton) radioGroup.getChildAt(defaultgun)).setChecked(true);
-
-
-                configsRightData.get(position).setmIsUsed(true);
-                adapterRight.notifyDataSetChanged();
-            }
-        });
-        listLeft.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                if (configsLeftData.get(position).getmConfigName().endsWith("[官方]")) {
-                    SimpleUtil.addMsgBottomToTop(mContext, "不能删除官方配置", true);
-                    return true;
-                }
-
-                String configIDs = (String) SimpleUtil.getFromShare(mContext, "ini", "configsID", String.class, "");
-
-                int configID_ = (Integer) SimpleUtil.getFromShare(mContext, configsLeftData.get(position).getmTabValue(), "configID", int.class);
-                byte[] ids = Hex.parse(configIDs);
-                for (int i = 0; i < 100; i++) {
-                    if (ids[i] == configID_) {
-                        ids[i] = 0;
-                        SimpleUtil.saveToShare(mContext, "ini", "configsID", Hex.toString(ids));
-                        //SimpleUtil.saveToShare(mContext,mSpFileName,"configID",(int)ids[i]);
-                        break;
-                    }
-                }
-
-
-                SharedPreferences shareLib = mContext.getSharedPreferences(configsLeftData.get(position).getmContent() + "_table", 0);
-                boolean res = shareLib.edit().remove(configsLeftData.get(position).getmTabKey()).commit();
-                SimpleUtil.log("delete iniconfig result:" + res);
-                SimpleUtil.addMsgBottomToTop(mContext, "删除" + (res ? "成功" : "失败"), !res);
-                String newConfig = (String) SimpleUtil.getFromShare(mContext, "ini", "NewConfigNotWrite", String.class, "");
-                if (!newConfig.isEmpty()) {
-                    if (configsLeftData.get(position).getmConfigName().equals(newConfig)) {
-                        SimpleUtil.log("we remove the newconfig in the lib!");
-                        SimpleUtil.saveToShare(mContext, "ini", "NewConfigNotWrite", "");
-                    }
-                }
-
-                //如果已经全部删除则删除游戏目录
-
-                if (shareLib.getAll().size() == 0) {
-                    File file = new File("/data/data/" + CommonUtils.getAppPkgName(mContext) + "/shared_prefs", configsLeftData.get(position).getmContent() + "_table.xml");
-                    if (file.exists()) {
-                        file.delete();
-                        SimpleUtil.delFromShare(mContext, "KeysConfigs", configsLeftData.get(position).getmContent());
-                        SimpleUtil.addMsgBottomToTop(mContext, "游戏[" + configsLeftData.get(position).getmContent() + "]已清除", false);
-                        SimpleUtil.log("have delete the content " + configsLeftData.get(position).getmContent());
-                    }
-                }
-                configsLeftData.remove(position);
-                adapterleft.notifyDataSetChanged();
-                return true;
-            }
-
-        });
-        final TextView changeGunTv = view.findViewById(R.id.dialog_oversize_changetv);
-        changeGunTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (changeGunTv.getText().toString().contains("压枪")) {
-                    view.findViewById(R.id.dialog_oversize_bar).setVisibility(View.GONE);
-                    listPar.setVisibility(View.GONE);
-                    gunPar.setVisibility(View.VISIBLE);
-                    changeGunTv.setText("点击我跳转到配置选择列表");
-                } else {
-                    view.findViewById(R.id.dialog_oversize_bar).setVisibility(View.VISIBLE);
-                    listPar.setVisibility(View.VISIBLE);
-                    gunPar.setVisibility(View.GONE);
-                    changeGunTv.setText("点击我跳转到压枪设置");
-                }
-            }
-        });
-
-
-        final SimpleUtil.INormalBack iNormalBack = new SimpleUtil.INormalBack() {
-            @Override
-            public void back(int id, final Object obj) {
-                if (id < 10007 && id > 10014) {
-                    return;
-                }
-                if (!AOAConfigTool.getInstance(mContext).isAOAConnect()) {
-                    if (id == 10014) {
-                        SimpleUtil.removeINormalCallback(this);
-                    } else {
-                        SimpleUtil.addMsgBottomToTop(mContext, "请先连接设备再调整配置！", true);
-                    }
-                    return;
-                }
-                if (id == 10007) {//取消一个配置
-                    AOAConfigTool.Config config = (AOAConfigTool.Config) obj;
-
-                    if (config.getIsUsed()) {
-                        SimpleUtil.addMsgBottomToTop(mContext, "正在使用的配置不能取消！", true);
-                        return;
-                    }
-                    SimpleUtil.saveToShare(mContext, config.getmTabValue(), "isDelete", true);
-                    config.setDeleted(true);
-                    configsLeftData.add(config);
-                    configsRightData.remove(obj);
-                    rightSize[0] -= config.getmSize();
-                    adapterleft.notifyDataSetChanged();
-                    adapterRight.notifyDataSetChanged();
-
-                } else if (id == 10008) {//增加一个配置
-                    if (configsRightData.size() == 4) {
-                        SimpleUtil.addMsgBottomToTop(mContext, "当前最多支持写4个配置！", true);
-                        return;
-                    }
-                    AOAConfigTool.Config config = (AOAConfigTool.Config) obj;
-                    config.setDeleted(false);
-                    SimpleUtil.saveToShare(mContext, config.getmTabValue(), "isDelete", false);
-                    configsRightData.add(config);
-                    configsLeftData.remove(obj);
-                    rightSize[0] += config.getmSize();
-                    adapterleft.notifyDataSetChanged();
-                    adapterRight.notifyDataSetChanged();
-                } else if (id == 10009) {//上
-                    int position = (Integer) obj;
-                    if (position == 0) {
-                        return;
-                    } else if (position == 1) {
-                        // addMsgBottomToTop(context, "当前使用的配置必须放在第一位！", true);
-                        // return;
-                    }
-                    SimpleUtil.log("up position:" + position);
-                    configsRightData.add(position - 1, configsRightData.get(position));
-                    configsRightData.remove(position + 1);
-                    adapterleft.notifyDataSetChanged();
-                    adapterRight.notifyDataSetChanged();
-                } else if (id == 10010) {//下
-                    int position = (Integer) obj;
-                    if (position == configsRightData.size() - 1) {
-                        return;
-                    } else if (position == 0) {
-                        //addMsgBottomToTop(context, "当前使用的配置必须放在第一位！", true);
-                        //return;
-                    }
-                    SimpleUtil.log("down position:" + position);
-                    configsRightData.add(position + 2, configsRightData.get(position));
-                    configsRightData.remove(position);
-                    adapterleft.notifyDataSetChanged();
-                    adapterRight.notifyDataSetChanged();
-                } else if (id == 10012)//配置写入完成通知结果
-                {
-                    SimpleUtil.removeINormalCallback(this);
-                    SimpleUtil.runOnUIThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            byte[] c0Data = (byte[]) obj;
-                            SimpleUtil.notifyall_(10013, configsRightData.get(c0Data[3] - 1));
-                            KeyboardEditWindowManager.getInstance().close();
-
+            public void run() {
+                SimpleUtil.addWaitToTop(mContext, "正在加载，请稍后...");
+                final boolean isMatch = AOAConfigTool.getInstance(mContext).AnysLeftRihgtConfigs(configsLeftData, configsRightData);
+                SimpleUtil.resetWaitTop();
+                SimpleUtil.runOnUIThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (AOAConfigTool.Config config : configsRightData) {
+                            configCopyRight.add((AOAConfigTool.Config) config.clone());
                         }
-                    });
-
-                } else if (id == 10014) {
-                    if (configCopyRight.size() != configsRightData.size() || (Boolean) SimpleUtil.getFromShare(mContext, "ini", "configschange", boolean.class)) {
-                        SimpleUtil.addMsgBottomToTop(mContext, "检测到配置更新！自动写入！", false);
-                        view.findViewById(R.id.dialog_oversize_write).performClick();
-                    } else {
-                        for (int i = 0; i < configCopyRight.size(); i++) {
-                            if (!configCopyRight.get(i).equals(configsRightData.get(i)) || configCopyRight.get(i).getIsUsed() != configsRightData.get(i).getIsUsed()) {
-                                SimpleUtil.addMsgBottomToTop(mContext, "检测到配置更新！自动写入！", false);
-                                view.findViewById(R.id.dialog_oversize_write).performClick();
+                        if (!isMatch && AOAConfigTool.getInstance(mContext).isAOAConnect()) {
+                            SimpleUtil.addMsgBottomToTop(mContext, "当前配置与设备配置不匹配！请重新写入配置！", true);
+                        }
+                        for (AOAConfigTool.Config config : configsRightData) {
+                            if (config.getIsUsed()) {
+                                SimpleUtil.notifyall_(10013, config);
                                 break;
                             }
                         }
+                        SimpleUtil.log(configsRightData.size() + "");
+                        final int[] rightSize = {0};
+
+                        ListView listLeft = view.findViewById(R.id.dialog_oversize_left);
+                        ListView listRight = view.findViewById(R.id.dialog_oversize_right);
+
+                        final MoveConfigAdapter adapterleft = new MoveConfigAdapter(mContext, configsLeftData);
+                        final MoveConfigAdapter adapterRight = new MoveConfigAdapter(mContext, configsRightData);
+                        listLeft.setAdapter(adapterleft);
+                        listRight.setAdapter(adapterRight);
+                        listRight.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                if (!AOAConfigTool.getInstance(mContext).isAOAConnect()) {
+                                    SimpleUtil.addMsgBottomToTop(mContext, "请先连接设备再调整配置！", true);
+                                    return;
+                                }
+                                if (configsRightData.get(position).getIsUsed()) {
+                                    return;
+                                }
+                                String gamesha = configsRightData.get(position).getmTabValue();
+                                SimpleUtil.log("item select:" + gamesha);
+                                for (AOAConfigTool.Config config1 : configsRightData) {
+                                    if (config1.getIsUsed()) {
+                                        config1.setmIsUsed(false);
+                                    }
+                                }
+
+                                //这里刷新一下UI
+                                sp0[2] = gamesha;
+                                int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "cfqNum", int.class, 13);
+                                int bqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "bqNum", int.class, 16);
+                                int akNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "akNum", int.class, 19);
+                                SimpleUtil.log("刷新获取存储的压枪值:" + bqNum + "." + cfqNum + "," + akNum);
+                                bqBar.setProgress(bqNum - 1);
+                                cfqBar.setProgress(cfqNum - 1);
+                                akBar.setProgress(akNum - 1);
+                                bq.setText("F2类型:步枪   灵敏度:" + bqNum);
+                                cfq.setText("F1类型:冲锋枪   灵敏度:" + cfqNum);
+                                ak.setText("F3类型:AK47   灵敏度:" + akNum);
+
+                                int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "defaultgun", int.class, 0);
+                                ((RadioButton) radioGroup.getChildAt(defaultgun)).setChecked(true);
+
+
+                                configsRightData.get(position).setmIsUsed(true);
+                                adapterRight.notifyDataSetChanged();
+                            }
+                        });
+                        listLeft.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                            @Override
+                            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                                if (configsLeftData.get(position).getmConfigName().endsWith("[官方]")) {
+                                    SimpleUtil.addMsgBottomToTop(mContext, "不能删除官方配置", true);
+                                    return true;
+                                }
+
+                                String configIDs = (String) SimpleUtil.getFromShare(mContext, "ini", "configsID", String.class, "");
+
+                                int configID_ = (Integer) SimpleUtil.getFromShare(mContext, configsLeftData.get(position).getmTabValue(), "configID", int.class);
+                                byte[] ids = Hex.parse(configIDs);
+                                for (int i = 0; i < 100; i++) {
+                                    if (ids[i] == configID_) {
+                                        ids[i] = 0;
+                                        SimpleUtil.saveToShare(mContext, "ini", "configsID", Hex.toString(ids));
+                                        //SimpleUtil.saveToShare(mContext,mSpFileName,"configID",(int)ids[i]);
+                                        break;
+                                    }
+                                }
+
+
+                                SharedPreferences shareLib = mContext.getSharedPreferences(configsLeftData.get(position).getmContent() + "_table", 0);
+                                boolean res = shareLib.edit().remove(configsLeftData.get(position).getmTabKey()).commit();
+                                SimpleUtil.log("delete iniconfig result:" + res);
+                                SimpleUtil.addMsgBottomToTop(mContext, "删除" + (res ? "成功" : "失败"), !res);
+                                String newConfig = (String) SimpleUtil.getFromShare(mContext, "ini", "NewConfigNotWrite", String.class, "");
+                                if (!newConfig.isEmpty()) {
+                                    if (configsLeftData.get(position).getmConfigName().equals(newConfig)) {
+                                        SimpleUtil.log("we remove the newconfig in the lib!");
+                                        SimpleUtil.saveToShare(mContext, "ini", "NewConfigNotWrite", "");
+                                    }
+                                }
+
+                                //如果已经全部删除则删除游戏目录
+
+                                if (shareLib.getAll().size() == 0) {
+                                    File file = new File("/data/data/" + CommonUtils.getAppPkgName(mContext) + "/shared_prefs", configsLeftData.get(position).getmContent() + "_table.xml");
+                                    if (file.exists()) {
+                                        file.delete();
+                                        SimpleUtil.delFromShare(mContext, "KeysConfigs", configsLeftData.get(position).getmContent());
+                                        SimpleUtil.addMsgBottomToTop(mContext, "游戏[" + configsLeftData.get(position).getmContent() + "]已清除", false);
+                                        SimpleUtil.log("have delete the content " + configsLeftData.get(position).getmContent());
+                                    }
+                                }
+                                configsLeftData.remove(position);
+                                adapterleft.notifyDataSetChanged();
+                                return true;
+                            }
+
+                        });
+                        final TextView changeGunTv = view.findViewById(R.id.dialog_oversize_changetv);
+                        changeGunTv.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (changeGunTv.getText().toString().contains("压枪")) {
+                                    view.findViewById(R.id.dialog_oversize_bar).setVisibility(View.GONE);
+                                    listPar.setVisibility(View.GONE);
+                                    gunPar.setVisibility(View.VISIBLE);
+                                    changeGunTv.setText("点击我跳转到配置选择列表");
+                                } else {
+                                    view.findViewById(R.id.dialog_oversize_bar).setVisibility(View.VISIBLE);
+                                    listPar.setVisibility(View.VISIBLE);
+                                    gunPar.setVisibility(View.GONE);
+                                    changeGunTv.setText("点击我跳转到压枪设置");
+                                }
+                            }
+                        });
+
+
+                        final SimpleUtil.INormalBack iNormalBack = new SimpleUtil.INormalBack() {
+                            @Override
+                            public void back(int id, final Object obj) {
+                                if (id < 10007 || id > 10014) {
+                                    return;
+                                }
+                                if (!AOAConfigTool.getInstance(mContext).isAOAConnect()) {
+                                    if (id == 10014) {
+                                        SimpleUtil.removeINormalCallback(this);
+                                    } else {
+                                        SimpleUtil.addMsgBottomToTop(mContext, "请先连接设备再调整配置！", true);
+                                    }
+                                    return;
+                                }
+                                if (id == 10007) {//取消一个配置
+                                    AOAConfigTool.Config config = (AOAConfigTool.Config) obj;
+
+                                    if (config.getIsUsed()) {
+                                        SimpleUtil.addMsgBottomToTop(mContext, "正在使用的配置不能取消！", true);
+                                        return;
+                                    }
+                                    SimpleUtil.saveToShare(mContext, config.getmTabValue(), "isDelete", true);
+                                    config.setDeleted(true);
+                                    configsLeftData.add(config);
+                                    configsRightData.remove(obj);
+                                    rightSize[0] -= config.getmSize();
+                                    adapterleft.notifyDataSetChanged();
+                                    adapterRight.notifyDataSetChanged();
+
+                                } else if (id == 10008) {//增加一个配置
+                                    if (configsRightData.size() == 4) {
+                                        SimpleUtil.addMsgBottomToTop(mContext, "当前最多支持写4个配置！", true);
+                                        return;
+                                    }
+                                    AOAConfigTool.Config config = (AOAConfigTool.Config) obj;
+                                    config.setDeleted(false);
+                                    SimpleUtil.saveToShare(mContext, config.getmTabValue(), "isDelete", false);
+                                    configsRightData.add(config);
+                                    configsLeftData.remove(obj);
+                                    rightSize[0] += config.getmSize();
+                                    adapterleft.notifyDataSetChanged();
+                                    adapterRight.notifyDataSetChanged();
+                                } else if (id == 10009) {//上
+                                    int position = (Integer) obj;
+                                    if (position == 0) {
+                                        return;
+                                    } else if (position == 1) {
+                                        // addMsgBottomToTop(context, "当前使用的配置必须放在第一位！", true);
+                                        // return;
+                                    }
+                                    SimpleUtil.log("up position:" + position);
+                                    configsRightData.add(position - 1, configsRightData.get(position));
+                                    configsRightData.remove(position + 1);
+                                    adapterleft.notifyDataSetChanged();
+                                    adapterRight.notifyDataSetChanged();
+                                } else if (id == 10010) {//下
+                                    int position = (Integer) obj;
+                                    if (position == configsRightData.size() - 1) {
+                                        return;
+                                    } else if (position == 0) {
+                                        //addMsgBottomToTop(context, "当前使用的配置必须放在第一位！", true);
+                                        //return;
+                                    }
+                                    SimpleUtil.log("down position:" + position);
+                                    configsRightData.add(position + 2, configsRightData.get(position));
+                                    configsRightData.remove(position);
+                                    adapterleft.notifyDataSetChanged();
+                                    adapterRight.notifyDataSetChanged();
+                                } else if (id == 10012)//配置写入完成通知结果
+                                {
+                                    SimpleUtil.removeINormalCallback(this);
+                                    SimpleUtil.runOnUIThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            byte[] c0Data = (byte[]) obj;
+                                            SimpleUtil.notifyall_(10013, configsRightData.get(c0Data[3] - 1));
+                                            KeyboardEditWindowManager.getInstance().close();
+
+                                        }
+                                    });
+
+                                } else if (id == 10014) {
+                                    if (configCopyRight.size() != configsRightData.size() || (Boolean) SimpleUtil.getFromShare(mContext, "ini", "configschange", boolean.class)) {
+                                        SimpleUtil.addMsgBottomToTop(mContext, "检测到配置更新！自动写入！", false);
+                                        view.findViewById(R.id.dialog_oversize_write).performClick();
+                                    } else {
+                                        for (int i = 0; i < configCopyRight.size(); i++) {
+                                            if (!configCopyRight.get(i).equals(configsRightData.get(i)) || configCopyRight.get(i).getIsUsed() != configsRightData.get(i).getIsUsed()) {
+                                                SimpleUtil.addMsgBottomToTop(mContext, "检测到配置更新！自动写入！", false);
+                                                view.findViewById(R.id.dialog_oversize_write).performClick();
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    //SimpleUtil.removeINormalCallback(this);
+                                }
+
+                            }
+                        };
+                        SimpleUtil.addINormalCallback(iNormalBack);
+
+                        view.findViewById(R.id.dialog_oversize_write).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (rightSize[0] > 1024) {
+                                    SimpleUtil.addMsgBottomToTop(mContext, "配置过大！", true);
+                                    return;
+                                }
+                                SimpleUtil.log("dialog_oversize_write==>");
+                                AOAConfigTool.getInstance(mContext).writeManyConfigs(configsRightData);
+
+                            }
+                        });
+                        view.findViewById(R.id.dialog_oversize_cancel).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                SimpleUtil.removeINormalCallback(iNormalBack);
+                                KeyboardEditWindowManager.getInstance().close();
+                            }
+                        });
+
+                        SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+                            @Override
+                            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                                progress += 1;
+                                if (progress >= 100) {
+                                    progress = 99;
+                                }
+                                switch (seekBar.getId()) {
+
+                                    case R.id.dialog_oversize_gun_cfq:
+                                        cfq.setText("F1类型:冲锋枪   灵敏度:" + progress);
+                                        SimpleUtil.saveToShare(mContext, sp0[2], "cfqNum", progress);
+                                        break;
+                                    case R.id.dialog_oversize_gun_bq:
+                                        bq.setText("F2类型:步枪   灵敏度:" + progress);
+                                        SimpleUtil.saveToShare(mContext, sp0[2], "bqNum", progress);
+                                        break;
+                                    case R.id.dialog_oversize_gun_ak:
+                                        ak.setText("F3类型:AK47   灵敏度:" + progress);
+                                        SimpleUtil.saveToShare(mContext, sp0[2], "akNum", progress);
+                                        break;
+                                }
+                            }
+
+                            @Override
+                            public void onStartTrackingTouch(SeekBar seekBar) {
+
+                            }
+
+                            @Override
+                            public void onStopTrackingTouch(SeekBar seekBar) {
+                                //SimpleUtil.addMsgBottomToTop(mContext, "修改成功", false);
+                                SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
+                            }
+                        };
+                        akBar.setOnSeekBarChangeListener(seekBarChangeListener);
+                        bqBar.setOnSeekBarChangeListener(seekBarChangeListener);
+                        cfqBar.setOnSeekBarChangeListener(seekBarChangeListener);
+                        resetBtn.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                cfqBar.setProgress(12);
+                                bqBar.setProgress(15);
+                                akBar.setProgress(19);
+                                SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
+
+                            }
+                        });
+                        int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "cfqNum", int.class, 13);
+                        int bqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "bqNum", int.class, 16);
+                        int akNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "akNum", int.class, 20);
+                        SimpleUtil.log("获取存储的压枪值:" + bqNum + "." + cfqNum + "," + akNum);
+                        bqBar.setProgress(bqNum - 1);
+                        cfqBar.setProgress(cfqNum - 1);
+                        akBar.setProgress(akNum - 1);
+                        bq.setText("F2类型:步枪   灵敏度:" + bqNum);
+                        cfq.setText("F1类型:冲锋枪  灵敏度:" + cfqNum);
+                        ak.setText("F3类型:AK47   灵敏度:" + akNum);
+
+                        int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "defaultgun", int.class, 0);
+                        ((RadioButton) radioGroup.getChildAt(defaultgun)).setChecked(true);
+
+                        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                            @Override
+                            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                                RadioButton radioButton = group.findViewById(checkedId);
+                                String text = radioButton.getText().toString();
+                                SimpleUtil.log("checkedId:" + text);
+                                if (text.contains("压枪")) {
+                                    SimpleUtil.saveToShare(mContext, sp0[2], "defaultgun", 0);
+                                } else if (text.contains("冲锋枪")) {
+                                    SimpleUtil.saveToShare(mContext, sp0[2], "defaultgun", 1);
+                                } else if (text.contains("步枪")) {
+                                    SimpleUtil.saveToShare(mContext, sp0[2], "defaultgun", 2);
+                                } else if (text.contains("AK")) {
+                                    SimpleUtil.saveToShare(mContext, sp0[2], "defaultgun", 3);
+                                }
+                                SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
+                            }
+                        });
+
+                        ListView qaList = view.findViewById(R.id.dialog_oversize_gun_qa);
+                        final List<GunQaAdapter.QAItem> qaData = new ArrayList<>();
+                        GunQaAdapter qaAdapter = new GunQaAdapter(mContext, qaData);
+                        String[] questionArr = mContext.getResources().getStringArray(R.array.gunqaitems);
+                        for (String que : questionArr) {
+                            String[] queSp = que.split("`");
+                            GunQaAdapter.QAItem qaItem = new GunQaAdapter.QAItem();
+                            qaItem.mQueston = queSp[0];
+                            qaItem.mAnswer = queSp[1];
+                            qaData.add(qaItem);
+                        }
+                        qaList.setAdapter(qaAdapter);
+
+                        int height = 0;
+                        int count = qaAdapter.getCount();
+                        for (int i = 0; i < count; i++) {
+                            View temp = qaAdapter.getView(i, null, qaList);
+                            temp.measure(0, 0);
+                            height += temp.getMeasuredHeight();
+                        }
+                        ViewGroup.LayoutParams params = qaList.getLayoutParams();
+                        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                        params.height = height;
+                        qaList.setLayoutParams(params);
+
+                        qaList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                SimpleUtil.addMsgtoTop(mContext, "帮助信息", "问:" + qaData.get(position).mQueston + "\n\n答:" + qaData.get(position).mAnswer, null, null, true);
+                            }
+                        });
                     }
-                    //SimpleUtil.removeINormalCallback(this);
-                }
-
-            }
-        };
-        SimpleUtil.addINormalCallback(iNormalBack);
-
-        view.findViewById(R.id.dialog_oversize_write).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (rightSize[0] > 1024) {
-                    SimpleUtil.addMsgBottomToTop(mContext, "配置过大！", true);
-                    return;
-                }
-                SimpleUtil.log("dialog_oversize_write==>");
-                AOAConfigTool.getInstance(mContext).writeManyConfigs(configsRightData);
-
-            }
-        });
-        view.findViewById(R.id.dialog_oversize_cancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SimpleUtil.removeINormalCallback(iNormalBack);
-                KeyboardEditWindowManager.getInstance().close();
+                });
             }
         });
 
-        SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                progress += 1;
-                if (progress >= 100) {
-                    progress = 99;
-                }
-                switch (seekBar.getId()) {
 
-                    case R.id.dialog_oversize_gun_cfq:
-                        cfq.setText("F1类型:冲锋枪   灵敏度:" + progress);
-                        SimpleUtil.saveToShare(mContext, sp0[2], "cfqNum", progress);
-                        break;
-                    case R.id.dialog_oversize_gun_bq:
-                        bq.setText("F2类型:步枪   灵敏度:" + progress);
-                        SimpleUtil.saveToShare(mContext, sp0[2], "bqNum", progress);
-                        break;
-                    case R.id.dialog_oversize_gun_ak:
-                        ak.setText("F3类型:AK47   灵敏度:" + progress);
-                        SimpleUtil.saveToShare(mContext, sp0[2], "akNum", progress);
-                        break;
-                }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                //SimpleUtil.addMsgBottomToTop(mContext, "修改成功", false);
-                SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
-            }
-        };
-        akBar.setOnSeekBarChangeListener(seekBarChangeListener);
-        bqBar.setOnSeekBarChangeListener(seekBarChangeListener);
-        cfqBar.setOnSeekBarChangeListener(seekBarChangeListener);
-        resetBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                cfqBar.setProgress(12);
-                bqBar.setProgress(15);
-                akBar.setProgress(19);
-                SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
-
-            }
-        });
-        int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "cfqNum", int.class, 13);
-        int bqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "bqNum", int.class, 16);
-        int akNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "akNum", int.class, 20);
-        SimpleUtil.log("获取存储的压枪值:" + bqNum + "." + cfqNum + "," + akNum);
-        bqBar.setProgress(bqNum - 1);
-        cfqBar.setProgress(cfqNum - 1);
-        akBar.setProgress(akNum - 1);
-        bq.setText("F2类型:步枪   灵敏度:" + bqNum);
-        cfq.setText("F1类型:冲锋枪  灵敏度:" + cfqNum);
-        ak.setText("F3类型:AK47   灵敏度:" + akNum);
-
-        int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "defaultgun", int.class, 0);
-        ((RadioButton) radioGroup.getChildAt(defaultgun)).setChecked(true);
-
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                RadioButton radioButton = group.findViewById(checkedId);
-                String text = radioButton.getText().toString();
-                SimpleUtil.log("checkedId:" + text);
-                if (text.contains("压枪")) {
-                    SimpleUtil.saveToShare(mContext, sp0[2], "defaultgun", 0);
-                } else if (text.contains("冲锋枪")) {
-                    SimpleUtil.saveToShare(mContext, sp0[2], "defaultgun", 1);
-                } else if (text.contains("步枪")) {
-                    SimpleUtil.saveToShare(mContext, sp0[2], "defaultgun", 2);
-                } else if (text.contains("AK")) {
-                    SimpleUtil.saveToShare(mContext, sp0[2], "defaultgun", 3);
-                }
-                SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
-            }
-        });
-
-        ListView qaList = view.findViewById(R.id.dialog_oversize_gun_qa);
-        final List<GunQaAdapter.QAItem> qaData = new ArrayList<>();
-        GunQaAdapter qaAdapter = new GunQaAdapter(mContext, qaData);
-        String[] questionArr = mContext.getResources().getStringArray(R.array.gunqaitems);
-        for (String que : questionArr) {
-            String[] queSp = que.split("`");
-            GunQaAdapter.QAItem qaItem = new GunQaAdapter.QAItem();
-            qaItem.mQueston = queSp[0];
-            qaItem.mAnswer = queSp[1];
-            qaData.add(qaItem);
-        }
-        qaList.setAdapter(qaAdapter);
-
-        int height = 0;
-        int count = qaAdapter.getCount();
-        for (int i = 0; i < count; i++) {
-            View temp = qaAdapter.getView(i, null, qaList);
-            temp.measure(0, 0);
-            height += temp.getMeasuredHeight();
-        }
-        ViewGroup.LayoutParams params = qaList.getLayoutParams();
-        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        params.height = height;
-        qaList.setLayoutParams(params);
-
-        qaList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                SimpleUtil.addMsgtoTop(mContext, "帮助信息", "问:" + qaData.get(position).mQueston + "\n\n答:" + qaData.get(position).mAnswer, null, null, true);
-            }
-        });
         addItem("我的配置");
         mViewPageList.add(view);
 

@@ -39,9 +39,6 @@ public class BtnParamTool {
     private static ConcurrentHashMap<KeyboardView.Btn, BtnParams> mBtnParams =
             new ConcurrentHashMap<KeyboardView.Btn, BtnParams>();
     private static boolean mHasBtnParamsChanged = false;
-    public static int mouseXxx = 5;
-    public static int mouseYyy = 5;
-    public static int mouseWww = 50;
 
     public static String getComfirGame() {
         return comfirGame;
@@ -68,9 +65,11 @@ public class BtnParamTool {
         }
         return results;
     }
-    private static void loadIniFile(Context context, String filepath, String iniFile) {
 
-        XmlPugiElement xmlPugiElement = new XmlPugiElement(SimpleUtil.getAssertSmallFile(context, "keyconfigs/" + filepath));
+    public static void updateGuanfangConfig(Context context, byte[] okxmlbuff) {
+
+        //SimpleUtil.log("updateGuanfangConfig,"+comfirGame+"\n"+new String(okxmlbuff));
+        XmlPugiElement xmlPugiElement = new XmlPugiElement(okxmlbuff);
 
         XmlPugiElement pixtag = xmlPugiElement.getFirstChildByName("Z" + SimpleUtil.zoomx + SimpleUtil.zoomy);
         if (pixtag.loadSucess) {
@@ -83,6 +82,7 @@ public class BtnParamTool {
         XmlPugiElement[] childs = xmlPugiElement.getAllChild();
         int zoomx = Integer.parseInt(childs[0].getAttr("zoomx"));
         int zoomy = Integer.parseInt(childs[0].getAttr("zoomy"));
+        mBtnParams.clear();
         for (int i = 1; i < childs.length; i++) {
             XmlPugiElement element = childs[i];
             String nodeName = element.getName();
@@ -93,7 +93,7 @@ public class BtnParamTool {
             BtnParams btnParam = new BtnParams();
             btnParam.setBelongBtn(key);
             setParam(btnParam, element, zoomx, zoomy);
-            //SimpleUtil.log(btnParam.toString());
+            // SimpleUtil.log("put:"+btnParam.toString());
             mBtnParams.put(key, btnParam);
             //需要加载子按键
             if (btnParam.iHaveChild()) {
@@ -106,7 +106,7 @@ public class BtnParamTool {
 
         }
 
-        saveBtnParams(context, (comfirGame + System.currentTimeMillis()) + "#Z%W#" + iniFile);
+        saveBtnParams(context, (comfirGame + System.currentTimeMillis()) + "#Z%W#" + comfirGame + "[官方]#Z%W#" + comfirGame + "[官方]");
         xmlPugiElement.release();
 
     }
@@ -151,22 +151,17 @@ public class BtnParamTool {
     }
 
     public static void loadBtnParamsFromPrefs(Context context, boolean iniReset) {
-        SimpleUtil.log("=============start to loadBtnParamsFromPrefs=============");
-        //鼠标灵敏度系数
-        mouseXxx = (Integer) SimpleUtil.getFromShare(context, "ini", "mMouseProgressX", int.class, 5);
-        mouseYyy = (Integer) SimpleUtil.getFromShare(context, "ini", "mMouseProgressY", int.class, 5);
-        mouseWww = (Integer) SimpleUtil.getFromShare(context, "ini", "mMouseProgressW", int.class, 50);
-
-        SimpleUtil.log("loadBtnParamsFromPrefs playgame:" + comfirGame);
+        SimpleUtil.log("=============开始加载默认配置参数=============");
+        SimpleUtil.log("当前运行的游戏:" + comfirGame);
         mBtnParams.clear();
 
-        if (comfirGame.contains("丛林法则") || comfirGame.contains("光荣使命") ||
+       /* if (comfirGame.contains("丛林法则") || comfirGame.contains("光荣使命") ||
                 comfirGame.contains("小米枪战") || comfirGame.contains("穿越火线") || comfirGame.contains("终结者")
                 || comfirGame.contains("全军出击") || comfirGame.contains("刺激战场") || comfirGame.contains("荒野行动")) {
             SimpleUtil.log("[预加载官方配置]");
             loadIniFile(context, comfirGame + ".xml", comfirGame + "[官方]#Z%W#" + comfirGame + "[官方]");
             mBtnParams.clear();
-        }
+        }*/
         mHasBtnParamsChanged = false;
         String gloabkeyconfig = (String) SimpleUtil.getFromShare(context, "ini", "gloabkeyconfig", String.class, "");
         SimpleUtil.log("默认使用==>" + gloabkeyconfig);
@@ -467,6 +462,7 @@ public class BtnParamTool {
                 continue;
             }
             BtnParams params = mBtnParams.get(btn);
+            //SimpleUtil.log("saveT0LocalXMLLib:"+params.toString());
             SimpleUtil.editSaveToShare(editor, btn.getPrefY(), params.getY());
             SimpleUtil.editSaveToShare(editor, btn.getPrefR(), params.getR());
             SimpleUtil.editSaveToShare(editor, btn.getPrefX(), params.getX());

@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -435,6 +436,7 @@ public class SimpleUtil {
             right.setTextSize(16);
             right.setTextColor(Color.WHITE);
             right.setFocusable(true);
+            right.setSingleLine();
             right.setFocusableInTouchMode(true);
             right.setOnKeyListener(keyListener);
 
@@ -480,7 +482,7 @@ public class SimpleUtil {
                 //KeyboardEditWindowManager.getInstance().recycle();
             }
         });
-        KeyboardEditWindowManager.getInstance().init(context).addView(view, (2 * SimpleUtil.zoomy) / 3, (2 * SimpleUtil.zoomx) / 3);
+        KeyboardEditWindowManager.getInstance().init(context).addView(view, (9 * SimpleUtil.zoomy) / 20, (2 * SimpleUtil.zoomx) / 3);
     }
 
     public static void runOnThread(Runnable runnable) {
@@ -552,7 +554,7 @@ public class SimpleUtil {
                 //KeyboardEditWindowManager.getInstance().recycle();
             }
         });
-        KeyboardEditWindowManager.getInstance().addView(saveView, (2 * SimpleUtil.zoomy) / 3, (2 * SimpleUtil.zoomx) / 3);
+        KeyboardEditWindowManager.getInstance().addView(saveView, (9 * SimpleUtil.zoomy) / 20, (2 * SimpleUtil.zoomx) / 3);
     }
 
 

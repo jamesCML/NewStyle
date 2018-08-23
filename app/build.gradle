@@ -70,4 +70,5 @@ dependencies {
     implementation files('libs/pad-server-v3.0.8.jar')
     implementation(name: 'xml-debug', ext: 'aar')
     implementation 'com.pgyersdk:sdk:3.0.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.4.1'
 }

@@ -647,7 +647,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
                             e.printStackTrace();
                         }
                     }
-                    //SimpleUtil.addMsgBottomToTop(getBaseContext(),"连接断开,2秒之后自动退出程序",true);
+                    //SimpleUtil.addMsgBottomToTop(getBaseContext(),"与设备之间的连接已经断开！",true);
                     //System.exit(0);
                     // SimpleUtil.log("HANDLE_SCAN_AOA:"+5);
                     // mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 3000);

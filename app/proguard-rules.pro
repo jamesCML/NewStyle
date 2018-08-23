@@ -76,3 +76,5 @@
     public void *(android.webkit.webView, jav.lang.String);
 }
 
+-dontwarn org.codehaus.**
+-keep class org.codehaus.** { *;}
