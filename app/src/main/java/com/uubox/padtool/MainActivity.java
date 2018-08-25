@@ -46,6 +46,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -282,6 +283,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
         @Override
         protected Void doInBackground(Void... voids) {
             try {
+                //先获取唯一key
+                String idkey = (String) SimpleUtil.getFromShare(MainActivity.this, "ini", "idkey", String.class, "");
+                SimpleUtil.log("idkey:" + idkey);
+                if (idkey.isEmpty()) {
+                    String getidkey = new Random().nextDouble() + "" + new Random().nextDouble();
+                    SimpleUtil.log("getidkey:" + getidkey + "\n" + SimpleUtil.getSha1(getidkey));
+                    SimpleUtil.saveToShare(MainActivity.this, "ini", "idkey", SimpleUtil.getSha1(getidkey));
+                }
+                idkey = (String) SimpleUtil.getFromShare(MainActivity.this, "ini", "idkey", String.class, "");
                 OkHttpClient okHttpClient = new OkHttpClient();
                 Request request = new Request.Builder().url("https://usbdata.oss-cn-shenzhen.aliyuncs.com/usbconfig.xml").build();
                 Response response = okHttpClient.newCall(request).execute();
@@ -337,7 +347,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         SimpleUtil.saveToShare(MainActivity.this, "ini", "configver", configVersion);
                     }
 
-
+                    //获取可以配置xml的白名单
+                    XmlPugiElement[] savexmlids = config.getFirstChildByName("savexmlids").getAllChild();
+                    for (XmlPugiElement savexmlid : savexmlids) {
+                        if (savexmlid.getValue().equals(idkey)) {
+                            SimpleUtil.isSaveToXml = true;
+                            SimpleUtil.log(idkey + " 允许保存配置文件!");
+                            break;
+                        }
+                    }
 
                 }
             } catch (Exception e) {
