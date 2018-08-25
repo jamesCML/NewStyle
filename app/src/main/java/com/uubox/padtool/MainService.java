@@ -77,6 +77,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         initWindowOnlyOnce();
         SimpleUtil.addINormalCallback(this);
         mAOAConfigTool = AOAConfigTool.getInstance(this);
+        mUSBManager = (UsbManager) getSystemService(Context.USB_SERVICE);
     }
 
     @Override
@@ -96,9 +97,6 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         }
         return super.onStartCommand(intent, flags, startId);
     }
-
-    Button ok;
-
 
     private void init() {
 
@@ -137,19 +135,19 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         }*/
 
         //acc方式
-        mUSBManager = (UsbManager) getSystemService(Context.USB_SERVICE);
+
         UsbAccessory[] usbAccessories = mUSBManager.getAccessoryList();
 
         if (usbAccessories == null) {
             SimpleUtil.log("return usbAccessories list is null!!!!!!");
             mfloatingIv.setImageResource((Integer) mfloatingIv.getTag() == 1 ? R.mipmap.ic_folat_offline : R.mipmap.ic_folat_offline_edge);
             //SimpleUtil.log("HANDLE_SCAN_AOA:"+2);
-            //mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 3000);
+            mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 3000);
             return;
         }
         //防止开启异常后继续扫描
         //SimpleUtil.log("HANDLE_SCAN_AOA:"+3);
-        //mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 5000);
+        mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 5000);
         String s = "accessory：\n" +
                 "model:" + usbAccessories[0].getModel() + "\n" +
                 "Manufacturer:" + usbAccessories[0].getManufacturer() + "\n" +
@@ -181,6 +179,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         mAccInputThread.start();
         mAOAConfigTool.startConnect(mAccInputThread);
         SimpleUtil.log("openUsbAccessory sucessful!!!!!");
+        mAOAConfigTool.setAOAInfo(usbAccessory.getManufacturer(), usbAccessory.getModel(), usbAccessory.getSerial());
         byte[] result = mAOAConfigTool.writeWaitResult((byte) 0xb3, new byte[]{(byte) 0xa5, (byte) 0x04, (byte) 0xb3, (byte) 0x5c}, 3000);
         if (result == null) {
             SimpleUtil.log("读取版本信息出错");
@@ -647,7 +646,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
                     //SimpleUtil.addMsgBottomToTop(getBaseContext(),"与设备之间的连接已经断开！",true);
                     //System.exit(0);
                     // SimpleUtil.log("HANDLE_SCAN_AOA:"+5);
-                    // mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 3000);
+                    mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 3000);
 
                 }
             });

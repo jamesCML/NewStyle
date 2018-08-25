@@ -23,9 +23,11 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
     private static AOAConfigTool mInstance;
     private static Object lock = new Object();
     private boolean isNeedToCloseKeySet;
+    private String[] mAOAInfos;
     private AOAConfigTool(Context context) {
 
         mContext = context;
+        mAOAInfos = new String[3];
         SimpleUtil.log("构造AOADataPack");
         SimpleUtil.addINormalCallback(this);
         init();
@@ -40,7 +42,15 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
         }
     }
 
+    public void setAOAInfo(String manufacturer, String model, String serial) {
+        mAOAInfos[0] = manufacturer;
+        mAOAInfos[1] = model;
+        mAOAInfos[2] = serial;
+    }
 
+    public String[] getAOAInfo() {
+        return mAOAInfos;
+    }
     public void setNeedToCloseKeySet(boolean needToCloseKeySet) {
         isNeedToCloseKeySet = needToCloseKeySet;
     }
@@ -344,7 +354,9 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                     SimpleUtil.saveToShare(mContext, "ini", "configschange", false);
                     SimpleUtil.saveToShare(mContext, "ini", "configsorderbytes", Hex.toString(d0data));
                     SimpleUtil.saveToShare(mContext, "ini", "NewConfigNotWrite", "");
-                    //sendAOAChangeInfo("AAABBCC","LALALA","0000000012345678");
+                    if ((Boolean) SimpleUtil.getFromShare(mContext, "ini", "aoaparamschange", boolean.class)) {
+                        sendAOAChangeInfo("AAABBCC" + (uuu++), "LALALA", "0000000012345678");
+                    }
                 } else {
                     SimpleUtil.addMsgBottomToTop(mContext, "配置写入失败！", true);
                 }
@@ -358,8 +370,10 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
 
     }
 
+    static int uuu = 1;
     private void sendAOAChangeInfo(String accessory_manufacturer, String accessory_model, String accessory_serial) {
-        if (accessory_manufacturer.length() > 8 || accessory_model.length() > 8 || accessory_serial.length() > 16) {
+        if (accessory_manufacturer == null || accessory_model == null || accessory_serial == null || accessory_manufacturer.length() > 8 || accessory_model.length() > 8 || accessory_serial.length() > 16
+                || accessory_manufacturer.isEmpty() || accessory_model.isEmpty() || accessory_serial.isEmpty()) {
             SimpleUtil.addMsgBottomToTop(mContext, "AOA参数变更失败，字符串长度过长！", true);
             return;
         }
@@ -385,6 +399,9 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
         SimpleUtil.log("更新AOA参数:" + Hex.toString(mReq.mReqResult));
         if (mReq.mReqResult != null && mReq.mReqResult.length > 3 && mReq.mReqResult[3] == 0) {
             SimpleUtil.addMsgBottomToTop(mContext, "AOA参数变更" + (mReq.mReqResult[3] == 0 ? "成功" : "失败"), mReq.mReqResult[3] != 0);
+            if (mReq.mReqResult[3] == 0) {
+                SimpleUtil.saveToShare(mContext, "ini", "aoaparamschange", false);
+            }
         }
     }
     public void writeDefaultConfigs() {

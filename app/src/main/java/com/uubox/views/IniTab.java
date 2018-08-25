@@ -78,6 +78,7 @@ public class IniTab {
         //addKeyInit();
         WriteConfigs();
         addAbout();
+        addAOAParamChange();
         addHelper();
         mViewPage.setAdapter(pagerAdapter);
         mViewPage.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -644,6 +645,33 @@ public class IniTab {
 
     }
 
+    private void addAOAParamChange() {
+        ViewGroup aoaparamview = (ViewGroup) LayoutInflater.from(mContext).inflate(R.layout.aoaparam, null);
+        final EditText changshang = aoaparamview.findViewById(R.id.aoaparam_changshang);
+        final EditText moshi = aoaparamview.findViewById(R.id.aoaparam_moshi);
+        final EditText xuliehao = aoaparamview.findViewById(R.id.aoaparam_xuliehao);
+        changshang.setText(AOAConfigTool.getInstance(mContext).getAOAInfo()[0]);
+        moshi.setText(AOAConfigTool.getInstance(mContext).getAOAInfo()[1]);
+        xuliehao.setText(AOAConfigTool.getInstance(mContext).getAOAInfo()[2]);
+        aoaparamview.findViewById(R.id.aoaparam_ok).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (changshang.getText().toString().isEmpty() || moshi.getText().toString().isEmpty() || xuliehao.getText().toString().isEmpty()) {
+                    SimpleUtil.addMsgBottomToTop(mContext, "信息不完整，不能为空！", true);
+                    return;
+                }
+
+                AOAConfigTool.getInstance(mContext).setAOAInfo(changshang.getText().toString(), moshi.getText().toString(), xuliehao.getText().toString());
+                SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
+                SimpleUtil.saveToShare(mContext, "ini", "aoaparamschange", true);
+            }
+        });
+        addItem("设备修改");
+        mViewPageList.add(aoaparamview);
+
+
+    }
     private void addAbout() {
         View view = LayoutInflater.from(mContext).inflate(R.layout.iniabout, null);
         ((TextView) (view.findViewById(R.id.iniabout_appver))).setText("应用版本:" + CommonUtils.getAppVersionName(mContext));

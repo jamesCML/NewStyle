@@ -4,10 +4,12 @@ import android.content.Context;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+import com.uubox.padtool.R;
 import com.uubox.tools.BtnParamTool;
 import com.uubox.tools.SimpleUtil;
 
@@ -62,10 +64,10 @@ public class KeyboardEditWindowManager {
 //            mLayoutParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
         // 不响应按键事件和触屏事件**********
 //            mLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE//这个窗口永远不会收到触摸事件。
-        mLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;//即使这个窗口是可调焦的（它 FLAG_NOT_FOCUSABLE没有设置），允许窗口外的任何指针事件被发送到窗口后面的窗口。
+        mLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;//即使这个窗口是可调焦的（它 FLAG_NOT_FOCUSABLE没有设置），允许窗口外的任何指针事件被发送到窗口后面的窗口。
         //| WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE//这个窗口不会获得按键输入焦点，所以用户不能向其发送按键或其他按钮事件。
         //| WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;//反转FLAG_NOT_FOCUSABLE窗口与当前方法的交互方式
-        // 默认格式会导致重影，所以需要设置为其他格式
+        // 默认格式会导致重影，所以需要设置为其他格式|WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
         mLayoutParams.format = PixelFormat.RGBA_8888;
         mLayoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
         mLayoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
@@ -74,35 +76,6 @@ public class KeyboardEditWindowManager {
         //rootView.setBackgroundColor(Color.parseColor("#8800FF00"));
         hideBottomUIMenu(true);//test
         rootView.setFocusableInTouchMode(true);
-        /*rootView.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-
-                if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
-                    SimpleUtil.log("windManager,key1:" + event);
-                    SimpleUtil.notifyall_(4, null);
-                    boolean changed = BtnParamTool.hasBtnParamsChanged();
-                    // 退出映射界面
-                    if (changed && rootView.getChildCount() == 1) {
-                        KeyboardView keyboardView = (KeyboardView) rootView.getChildAt(0);
-                        keyboardView.showSaveDialog();
-                    } else if (rootView.getChildCount() > 1) {
-                        *//*if (SimpleUtil.waitTopShowing()) {
-                            return true;
-                        }*//*
-                        View view = rootView.getChildAt(rootView.getChildCount() - 1);
-                        int id = view.getId();
-                        if (id == R.id.dialog_keyboard_rock_attr_parent) {
-                            hideOrShowBottomUIMenu(true);
-                        }
-                        removeView(view);
-                    } else {
-                        close(false);
-                    }
-                }
-                return true;
-            }
-        });*/
         BtnParamTool.disableInjection();
         try {
             mLayoutParams.gravity = Gravity.TOP;
