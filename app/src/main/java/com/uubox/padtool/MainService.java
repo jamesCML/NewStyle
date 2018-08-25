@@ -4,8 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -35,7 +33,6 @@ import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -145,7 +142,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
 
         if (usbAccessories == null) {
             SimpleUtil.log("return usbAccessories list is null!!!!!!");
-            mfloatingIv.setImageResource((Integer) mfloatingIv.getTag() == 1 ? R.mipmap.app_icon0805001_gray : R.mipmap.app_icon0805001_half_gray);
+            mfloatingIv.setImageResource((Integer) mfloatingIv.getTag() == 1 ? R.mipmap.ic_folat_offline : R.mipmap.ic_folat_offline_edge);
             //SimpleUtil.log("HANDLE_SCAN_AOA:"+2);
             //mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 3000);
             return;
@@ -193,7 +190,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             SimpleUtil.putOneInfoToMap("devver", SimpleUtil.mDeviceVersion + "");
         }
         mHandler.removeMessages(HANDLE_SCAN_AOA);
-        mfloatingIv.setImageResource((Integer) mfloatingIv.getTag() == 1 ? R.mipmap.app_icon0805001 : R.mipmap.app_icon0805001_half);
+        mfloatingIv.setImageResource((Integer) mfloatingIv.getTag() == 1 ? R.mipmap.ic_folat_online : R.mipmap.ic_folat_online_edge);
 
         SimpleUtil.notifyall_(10004, null);
         SimpleUtil.runOnUIThread(new Runnable() {
@@ -524,7 +521,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
     private void initFloating() {
         mfloatingIv = mlayout.findViewById(R.id.floating_imageView);
         //mfloatingentergame = mlayout.findViewById(R.id.floating_entergame);
-        mfloatingIv.setImageResource(R.mipmap.app_icon0805001_gray);
+        mfloatingIv.setImageResource(R.mipmap.ic_folat_offline);
         mfloatingIv.getBackground().setAlpha(150);
         mfloatingIv.setTag(1);
         mGestureDetector = new GestureDetector(this, new MyOnGestureListener());
@@ -559,7 +556,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             @Override
             public void onAnimationEnd(Animator animation) {
                 mfloatingIv.setTag(0);
-                mfloatingIv.setImageResource((mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.app_icon0805001_half_gray : R.mipmap.app_icon0805001_half);
+                mfloatingIv.setImageResource((mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.ic_folat_offline_edge : R.mipmap.ic_folat_online_edge);
             }
         });
         animator.start();
@@ -632,10 +629,10 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
                 @Override
                 public void run() {
                     if ((Integer) mfloatingIv.getTag() == 1) {
-                        mfloatingIv.setImageResource((mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.app_icon0805001_gray : R.mipmap.app_icon0805001);
+                        mfloatingIv.setImageResource((mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.ic_folat_offline : R.mipmap.ic_folat_online);
 
                     } else {
-                        mfloatingIv.setImageResource((mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.app_icon0805001_half_gray : R.mipmap.app_icon0805001_gray);
+                        mfloatingIv.setImageResource((mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.ic_folat_offline_edge : R.mipmap.ic_folat_offline);
 
                     }
 
@@ -669,7 +666,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             switch (action) {
                 case MotionEvent.ACTION_DOWN:
                     //mfloatingIv.setTag(1);mfloatingIv.setImageDrawable(getDrawable((mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.app_icon0805001_gray : R.mipmap.app_icon0805001));
-                    mfloatingIv.setImageResource((mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.app_icon0805001_gray : R.mipmap.app_icon0805001);
+                    mfloatingIv.setImageResource((mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.ic_folat_offline : R.mipmap.ic_folat_online);
                     isMove = false;
                     mTouchStartX = (int) event.getRawX();
                     mTouchStartY = (int) event.getRawY();
