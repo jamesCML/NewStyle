@@ -30,16 +30,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
 import com.uubox.padtool.MainService;
 import com.uubox.padtool.R;
 import com.uubox.tools.AOAConfigTool;
@@ -48,6 +38,13 @@ import com.uubox.tools.BtnUtil;
 import com.uubox.tools.IniAdapter;
 import com.uubox.tools.SaveBtnParamsTask;
 import com.uubox.tools.SimpleUtil;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * 自定义键盘界面，支持添加、删除、自定义按钮，支持按钮x坐标、y坐标和半径记忆功能。
@@ -118,6 +115,7 @@ public class KeyboardView extends FrameLayout
     private Vibrator vibrator;
     private Handler mHandler;
     private final int HANDLE_ADDWHAT = 1;
+
     @SuppressLint("ResourceType")
     public KeyboardView(Context context) {
         super(context);
@@ -340,7 +338,7 @@ public class KeyboardView extends FrameLayout
 
                         }
                     }, newinietback);
-                    SimpleUtil.addMsgBottomToTop(getContext(), "当前使用官方配置,默认新建一个配置",true);
+                    SimpleUtil.addMsgBottomToTop(getContext(), "当前使用官方配置,默认新建一个配置", true);
                     return;
                 }
                 if (curIni == null || curIni.isEmpty()) {
@@ -747,6 +745,7 @@ public class KeyboardView extends FrameLayout
 
         //addingBtns.add(params.clone());
     }
+
     /**
      * @return 按钮对应图片资源
      */
@@ -770,6 +769,7 @@ public class KeyboardView extends FrameLayout
     }
 
     static String sss = "";
+
     /**
      * 拖动完成时
      *
@@ -833,14 +833,14 @@ public class KeyboardView extends FrameLayout
         }
 
         // 显示添加按钮
-        mIvMenu.setImageDrawable(getResources().getDrawable(R.mipmap.icon_edit));
+        mIvMenu.setImageDrawable(getResources().getDrawable(R.mipmap.ic_menu_delete));
     }
 
     @Override
     public void onScaleStart(View v) {
         Log.i(TAG, "onScaleStart: " + v.toString());
         // 显示添加按钮
-        mIvMenu.setImageDrawable(getResources().getDrawable(R.mipmap.icon_edit));
+        mIvMenu.setImageDrawable(getResources().getDrawable(R.mipmap.ic_menu_delete));
     }
 
     @Override
@@ -1016,7 +1016,6 @@ public class KeyboardView extends FrameLayout
             btnParams.img = null;
 
 
-
         }
 
     }
@@ -1119,6 +1118,7 @@ public class KeyboardView extends FrameLayout
     private DragImageView whatImg;
     private long mWhatAddTime;
     private boolean mEnableSetting = true;
+
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         Log.d("touch event", "getX=" + event.getX() + ",getY=" + event.getY());
@@ -1182,6 +1182,7 @@ public class KeyboardView extends FrameLayout
         mEnableSetting = false;
         new IniTab(getContext()).show();
     }
+
     private void initEyes() {
         if (BtnParamTool.isShowKbFloatView(getContext())) {
             mIvKeymap.setImageResource(R.mipmap.keymap_show);
@@ -1229,6 +1230,7 @@ public class KeyboardView extends FrameLayout
         BtnParamTool.loadBtnParamsFromPrefs(getContext());
         loadUi();
     }
+
     /**
      * 按钮类型
      */
@@ -1374,6 +1376,7 @@ public class KeyboardView extends FrameLayout
         public String getParent() {
             return "pref_" + this.name + "_parent";
         }
+
         public String getPrefX() {
             return "pref_" + this.name + "_x";
         }
