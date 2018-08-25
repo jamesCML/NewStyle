@@ -37,6 +37,7 @@ import com.pgyersdk.feedback.PgyerFeedbackManager;
 import com.uubox.tools.BtnParamTool;
 import com.uubox.tools.ByteArrayList;
 import com.uubox.tools.CommonUtils;
+import com.uubox.tools.Hex;
 import com.uubox.tools.SimpleUtil;
 import com.uubox.tools.SocketLog;
 
@@ -101,25 +102,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 79009);
             }
         }
-        //setMaxAspect();
+
+
     }
 
-    /* public void setMaxAspect() {
-         ApplicationInfo applicationInfo = null;
-         try {
-             SimpleUtil.log("设置全面屏参数1");
-             applicationInfo = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
-             SimpleUtil.log("设置全面屏参数2");
-         } catch (PackageManager.NameNotFoundException e) {
-             e.printStackTrace();
-         }
-         if(applicationInfo == null){
-             SimpleUtil.log("设置全面屏参数失败");
-             throw new IllegalArgumentException(" get application info = null, has no meta data! ");
-         }
-         SimpleUtil.log("设置全面屏参数成功");
-         applicationInfo.metaData.putString("android.max_aspect", "3.2");
-     }*/
     @Override
     protected void onResume() {
         super.onResume();

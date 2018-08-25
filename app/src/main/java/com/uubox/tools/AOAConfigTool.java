@@ -344,7 +344,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                     SimpleUtil.saveToShare(mContext, "ini", "configschange", false);
                     SimpleUtil.saveToShare(mContext, "ini", "configsorderbytes", Hex.toString(d0data));
                     SimpleUtil.saveToShare(mContext, "ini", "NewConfigNotWrite", "");
-
+                    //sendAOAChangeInfo("AAABBCC","LALALA","0000000012345678");
                 } else {
                     SimpleUtil.addMsgBottomToTop(mContext, "配置写入失败！", true);
                 }
@@ -358,6 +358,35 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
 
     }
 
+    private void sendAOAChangeInfo(String accessory_manufacturer, String accessory_model, String accessory_serial) {
+        if (accessory_manufacturer.length() > 8 || accessory_model.length() > 8 || accessory_serial.length() > 16) {
+            SimpleUtil.addMsgBottomToTop(mContext, "AOA参数变更失败，字符串长度过长！", true);
+            return;
+        }
+
+        byte[] accessory_manufacturer_bytes = new byte[9];
+        byte[] accessory_model_bytes = new byte[9];
+        byte[] accessory_serial_bytes = new byte[17];
+        System.arraycopy(accessory_manufacturer.getBytes(), 0, accessory_manufacturer_bytes, 0, accessory_manufacturer.length());
+        System.arraycopy(accessory_model.getBytes(), 0, accessory_model_bytes, 0, accessory_model.length());
+        System.arraycopy(accessory_serial.getBytes(), 0, accessory_serial_bytes, 0, accessory_serial.length());
+
+        ByteArrayList buff = new ByteArrayList();
+        buff.add((byte) 0xa5);
+        buff.add((byte) 0x44);
+        buff.add((byte) 0xe1);
+        buff.add(accessory_manufacturer_bytes);
+        buff.add(accessory_model_bytes);
+        buff.add(accessory_serial_bytes);
+        buff.add(new byte[29]);
+        buff.add(SimpleUtil.sumCheck(buff.all2Bytes()));
+        SimpleUtil.log("AOA参数变更:" + Hex.toString(buff.all2Bytes()));
+        writeWaitResult((byte) 0xe1, buff.all2Bytes(), 2000);
+        SimpleUtil.log("更新AOA参数:" + Hex.toString(mReq.mReqResult));
+        if (mReq.mReqResult != null && mReq.mReqResult.length > 3 && mReq.mReqResult[3] == 0) {
+            SimpleUtil.addMsgBottomToTop(mContext, "AOA参数变更" + (mReq.mReqResult[3] == 0 ? "成功" : "失败"), mReq.mReqResult[3] != 0);
+        }
+    }
     public void writeDefaultConfigs() {
         List<Config> configsRightData = new ArrayList<>();
         List<Config> configsLeftData = new ArrayList<>();
