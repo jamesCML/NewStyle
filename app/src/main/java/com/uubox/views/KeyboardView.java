@@ -1084,33 +1084,35 @@ public class KeyboardView extends FrameLayout
             default:
                 break;
         }
-       /* if (btnParams.iHaveChild() || btnParams.iAnChild()) {
-            SimpleUtil.addMsgBottomToTop(getContext(), "key只能只有一个按键!", true);
-            return;
+        if (SimpleUtil.isSaveToXml) {
+            if (btnParams.iHaveChild() || btnParams.iAnChild()) {
+                SimpleUtil.addMsgBottomToTop(getContext(), "key只能只有一个按键!", true);
+                return;
+            }
+            List<String> items = new ArrayList<>();
+            items.add("设定为按键类型");
+            items.add("删除 " + btnParams.getBelongBtn());
+            List<Runnable> runnables = new ArrayList<>();
+            runnables.add(new Runnable() {
+                @Override
+                public void run() {
+                    btnParams.setKeyType(3);
+                    v.setBackgroundResource(BtnParamTool.getBtnBelongColor(btnParams));
+                }
+            });
+            runnables.add(new Runnable() {
+                @Override
+                public void run() {
+                    removeBtn(btnParams);
+                }
+            });
+            SimpleUtil.addRadioGrouptoTop(getContext(), "按键操作", items, runnables, new Runnable() {
+                @Override
+                public void run() {
+                    BtnParamTool.setBtnParamsChanged(true);
+                }
+            }, null);
         }
-        List<String> items = new ArrayList<>();
-        items.add("设定为按键类型");
-        items.add("删除 " + btnParams.getBelongBtn());
-        List<Runnable> runnables = new ArrayList<>();
-        runnables.add(new Runnable() {
-            @Override
-            public void run() {
-                btnParams.setKeyType(3);
-                v.setBackgroundResource(BtnParamTool.getBtnBelongColor(btnParams));
-            }
-        });
-        runnables.add(new Runnable() {
-            @Override
-            public void run() {
-                removeBtn(btnParams);
-            }
-        });
-        SimpleUtil.addRadioGrouptoTop(getContext(), "按键操作", items, runnables, new Runnable() {
-            @Override
-            public void run() {
-                BtnParamTool.setBtnParamsChanged(true);
-            }
-        }, null);*/
 
     }
 

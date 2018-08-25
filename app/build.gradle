@@ -6,7 +6,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 22
         versionCode 102
-        versionName "2.2.4"
+        versionName "2.2.4.1"
         flavorDimensions "versionCode"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }

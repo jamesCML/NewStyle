@@ -273,13 +273,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
         protected void onPreExecute() {
 
             SimpleUtil.log("IniTask onPreExecute");
-
+            mProgress.setVisibility(View.VISIBLE);
+            mButton.clearAnimation();
+            mButton.setVisibility(View.GONE);
+            mLoadMsg.setText("正在加载资源...");
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
             try {
-                int proc = 0;
                 OkHttpClient okHttpClient = new OkHttpClient();
                 Request request = new Request.Builder().url("https://usbdata.oss-cn-shenzhen.aliyuncs.com/usbconfig.xml").build();
                 Response response = okHttpClient.newCall(request).execute();
@@ -301,53 +303,42 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     int configVersion = Integer.parseInt(keyconfigs.getAttr("version"));
 
                     int curConfigVer = (Integer) SimpleUtil.getFromShare(MainActivity.this, "ini", "configver", int.class);
-                    SimpleUtil.log("config version:" + configVersion + ",curconfigver:" + curConfigVer);
-                    if (curConfigVer >= configVersion) {
-                        return null;
-                    }
+                    SimpleUtil.log("服务器配置版本:" + configVersion + ",当前配置版本:" + curConfigVer);
+                    if (curConfigVer < configVersion) {
+                        XmlPugiElement[] childs = keyconfigs.getAllChild();
 
-                    SimpleUtil.runOnUIThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mProgress.setVisibility(View.VISIBLE);
-                            mButton.clearAnimation();
-                            mButton.setVisibility(View.GONE);
-                        }
-                    });
-                    SimpleUtil.sleep(50);
-                    XmlPugiElement[] childs = keyconfigs.getAllChild();
-                    publishProgress(0, childs.length);
-
-                    //String use = null;
-                    for (XmlPugiElement element : childs) {
-                        String ini = element.getAttr("name");
+                        //String use = null;
+                        for (XmlPugiElement element : childs) {
+                            String ini = element.getAttr("name");
                        /* if (ini.contains("刺激战场")) {
                             use = ini;
                             continue;
                         }*/
-                        request = new Request.Builder().url(element.getValue()).build();
-                        response = okHttpClient.newCall(request).execute();
-                        if (response.isSuccessful()) {
-                            proc++;
-                            publishProgress(proc, childs.length);
-                            buffList.clear();
-                            buff = new byte[1024];
-                            inputStream = response.body().byteStream();
-                            while ((len = inputStream.read(buff)) > 0) {
-                                buffList.add(Arrays.copyOfRange(buff, 0, len));
-                            }
-                            String getmd5 = CommonUtils.getmd5(buffList.all2Bytes());
-                            String childmd5 = element.getAttr("md5");
-                            if (!getmd5.equals(childmd5)) {
-                                SimpleUtil.log(ini + " MD5校验错误！");
-                                return null;
-                            }
-                            BtnParamTool.setComfirGame(ini);
-                            BtnParamTool.updateGuanfangConfig(MainActivity.this, SimpleUtil.getAES().decrypt(buffList.all2Bytes()));
+                            request = new Request.Builder().url(element.getValue()).build();
+                            response = okHttpClient.newCall(request).execute();
+                            if (response.isSuccessful()) {
+                                buffList.clear();
+                                buff = new byte[1024];
+                                inputStream = response.body().byteStream();
+                                while ((len = inputStream.read(buff)) > 0) {
+                                    buffList.add(Arrays.copyOfRange(buff, 0, len));
+                                }
+                                String getmd5 = CommonUtils.getmd5(buffList.all2Bytes());
+                                String childmd5 = element.getAttr("md5");
+                                if (!getmd5.equals(childmd5)) {
+                                    SimpleUtil.log(ini + " MD5校验错误！");
+                                    return null;
+                                }
+                                BtnParamTool.setComfirGame(ini);
+                                BtnParamTool.updateGuanfangConfig(MainActivity.this, SimpleUtil.getAES().decrypt(buffList.all2Bytes()));
 
+                            }
                         }
+                        SimpleUtil.saveToShare(MainActivity.this, "ini", "configver", configVersion);
                     }
-                    SimpleUtil.saveToShare(MainActivity.this, "ini", "configver", configVersion);
+
+
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -357,9 +348,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         @Override
         protected void onProgressUpdate(Integer... values) {
-            mProgress.setMax(values[1]);
+           /* mProgress.setMax(values[1]);
             mProgress.setProgress(values[0]);
-            mLoadMsg.setText("正在初始化 " + values[0] + "/" + values[1]);
+            mLoadMsg.setText("正在加载资源 " + values[0] + "/" + values[1]);*/
         }
 
         @Override
