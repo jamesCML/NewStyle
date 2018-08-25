@@ -1,14 +1,24 @@
 package com.uubox.views;
 
 import android.Manifest;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.method.LinkMovementMethod;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,6 +40,7 @@ import com.pgyersdk.update.UpdateManagerListener;
 import com.pgyersdk.update.javabean.AppBean;
 import com.uubox.adapters.GunQaAdapter;
 import com.uubox.adapters.MoveConfigAdapter;
+import com.uubox.padtool.MainActivity;
 import com.uubox.padtool.R;
 import com.uubox.tools.AOAConfigTool;
 import com.uubox.tools.CommonUtils;
@@ -636,8 +647,29 @@ public class IniTab {
     private void addAbout() {
         View view = LayoutInflater.from(mContext).inflate(R.layout.iniabout, null);
         ((TextView) (view.findViewById(R.id.iniabout_appver))).setText("应用版本:" + CommonUtils.getAppVersionName(mContext));
-        ((TextView) (view.findViewById(R.id.iniabout_devver))).setText("设备版本:" + SimpleUtil.mDeviceVersion);
+        ((TextView) (view.findViewById(R.id.iniabout_devver))).setText("设备版本:" + (SimpleUtil.mDeviceVersion == 0 ? "读取版本失败" : SimpleUtil.mDeviceVersion));
         ((TextView) (view.findViewById(R.id.iniabout_pix))).setText("分辨率:" + SimpleUtil.zoomx + "*" + SimpleUtil.zoomy);
+        SpannableStringBuilder spannableString = new SpannableStringBuilder("设备号:" + (String) SimpleUtil.getFromShare(mContext, "ini", "idkey", String.class, ""));
+        AbsoluteSizeSpan sizeSpan = new AbsoluteSizeSpan(50);
+        spannableString.setSpan(sizeSpan, 4, spannableString.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        ClickableSpan clickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(View widget) {
+                ClipboardManager myClipboard = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
+                myClipboard.setPrimaryClip(ClipData.newPlainText("text", (String) SimpleUtil.getFromShare(mContext, "ini", "idkey", String.class, "")));
+                SimpleUtil.addMsgBottomToTop(mContext, "设备号已经复制到剪贴板", false);
+            }
+        };
+        spannableString.setSpan(clickableSpan, 4, spannableString.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        ((TextView) (view.findViewById(R.id.iniabout_count))).setText(spannableString);
+        ((TextView) (view.findViewById(R.id.iniabout_count))).setMovementMethod(LinkMovementMethod.getInstance());
+
+        if (SimpleUtil.isSaveToXml) {
+            view.findViewById(R.id.iniabout_savexml).setVisibility(View.VISIBLE);
+            ((TextView) (view.findViewById(R.id.iniabout_savexml))).setText("配置保存:允许");
+        }
+
+
         addItem("基本信息");
         mViewPageList.add(view);
     }

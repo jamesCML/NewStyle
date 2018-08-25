@@ -28,7 +28,7 @@ public class InitActivity extends Activity {
             public void run() {
 
                 int[] position = new int[2];
-                mTest.getLocationOnScreen(position);
+                getWindow().getDecorView().getLocationOnScreen(position);
                 SimpleUtil.log("检测到停靠屏幕位置为:" + position[0]);
                 if (position[0] != 0)//有刘海屏
                 {

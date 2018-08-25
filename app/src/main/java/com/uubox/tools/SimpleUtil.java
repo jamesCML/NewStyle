@@ -45,7 +45,7 @@ public class SimpleUtil {
     public static boolean DEBUG;
     public static int zoomx;
     public static int zoomy;
-    public static boolean isSaveToXml = true;
+    public static boolean isSaveToXml = false;
     public static boolean screenstate;
     public static boolean mAOAInjectEable;
     public static int LIUHAI;
@@ -68,7 +68,7 @@ public class SimpleUtil {
        {
            mInfoMap.put(getCurTime()+"_"+key+"_"+getSha1(System.currentTimeMillis()+""),value);
        }*/
-        mInfoMap.put(getCurTime() + "_" + key, value);
+        mInfoMap.put(key, value);
     }
 
     public static void clearInfoMap() {
