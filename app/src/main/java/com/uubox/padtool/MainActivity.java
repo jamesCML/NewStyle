@@ -334,16 +334,26 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     }
 
                     //获取可以配置xml的白名单
-                    XmlPugiElement[] savexmlids = config.getFirstChildByName("savexmlids").getAllChild();
-                    for (XmlPugiElement savexmlid : savexmlids) {
-                        if (savexmlid.getValue().equals(idkey)) {
-                            SimpleUtil.isSaveToXml = true;
-                            SimpleUtil.log(idkey + " 允许保存配置文件!");
-                            break;
-                        }
-                    }
+                    XmlPugiElement savexmlids = config.getFirstChildByName("savexmlids");
+                    //free:任意的 forbiden:禁止 grep:白名单过滤
+                    String rules = savexmlids.getAttr("rules");
 
+                    if (rules.equals("grep")) {
+                        XmlPugiElement[] savexmlids_childs = savexmlids.getAllChild();
+                        for (XmlPugiElement savexmlid : savexmlids_childs) {
+                            if (savexmlid.getValue().equals(idkey)) {
+
+                                SimpleUtil.isSaveToXml = true;
+                                SimpleUtil.log(idkey + " 允许保存配置文件!");
+                                break;
+                            }
+                        }
+                    } else if (rules.equals("free")) {
+                        SimpleUtil.isSaveToXml = true;
+                    }
+                    config.release();
                 }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }

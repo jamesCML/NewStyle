@@ -424,7 +424,7 @@ public class BtnParamTool {
         mHasBtnParamsChanged = false;
         //需要增加配置，打开这个函数
         if (SimpleUtil.isSaveToXml) {
-            saveBtnParamsObjs();
+            saveBtnParamsObjs(context);
         }
         if (isFind) {
             pressFloatable = true;
@@ -493,7 +493,7 @@ public class BtnParamTool {
         return pressFloatable;
     }
 
-    private static void saveBtnParamsObjs() {
+    private static void saveBtnParamsObjs(Context context) {
         XmlPugiElement ini_xml = XmlPugiElement.createXml("/sdcard/Zhiwan/ini_button_" + comfirGame + ".xml", "Root", true);
         XmlPugiElement zoom = ini_xml.addNode("ZOOM");
         zoom.addAttr("zoomx", SimpleUtil.zoomx + "");
@@ -512,6 +512,8 @@ public class BtnParamTool {
         ini_xml.save();
         ini_xml.release();
 
+        boolean result = SimpleUtil.saveSmallFileToLocal(SimpleUtil.getAES().encrypt(SimpleUtil.getSmallFile(context, "/sdcard/Zhiwan/ini_button_" + comfirGame + ".xml")), "/sdcard/Zhiwan/ini_button_" + comfirGame + ".xml");
+        SimpleUtil.addMsgBottomToTop(context, "保存配置到本地" + (result ? "成功" : "失败") + " 路径:" + "/sdcard/Zhiwan/ini_button_" + comfirGame + ".xml", !result);
     }
 
     private static void saveXmlNode(XmlPugiElement mainNode, KeyboardView.Btn key, BtnParams param) {

@@ -30,6 +30,10 @@ import com.uubox.padtool.R;
 import com.uubox.views.KeyboardEditWindowManager;
 import com.uubox.views.WrapFloat;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
@@ -63,6 +67,43 @@ public class SimpleUtil {
         return null;
     }
 
+    public static byte[] getSmallFile(Context context, String path) {
+        try {
+            File file = new File(path);
+            if (!file.exists()) {
+                return new byte[]{};
+            }
+            FileInputStream fileInputStream = new FileInputStream(file);
+            byte[] buff = new byte[fileInputStream.available()];
+            fileInputStream.read(buff, 0, fileInputStream.available());
+            return buff;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static boolean saveSmallFileToLocal(byte[] buff, String path) {
+        File file = new File(path);
+        if (file.isDirectory()) {
+            SimpleUtil.log("不能保存到目录:" + path);
+            return false;
+        }
+        if (file.exists()) {
+            file.delete();
+        }
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(path);
+            fileOutputStream.write(buff);
+            fileOutputStream.flush();
+            fileOutputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
     public static void putOneInfoToMap(String key, String value) {
       /* if(mInfoMap.containsKey(key))
        {
