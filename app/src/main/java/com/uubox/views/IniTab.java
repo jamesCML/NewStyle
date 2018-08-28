@@ -78,7 +78,7 @@ public class IniTab {
         //addKeyInit();
         WriteConfigs();
         addAbout();
-        addAOAParamChange();
+        //addAOAParamChange();
         addHelper();
         mViewPage.setAdapter(pagerAdapter);
         mViewPage.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
