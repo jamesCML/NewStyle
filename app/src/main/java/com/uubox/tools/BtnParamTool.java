@@ -512,8 +512,9 @@ public class BtnParamTool {
         ini_xml.save();
         ini_xml.release();
 
-        boolean result = SimpleUtil.saveSmallFileToLocal(SimpleUtil.getAES().encrypt(SimpleUtil.getSmallFile(context, "/sdcard/Zhiwan/ini_button_" + comfirGame + ".xml")), "/sdcard/Zhiwan/ini_button_" + comfirGame + ".xml");
-        SimpleUtil.addMsgBottomToTop(context, "保存配置到本地" + (result ? "成功" : "失败") + " 路径:" + "/sdcard/Zhiwan/ini_button_" + comfirGame + ".xml", !result);
+        //暂时不加密
+        //boolean result = SimpleUtil.saveSmallFileToLocal(SimpleUtil.getAES().encrypt(SimpleUtil.getSmallFile(context, "/sdcard/Zhiwan/ini_button_" + comfirGame + ".xml")), "/sdcard/Zhiwan/ini_button_" + comfirGame + ".xml");
+        SimpleUtil.addMsgBottomToTop(context, "保存配置到本地" + (true ? "成功" : "失败") + " 路径:" + "/sdcard/Zhiwan/ini_button_" + comfirGame + ".xml", false);
     }
 
     private static void saveXmlNode(XmlPugiElement mainNode, KeyboardView.Btn key, BtnParams param) {
