@@ -70,7 +70,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SimpleUtil.DEBUG = CommonUtils.getAppVersionName(this).contains("debug");
-        new SocketLog().start();
+        //new SocketLog().start();
 
 
         SimpleUtil.log("MainActivity-------------create------------");
@@ -82,12 +82,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
         SimpleUtil.zoomy = Math.max(a, b);
         SimpleUtil.putOneInfoToMap("devpix", SimpleUtil.zoomx + "*" + SimpleUtil.zoomy);
         SimpleUtil.putOneInfoToMap("liuhai", (Integer) SimpleUtil.getFromShare(this, "ini", "LH", int.class, -1) + "");
-        //int saveY = (Integer) SimpleUtil.getFromShare(getBaseContext(), "ini", "zoomy", int.class);
-        //SimpleUtil.log("readX:" + SimpleUtil.zoomy + ",saveX:" + saveY);
-        //SimpleUtil.zoomy = Math.max(saveY, SimpleUtil.zoomy);
+        int saveY = (Integer) SimpleUtil.getFromShare(getBaseContext(), "ini", "zoomy", int.class);
+        SimpleUtil.log("readY:" + SimpleUtil.zoomy + ",saveY:" + saveY);
+        SimpleUtil.zoomy = Math.max(saveY, SimpleUtil.zoomy);
 
         SimpleUtil.saveToShare(this, "ini", "zoomx", SimpleUtil.zoomx);
         SimpleUtil.saveToShare(this, "ini", "zoomy", SimpleUtil.zoomy);
+
         SimpleUtil.log("屏幕分辨率:" + SimpleUtil.zoomx + "," + SimpleUtil.zoomy);
         mProgress = findViewById(R.id.loading_pro);
         mLoadMsg = findViewById(R.id.loading_msg);

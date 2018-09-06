@@ -234,7 +234,7 @@ public class SimpleUtil {
     }
 
     public static void log(String msg) {
-        SocketLogEx.getInstance().sendLog(getCurTime() + "  " + msg);
+        //SocketLogEx.getInstance().sendLog(getCurTime() + "  " + msg);
         if (!DEBUG) {
             return;
         }
