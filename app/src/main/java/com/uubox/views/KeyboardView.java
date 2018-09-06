@@ -768,7 +768,6 @@ public class KeyboardView extends FrameLayout
         mIvMenu.setImageDrawable(getResources().getDrawable(R.mipmap.del));
     }
 
-    static String sss = "";
 
     /**
      * 拖动完成时
@@ -824,7 +823,6 @@ public class KeyboardView extends FrameLayout
                     params.setX(x);
                     params.setY(y);
                     SimpleUtil.log("save the XY:" + x + "," + y + " LIUHAI:" + SimpleUtil.LIUHAI + "  hash:" + params.hashCode());
-                    sss = x + "," + y;
                     BtnParamTool.setBtnParamsChanged(true);
                 }
 
@@ -888,8 +886,11 @@ public class KeyboardView extends FrameLayout
     //奇怪，用帧布局移除老是只移除基数的角标,增加一个列表保存所有的View
     private List<View> allView = new ArrayList<>();
 
+    public List<View> getAllButtonViews() {
+        return allView;
+    }
     private void makeButtonView(final Btn btn, final BtnParams params) {
-        int x = params.getX() - SimpleUtil.LIUHAI;
+        int x = params.getX();//- SimpleUtil.LIUHAI
         int y = params.getY();
         int rd = params.getR();
 
@@ -951,7 +952,10 @@ public class KeyboardView extends FrameLayout
         if (params.iHaveChild()) {
             makeButtonView(btn, params.btn2);
         }
-        //SimpleUtil.log(btn.name + "   " + x + "," + y + "," + layoutParams.leftMargin + "," + layoutParams.topMargin);
+        /*mFlMain.measure(0,0);
+        int[] position = new int[2];
+        iv.getLocationOnScreen(position);
+        SimpleUtil.log(BtnParamTool.getComfirGame()+" mk:"+btn.name + "   " + position[0] + "," + position[1]);*/
     }
 
     /**
@@ -1219,14 +1223,12 @@ public class KeyboardView extends FrameLayout
             setUse((AOAConfigTool.Config) obj);
         } else if (id == 10014) {
             mEnableSetting = true;
-        } else if (id == 10015) {
-            SimpleUtil.log("映射界面收到按键更改通知:" + (byte) obj);
         }
     }
 
     private void setUse(AOAConfigTool.Config config) {
-        SimpleUtil.saveToShare(getContext(), "ini", "gloabkeyconfig", "default#Z%W#" + config.getmConfigName() + "#Z%W#" + config.getmTabValue() + "#Z%W#" + config.getmContent());
-        BtnParamTool.setComfirGame(config.getmContent());
+        SimpleUtil.saveToShare(getContext(), "ini", "gloabkeyconfig", "default#Z%W#" + config.getmConfigName() + "#Z%W#" + config.getmTabValue() + "#Z%W#" + config.getmBelongGame());
+        BtnParamTool.setComfirGame(config.getmBelongGame());
         BtnParamTool.loadBtnParamsFromPrefs(getContext());
         loadUi();
     }
@@ -1383,6 +1385,14 @@ public class KeyboardView extends FrameLayout
 
         public String getPrefY() {
             return "pref_" + this.name + "_y";
+        }
+
+        public String getPrefEX() {
+            return "pref_" + this.name + "_ex";
+        }
+
+        public String getPrefEY() {
+            return "pref_" + this.name + "_ey";
         }
 
         public String getPrefXDP() {

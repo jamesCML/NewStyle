@@ -34,7 +34,6 @@ import static android.content.Context.WINDOW_SERVICE;
  */
 public class KeyboardFloatView extends FrameLayout implements SimpleUtil.INormalBack {
 
-    private static final int BTN_COUNT = KeyboardView.Btn.values().length;
     private static KeyboardFloatView mInstance;
     /**
      * 预防重复添加或移除
@@ -104,7 +103,7 @@ public class KeyboardFloatView extends FrameLayout implements SimpleUtil.INormal
     }
 
     private void addView(BtnParams params, KeyboardView.Btn btn) {
-        int x = params.getX() - SimpleUtil.LIUHAI;
+        int x = params.getX();//- SimpleUtil.LIUHAI
         int y = params.getY();
 
         ImageView iv = new ImageView(getContext());
@@ -136,11 +135,27 @@ public class KeyboardFloatView extends FrameLayout implements SimpleUtil.INormal
             layoutParams.topMargin -= iv.getMeasuredHeight() / 2;
         }
         iv.setBackgroundResource(BtnParamTool.getBtnBelongColor(params));
-        SimpleUtil.log("小健位:" + btn + "," + layoutParams.leftMargin + "," + layoutParams.topMargin);
+        //SimpleUtil.log("小健位:" + btn + "," + layoutParams.leftMargin + "," + layoutParams.topMargin);
         addView(iv, layoutParams);
         if (params.iHaveChild()) {
             addView(params.getBtn2(), btn);
         }
+
+        /*if(BtnParamTool.getComfirGame().contains("刺激战场"))//fortest
+        {
+            if(btn== KeyboardView.Btn.NUM_1)
+            {
+                final ImageView finalIv = iv;
+                SimpleUtil.runOnUIThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        int[] postion = new int[2];
+                        finalIv.getLocationOnScreen(postion);
+                        SimpleUtil.log("num_1:"+postion[0]+","+postion[1]);
+                    }
+                },1000);
+            }
+        }*/
     }
     private void clearUI() {
         removeAllViews();

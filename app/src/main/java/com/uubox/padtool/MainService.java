@@ -10,6 +10,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.BitmapFactory;
 import android.graphics.PixelFormat;
@@ -32,7 +33,6 @@ import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -40,6 +40,7 @@ import com.uubox.threads.AccInputThread;
 import com.uubox.tools.AOAConfigTool;
 import com.uubox.tools.BtnParamTool;
 import com.uubox.tools.SimpleUtil;
+import com.uubox.views.BtnParams;
 import com.uubox.views.GuiStep;
 import com.uubox.views.KeyboardEditWindowManager;
 import com.uubox.views.KeyboardFloatView;
@@ -49,6 +50,9 @@ import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class MainService extends Service implements SimpleUtil.INormalBack {
     private UsbManager mUSBManager;
@@ -142,12 +146,12 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             SimpleUtil.log("return usbAccessories list is null!!!!!!");
             mfloatingIv.setImageResource((Integer) mfloatingIv.getTag() == 1 ? R.mipmap.ic_folat_offline : R.mipmap.ic_folat_offline_edge);
             //SimpleUtil.log("HANDLE_SCAN_AOA:"+2);
-            mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 3000);
+            //mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 3000);
             return;
         }
         //防止开启异常后继续扫描
         //SimpleUtil.log("HANDLE_SCAN_AOA:"+3);
-        mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 5000);
+        //mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 5000);
         String s = "accessory：\n" +
                 "model:" + usbAccessories[0].getModel() + "\n" +
                 "Manufacturer:" + usbAccessories[0].getManufacturer() + "\n" +
@@ -604,6 +608,9 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
                 SimpleUtil.addMsgBottomToTop(getBaseContext(), "检测到配置有更新，自动写入中...", false);
             }
             SimpleUtil.saveToShare(getBaseContext(), "ini", "configschange", true);
+
+            //preareLoadConfigs();
+
             mAOAConfigTool.writeDefaultConfigs();
         } else if (id == 10004) {
             boolean ischange = (Boolean) SimpleUtil.getFromShare(getBaseContext(), "ini", "configschange", boolean.class);
@@ -646,7 +653,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
                     //SimpleUtil.addMsgBottomToTop(getBaseContext(),"与设备之间的连接已经断开！",true);
                     //System.exit(0);
                     // SimpleUtil.log("HANDLE_SCAN_AOA:"+5);
-                    mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 3000);
+                    //mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 3000);
 
                 }
             });
@@ -748,6 +755,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         //增加菜单View
         mKeyboardView = new KeyboardView(getBaseContext());
         KeyboardEditWindowManager.getInstance().addView(mKeyboardView);
+        //preareLoadConfigs();
     }
 
 

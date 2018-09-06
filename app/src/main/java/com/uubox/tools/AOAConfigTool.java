@@ -2,6 +2,8 @@ package com.uubox.tools;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
+import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,6 +15,7 @@ import java.util.Map;
 
 import com.uubox.threads.AccInputThread;
 import com.uubox.views.BtnParams;
+import com.uubox.views.BtnParamsHolder;
 import com.uubox.views.KeyboardView;
 
 public class AOAConfigTool implements SimpleUtil.INormalBack {
@@ -101,7 +104,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
 
             while (it.hasNext()) {
                 Config config = new Config();
-                config.mContent = key;
+                config.mBelongGame = key;
                 Map.Entry<String, ?> obj2 = it.next();
                 String subKey = obj2.getKey();
                 config.setmTabKey(subKey);
@@ -125,99 +128,8 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                 }
 
                 index++;
-                long t1 = System.currentTimeMillis();
-                LinkedHashMap<KeyboardView.Btn, BtnParams> xmlConfig = BtnParamTool.getButtonParamsFromXML(mContext, sp[2]);
-                SimpleUtil.log("getButtonParamsFromXML:" + (System.currentTimeMillis() - t1));
-                ByteArrayList cj_cfg_t = new ByteArrayList();
-                cj_cfg_t.add((byte) 0x35);//show mouse board key,暂时鼠标中建，可能键码不对
-                cj_cfg_t.add((byte) 0xf2);//show mouse mouse key
-
-                cj_cfg_t.add((byte) 0xe2);//alter
-                cj_cfg_t.add((byte) 0x10);//map
-                cj_cfg_t.add((byte) 0x2b);//tab
-                cj_cfg_t.add((byte) 0xe1);//left shift
-                cj_cfg_t.add((byte) 0x1b);//get off key
-                cj_cfg_t.add((byte) 0xe0);//fn key
-                cj_cfg_t.add((byte) 0x1b);//switch
-                cj_cfg_t.add((byte) 0xe1);//keyboard key left shift 11
-
-                BtnParams wasd = xmlConfig.get(KeyboardView.Btn.L);
-                cj_cfg_t.add(Hex.fromShortB((short) (wasd.getR() * 2)));
-                cj_cfg_t.add(Hex.fromShortB((short) (OAODEVICE_Y - turnY(wasd.getY()))));
-                cj_cfg_t.add(Hex.fromShortB((short) turnX(wasd.getX())));
-
-
-                BtnParams mouse = xmlConfig.get(KeyboardView.Btn.R);
-                int mouse_step = (Integer) SimpleUtil.getFromShare(mContext, "ini", "mousesen", int.class, 10);
-                cj_cfg_t.add((byte) mouse_step);
-                cj_cfg_t.add(Hex.fromShortB((short) (OAODEVICE_Y - turnY(mouse.getY()))));
-                cj_cfg_t.add(Hex.fromShortB((short) turnX(mouse.getX())));
-
-
-                BtnParams alterLeft = xmlConfig.get(KeyboardView.Btn.ALT_LEFT);
-                cj_cfg_t.add(Hex.fromShortB((short) (OAODEVICE_Y - turnY(alterLeft.getY()))));
-                cj_cfg_t.add(Hex.fromShortB((short) turnX(alterLeft.getX())));
-
-
-                int gunlun_step = (Integer) SimpleUtil.getFromShare(mContext, "ini", "mousesrcollsen", int.class, 20);
-                cj_cfg_t.add((byte) gunlun_step);//wheel radio
-                BtnParams gunlun = xmlConfig.get(KeyboardView.Btn.KEY_H);
-                cj_cfg_t.add(Hex.fromShortB((short) (OAODEVICE_Y - turnY(gunlun.getY()))));
-                cj_cfg_t.add(Hex.fromShortB((short) turnX(gunlun.getX())));
-
-                //开始索引：33
-                byte[] tempContainer = new byte[18];
-
-
-                //添加游戏ID
                 int configID_ = (Integer) SimpleUtil.getFromShare(mContext, sp[2], "configID", int.class);
-                //压枪灵敏度
-
-                int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, sp[2], "cfqNum", int.class, 13);
-                int bqNum = (Integer) SimpleUtil.getFromShare(mContext, sp[2], "bqNum", int.class, 16);
-                int akNum = (Integer) SimpleUtil.getFromShare(mContext, sp[2], "akNum", int.class, 19);
-                tempContainer[0] = (byte) bqNum;
-                tempContainer[1] = (byte) cfqNum;
-                tempContainer[2] = (byte) akNum;
-                tempContainer[3] = (byte) configID_;
-                config.setmConfigid(tempContainer[3]);
-                SimpleUtil.log("configID:" + sp[2] + "   " + tempContainer[3]);
-
-                int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "defaultgun", int.class, 0);
-                tempContainer[4] = (byte) defaultgun;
-                cj_cfg_t.add(tempContainer);
-
-                ByteArrayList keyPoints = new ByteArrayList();
-                //遍历每一个配置的具体按键
-                SimpleUtil.log("分辨率:" + SimpleUtil.zoomx + "," + SimpleUtil.zoomy);
-                Iterator<KeyboardView.Btn> it2 = xmlConfig.keySet().iterator();
-                while (it2.hasNext()) {
-                    KeyboardView.Btn key2 = it2.next();
-                    BtnParams btnParams = xmlConfig.get(key2);
-                    if (key2 == KeyboardView.Btn.L || key2 == KeyboardView.Btn.R) {
-                        continue;
-                    } else if (btnParams.getX() > 0 && btnParams.getY() > 0 && mBtMap.get(key2) != null) {
-                        keyPoints.add(packKeyData2(mBtMap.get(key2), 0, OAODEVICE_Y - turnY(btnParams.getY()), turnX(btnParams.getX()), btnParams.getKeyType() == 3 ? KEYMODE.MP_KEY : KEYMODE.MP_TOUCH));
-                        SimpleUtil.log(sp[1] + ":" + btnParams.toString());
-                        if (btnParams.iHaveChild())
-                        {
-                            BtnParams btnParams2 = btnParams.getBtn2();
-                            //SimpleUtil.log("我有子按键按键:" + btnParams2.toString());
-                            if (btnParams2.getKeyType() == 1) {
-                                //SimpleUtil.log("添加联动按键:" + btnParams2.toString());
-                                keyPoints.add(packKeyData2(mBtMap.get(key2), 0, OAODEVICE_Y - turnY(btnParams2.getY()), turnX(btnParams2.getX()), btnParams.getKeyType() == 3 ? KEYMODE.MP_KEY : KEYMODE.MP_TOUCH));
-                            }
-
-                        }
-                    }
-
-                }
-
-                int oneConfigLen = cj_cfg_t.all2Bytes().length + keyPoints.all2Bytes().length + 2;
-                cj_cfg_t.add_(0, (byte) oneConfigLen);
-                cj_cfg_t.add_(0, SimpleUtil.sumCheck(cj_cfg_t.add(keyPoints).all2Bytes()));
-                config.mData = cj_cfg_t;
-                config.mSize = config.mData.all2Bytes().length;
+                config.setmConfigid((byte) configID_);
                 if (config.mIsUsed) {
                     SimpleUtil.log("默认配置放到第一位");
                     allConfigs.add(0, config);
@@ -232,9 +144,113 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
             }*/
         }
         SimpleUtil.log("加载配置文件完成:" + allConfigs.size());
-
         return allConfigs;
 
+    }
+
+    private void loadXmlToConfigData(@NonNull Config config) {
+        if (config == null) {
+            SimpleUtil.log("loadXmlToConfigData fail!config is null!");
+            return;
+        }
+        LinkedHashMap<KeyboardView.Btn, BtnParams> xmlConfig = BtnParamTool.getButtonParamsFromXML(mContext, config.mTabValue);
+        SimpleUtil.log("加载xml数据到configbuff:" + config.getmBelongGame() + "/" + config.getmConfigName());
+        ByteArrayList cj_cfg_t = new ByteArrayList();
+        cj_cfg_t.add((byte) 0x35);//show mouse board key,暂时鼠标中建，可能键码不对
+        cj_cfg_t.add((byte) 0xf2);//show mouse mouse key
+
+        cj_cfg_t.add((byte) 0xe2);//alter
+        cj_cfg_t.add((byte) 0x10);//map
+        cj_cfg_t.add((byte) 0x2b);//tab
+        cj_cfg_t.add((byte) 0xe1);//left shift
+        cj_cfg_t.add((byte) 0x1b);//get off key
+        cj_cfg_t.add((byte) 0xe0);//fn key
+        cj_cfg_t.add((byte) 0x1b);//switch
+        cj_cfg_t.add((byte) 0xe1);//keyboard key left shift 11
+
+        BtnParams wasd = xmlConfig.get(KeyboardView.Btn.L);
+        cj_cfg_t.add(Hex.fromShortB((short) (wasd.getR() * 2)));
+        cj_cfg_t.add(Hex.fromShortB((short) (OAODEVICE_Y - turnY(wasd.getEy()))));
+        cj_cfg_t.add(Hex.fromShortB((short) turnX(wasd.getEx())));
+
+
+        BtnParams mouse = xmlConfig.get(KeyboardView.Btn.R);
+        int mouse_step = (Integer) SimpleUtil.getFromShare(mContext, "ini", "mousesen", int.class, 10);
+        cj_cfg_t.add((byte) mouse_step);
+        cj_cfg_t.add(Hex.fromShortB((short) (OAODEVICE_Y - turnY(mouse.getEy()))));
+        cj_cfg_t.add(Hex.fromShortB((short) turnX(mouse.getEx())));
+
+
+        BtnParams alterLeft = xmlConfig.get(KeyboardView.Btn.ALT_LEFT);
+        cj_cfg_t.add(Hex.fromShortB((short) (OAODEVICE_Y - turnY(alterLeft.getEy()))));
+        cj_cfg_t.add(Hex.fromShortB((short) turnX(alterLeft.getEx())));
+
+
+        int gunlun_step = (Integer) SimpleUtil.getFromShare(mContext, "ini", "mousesrcollsen", int.class, 20);
+        cj_cfg_t.add((byte) gunlun_step);//wheel radio
+        BtnParams gunlun = xmlConfig.get(KeyboardView.Btn.KEY_H);
+        cj_cfg_t.add(Hex.fromShortB((short) (OAODEVICE_Y - turnY(gunlun.getEy()))));
+        cj_cfg_t.add(Hex.fromShortB((short) turnX(gunlun.getEx())));
+
+        //开始索引：33
+        byte[] tempContainer = new byte[18];
+
+
+        //添加游戏ID
+        int configID_ = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "configID", int.class);
+        //压枪灵敏度
+
+        int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "cfqNum", int.class, 13);
+        int bqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "bqNum", int.class, 16);
+        int akNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "akNum", int.class, 19);
+        tempContainer[0] = (byte) bqNum;
+        tempContainer[1] = (byte) cfqNum;
+        tempContainer[2] = (byte) akNum;
+        tempContainer[3] = (byte) configID_;
+
+        SimpleUtil.log("configID:" + config.mTabValue + "   " + tempContainer[3]);
+
+        int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "defaultgun", int.class, 0);
+        tempContainer[4] = (byte) defaultgun;
+        cj_cfg_t.add(tempContainer);
+
+        ByteArrayList keyPoints = new ByteArrayList();
+        //遍历每一个配置的具体按键
+
+        Iterator<KeyboardView.Btn> it2 = xmlConfig.keySet().iterator();
+        while (it2.hasNext()) {
+            KeyboardView.Btn key2 = it2.next();
+            BtnParams btnParams = xmlConfig.get(key2);
+
+            if (key2 == KeyboardView.Btn.L || key2 == KeyboardView.Btn.R) {
+                continue;
+            } else if (btnParams.getX() > 0 && btnParams.getY() > 0 && mBtMap.get(key2) != null) {
+                SimpleUtil.log(config.mConfigName + ":" + btnParams.toString());
+                        /*if(btnParams.img!=null) {
+                            int[] position = new int[2];
+                            btnParams.img.getLocationOnScreen(position);
+                            SimpleUtil.log("实际位置:" + Arrays.toString(position));
+                        }*/
+                keyPoints.add(packKeyData2(mBtMap.get(key2), 0, OAODEVICE_Y - turnY(btnParams.getEy()), turnX(btnParams.getEx()), btnParams.getKeyType() == 3 ? KEYMODE.MP_KEY : KEYMODE.MP_TOUCH));
+
+                if (btnParams.iHaveChild()) {
+                    BtnParams btnParams2 = btnParams.getBtn2();
+                    //SimpleUtil.log("我有子按键按键:" + btnParams2.toString());
+                    if (btnParams2.getKeyType() == 1) {
+                        //SimpleUtil.log("添加联动按键:" + btnParams2.toString());
+                        keyPoints.add(packKeyData2(mBtMap.get(key2), 0, OAODEVICE_Y - turnY(btnParams2.getEy()), turnX(btnParams2.getEx()), btnParams.getKeyType() == 3 ? KEYMODE.MP_KEY : KEYMODE.MP_TOUCH));
+                    }
+
+                }
+            }
+
+        }
+
+        int oneConfigLen = cj_cfg_t.all2Bytes().length + keyPoints.all2Bytes().length + 2;
+        cj_cfg_t.add_(0, (byte) oneConfigLen);
+        cj_cfg_t.add_(0, SimpleUtil.sumCheck(cj_cfg_t.add(keyPoints).all2Bytes()));
+        config.mData = cj_cfg_t;
+        config.mSize = config.mData.all2Bytes().length;
     }
 
     private Req mReq = new Req();
@@ -259,111 +275,120 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
             SimpleUtil.addMsgBottomToTop(mContext, "写入配置失败！", true);
             return;
         }
+        SimpleUtil.log("准备开始写配置，其中分辨率:" + SimpleUtil.zoomx + "," + SimpleUtil.zoomy);
         SimpleUtil.runOnThread(new Runnable() {
             @Override
             public void run() {
                 SimpleUtil.addWaitToTop(mContext, "");
                 SimpleUtil.sleep(20);
 
-                for (AOAConfigTool.Config config : allConfigs) {
-                    if (config.getIsUsed()) {
-                        //压枪数据重新构造一下
-                        int bqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "bqNum", int.class, 16);
-                        int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "cfqNum", int.class, 13);
-                        int akNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "akNum", int.class, 19);
-                        int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "defaultgun", int.class, 0);
+                new BtnParamsHolder(mContext).preareLoadConfigs(allConfigs, new BtnParamsHolder.IMeasureResult() {
+                    @Override
+                    public void measurefinish() {
 
-                        SimpleUtil.log("重新调整一下压枪灵敏度、压枪：" + bqNum + "," + cfqNum + "," + akNum + "," + defaultgun);
-                        byte[] data = config.getmData().all2Bytes();
-                        data[32] = (byte) cfqNum;
-                        data[33] = (byte) bqNum;
-                        data[34] = (byte) akNum;
-                        //[35]正在使用的gameid
-                        data[36] = (byte) defaultgun;//压枪设置，如开启、使用哪一把枪等
-                        byte[] data2 = Arrays.copyOfRange(data, 1, data.length);
-                        ByteArrayList bytes = new ByteArrayList();
-                        bytes.add(SimpleUtil.sumCheck(data2));
-                        bytes.add(data2);
-                        config.setmData(bytes);
-                        break;
-                    }
-                }
+                        for (AOAConfigTool.Config config : allConfigs) {
+                            loadXmlToConfigData(config);
+                            if (config.getIsUsed()) {
+                                //压枪数据重新构造一下
+                                int bqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "bqNum", int.class, 16);
+                                int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "cfqNum", int.class, 13);
+                                int akNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "akNum", int.class, 19);
+                                int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "defaultgun", int.class, 0);
+
+                                SimpleUtil.log("重新调整一下压枪灵敏度、压枪：" + bqNum + "," + cfqNum + "," + akNum + "," + defaultgun);
+                                byte[] data = config.getmData().all2Bytes();
+                                data[32] = (byte) cfqNum;
+                                data[33] = (byte) bqNum;
+                                data[34] = (byte) akNum;
+                                //[35]正在使用的gameid
+                                data[36] = (byte) defaultgun;//压枪设置，如开启、使用哪一把枪等
+                                byte[] data2 = Arrays.copyOfRange(data, 1, data.length);
+                                ByteArrayList bytes = new ByteArrayList();
+                                bytes.add(SimpleUtil.sumCheck(data2));
+                                bytes.add(data2);
+                                config.setmData(bytes);
+                                //break;
+                            }
+                        }
 
 
+                        short totlen = 0;
+                        int defaultIndex = 0;
+                        byte[] gameList = new byte[4];
+                        //构建C0
+                        SimpleUtil.log("构造C0:" + allConfigs.size());
+                        for (int i = 0; i < allConfigs.size(); i++) {
+                            totlen += allConfigs.get(i).getmSize();
+                            if (allConfigs.get(i).getIsUsed()) {
+                                defaultIndex = i + 1;
+                            }
+                            gameList[i] = allConfigs.get(i).getmConfigid();
+                        }
 
+                        ByteArrayList c0Data = new ByteArrayList();
+                        c0Data.add((byte) 0xa5);
+                        c0Data.add((byte) 0x14);
+                        c0Data.add((byte) 0xc0);
+                        c0Data.add((byte) defaultIndex);
+                        c0Data.add(gameList);
+                        c0Data.add(Hex.fromShortB(totlen));
+                        byte[] leave = new byte[9];
+                        leave[0] = (byte) Build.VERSION.SDK_INT;//发送安卓版本信息
+                        c0Data.add(leave);
 
-                short totlen = 0;
-                int defaultIndex = 0;
-                byte[] gameList = new byte[4];
-                //构建C0
-                SimpleUtil.log("构造C0:" + allConfigs.size());
-                for (int i = 0; i < allConfigs.size(); i++) {
-                    totlen += allConfigs.get(i).getmSize();
-                    if (allConfigs.get(i).getIsUsed()) {
-                        defaultIndex = i + 1;
-                    }
-                    gameList[i] = allConfigs.get(i).getmConfigid();
-                }
+                        c0Data.add(SimpleUtil.sumCheck(c0Data.all2Bytes()));
 
-                ByteArrayList c0Data = new ByteArrayList();
-                c0Data.add((byte) 0xa5);
-                c0Data.add((byte) 0x14);
-                c0Data.add((byte) 0xc0);
-                c0Data.add((byte) defaultIndex);
-                c0Data.add(gameList);
-                c0Data.add(Hex.fromShortB(totlen));
-                byte[] leave = new byte[9];
-                c0Data.add(leave);
+                        resetReq();
+                        mReq.mReqType = (byte) 0xc0;
+                        mAccInputThread.writeAcc(c0Data.all2Bytes());
+                        long time = System.currentTimeMillis();
+                        while ((System.currentTimeMillis() - time) < 3000 && mReq.mReqResult == null)
+                            ;
+                        if (mReq.mReqResult != null) {
+                            if (mReq.mReqResult[3] != 0) {
+                                SimpleUtil.log("发送C0失败！！！");
+                                return;
+                            }
+                        }
+                        SimpleUtil.log("发送C0成功！！！");
 
-                c0Data.add(SimpleUtil.sumCheck(c0Data.all2Bytes()));
+                        byte index_ = (byte) 0xc1;
+                        for (int i = 0; i < allConfigs.size(); i++) {
+                            resetReq();
+                            SimpleUtil.log("正在载入 " + allConfigs.get(i).getmBelongGame() + ":" + allConfigs.get(i).getmConfigName());
+                            SimpleUtil.updateWaitTopMsg("正在载入\n  " + allConfigs.get(i).getmBelongGame() + "\n    " + allConfigs.get(i).getmConfigName());
+                            if (!diveSend(allConfigs.get(i).mData.all2Bytes(), index_)) {
+                                SimpleUtil.log("请求错误！" + Hex.toString(mReq.mReqResult) + "," + false);
+                                SimpleUtil.resetWaitTop();
+                                SimpleUtil.addMsgBottomToTop(mContext, "配置写入失败！", true);
+                                return;
+                            }
 
-                resetReq();
-                mReq.mReqType = (byte) 0xc0;
-                mAccInputThread.writeAcc(c0Data.all2Bytes());
-                long time = System.currentTimeMillis();
-                while ((System.currentTimeMillis() - time) < 3000 && mReq.mReqResult == null) ;
-                if (mReq.mReqResult != null) {
-                    if (mReq.mReqResult[3] != 0) {
-                        SimpleUtil.log("发送C0失败！！！");
-                        return;
-                    }
-                }
-                SimpleUtil.log("发送C0成功！！！");
-
-                byte index_ = (byte) 0xc1;
-                for (int i = 0; i < allConfigs.size(); i++) {
-                    resetReq();
-                    SimpleUtil.log("正在载入 " + allConfigs.get(i).getmContent() + ":" + allConfigs.get(i).getmConfigName());
-                    SimpleUtil.updateWaitTopMsg("正在载入\n  " + allConfigs.get(i).getmContent() + "\n    " + allConfigs.get(i).getmConfigName());
-                    if (!diveSend(allConfigs.get(i).mData.all2Bytes(), index_)) {
-                        SimpleUtil.log("请求错误！" + Hex.toString(mReq.mReqResult) + "," + false);
+                            index_++;
+                            resetReq();
+                        }
+                        SimpleUtil.log("保底配置顺序，查询一下！！！");
+                        //保底配置顺序，查询一下
+                        byte[] d0data = getDeviceConfigD0();
                         SimpleUtil.resetWaitTop();
-                        SimpleUtil.addMsgBottomToTop(mContext, "配置写入失败！", true);
-                        return;
+                        if (d0data != null) {
+                            SimpleUtil.addMsgBottomToTop(mContext, "配置写入成功！", false);
+                            SimpleUtil.saveToShare(mContext, "ini", "configschange", false);
+                            SimpleUtil.saveToShare(mContext, "ini", "configsorderbytes", Hex.toString(d0data));
+                            SimpleUtil.saveToShare(mContext, "ini", "NewConfigNotWrite", "");
+                            if ((Boolean) SimpleUtil.getFromShare(mContext, "ini", "aoaparamschange", boolean.class)) {
+                                sendAOAChangeInfo("AAABBCC" + (uuu++), "LALALA", "0000000012345678");
+                            }
+                            SimpleUtil.notifyall_(10015, d0data);
+                        } else {
+                            SimpleUtil.addMsgBottomToTop(mContext, "配置写入失败！", true);
+                        }
+                        SimpleUtil.notifyall_(10012, d0data);
+                        if (isNeedToCloseKeySet) {
+                            openOrCloseRecKeycode(false);
+                        }
                     }
-
-                    index_++;
-                    resetReq();
-                }
-                SimpleUtil.log("保底配置顺序，查询一下！！！");
-                //保底配置顺序，查询一下
-                byte[] d0data = getDeviceConfigD0();
-                SimpleUtil.resetWaitTop();
-                if (d0data != null) {
-                    SimpleUtil.addMsgBottomToTop(mContext, "配置写入成功！", false);
-                    SimpleUtil.saveToShare(mContext, "ini", "configschange", false);
-                    SimpleUtil.saveToShare(mContext, "ini", "configsorderbytes", Hex.toString(d0data));
-                    SimpleUtil.saveToShare(mContext, "ini", "NewConfigNotWrite", "");
-                    if ((Boolean) SimpleUtil.getFromShare(mContext, "ini", "aoaparamschange", boolean.class)) {
-                        sendAOAChangeInfo("AAABBCC" + (uuu++), "LALALA", "0000000012345678");
-                    }
-                } else {
-                    SimpleUtil.addMsgBottomToTop(mContext, "配置写入失败！", true);
-                }
-                SimpleUtil.notifyall_(10012, d0data);
-                if (isNeedToCloseKeySet) {
-                    openOrCloseRecKeycode(false);
-                }
+                });
 
             }
         });
@@ -868,7 +893,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
     }
 
     public class Config implements Cloneable {
-        private String mContent;
+        private String mBelongGame;
         private String mConfigName;
         private ByteArrayList mData;
         private boolean mIsUsed;
@@ -877,8 +902,9 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
         private String mTabValue;
         private byte mConfigid;
         private String mTabKey;
-        public String getmContent() {
-            return mContent;
+
+        public String getmBelongGame() {
+            return mBelongGame;
         }
 
         public String getmConfigName() {

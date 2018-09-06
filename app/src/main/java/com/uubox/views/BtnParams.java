@@ -29,6 +29,17 @@ public class BtnParams implements Serializable, Cloneable {
      * y坐标
      */
     private int y;
+
+    /**
+     * x绝对坐标
+     */
+    private int ex;
+    /**
+     * y绝对坐标
+     */
+    private int ey;
+
+
     /**
      * 半径
      */
@@ -186,10 +197,27 @@ public class BtnParams implements Serializable, Cloneable {
           this.mIsParent = mBackup.mIsParent;
           mBackup = null;
      }*/
+
+    public int getEx() {
+        return ex;
+    }
+
+    public void setEx(int ex) {
+        this.ex = ex;
+    }
+
+    public int getEy() {
+        return ey;
+    }
+
+    public void setEy(int ey) {
+        this.ey = ey;
+    }
+
     @Override
     public String toString() {
         return belongBtn + "(x: " + x + ", y: " + y + ", r: " + r + ", mKeyType: " + mKeyType + ", step: "
-                + step + ", mIsParent: " + mIsParent + ")";
+                + step + ", mIsParent: " + mIsParent + "),ex:" + ex + ",ey:" + ey;
     }
 
    /* @Override

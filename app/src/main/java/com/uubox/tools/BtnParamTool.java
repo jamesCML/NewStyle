@@ -236,24 +236,17 @@ public class BtnParamTool {
             params.setBelongBtn(btn);
             params.setX((Integer) SimpleUtil.getFromShare(sp, btn.getPrefX(), int.class, -1));
             params.setY((Integer) SimpleUtil.getFromShare(sp, btn.getPrefY(), int.class, -1));
+            params.setEx((Integer) SimpleUtil.getFromShare(sp, btn.getPrefEX(), int.class, -1));
+            params.setEy((Integer) SimpleUtil.getFromShare(sp, btn.getPrefEY(), int.class, -1));
             params.setR((Integer) SimpleUtil.getFromShare(sp, btn.getPrefR(), int.class, -1));
             params.doParent((Boolean) SimpleUtil.getFromShare(sp, btn.getParent(), boolean.class, false));
             params.setKeyType((Integer) SimpleUtil.getFromShare(sp, btn.getPrefType(), int.class, 0));
             params.setKeyRepeatSwitch((Boolean) SimpleUtil.getFromShare(sp, btn.getPrefSwitch(), boolean.class, true));
 
-            // SimpleUtil.log("getButtonParamsFromXML " + btn + ",x:" + params.getX() + " db_xml:" + db_xml);
-            if (btn == KeyboardView.Btn.L || btn == KeyboardView.Btn.R) {
-                params.setMode(
-                        (Integer) SimpleUtil.getFromShare(sp, btn.getPrefMode(), int.class, 0));
-                params.setStep(
-                        (Integer) SimpleUtil.getFromShare(sp, btn.getPrefStep(), int.class, 15));
+            //SimpleUtil.log("getButtonParamsFromXML " + db_xml+":"+params.toString());
+            params.setMode((Integer) SimpleUtil.getFromShare(sp, btn.getPrefMode(), int.class, 0));
+            params.setStep((Integer) SimpleUtil.getFromShare(sp, btn.getPrefStep(), int.class, 15));
                 params.setFrequency((Integer) SimpleUtil.getFromShare(sp, btn.getPrefFrequency(), int.class, 30));
-            } else {
-                params.setMode((Integer) SimpleUtil.getFromShare(sp, btn.getPrefMode(), int.class, -1));
-                params.setStep((Integer) SimpleUtil.getFromShare(sp, btn.getPrefStep(), int.class, -1));
-                params.setFrequency((Integer) SimpleUtil.getFromShare(sp, btn.getPrefFrequency(), int.class, -1));
-            }
-
 
             //有附属按键需要加载
             if (params.iHaveChild()) {
@@ -262,22 +255,14 @@ public class BtnParamTool {
                 subParams.doParent(false);
                 subParams.setX((Integer) SimpleUtil.getFromShare(sp, btn.getPrefX() + "_2", int.class, -1));
                 subParams.setY((Integer) SimpleUtil.getFromShare(sp, btn.getPrefY() + "_2", int.class, -1));
+                subParams.setEx((Integer) SimpleUtil.getFromShare(sp, btn.getPrefEX() + "_2", int.class, -1));
+                subParams.setEy((Integer) SimpleUtil.getFromShare(sp, btn.getPrefEY() + "_2", int.class, -1));
                 subParams.setR((Integer) SimpleUtil.getFromShare(sp, btn.getPrefR() + "_2", int.class, -1));
                 subParams.setKeyType((Integer) SimpleUtil.getFromShare(sp, btn.getPrefType() + "_2", int.class, 0));
 
-
-                if (btn == KeyboardView.Btn.L || btn == KeyboardView.Btn.R) {
-                    subParams.setMode(
-                            (Integer) SimpleUtil.getFromShare(sp, btn.getPrefMode() + "_2", int.class, 0));
-                    subParams.setStep(
-                            (Integer) SimpleUtil.getFromShare(sp, btn.getPrefStep() + "_2", int.class, 15));
-                    subParams.setFrequency((Integer) SimpleUtil.getFromShare(sp, btn.getPrefFrequency() + "_2", int.class, 30));
-                } else {
-                    subParams.setMode((Integer) SimpleUtil.getFromShare(sp, btn.getPrefMode() + "_2", int.class, -1));
-                    subParams.setStep((Integer) SimpleUtil.getFromShare(sp, btn.getPrefStep() + "_2", int.class, -1));
-                    subParams.setFrequency((Integer) SimpleUtil.getFromShare(sp, btn.getPrefFrequency() + "_2", int.class, -1));
-                }
-
+                subParams.setMode((Integer) SimpleUtil.getFromShare(sp, btn.getPrefMode() + "_2", int.class, 0));
+                subParams.setStep((Integer) SimpleUtil.getFromShare(sp, btn.getPrefStep() + "_2", int.class, 15));
+                subParams.setFrequency((Integer) SimpleUtil.getFromShare(sp, btn.getPrefFrequency() + "_2", int.class, 30));
                 params.setBtn2(subParams);
 
             }
@@ -543,6 +528,12 @@ public class BtnParamTool {
         }
     }
 
+    //default#Z%W#绝地求生之全军出击[官方]#Z%W#d8a4370a36d19286077bc485d61601d3ede501bd#Z%W#绝地求生之全军出击
+    public static boolean setDefaultUseConfig(Context context, String configname, String configsha, String belonggame) {
+        setComfirGame(belonggame);
+        return SimpleUtil.saveToShare(context, "ini", "gloabkeyconfig", "default#Z%W#" + configname + "#Z%W#" + configsha + "#Z%W#" + belonggame);
+
+    }
     public static int getBtnRepeatType(final KeyboardView.Btn btn) {
         if (btn == null || mBtnParams == null || !mBtnParams.containsKey(btn)) {
             return 0;

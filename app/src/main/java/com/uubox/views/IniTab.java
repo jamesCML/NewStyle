@@ -6,19 +6,16 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.method.LinkMovementMethod;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ClickableSpan;
-import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -40,7 +37,6 @@ import com.pgyersdk.update.UpdateManagerListener;
 import com.pgyersdk.update.javabean.AppBean;
 import com.uubox.adapters.GunQaAdapter;
 import com.uubox.adapters.MoveConfigAdapter;
-import com.uubox.padtool.MainActivity;
 import com.uubox.padtool.R;
 import com.uubox.tools.AOAConfigTool;
 import com.uubox.tools.CommonUtils;
@@ -316,7 +312,7 @@ public class IniTab {
                                 }
 
 
-                                SharedPreferences shareLib = mContext.getSharedPreferences(configsLeftData.get(position).getmContent() + "_table", 0);
+                                SharedPreferences shareLib = mContext.getSharedPreferences(configsLeftData.get(position).getmBelongGame() + "_table", 0);
                                 boolean res = shareLib.edit().remove(configsLeftData.get(position).getmTabKey()).commit();
                                 SimpleUtil.log("delete iniconfig result:" + res);
                                 SimpleUtil.addMsgBottomToTop(mContext, "删除" + (res ? "成功" : "失败"), !res);
@@ -331,12 +327,12 @@ public class IniTab {
                                 //如果已经全部删除则删除游戏目录
 
                                 if (shareLib.getAll().size() == 0) {
-                                    File file = new File("/data/data/" + CommonUtils.getAppPkgName(mContext) + "/shared_prefs", configsLeftData.get(position).getmContent() + "_table.xml");
+                                    File file = new File("/data/data/" + CommonUtils.getAppPkgName(mContext) + "/shared_prefs", configsLeftData.get(position).getmBelongGame() + "_table.xml");
                                     if (file.exists()) {
                                         file.delete();
-                                        SimpleUtil.delFromShare(mContext, "KeysConfigs", configsLeftData.get(position).getmContent());
-                                        SimpleUtil.addMsgBottomToTop(mContext, "游戏[" + configsLeftData.get(position).getmContent() + "]已清除", false);
-                                        SimpleUtil.log("have delete the content " + configsLeftData.get(position).getmContent());
+                                        SimpleUtil.delFromShare(mContext, "KeysConfigs", configsLeftData.get(position).getmBelongGame());
+                                        SimpleUtil.addMsgBottomToTop(mContext, "游戏[" + configsLeftData.get(position).getmBelongGame() + "]已清除", false);
+                                        SimpleUtil.log("have delete the content " + configsLeftData.get(position).getmBelongGame());
                                     }
                                 }
                                 configsLeftData.remove(position);
