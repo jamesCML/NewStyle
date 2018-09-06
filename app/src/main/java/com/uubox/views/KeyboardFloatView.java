@@ -64,7 +64,7 @@ public class KeyboardFloatView extends FrameLayout implements SimpleUtil.INormal
         }
         // 重新载入按钮参数
         //BtnParamTool.loadBtnParamsFromPrefs(getContext());
-        SimpleUtil.log("keymanager show2");
+        SimpleUtil.log("开启小健位并加载");
         loadUi();
         addToWM();
         mIsAdded = true;
@@ -74,7 +74,7 @@ public class KeyboardFloatView extends FrameLayout implements SimpleUtil.INormal
         if (!mIsAdded) {
             return;
         }
-        SimpleUtil.log("keymanager dismiss");
+        SimpleUtil.log("关闭小健位");
         removeFromWM();
         clearUI();
         mIsAdded = false;
@@ -112,7 +112,6 @@ public class KeyboardFloatView extends FrameLayout implements SimpleUtil.INormal
                 || btn == KeyboardView.Btn.L || btn == KeyboardView.Btn.R) {
             return;
         }
-        iv = new ImageView(getContext());
         Drawable drawable = BtnUtil.getBtnDrawable(btn, getContext());
         if (drawable != null) {
             iv.setImageDrawable(drawable);
@@ -135,7 +134,7 @@ public class KeyboardFloatView extends FrameLayout implements SimpleUtil.INormal
             layoutParams.topMargin -= iv.getMeasuredHeight() / 2;
         }
         iv.setBackgroundResource(BtnParamTool.getBtnBelongColor(params));
-        //SimpleUtil.log("小健位:" + btn + "," + layoutParams.leftMargin + "," + layoutParams.topMargin);
+        SimpleUtil.log("小健位:" + btn + "," + layoutParams.leftMargin + "," + layoutParams.topMargin);
         addView(iv, layoutParams);
         if (params.iHaveChild()) {
             addView(params.getBtn2(), btn);

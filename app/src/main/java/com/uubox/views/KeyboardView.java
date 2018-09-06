@@ -811,7 +811,7 @@ public class KeyboardView extends FrameLayout
         else {
             if (!(v.getTag() instanceof Integer)) {
                 int[] position = new int[2];
-                v.getLocationOnScreen(position);
+                v.getLocationInWindow(position);
                 final int x = position[0] + v.getWidth() / 2;
                 final int y = position[1] + v.getHeight() / 2;
                 //final int x = (int) v.getX() + v.getWidth() / 2+SimpleUtil.LIUHAI;
