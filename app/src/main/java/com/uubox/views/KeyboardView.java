@@ -907,7 +907,7 @@ public class KeyboardView extends FrameLayout
 
         iv.setTag(params);
         iv.setDragListener(this);
-        iv.setScaleListener(this);
+        //iv.setScaleListener(this);
         iv.setClickListener(this);
         final LayoutParams layoutParams =
                 new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
@@ -933,6 +933,7 @@ public class KeyboardView extends FrameLayout
         allView.add(iv);
         mFlMain.addView(iv, layoutParams);
         if (btn == Btn.L) {
+            iv.setScaleListener(this);
             mIvMenuBtnL.setVisibility(GONE);
             GuiStep.getInstance().addToGui(iv, "控制方向按键，如果您觉得按下【W】键人物不能疾跑，建议将该按键放大以达到效果");
         } else if (btn == Btn.R) {

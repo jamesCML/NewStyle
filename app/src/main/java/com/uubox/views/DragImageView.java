@@ -248,7 +248,7 @@ public class DragImageView extends android.support.v7.widget.AppCompatImageView 
             mCurrentY = (int) event.getRawY();
         }
         // 缩放
-        else if (mMode == MODE.ZOOM) {
+        else if (mMode == MODE.ZOOM && mScaleListener != null) {
             // 获取两点的距离
             mAfterLength = getDistance(event);
             // 变化的长度
