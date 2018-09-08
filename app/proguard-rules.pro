@@ -78,3 +78,10 @@
 
 -dontwarn org.codehaus.**
 -keep class org.codehaus.** { *;}
+
+-dontwarn okhttp3.**
+-keep class okhttp3.** { *;}
+
+-keep class com.alibaba.sdk.android.oss.** { *; }
+-dontwarn okio.**
+-dontwarn org.apache.commons.codec.binary.**

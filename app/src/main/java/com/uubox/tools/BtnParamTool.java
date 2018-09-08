@@ -13,7 +13,18 @@ import java.util.Map;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
+
+import com.alibaba.sdk.android.oss.ClientConfiguration;
+import com.alibaba.sdk.android.oss.ClientException;
+import com.alibaba.sdk.android.oss.OSSClient;
+import com.alibaba.sdk.android.oss.ServiceException;
+import com.alibaba.sdk.android.oss.callback.OSSCompletedCallback;
+import com.alibaba.sdk.android.oss.common.auth.OSSCredentialProvider;
+import com.alibaba.sdk.android.oss.common.auth.OSSPlainTextAKSKCredentialProvider;
+import com.alibaba.sdk.android.oss.model.PutObjectRequest;
+import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.example.cgodawson.xml.XmlPugiElement;
+import com.uubox.padtool.MainActivity;
 import com.uubox.padtool.R;
 import com.uubox.views.BtnParams;
 import com.uubox.views.KeyboardView;
@@ -479,6 +490,8 @@ public class BtnParamTool {
     }
 
     private static void saveBtnParamsObjs(Context context) {
+
+
         XmlPugiElement ini_xml = XmlPugiElement.createXml("/sdcard/Zhiwan/ini_button_" + comfirGame + ".xml", "Root", true);
         XmlPugiElement zoom = ini_xml.addNode("ZOOM");
         zoom.addAttr("zoomx", SimpleUtil.zoomx + "");
@@ -496,12 +509,53 @@ public class BtnParamTool {
         }
         ini_xml.save();
         ini_xml.release();
+        String idkey = (String) SimpleUtil.getFromShare(context, "ini", "idkey", String.class, "");
+        saveXMLtooss(context, comfirGame + "_" + SimpleUtil.zoomx + "*" + SimpleUtil.zoomy + "_" + android.os.Build.MODEL + "_" + idkey + ".xml", SimpleUtil.getSmallFile(context, "/sdcard/Zhiwan/ini_button_" + comfirGame + ".xml"));
 
         //暂时不加密
         //boolean result = SimpleUtil.saveSmallFileToLocal(SimpleUtil.getAES().encrypt(SimpleUtil.getSmallFile(context, "/sdcard/Zhiwan/ini_button_" + comfirGame + ".xml")), "/sdcard/Zhiwan/ini_button_" + comfirGame + ".xml");
-        SimpleUtil.addMsgBottomToTop(context, "保存配置到本地" + (true ? "成功" : "失败") + " 路径:" + "/sdcard/Zhiwan/ini_button_" + comfirGame + ".xml", false);
+
     }
 
+    private static void saveXMLtooss(final Context context, String filename, byte[] buff) {
+        PutObjectRequest putObjectRequest = new PutObjectRequest("usbpublicreadwrite", "tempconfigs/" + filename, buff);
+
+        ClientConfiguration conf = new ClientConfiguration();
+        conf.setConnectionTimeout(5 * 1000); // 连接超时，默认15秒
+        conf.setSocketTimeout(5 * 1000); // socket超时，默认15秒
+        conf.setMaxConcurrentRequest(5); // 最大并发请求数，默认5个
+        conf.setMaxErrorRetry(2); // 失败后最大重试次数，默认2次
+
+
+        OSSCredentialProvider provider = new OSSPlainTextAKSKCredentialProvider("LTAILkfXHbE0tEf4", "pnezrct5QOytMKa52mnGDDhx1StUYW");
+        OSSClient ossClient = new OSSClient(context, "oss-cn-shenzhen.aliyuncs.com", provider, conf);
+
+        ossClient.asyncPutObject(putObjectRequest, new OSSCompletedCallback<PutObjectRequest, PutObjectResult>() {
+            @Override
+            public void onSuccess(PutObjectRequest request, PutObjectResult result) {
+                SimpleUtil.addMsgBottomToTop(context, "配置上传成功", false);
+            }
+
+            @Override
+            public void onFailure(PutObjectRequest request, ClientException clientException, ServiceException serviceException) {
+                SimpleUtil.log("上传失败");
+                SimpleUtil.addMsgBottomToTop(context, "上传失败", true);
+                if (clientException != null) {
+                    // 本地异常如网络异常等
+                    clientException.printStackTrace();
+                }
+                if (serviceException != null) {
+                    // 服务异常
+                    Log.e("ErrorCode", serviceException.getErrorCode());
+                    Log.e("RequestId", serviceException.getRequestId());
+                    Log.e("HostId", serviceException.getHostId());
+                    Log.e("RawMessage", serviceException.getRawMessage());
+                }
+            }
+        });
+
+
+    }
     private static void saveXmlNode(XmlPugiElement mainNode, KeyboardView.Btn key, BtnParams param) {
 
         try {

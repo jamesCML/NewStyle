@@ -419,7 +419,7 @@ public class SimpleUtil {
     }
 
     public static String getCurTime() {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss.SSS");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         return simpleDateFormat.format(new Date());
     }
     public static void toastTop(Context context, String msg) {

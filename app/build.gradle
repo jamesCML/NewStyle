@@ -5,18 +5,13 @@ android {
         applicationId "com.uubox.padtool"
         minSdkVersion 19
         targetSdkVersion 22
-        versionCode 108
-        versionName "2.2.6"
+        versionCode 109
+        versionName "2.2.6.1"
         flavorDimensions "versionCode"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
-        debug {
-            keyAlias 'Wisega'
-            keyPassword '123456'
-            storeFile file('../jks/xiaoji.jks')
-            storePassword '123456'
-        }
+
         release {
             keyAlias 'Wisega'
             keyPassword '123456'
@@ -71,4 +66,16 @@ dependencies {
     implementation(name: 'xml-debug', ext: 'aar')
     implementation 'com.pgyersdk:sdk:3.0.0'
     implementation 'com.squareup.okhttp3:okhttp:3.4.1'
+    /*implementation 'com.aliyun.dpa:oss-android-sdk:+'
+
+    implementation 'com.squareup.okio:okio:1.9.0'*/
+
+
+    implementation 'com.aliyun.dpa:oss-android-sdk:+'
+    //implementation 'com.squareup.okio:okio:1.9.0'
+    //implementation files('libs/aliyun-java-sdk-core-3.7.1.jar')
+    //implementation files('libs/aliyun-java-sdk-sts-3.0.0.jar')
+    //implementation files('libs/json-lib-2.4-jdk15.jar')
+
+    //implementation files('libs/javax.servlet-api-3.1.0.jar')
 }

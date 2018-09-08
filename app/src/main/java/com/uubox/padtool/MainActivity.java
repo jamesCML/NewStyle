@@ -34,6 +34,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import com.example.cgodawson.xml.XmlPugiElement;
 import com.pgyersdk.feedback.PgyerFeedbackManager;
 import com.uubox.toolex.ScreenUtils;
@@ -52,11 +53,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+
 
 /**
  * 1.处理未获得权限时APK崩溃
@@ -111,6 +111,25 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     }
 
+    private void testalyun() {
+       /*SimpleUtil.runOnThread(new Runnable() {
+           @Override
+           public void run() {
+               PutObjectRequest putObjectRequest = new PutObjectRequest("usbdata","tempconfigs/test.txt","hellotest".getBytes());
+
+               OSSCredentialProvider provider = new OSSPlainTextAKSKCredentialProvider("LTAICh5dM195Maxr","6JECRijHX9ljNjvrj33hPsfO0fZF3P");
+               OSSClient ossClient = new OSSClient(MainActivity.this,"https://usbdata.oss-cn-shenzhen.aliyuncs.com",provider);
+               try {
+                   PutObjectResult result =  ossClient.putObject(putObjectRequest);
+                   SimpleUtil.log("resultaliyun:"+result);
+               } catch (ClientException e) {
+                   e.printStackTrace();
+               } catch (ServiceException e) {
+                   e.printStackTrace();
+               }
+           }
+       });*/
+    }
     @Override
     protected void onResume() {
         super.onResume();
@@ -425,6 +444,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     private void feedback() {
+        testalyun();
         new PgyerFeedbackManager.PgyerFeedbackBuilder()
                 .setShakeInvoke(false)       //fasle 则不触发摇一摇，最后需要调用 invoke 方法
                 // true 设置需要调用 register 方法使摇一摇生效
