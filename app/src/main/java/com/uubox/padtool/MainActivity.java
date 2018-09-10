@@ -384,16 +384,20 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         new AliyuOSS().uploadFilesToOSS(MainActivity.this, "usbpublicreadwrite", new String[]{"templogs/" + android.os.Build.MODEL + "_" + idkey + "_main.txt", "templogs/" + android.os.Build.MODEL + "_" + idkey + "_ex.txt"}, new String[]{"/data/data/" + CommonUtils.getAppPkgName(MainActivity.this) + "/uuboxiconbackground.png", "/data/data/" + CommonUtils.getAppPkgName(MainActivity.this) + "/uuboxicon.png"}, new OSSCompletedCallback<PutObjectRequest, PutObjectResult>() {
                             @Override
                             public void onSuccess(PutObjectRequest request, PutObjectResult result) {
-                                SimpleUtil.resetWaitTop();
-                                SimpleUtil.addMsgBottomToTop(MainActivity.this, "日志上传成功!", false);
-                                openOSSLOG();
+                                if (request.getUploadFilePath().endsWith("uuboxicon.png")) {
+                                    SimpleUtil.resetWaitTop();
+                                    SimpleUtil.addMsgBottomToTop(MainActivity.this, "日志上传成功!", false);
+                                    openOSSLOG();
+                                }
                             }
 
                             @Override
                             public void onFailure(PutObjectRequest request, ClientException clientException, ServiceException serviceException) {
-                                SimpleUtil.resetWaitTop();
-                                SimpleUtil.addMsgBottomToTop(MainActivity.this, "日志上传失败!", true);
-                                openOSSLOG();
+                                if (request.getUploadFilePath().endsWith("uuboxicon.png")) {
+                                    SimpleUtil.resetWaitTop();
+                                    SimpleUtil.addMsgBottomToTop(MainActivity.this, "日志上传失败!", true);
+                                    openOSSLOG();
+                                }
                             }
                         });
                     } else {
