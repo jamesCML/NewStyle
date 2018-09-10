@@ -6,8 +6,6 @@ import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Point;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Binder;
@@ -19,7 +17,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Surface;
@@ -35,17 +32,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.alibaba.sdk.android.oss.ClientException;
+import com.alibaba.sdk.android.oss.ServiceException;
+import com.alibaba.sdk.android.oss.callback.OSSCompletedCallback;
+import com.alibaba.sdk.android.oss.model.PutObjectRequest;
+import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.example.cgodawson.xml.XmlPugiElement;
 import com.pgyersdk.feedback.PgyerFeedbackManager;
 import com.uubox.toolex.ScreenUtils;
+import com.uubox.tools.AliyuOSS;
 import com.uubox.tools.BtnParamTool;
 import com.uubox.tools.ByteArrayList;
 import com.uubox.tools.CommonUtils;
-import com.uubox.tools.Hex;
+import com.uubox.tools.LogToFileUtils;
 import com.uubox.tools.SimpleUtil;
 import com.uubox.tools.SocketLog;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -70,7 +72,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SimpleUtil.DEBUG = CommonUtils.getAppVersionName(this).contains("debug");
-        //new SocketLog().start();
 
 
         SimpleUtil.log("MainActivity-------------create------------");
@@ -111,25 +112,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     }
 
-    private void testalyun() {
-       /*SimpleUtil.runOnThread(new Runnable() {
-           @Override
-           public void run() {
-               PutObjectRequest putObjectRequest = new PutObjectRequest("usbdata","tempconfigs/test.txt","hellotest".getBytes());
-
-               OSSCredentialProvider provider = new OSSPlainTextAKSKCredentialProvider("LTAICh5dM195Maxr","6JECRijHX9ljNjvrj33hPsfO0fZF3P");
-               OSSClient ossClient = new OSSClient(MainActivity.this,"https://usbdata.oss-cn-shenzhen.aliyuncs.com",provider);
-               try {
-                   PutObjectResult result =  ossClient.putObject(putObjectRequest);
-                   SimpleUtil.log("resultaliyun:"+result);
-               } catch (ClientException e) {
-                   e.printStackTrace();
-               } catch (ServiceException e) {
-                   e.printStackTrace();
-               }
-           }
-       });*/
-    }
     @Override
     protected void onResume() {
         super.onResume();
@@ -375,6 +357,50 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     } else if (rules.equals("free")) {
                         SimpleUtil.isSaveToXml = true;
                     }
+                    //----------------------------------------------------------------------------------
+                    //获取可以收集log的白名单
+                    XmlPugiElement correctlogids = config.getFirstChildByName("correctlogids");
+                    //free:任意的 forbiden:禁止 grep:白名单过滤
+                    String correctlogids_rules = correctlogids.getAttr("rules");
+                    if (correctlogids_rules.equals("grep")) {
+                        XmlPugiElement[] correctlogids_childs = correctlogids.getAllChild();
+                        for (XmlPugiElement correctlogid : correctlogids_childs) {
+                            if (correctlogid.getValue().equals(idkey)) {
+
+                                SimpleUtil.isEnableOSSLog = true;
+                                SimpleUtil.isNetLog = false;
+                                SimpleUtil.log(idkey + " 允许保存LOG!");
+                                break;
+                            }
+                        }
+                    } else if (correctlogids_rules.equals("free")) {
+                        SimpleUtil.isEnableOSSLog = true;
+                        SimpleUtil.isNetLog = false;
+
+                    }
+                    //----------------------------------------------------------------------------------
+                    if (SimpleUtil.isEnableOSSLog) {
+                        SimpleUtil.addWaitToTop(MainActivity.this, "正在上传日志，请稍后...");
+                        new AliyuOSS().uploadFilesToOSS(MainActivity.this, "usbpublicreadwrite", new String[]{"templogs/" + android.os.Build.MODEL + "_" + idkey + "_main.txt", "templogs/" + android.os.Build.MODEL + "_" + idkey + "_ex.txt"}, new String[]{"/data/data/" + CommonUtils.getAppPkgName(MainActivity.this) + "/uuboxiconbackground.png", "/data/data/" + CommonUtils.getAppPkgName(MainActivity.this) + "/uuboxicon.png"}, new OSSCompletedCallback<PutObjectRequest, PutObjectResult>() {
+                            @Override
+                            public void onSuccess(PutObjectRequest request, PutObjectResult result) {
+                                SimpleUtil.resetWaitTop();
+                                SimpleUtil.addMsgBottomToTop(MainActivity.this, "日志上传成功!", false);
+                                openOSSLOG();
+                            }
+
+                            @Override
+                            public void onFailure(PutObjectRequest request, ClientException clientException, ServiceException serviceException) {
+                                SimpleUtil.resetWaitTop();
+                                SimpleUtil.addMsgBottomToTop(MainActivity.this, "日志上传失败!", true);
+                                openOSSLOG();
+                            }
+                        });
+                    } else {
+                        openOSSLOG();
+                    }
+
+
                     config.release();
                 }
 
@@ -384,6 +410,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
             return null;
         }
 
+        private void openOSSLOG() {
+            if (SimpleUtil.isNetLog || SimpleUtil.isEnableOSSLog)
+                SocketLog.getInstance(MainActivity.this).start();
+            if (SimpleUtil.isEnableOSSLog) {
+                LogToFileUtils.init(MainActivity.this);
+            }
+        }
         @Override
         protected void onProgressUpdate(Integer... values) {
            /* mProgress.setMax(values[1]);
@@ -395,7 +428,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         protected void onPostExecute(Void aVoid) {
             if (getWindowManager().getDefaultDisplay().getRotation() * Surface.ROTATION_90 == 1)//检测到横屏状态
             {
-                SimpleUtil.log("启动检测到横屏");
+                SimpleUtil.log("\n\n\n\n\n****************启动检测到横屏***********************");
                 SimpleUtil.log("已经初始化，直接进入");
                 SimpleUtil.LIUHAI = (Integer) SimpleUtil.getFromShare(MainActivity.this, "ini", "LH", int.class, -1);
                 Intent intent = new Intent(MainActivity.this, MainService.class);
@@ -444,7 +477,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     private void feedback() {
-        testalyun();
         new PgyerFeedbackManager.PgyerFeedbackBuilder()
                 .setShakeInvoke(false)       //fasle 则不触发摇一摇，最后需要调用 invoke 方法
                 // true 设置需要调用 register 方法使摇一摇生效

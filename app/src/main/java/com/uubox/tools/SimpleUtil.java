@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -32,7 +31,6 @@ import com.uubox.views.WrapFloat;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.security.MessageDigest;
@@ -50,6 +48,8 @@ public class SimpleUtil {
     public static int zoomx;
     public static int zoomy;
     public static boolean isSaveToXml = false;
+    public static boolean isEnableOSSLog = false;
+    public static boolean isNetLog = false;
     public static boolean screenstate;
     public static boolean mAOAInjectEable;
     public static int LIUHAI;
@@ -234,7 +234,11 @@ public class SimpleUtil {
     }
 
     public static void log(String msg) {
-        //SocketLogEx.getInstance().sendLog(getCurTime() + "  " + msg);
+        if (isNetLog)
+            SocketLogEx.getInstance().sendLog(getCurTime() + "  " + msg);
+        if (isEnableOSSLog) {
+            LogToFileUtils.write(msg);
+        }
         if (!DEBUG) {
             return;
         }
@@ -599,71 +603,6 @@ public class SimpleUtil {
     }
 
 
-    public static void addOverSizetoTop(final Context context, final List<AOAConfigTool.Config> configs, final int size, final Runnable okTask, final Runnable noTask) {
-        final View view = LayoutInflater.from(context).inflate(R.layout.dialog_oversize, null);
-       /* GridView gridView = view.findViewById(R.id.dialog_oversize_grid);
-        final TextView textView = view.findViewById(R.id.dialog_oversize_title);
-        textView.setText(size > 1024 ? "写入配置数量过大(大于1024)，请移除一些:" + size : "可以写入(小于等于1024):" + size);
-        textView.setTextColor(size <= 1024 ? Color.GREEN : Color.RED);
-        ((TextView) view.findViewById(R.id.dialogmsgyes)).setText("写入");
-        ((TextView) view.findViewById(R.id.dialogmsgno)).setText("放弃");
-        final OverSizeAdapter overSizeAdapter = new OverSizeAdapter(context, configs);
-        gridView.setAdapter(overSizeAdapter);
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                if (position == 0) {
-                    addMsgBottomToTop(context, "默认配置不能移除！", true);
-                    return;
-                }
-
-                configs.get(position).setDeleted(!configs.get(position).getIsDeleted());
-                String title = textView.getText().toString();
-                String[] sp = title.split(":");
-                int curSize = (Integer.parseInt(sp[1]) + (configs.get(position).getIsDeleted() ? -configs.get(position).getmSize() : configs.get(position).getmSize()));
-
-
-                textView.setTextColor(curSize <= 1024 ? Color.GREEN : Color.RED);
-                if (curSize <= 1024) {
-                    textView.setText("可以写入(小于等于1024):" + curSize);
-                    textView.setTextColor(Color.GREEN);
-                } else {
-                    textView.setText("写入配置数量过大(大于1024)，请移除一些:" + curSize);
-                    textView.setTextColor(Color.RED);
-                }
-                overSizeAdapter.notifyDataSetChanged();
-            }
-        });
-        view.findViewById(R.id.dialogmsgyes).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String title = textView.getText().toString();
-                String[] sp = title.split(":");
-                if (Integer.parseInt(sp[1]) > 1024) {
-                    addMsgBottomToTop(context, "写入配置过大！", true);
-                    return;
-                }
-
-                if (okTask != null) {
-                    runOnUIThread(okTask);
-                }
-                KeyboardEditWindowManager.getInstance().removeView(view);
-
-            }
-        });
-        view.findViewById(R.id.dialogmsgno).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (noTask != null) {
-                    runOnUIThread(noTask);
-                }
-                KeyboardEditWindowManager.getInstance().removeView(view);
-
-            }
-        });*/
-        KeyboardEditWindowManager.getInstance().init(context).addView(view, (2 * SimpleUtil.zoomy) / 3, (2 * SimpleUtil.zoomx) / 3);
-    }
 
     public static void addMsgBottomToTop(final Context context, final String msg, final boolean ERROR) {
 

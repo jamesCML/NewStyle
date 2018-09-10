@@ -743,23 +743,25 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                         btn = KeyboardView.Btn.MOUSE_LEFT;
                     } else if (data[3] == 0x02) {
                         btn = KeyboardView.Btn.MOUSE_RIGHT;
-                    }
-                    if (data[3] == 0x04) {
+                    } else if (data[3] == 0x04) {
                         btn = KeyboardView.Btn.MOUSE_IN;
+                    } else if (data[3] == 0x10) {//前侧键
+                        btn = KeyboardView.Btn.MOUSE_SIDE_FRONT;
+                    } else if (data[3] == 0x08) {//后侧键
+                        btn = KeyboardView.Btn.MOUSE_SIDE_BACK;
                     }
+
                 } else if (data[9] != 0)//功能按键
                 {
                     if (data[9] == 0x01) {
                         btn = KeyboardView.Btn.CTRL_LEFT;
                     } else if (data[9] == 0x10) {
                         btn = KeyboardView.Btn.CTRL_RGHT;
-                    }
-                    if (data[9] == 0x04) {
+                    } else if (data[9] == 0x04) {
                         btn = KeyboardView.Btn.ALT_LEFT;
                     } else if (data[9] == 0x40) {
                         btn = KeyboardView.Btn.ALT_RIGHT;
-                    }
-                    if (data[9] == 0x02) {
+                    } else if (data[9] == 0x02) {
                         btn = KeyboardView.Btn.SHIFT_LEFT;
                     } else if (data[9] == 0x20) {
                         btn = KeyboardView.Btn.SHIFT_RIGHT;
@@ -868,7 +870,9 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
 
         mBtMap.put(KeyboardView.Btn.MOUSE_LEFT, (byte) 0xf0);
         mBtMap.put(KeyboardView.Btn.MOUSE_RIGHT, (byte) 0xf1);
-        mBtMap.put(KeyboardView.Btn.MOUSE_IN, (byte) 0xf4);
+        mBtMap.put(KeyboardView.Btn.MOUSE_IN, (byte) 0xf2);
+        mBtMap.put(KeyboardView.Btn.MOUSE_SIDE_FRONT, (byte) 0xf4);
+        mBtMap.put(KeyboardView.Btn.MOUSE_SIDE_BACK, (byte) 0xf3);
 
     }
 

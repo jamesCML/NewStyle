@@ -150,6 +150,13 @@ public class BtnUtil {
                 drawableId = R.mipmap.key_mouse_in;
                 break;
 
+            //侧键
+            case MOUSE_SIDE_FRONT:
+                drawableId = R.mipmap.key_mouse_side_front;
+                break;
+            case MOUSE_SIDE_BACK:
+                drawableId = R.mipmap.key_mouse_side_back;
+                break;
 
             //字母
             case KEY_Q:

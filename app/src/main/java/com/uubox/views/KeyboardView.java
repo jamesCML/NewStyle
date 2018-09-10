@@ -1321,6 +1321,9 @@ public class KeyboardView extends FrameLayout
         MOUSE_IN("mouse_in"),
         MOUSE_RIGHT("mouse_right"),
 
+        MOUSE_SIDE_FRONT("key_mouse_side_front"),
+        MOUSE_SIDE_BACK("key_mouse_side_back"),
+
         KEY_M("key_m"),
         //2017-12-20
         KEY_DOUHAO("key_douhao"),

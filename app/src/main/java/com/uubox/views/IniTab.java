@@ -31,6 +31,11 @@ import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.alibaba.sdk.android.oss.ClientException;
+import com.alibaba.sdk.android.oss.ServiceException;
+import com.alibaba.sdk.android.oss.callback.OSSCompletedCallback;
+import com.alibaba.sdk.android.oss.model.PutObjectRequest;
+import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.pgyersdk.update.DownloadFileListener;
 import com.pgyersdk.update.PgyUpdateManager;
 import com.pgyersdk.update.UpdateManagerListener;
@@ -39,8 +44,10 @@ import com.uubox.adapters.GunQaAdapter;
 import com.uubox.adapters.MoveConfigAdapter;
 import com.uubox.padtool.R;
 import com.uubox.tools.AOAConfigTool;
+import com.uubox.tools.AliyuOSS;
 import com.uubox.tools.CommonUtils;
 import com.uubox.tools.Hex;
+import com.uubox.tools.LogToFileUtils;
 import com.uubox.tools.SimpleUtil;
 
 import java.io.File;
@@ -692,7 +699,9 @@ public class IniTab {
             view.findViewById(R.id.iniabout_savexml).setVisibility(View.VISIBLE);
             ((TextView) (view.findViewById(R.id.iniabout_savexml))).setText("配置保存:允许");
         }
-
+        if (SimpleUtil.isEnableOSSLog) {
+            view.findViewById(R.id.iniabout_correctlog).setVisibility(View.VISIBLE);
+        }
 
         addItem("基本信息");
         mViewPageList.add(view);

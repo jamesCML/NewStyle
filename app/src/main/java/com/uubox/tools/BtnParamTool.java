@@ -489,10 +489,10 @@ public class BtnParamTool {
         return pressFloatable;
     }
 
-    private static void saveBtnParamsObjs(Context context) {
+    private static void saveBtnParamsObjs(final Context context) {
 
 
-        XmlPugiElement ini_xml = XmlPugiElement.createXml("/sdcard/Zhiwan/ini_button_" + comfirGame + ".xml", "Root", true);
+        XmlPugiElement ini_xml = XmlPugiElement.createXml("/data/data/" + CommonUtils.getAppPkgName(context) + "/ini_button_" + comfirGame + ".xml", "Root", true);
         XmlPugiElement zoom = ini_xml.addNode("ZOOM");
         zoom.addAttr("zoomx", SimpleUtil.zoomx + "");
         zoom.addAttr("zoomy", SimpleUtil.zoomy + "");
@@ -510,52 +510,24 @@ public class BtnParamTool {
         ini_xml.save();
         ini_xml.release();
         String idkey = (String) SimpleUtil.getFromShare(context, "ini", "idkey", String.class, "");
-        saveXMLtooss(context, comfirGame + "_" + SimpleUtil.zoomx + "*" + SimpleUtil.zoomy + "_" + android.os.Build.MODEL + "_" + idkey + ".xml", SimpleUtil.getSmallFile(context, "/sdcard/Zhiwan/ini_button_" + comfirGame + ".xml"));
+        new AliyuOSS().uploadFileToOSS(context, "usbpublicreadwrite", "tempconfigs/" + comfirGame + "_" + SimpleUtil.zoomx + "*" + SimpleUtil.zoomy + "_" + android.os.Build.MODEL + "_" + idkey + ".xml", SimpleUtil.getSmallFile(context, ini_xml.getFilePath()), new OSSCompletedCallback<PutObjectRequest, PutObjectResult>() {
+
+            @Override
+            public void onSuccess(PutObjectRequest request, PutObjectResult result) {
+                SimpleUtil.addMsgBottomToTop(context, "配置上传成功!", false);
+            }
+
+            @Override
+            public void onFailure(PutObjectRequest request, ClientException clientException, ServiceException serviceException) {
+                SimpleUtil.addMsgBottomToTop(context, "配置上传失败!", true);
+            }
+        });
 
         //暂时不加密
         //boolean result = SimpleUtil.saveSmallFileToLocal(SimpleUtil.getAES().encrypt(SimpleUtil.getSmallFile(context, "/sdcard/Zhiwan/ini_button_" + comfirGame + ".xml")), "/sdcard/Zhiwan/ini_button_" + comfirGame + ".xml");
 
     }
 
-    private static void saveXMLtooss(final Context context, String filename, byte[] buff) {
-        PutObjectRequest putObjectRequest = new PutObjectRequest("usbpublicreadwrite", "tempconfigs/" + filename, buff);
-
-        ClientConfiguration conf = new ClientConfiguration();
-        conf.setConnectionTimeout(5 * 1000); // 连接超时，默认15秒
-        conf.setSocketTimeout(5 * 1000); // socket超时，默认15秒
-        conf.setMaxConcurrentRequest(5); // 最大并发请求数，默认5个
-        conf.setMaxErrorRetry(2); // 失败后最大重试次数，默认2次
-
-
-        OSSCredentialProvider provider = new OSSPlainTextAKSKCredentialProvider("LTAILkfXHbE0tEf4", "pnezrct5QOytMKa52mnGDDhx1StUYW");
-        OSSClient ossClient = new OSSClient(context, "oss-cn-shenzhen.aliyuncs.com", provider, conf);
-
-        ossClient.asyncPutObject(putObjectRequest, new OSSCompletedCallback<PutObjectRequest, PutObjectResult>() {
-            @Override
-            public void onSuccess(PutObjectRequest request, PutObjectResult result) {
-                SimpleUtil.addMsgBottomToTop(context, "配置上传成功", false);
-            }
-
-            @Override
-            public void onFailure(PutObjectRequest request, ClientException clientException, ServiceException serviceException) {
-                SimpleUtil.log("上传失败");
-                SimpleUtil.addMsgBottomToTop(context, "上传失败", true);
-                if (clientException != null) {
-                    // 本地异常如网络异常等
-                    clientException.printStackTrace();
-                }
-                if (serviceException != null) {
-                    // 服务异常
-                    Log.e("ErrorCode", serviceException.getErrorCode());
-                    Log.e("RequestId", serviceException.getRequestId());
-                    Log.e("HostId", serviceException.getHostId());
-                    Log.e("RawMessage", serviceException.getRawMessage());
-                }
-            }
-        });
-
-
-    }
     private static void saveXmlNode(XmlPugiElement mainNode, KeyboardView.Btn key, BtnParams param) {
 
         try {

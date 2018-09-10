@@ -56,8 +56,20 @@
         android:layout_marginTop="5dp"
         android:textColor="@color/mk_white"
         android:textSize="20sp"
-        android:text="配置保存"
+        android:text="配置保存:允许"
         android:id="@+id/iniabout_savexml"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:background="@drawable/dialog_message_box"
+        android:padding="3dp"
+        android:visibility="gone"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/mk_white"
+        android:textSize="20sp"
+        android:text="收集日志:允许"
+        android:id="@+id/iniabout_correctlog"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 </LinearLayout>

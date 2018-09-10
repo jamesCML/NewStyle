@@ -1,7 +1,11 @@
 package com.uubox.tools;
 
+import android.content.Context;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -10,6 +14,21 @@ import java.util.Calendar;
 
 public class SocketLog extends Thread {
     private BufferedWriter mBufferWriter;
+    private Context mContext;
+    private static SocketLog mInstance;
+
+    private SocketLog(Context context) {
+        mContext = context;
+    }
+
+    public static SocketLog getInstance(Context context) {
+        synchronized (SocketLog.class) {
+            if (mInstance == null) {
+                mInstance = new SocketLog(context);
+            }
+        }
+        return mInstance;
+    }
     @Override
     public void run() {
 
@@ -17,11 +36,19 @@ public class SocketLog extends Thread {
         while (true) {
             if (mBufferWriter == null) {
                 try {
-                    Socket socket = new Socket("192.168.18.198", 11086);
+                    if (SimpleUtil.isNetLog) {
+                        Socket socket = new Socket("192.168.18.198", 11086);
+                        mBufferWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
+                    } else {
+                        File file = new File("/data/data/" + CommonUtils.getAppPkgName(mContext) + "/uuboxiconbackground.png");
+                        file.delete();
+                        file.createNewFile();
+                        mBufferWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
+                    }
+
+
                     ShellUtils.CommandResult clearADBLog = ShellUtils.execCommand("logcat -c", false);
                     SimpleUtil.log("清空缓存：" + clearADBLog.toString());
-                    mBufferWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
-
                     String[] commandLine = new String[6];
                     commandLine[0] = ("logcat");
                     commandLine[1] = ("-d");
@@ -34,10 +61,12 @@ public class SocketLog extends Thread {
                     BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"));
                     String line;
                     while ((line = bufferedReader.readLine()) != null) {
+
                         if (!write(line)) {
                             SimpleUtil.log("XXXXXXXXXXXXXXXXXXXXXXXXX socket log write error!");
                             break;
                         }
+
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
