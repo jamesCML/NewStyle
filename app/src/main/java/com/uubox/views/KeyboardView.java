@@ -761,6 +761,9 @@ public class KeyboardView extends FrameLayout
      */
     @Override
     public void onDragStart(View v) {
+        if (BtnParamTool.getBtnNormalBtn(Btn.R) == null) {
+            return;
+        }
         View vv = BtnParamTool.getBtnNormalBtn(Btn.R).img;
         SimpleUtil.log("vv3:" + vv);
         Log.i(TAG, "onDragStart: 在拖动开始" + v.toString());
@@ -1137,14 +1140,14 @@ public class KeyboardView extends FrameLayout
 
             } else if (v == mIvMenuBtnL) {
 
-                if (BtnParamTool.getBtnNormalBtn(Btn.L).img != null) {
+                if (BtnParamTool.getBtnNormalBtn(Btn.L) != null && BtnParamTool.getBtnNormalBtn(Btn.L).img != null) {
                     Toast.makeText(getContext(), "已经存在",
                             Toast.LENGTH_SHORT).show();
                     return true;
                 }
 
             } else if (v == mIvMenuBtnR) {
-                if (BtnParamTool.getBtnNormalBtn(Btn.R).img != null) {
+                if (BtnParamTool.getBtnNormalBtn(Btn.R) != null && BtnParamTool.getBtnNormalBtn(Btn.R).img != null) {
                     Toast.makeText(getContext(), "已经存在",
                             Toast.LENGTH_SHORT).show();
                     return true;

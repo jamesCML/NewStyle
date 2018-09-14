@@ -39,6 +39,10 @@ import com.alibaba.sdk.android.oss.model.PutObjectRequest;
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.example.cgodawson.xml.XmlPugiElement;
 import com.pgyersdk.feedback.PgyerFeedbackManager;
+import com.pgyersdk.update.DownloadFileListener;
+import com.pgyersdk.update.PgyUpdateManager;
+import com.pgyersdk.update.UpdateManagerListener;
+import com.pgyersdk.update.javabean.AppBean;
 import com.uubox.toolex.ScreenUtils;
 import com.uubox.tools.AliyuOSS;
 import com.uubox.tools.BtnParamTool;
@@ -139,7 +143,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private void runInit() {
         SimpleUtil.log("runInit initask execute");
-        new IniTask().execute();
+        checkUpdate(500);
     }
 
     @Override
@@ -278,6 +282,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 //先获取唯一key
                 String idkey = (String) SimpleUtil.getFromShare(MainActivity.this, "ini", "idkey", String.class, "");
                 SimpleUtil.log("idkey:" + idkey);
+                SimpleUtil.putOneInfoToMap("idkey", idkey);
                 if (idkey.isEmpty()) {
                     String getidkey = new Random().nextDouble() + "" + new Random().nextDouble();
                     SimpleUtil.log("getidkey:" + getidkey + "\n" + SimpleUtil.getSha1(getidkey));
@@ -385,7 +390,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                             @Override
                             public void onSuccess(PutObjectRequest request, PutObjectResult result) {
                                 if (request.getUploadFilePath().endsWith("uuboxicon.png")) {
-                                    SimpleUtil.resetWaitTop();
+                                    SimpleUtil.resetWaitTop(MainActivity.this);
                                     SimpleUtil.addMsgBottomToTop(MainActivity.this, "日志上传成功!", false);
                                     openOSSLOG();
                                 }
@@ -394,7 +399,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                             @Override
                             public void onFailure(PutObjectRequest request, ClientException clientException, ServiceException serviceException) {
                                 if (request.getUploadFilePath().endsWith("uuboxicon.png")) {
-                                    SimpleUtil.resetWaitTop();
+                                    SimpleUtil.resetWaitTop(MainActivity.this);
                                     SimpleUtil.addMsgBottomToTop(MainActivity.this, "日志上传失败!", true);
                                     openOSSLOG();
                                 }
@@ -413,6 +418,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
             return null;
         }
+
 
         private void openOSSLOG() {
             if (SimpleUtil.isNetLog || SimpleUtil.isEnableOSSLog)
@@ -475,12 +481,104 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
+    private void checkUpdate(int delay) {
+        SimpleUtil.runOnUIThread(new Runnable() {
+            @Override
+            public void run() {
+                new PgyUpdateManager.Builder()
+                        .setForced(true)
+                        .setUserCanRetry(false)
+                        .setDeleteHistroyApk(true)
+                        .setUpdateManagerListener(new UpdateManagerListener() {
+                            @Override
+                            public void onNoUpdateAvailable() {
+                                //没有更新是回调此方法
+                                SimpleUtil.log("there is no new version");
+                                new IniTask().execute();
+                            }
+
+                            @Override
+                            public void onUpdateAvailable(final AppBean appBean) {
+                                SimpleUtil.log("蒲公英版本:" + appBean.getVersionCode());
+                                boolean isForce = Integer.parseInt(appBean.getVersionCode()) % 2 == 0;
+
+                                SimpleUtil.addMsgtoTop(MainActivity.this, "版本更新", "发现新版本[" + appBean.getVersionName() + "]可更新\n当前应用版本[" + CommonUtils.getAppVersionName(MainActivity.this) + "]",
+                                        new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                                                    SimpleUtil.addMsgBottomToTop(MainActivity.this, "应用【存储权限】未打开，升级失败！", true);
+                                                    return;
+                                                }
+                                                SimpleUtil.addMsgBottomToTop(MainActivity.this, "开始下载...", false);
+                                                SimpleUtil.addWaitToTop(MainActivity.this, "升级进度 0%");
+                                                PgyUpdateManager.downLoadApk(appBean.getDownloadURL());
+                                            }
+                                        }, new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                new IniTask().execute();
+                                            }
+                                        }, isForce);//说明:双数表示强制升级，主要涉及一些重要结构调整必须升级 单数则不强制升级
+
+
+                                //PgyUpdateManager.downLoadApk(appBean.getDownloadURL());
+                            }
+
+                            @Override
+                            public void checkUpdateFailed(Exception e) {
+                                //更新检测失败回调
+
+                                e.printStackTrace();
+                                //  SimpleUtil.log("check update failed ");
+                            }
+                        })
+                        //注意 ：
+                        //下载方法调用 PgyUpdateManager.downLoadApk(appBean.getDownloadURL()); 此回调才有效
+                        //此方法是方便用户自己实现下载进度和状态的 UI 提供的回调
+                        //想要使用蒲公英的默认下载进度的UI则不设置此方法
+                        .setDownloadFileListener(new DownloadFileListener() {
+                            @Override
+                            public void downloadFailed() {
+                                //下载失败
+                                // SimpleUtil.closeDialog(mContext);
+                                SimpleUtil.resetWaitTop(MainActivity.this);
+                                SimpleUtil.addMsgBottomToTop(MainActivity.this, "下载异常，升级失败！", true);
+
+                            }
+
+                            @Override
+                            public void downloadSuccessful(final Uri uri) {
+                                SimpleUtil.log("download apk ok");
+                                // 使用蒲公英提供的安装方法提示用户 安装apk
+                                SimpleUtil.resetWaitTop(MainActivity.this);
+                                SimpleUtil.addMsgBottomToTop(MainActivity.this, "新版本下载成功！准备安装！", false);
+                                SimpleUtil.runOnUIThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        PgyUpdateManager.installApk(uri);
+                                    }
+                                }, 2000);
+                            }
+
+                            @Override
+                            public void onProgressUpdate(Integer... integers) {
+                                SimpleUtil.updateWaitTopMsg("升级进度 " + integers[0] + "%");
+                                SimpleUtil.log("apkupdate download apk progress" + integers[0]);
+                                //SimpleUtil.updateWaiting(MainActivity.this,"升级中 "+integers[0]+"/100");
+                            }
+                        }).register();
+            }
+        }, delay);
+    }
     @Override
     public void onBackPressed() {
         System.exit(0);
     }
 
     private void feedback() {
+        String idkey = (String) SimpleUtil.getFromShare(MainActivity.this, "ini", "idkey", String.class, "");
+        SimpleUtil.putOneInfoToMap("idkey", idkey);
         new PgyerFeedbackManager.PgyerFeedbackBuilder()
                 .setShakeInvoke(false)       //fasle 则不触发摇一摇，最后需要调用 invoke 方法
                 // true 设置需要调用 register 方法使摇一摇生效

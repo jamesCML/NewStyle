@@ -121,90 +121,16 @@ public class IniTab {
         SimpleUtil.log("show the Initab");
         KeyboardEditWindowManager.getInstance().hideOrShowBottomUIMenu(false);
         KeyboardEditWindowManager.getInstance().addView(parent, (7 * SimpleUtil.zoomy) / 8, (7 * SimpleUtil.zoomx) / 8);
-        checkUpdate(1000);
-    }
-
-    private void checkUpdate(int delay) {
-        SimpleUtil.runOnUIThread(new Runnable() {
-            @Override
-            public void run() {
-                new PgyUpdateManager.Builder()
-                        .setForced(true)
-                        .setUserCanRetry(false)
-                        .setDeleteHistroyApk(true)
-                        .setUpdateManagerListener(new UpdateManagerListener() {
-                            @Override
-                            public void onNoUpdateAvailable() {
-                                //没有更新是回调此方法
-                                SimpleUtil.log("there is no new version");
-                            }
-
-                            @Override
-                            public void onUpdateAvailable(final AppBean appBean) {
-                                SimpleUtil.log("蒲公英版本:" + appBean.getVersionCode());
-                                SimpleUtil.addMsgtoTop(mContext, "版本更新", "发现新版本[" + appBean.getVersionName() + "]可更新\n当前应用版本[" + CommonUtils.getAppVersionName(mContext) + "]",
-                                        new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                                                    SimpleUtil.addMsgBottomToTop(mContext, "应用【存储权限】未打开，升级失败！", true);
-                                                    return;
-                                                }
-                                                SimpleUtil.addMsgBottomToTop(mContext, "开始下载...", false);
-                                                PgyUpdateManager.downLoadApk(appBean.getDownloadURL());
-                                            }
-                                        }, null, false);
-                                //PgyUpdateManager.downLoadApk(appBean.getDownloadURL());
-                            }
-
-                            @Override
-                            public void checkUpdateFailed(Exception e) {
-                                //更新检测失败回调
-                                e.printStackTrace();
-                                //  SimpleUtil.log("check update failed ");
-                            }
-                        })
-                        //注意 ：
-                        //下载方法调用 PgyUpdateManager.downLoadApk(appBean.getDownloadURL()); 此回调才有效
-                        //此方法是方便用户自己实现下载进度和状态的 UI 提供的回调
-                        //想要使用蒲公英的默认下载进度的UI则不设置此方法
-                        .setDownloadFileListener(new DownloadFileListener() {
-                            @Override
-                            public void downloadFailed() {
-                                //下载失败
-                                // SimpleUtil.closeDialog(mContext);
-                                //SimpleUtil.toast(MainActivity.this,"下载异常，升级失败！");
-                                SimpleUtil.addMsgBottomToTop(mContext, "下载异常，升级失败！", true);
-
-                            }
-
-                            @Override
-                            public void downloadSuccessful(final Uri uri) {
-                                SimpleUtil.log("download apk ok");
-                                // 使用蒲公英提供的安装方法提示用户 安装apk
-                                SimpleUtil.addMsgBottomToTop(mContext, "新版本下载成功！准备安装！", false);
-                                SimpleUtil.runOnUIThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        PgyUpdateManager.installApk(uri);
-                                    }
-                                }, 2000);
-                            }
-
-                            @Override
-                            public void onProgressUpdate(Integer... integers) {
-                                SimpleUtil.log("apkupdate download apk progress" + integers[0]);
-                                //SimpleUtil.updateWaiting(MainActivity.this,"升级中 "+integers[0]+"/100");
-                            }
-                        }).register();
-            }
-        }, delay);
     }
 
     private void WriteConfigs() {
 
         String gloabkeyconfig = (String) SimpleUtil.getFromShare(mContext, "ini", "gloabkeyconfig", String.class, "");
         final String[] sp0 = gloabkeyconfig.split("#Z%W#", -1);
+        if (sp0.length < 2) {
+            SimpleUtil.addMsgBottomToTop(mContext, "配置加载出错！", true);
+            return;
+        }
         SimpleUtil.log("test当前使用:" + sp0[1] + "\n" + gloabkeyconfig);
         final View view = LayoutInflater.from(mContext).inflate(R.layout.dialog_oversize, null);
         final View listPar = view.findViewById(R.id.dialog_oversize_list_par);
@@ -232,7 +158,7 @@ public class IniTab {
             public void run() {
                 SimpleUtil.addWaitToTop(mContext, "正在加载，请稍后...");
                 final boolean isMatch = AOAConfigTool.getInstance(mContext).AnysLeftRihgtConfigs(configsLeftData, configsRightData);
-                SimpleUtil.resetWaitTop();
+                SimpleUtil.resetWaitTop(mContext);
                 SimpleUtil.runOnUIThread(new Runnable() {
                     @Override
                     public void run() {

@@ -651,7 +651,7 @@ public class SimpleUtil {
                 waitViewTop.setLayoutParams(layoutParams);
                 waittingMsg = waitViewTop.findViewById(R.id.waitingmsg);
                 waittingMsg.setText(message);
-                KeyboardEditWindowManager.getInstance().init(context).addView(waitViewTop, (2 * SimpleUtil.zoomy) / 3, (2 * SimpleUtil.zoomx) / 3);
+                KeyboardEditWindowManager.getInstance().init(context).addView(waitViewTop, (9 * SimpleUtil.zoomy) / 20, (2 * SimpleUtil.zoomx) / 3);
             }
         });
     }
@@ -668,11 +668,11 @@ public class SimpleUtil {
         });
     }
 
-    public static void resetWaitTop() {
+    public static void resetWaitTop(final Context context) {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-                KeyboardEditWindowManager.getInstance().removeView(waitViewTop);
+                KeyboardEditWindowManager.getInstance().init(context).removeView(waitViewTop);
                 waitViewTop = null;
                 waittingMsg = null;
             }

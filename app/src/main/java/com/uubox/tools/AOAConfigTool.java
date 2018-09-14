@@ -359,7 +359,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                             SimpleUtil.updateWaitTopMsg("正在载入\n  " + allConfigs.get(i).getmBelongGame() + "\n    " + allConfigs.get(i).getmConfigName());
                             if (!diveSend(allConfigs.get(i).mData.all2Bytes(), index_)) {
                                 SimpleUtil.log("请求错误！" + Hex.toString(mReq.mReqResult) + "," + false);
-                                SimpleUtil.resetWaitTop();
+                                SimpleUtil.resetWaitTop(mContext);
                                 SimpleUtil.addMsgBottomToTop(mContext, "配置写入失败！", true);
                                 return;
                             }
@@ -370,7 +370,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                         SimpleUtil.log("保底配置顺序，查询一下！！！");
                         //保底配置顺序，查询一下
                         byte[] d0data = getDeviceConfigD0();
-                        SimpleUtil.resetWaitTop();
+                        SimpleUtil.resetWaitTop(mContext);
                         if (d0data != null) {
                             SimpleUtil.addMsgBottomToTop(mContext, "配置写入成功！", false);
                             SimpleUtil.saveToShare(mContext, "ini", "configschange", false);

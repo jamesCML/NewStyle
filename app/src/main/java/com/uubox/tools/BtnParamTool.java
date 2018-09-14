@@ -6,6 +6,7 @@ import android.util.Log;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -94,9 +95,14 @@ public class BtnParamTool {
         int zoomx = Integer.parseInt(childs[0].getAttr("zoomx"));
         int zoomy = Integer.parseInt(childs[0].getAttr("zoomy"));
         mBtnParams.clear();
+        List<String> enumValues = getBtnEnumValues();
         for (int i = 1; i < childs.length; i++) {
             XmlPugiElement element = childs[i];
             String nodeName = element.getName();
+            if (!enumValues.contains(nodeName)) {
+                SimpleUtil.log("找不到该枚举:" + nodeName);
+                continue;
+            }
             KeyboardView.Btn key = KeyboardView.Btn.valueOf(nodeName);
             if (mBtnParams.containsKey(key)) {
                 continue;
@@ -122,6 +128,14 @@ public class BtnParamTool {
 
     }
 
+    private static List<String> getBtnEnumValues() {
+        KeyboardView.Btn[] values = KeyboardView.Btn.values();
+        List<String> enumValues = new ArrayList<>(values.length);
+        for (KeyboardView.Btn btn : values) {
+            enumValues.add(btn.name());
+        }
+        return enumValues;
+    }
     public static void setIsScreenChange(boolean change) {
         isScreenChange = change;
     }
@@ -270,6 +284,7 @@ public class BtnParamTool {
                 subParams.setEy((Integer) SimpleUtil.getFromShare(sp, btn.getPrefEY() + "_2", int.class, -1));
                 subParams.setR((Integer) SimpleUtil.getFromShare(sp, btn.getPrefR() + "_2", int.class, -1));
                 subParams.setKeyType((Integer) SimpleUtil.getFromShare(sp, btn.getPrefType() + "_2", int.class, 0));
+
 
                 subParams.setMode((Integer) SimpleUtil.getFromShare(sp, btn.getPrefMode() + "_2", int.class, 0));
                 subParams.setStep((Integer) SimpleUtil.getFromShare(sp, btn.getPrefStep() + "_2", int.class, 15));

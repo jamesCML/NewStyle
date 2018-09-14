@@ -42,7 +42,7 @@ public class SaveBtnParamsTask extends AsyncTask<String, Integer, String> {
         if (mKeyboardView != null) {
             // SimpleUtil.notifyall_(1, null);
         }
-        SimpleUtil.resetWaitTop();
+        SimpleUtil.resetWaitTop(mContext);
         SimpleUtil.addMsgBottomToTop(mContext, "已保存到本地！", false);
 
         if (isNewIni) {
