@@ -31,7 +31,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.alibaba.sdk.android.oss.ClientException;
 import com.alibaba.sdk.android.oss.ServiceException;
 import com.alibaba.sdk.android.oss.callback.OSSCompletedCallback;
@@ -43,25 +42,19 @@ import com.pgyersdk.update.DownloadFileListener;
 import com.pgyersdk.update.PgyUpdateManager;
 import com.pgyersdk.update.UpdateManagerListener;
 import com.pgyersdk.update.javabean.AppBean;
+import com.uubox.threads.IniTask;
 import com.uubox.toolex.ScreenUtils;
 import com.uubox.tools.AliyuOSS;
 import com.uubox.tools.BtnParamTool;
-import com.uubox.tools.ByteArrayList;
 import com.uubox.tools.CommonUtils;
 import com.uubox.tools.LogToFileUtils;
 import com.uubox.tools.SimpleUtil;
 import com.uubox.tools.SocketLog;
 
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 
 /**
@@ -72,6 +65,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private TextView mLoadMsg;
     private Button mButton;
     private boolean mIsJugeFloat;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -265,200 +259,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    class IniTask extends AsyncTask<Void, Integer, Void> {
-        @Override
-        protected void onPreExecute() {
 
-            SimpleUtil.log("IniTask onPreExecute");
-            mProgress.setVisibility(View.VISIBLE);
-            mButton.clearAnimation();
-            mButton.setVisibility(View.GONE);
-            mLoadMsg.setText("正在加载资源...");
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            try {
-                //先获取唯一key
-                String idkey = (String) SimpleUtil.getFromShare(MainActivity.this, "ini", "idkey", String.class, "");
-                SimpleUtil.log("idkey:" + idkey);
-                SimpleUtil.putOneInfoToMap("idkey", idkey);
-                if (idkey.isEmpty()) {
-                    String getidkey = new Random().nextDouble() + "" + new Random().nextDouble();
-                    SimpleUtil.log("getidkey:" + getidkey + "\n" + SimpleUtil.getSha1(getidkey));
-                    SimpleUtil.saveToShare(MainActivity.this, "ini", "idkey", SimpleUtil.getSha1(getidkey));
-                }
-                idkey = (String) SimpleUtil.getFromShare(MainActivity.this, "ini", "idkey", String.class, "");
-                OkHttpClient okHttpClient = new OkHttpClient();
-                Request request = new Request.Builder().url("https://usbdata.oss-cn-shenzhen.aliyuncs.com/usbconfig.xml").build();
-                Response response = okHttpClient.newCall(request).execute();
-                if (response.isSuccessful()) {
-                    InputStream inputStream = response.body().byteStream();
-                    int len = 0;
-                    ByteArrayList buffList = new ByteArrayList();
-                    byte[] buff = new byte[1024];
-                    while ((len = inputStream.read(buff)) > 0) {
-                        buffList.add(Arrays.copyOfRange(buff, 0, len));
-                    }
-
-                    XmlPugiElement config = new XmlPugiElement(SimpleUtil.getAES().decrypt(buffList.all2Bytes()));
-                    if (!config.loadSucess) {
-                        return null;
-                    }
-                    XmlPugiElement keyconfigs = config.getFirstChildByName("keyconfigs");
-
-                    int configVersion = Integer.parseInt(keyconfigs.getAttr("version"));
-
-                    int curConfigVer = (Integer) SimpleUtil.getFromShare(MainActivity.this, "ini", "configver", int.class);
-                    SimpleUtil.log("服务器配置版本:" + configVersion + ",当前配置版本:" + curConfigVer);
-                    if (curConfigVer < configVersion) {
-                        XmlPugiElement[] childs = keyconfigs.getAllChild();
-
-                        //String use = null;
-                        for (XmlPugiElement element : childs) {
-                            String ini = element.getAttr("name");
-                       /* if (ini.contains("刺激战场")) {
-                            use = ini;
-                            continue;
-                        }*/
-                            request = new Request.Builder().url(element.getValue()).build();
-                            response = okHttpClient.newCall(request).execute();
-                            if (response.isSuccessful()) {
-                                buffList.clear();
-                                buff = new byte[1024];
-                                inputStream = response.body().byteStream();
-                                while ((len = inputStream.read(buff)) > 0) {
-                                    buffList.add(Arrays.copyOfRange(buff, 0, len));
-                                }
-                                String getmd5 = CommonUtils.getmd5(buffList.all2Bytes());
-                                String childmd5 = element.getAttr("md5");
-                                if (!getmd5.equals(childmd5)) {
-                                    SimpleUtil.log(ini + " MD5校验错误！");
-                                    return null;
-                                }
-                                BtnParamTool.setComfirGame(ini);
-                                BtnParamTool.updateGuanfangConfig(MainActivity.this, SimpleUtil.getAES().decrypt(buffList.all2Bytes()));
-
-                            }
-                        }
-                        SimpleUtil.saveToShare(MainActivity.this, "ini", "configver", configVersion);
-                    }
-
-                    //获取可以配置xml的白名单
-                    XmlPugiElement savexmlids = config.getFirstChildByName("savexmlids");
-                    //free:任意的 forbiden:禁止 grep:白名单过滤
-                    String rules = savexmlids.getAttr("rules");
-
-                    if (rules.equals("grep")) {
-                        XmlPugiElement[] savexmlids_childs = savexmlids.getAllChild();
-                        for (XmlPugiElement savexmlid : savexmlids_childs) {
-                            if (savexmlid.getValue().equals(idkey)) {
-
-                                SimpleUtil.isSaveToXml = true;
-                                SimpleUtil.log(idkey + " 允许保存配置文件!");
-                                break;
-                            }
-                        }
-                    } else if (rules.equals("free")) {
-                        SimpleUtil.isSaveToXml = true;
-                    }
-                    //----------------------------------------------------------------------------------
-                    //获取可以收集log的白名单
-                    XmlPugiElement correctlogids = config.getFirstChildByName("correctlogids");
-                    //free:任意的 forbiden:禁止 grep:白名单过滤
-                    String correctlogids_rules = correctlogids.getAttr("rules");
-                    if (correctlogids_rules.equals("grep")) {
-                        XmlPugiElement[] correctlogids_childs = correctlogids.getAllChild();
-                        for (XmlPugiElement correctlogid : correctlogids_childs) {
-                            if (correctlogid.getValue().equals(idkey)) {
-
-                                SimpleUtil.isEnableOSSLog = true;
-                                SimpleUtil.isNetLog = false;
-                                SimpleUtil.log(idkey + " 允许保存LOG!");
-                                break;
-                            }
-                        }
-                    } else if (correctlogids_rules.equals("free")) {
-                        SimpleUtil.isEnableOSSLog = true;
-                        SimpleUtil.isNetLog = false;
-
-                    }
-                    //----------------------------------------------------------------------------------
-                    if (SimpleUtil.isEnableOSSLog) {
-                        SimpleUtil.addWaitToTop(MainActivity.this, "正在上传日志，请稍后...");
-                        new AliyuOSS().uploadFilesToOSS(MainActivity.this, "usbpublicreadwrite", new String[]{"templogs/" + android.os.Build.MODEL + "_" + idkey + "_main.txt", "templogs/" + android.os.Build.MODEL + "_" + idkey + "_ex.txt"}, new String[]{"/data/data/" + CommonUtils.getAppPkgName(MainActivity.this) + "/uuboxiconbackground.png", "/data/data/" + CommonUtils.getAppPkgName(MainActivity.this) + "/uuboxicon.png"}, new OSSCompletedCallback<PutObjectRequest, PutObjectResult>() {
-                            @Override
-                            public void onSuccess(PutObjectRequest request, PutObjectResult result) {
-                                if (request.getUploadFilePath().endsWith("uuboxicon.png")) {
-                                    SimpleUtil.resetWaitTop(MainActivity.this);
-                                    SimpleUtil.addMsgBottomToTop(MainActivity.this, "日志上传成功!", false);
-                                    openOSSLOG();
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(PutObjectRequest request, ClientException clientException, ServiceException serviceException) {
-                                if (request.getUploadFilePath().endsWith("uuboxicon.png")) {
-                                    SimpleUtil.resetWaitTop(MainActivity.this);
-                                    SimpleUtil.addMsgBottomToTop(MainActivity.this, "日志上传失败!", true);
-                                    openOSSLOG();
-                                }
-                            }
-                        });
-                    } else {
-                        openOSSLOG();
-                    }
-
-
-                    config.release();
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-
-        private void openOSSLOG() {
-            if (SimpleUtil.isNetLog || SimpleUtil.isEnableOSSLog)
-                SocketLog.getInstance(MainActivity.this).start();
-            if (SimpleUtil.isEnableOSSLog) {
-                LogToFileUtils.init(MainActivity.this);
-            }
-        }
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-           /* mProgress.setMax(values[1]);
-            mProgress.setProgress(values[0]);
-            mLoadMsg.setText("正在加载资源 " + values[0] + "/" + values[1]);*/
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            if (getWindowManager().getDefaultDisplay().getRotation() * Surface.ROTATION_90 == 1)//检测到横屏状态
-            {
-                SimpleUtil.log("\n\n\n\n\n****************启动检测到横屏***********************");
-                SimpleUtil.log("已经初始化，直接进入");
-                SimpleUtil.LIUHAI = (Integer) SimpleUtil.getFromShare(MainActivity.this, "ini", "LH", int.class, -1);
-                Intent intent = new Intent(MainActivity.this, MainService.class);
-                startService(intent);
-                finish();
-                return;
-            }
-
-            mLoadMsg.setText("初始化完成！进入游戏会自动显示游戏键位图！");
-            mProgress.setVisibility(View.GONE);
-            mButton.setText("点击我后台运行");
-            mButton.setVisibility(View.VISIBLE);
-            AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0);
-            alphaAnimation.setDuration(300);
-            alphaAnimation.setRepeatCount(Animation.INFINITE);
-            alphaAnimation.setRepeatMode(Animation.REVERSE);
-            mButton.startAnimation(alphaAnimation);
-
-        }
-    }
 
     /**
      * 进入沉浸模式
@@ -494,7 +295,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                             public void onNoUpdateAvailable() {
                                 //没有更新是回调此方法
                                 SimpleUtil.log("there is no new version");
-                                new IniTask().execute();
+                                exeIniTask();
                             }
 
                             @Override
@@ -517,7 +318,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                         }, new Runnable() {
                                             @Override
                                             public void run() {
-                                                new IniTask().execute();
+                                                exeIniTask();
                                             }
                                         }, isForce);//说明:双数表示强制升级，主要涉及一些重要结构调整必须升级 单数则不强制升级
 
@@ -571,11 +372,48 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
         }, delay);
     }
+
     @Override
     public void onBackPressed() {
         System.exit(0);
     }
 
+    private void exeIniTask() {
+        new IniTask(MainActivity.this, new IniTask.IIniexecallback() {
+            @Override
+            public void onPreExecute() {
+                SimpleUtil.log("IniTask onPreExecute");
+                mProgress.setVisibility(View.VISIBLE);
+                mButton.clearAnimation();
+                mButton.setVisibility(View.GONE);
+                mLoadMsg.setText("正在加载资源...");
+            }
+
+            @Override
+            public void onPostExecute() {
+                if (getWindowManager().getDefaultDisplay().getRotation() * Surface.ROTATION_90 == 1)//检测到横屏状态
+                {
+                    SimpleUtil.log("\n\n\n\n\n****************启动检测到横屏***********************");
+                    SimpleUtil.log("已经初始化，直接进入");
+                    SimpleUtil.LIUHAI = (Integer) SimpleUtil.getFromShare(MainActivity.this, "ini", "LH", int.class, -1);
+                    Intent intent = new Intent(MainActivity.this, MainService.class);
+                    startService(intent);
+                    finish();
+                    return;
+                }
+
+                mLoadMsg.setText("初始化完成！进入游戏会自动显示游戏键位图！");
+                mProgress.setVisibility(View.GONE);
+                mButton.setText("点击我后台运行");
+                mButton.setVisibility(View.VISIBLE);
+                AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0);
+                alphaAnimation.setDuration(300);
+                alphaAnimation.setRepeatCount(Animation.INFINITE);
+                alphaAnimation.setRepeatMode(Animation.REVERSE);
+                mButton.startAnimation(alphaAnimation);
+            }
+        }).execute();
+    }
     private void feedback() {
         String idkey = (String) SimpleUtil.getFromShare(MainActivity.this, "ini", "idkey", String.class, "");
         SimpleUtil.putOneInfoToMap("idkey", idkey);

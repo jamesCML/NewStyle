@@ -82,14 +82,9 @@ public class BtnParamTool {
 
         //SimpleUtil.log("updateGuanfangConfig,"+comfirGame+"\n"+new String(okxmlbuff));
         XmlPugiElement xmlPugiElement = new XmlPugiElement(okxmlbuff);
-
-        XmlPugiElement pixtag = xmlPugiElement.getFirstChildByName("Z" + SimpleUtil.zoomx + SimpleUtil.zoomy);
-        if (pixtag.loadSucess) {
-            SimpleUtil.log(comfirGame + " 寻找到符合的配置：" + "Z" + SimpleUtil.zoomx + SimpleUtil.zoomy);
-            xmlPugiElement = pixtag;
-        } else {//默认使用1080*1920
-            SimpleUtil.log(comfirGame + " 寻找不到符合的配置：" + "Z" + SimpleUtil.zoomx + SimpleUtil.zoomy);
-            xmlPugiElement = xmlPugiElement.getFirstChildByName("Z10802160");
+        if (!xmlPugiElement.loadSucess) {
+            SimpleUtil.addMsgBottomToTop(context, "配置解析出错！", true);
+            return;
         }
         XmlPugiElement[] childs = xmlPugiElement.getAllChild();
         int zoomx = Integer.parseInt(childs[0].getAttr("zoomx"));
@@ -525,7 +520,7 @@ public class BtnParamTool {
         ini_xml.save();
         ini_xml.release();
         String idkey = (String) SimpleUtil.getFromShare(context, "ini", "idkey", String.class, "");
-        new AliyuOSS().uploadFileToOSS(context, "usbpublicreadwrite", "tempconfigs/" + comfirGame + "_" + SimpleUtil.zoomx + "*" + SimpleUtil.zoomy + "_" + android.os.Build.MODEL + "_" + idkey + ".xml", SimpleUtil.getSmallFile(context, ini_xml.getFilePath()), new OSSCompletedCallback<PutObjectRequest, PutObjectResult>() {
+        new AliyuOSS(context).uploadFileToOSS("usbpublicreadwrite", "tempconfigs/" + comfirGame + "_" + SimpleUtil.zoomx + "*" + SimpleUtil.zoomy + "_" + android.os.Build.MODEL + "_" + idkey + ".xml", SimpleUtil.getSmallFile(context, ini_xml.getFilePath()), new OSSCompletedCallback<PutObjectRequest, PutObjectResult>() {
 
             @Override
             public void onSuccess(PutObjectRequest request, PutObjectResult result) {
