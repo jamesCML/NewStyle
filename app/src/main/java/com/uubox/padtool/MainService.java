@@ -106,7 +106,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
 
         //先判断是否支持USB
         boolean isSurportUSB = isSurportUSB();
-        //SimpleUtil.log("support usb:" + isSurportUSB);
+        SimpleUtil.log("support usb:" + isSurportUSB);
         if (!isSurportUSB) {
             return;
         }
@@ -227,7 +227,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
     }
 
     private boolean isSurportUSB() {
-        return getPackageManager().hasSystemFeature("android.hardware.usb.host");
+        return getPackageManager().hasSystemFeature("android.hardware.usb.accessory");
     }
 
     private void requstPermission(UsbDevice usbDevice) {

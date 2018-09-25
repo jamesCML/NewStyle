@@ -282,7 +282,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
+    private boolean mIsShowUpdate;
     private void checkUpdate(int delay) {
+        if (mIsShowUpdate) {
+            return;
+        }
         SimpleUtil.runOnUIThread(new Runnable() {
             @Override
             public void run() {
@@ -300,13 +304,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
                             @Override
                             public void onUpdateAvailable(final AppBean appBean) {
+                                mIsShowUpdate = true;
                                 SimpleUtil.log("蒲公英版本:" + appBean.getVersionCode());
-                                boolean isForce = Integer.parseInt(appBean.getVersionCode()) % 2 == 0;
+                                final boolean isForce = Integer.parseInt(appBean.getVersionCode()) % 2 == 0;
 
-                                SimpleUtil.addMsgtoTop(MainActivity.this, "版本更新", "发现新版本[" + appBean.getVersionName() + "]可更新\n当前应用版本[" + CommonUtils.getAppVersionName(MainActivity.this) + "]",
+                                SimpleUtil.popWindow(MainActivity.this, "版本更新", "发现新版本[" + appBean.getVersionName() + "]可更新\n当前应用版本[" + CommonUtils.getAppVersionName(MainActivity.this) + "]",
                                         new Runnable() {
                                             @Override
                                             public void run() {
+                                                mIsShowUpdate = false;
                                                 if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                                                     SimpleUtil.addMsgBottomToTop(MainActivity.this, "应用【存储权限】未打开，升级失败！", true);
                                                     return;
@@ -318,9 +324,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                         }, new Runnable() {
                                             @Override
                                             public void run() {
-                                                exeIniTask();
+                                                mIsShowUpdate = false;
+                                                if (isForce) {
+                                                    System.exit(0);
+                                                } else {
+                                                    exeIniTask();
+                                                }
+
                                             }
-                                        }, isForce);//说明:双数表示强制升级，主要涉及一些重要结构调整必须升级 单数则不强制升级
+                                        }, "下载", isForce ? "退出" : "取消", false, 0);//说明:双数表示强制升级，主要涉及一些重要结构调整必须升级 单数则不强制升级
 
 
                                 //PgyUpdateManager.downLoadApk(appBean.getDownloadURL());
@@ -375,7 +387,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onBackPressed() {
-        System.exit(0);
+        return;
     }
 
     private void exeIniTask() {
@@ -537,4 +549,5 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
         return false;
     }
+
 }

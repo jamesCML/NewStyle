@@ -63,7 +63,7 @@ public class IniTask extends AsyncTask<Void, Integer, Void> {
 
             int curConfigVer = (Integer) SimpleUtil.getFromShare(mContext, "ini", "configver", int.class);
             SimpleUtil.log("服务器配置版本:" + configVersion + ",当前配置版本:" + curConfigVer);
-            if (curConfigVer < configVersion) {//testfor
+            if (curConfigVer < configVersion) {
                 String[] games = {"荒野行动", "绝地求生之刺激战场", "绝地求生之全军出击", "终结者", "穿越火线", "小米枪战", "丛林法则", "光荣使命"};
                 for (String game : games) {
                     boolean isExist = aliyuOSS.isExistFile("usbdata", "keycongfigs2/" + game + "_" + SimpleUtil.zoomx + "" + SimpleUtil.zoomy + ".xml");

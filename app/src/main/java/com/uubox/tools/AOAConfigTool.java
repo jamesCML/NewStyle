@@ -874,6 +874,8 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
         mBtMap.put(KeyboardView.Btn.MOUSE_SIDE_FRONT, (byte) 0xf4);
         mBtMap.put(KeyboardView.Btn.MOUSE_SIDE_BACK, (byte) 0xf3);
 
+        mBtMap.put(KeyboardView.Btn.CAPS, (byte) 0x39);
+
     }
 
     public KeyboardView.Btn getBtnByByte(byte b) {
