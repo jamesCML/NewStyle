@@ -5,8 +5,8 @@ android {
         applicationId "com.uubox.padtool"
         minSdkVersion 19
         targetSdkVersion 22
-        versionCode 130
-        versionName "2.2.9"
+        versionCode 132
+        versionName "2.3.0"
         flavorDimensions "versionCode"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -38,7 +38,13 @@ android {
     productFlavors {
         UUBox_Wisega {
             applicationId "com.uubox.padtool"
-            manifestPlaceholders = [app_icon: "@mipmap/ic_launcher", appname: "UUBox"]
+            manifestPlaceholders = [app_icon: "@mipmap/ic_launcher", appname: "UUBOX",aoafilter:"@xml/accessory_filter"]
+            //buildConfigField "int", "TYPE", "1"
+            signingConfig signingConfigs.release
+        }
+        UUBox_XJ {
+            applicationId "com.fpsbox.padtool"
+            manifestPlaceholders = [app_icon: "@mipmap/ic_launcher", appname: "FPSBOX",aoafilter:"@xml/accessory_filter_xj"]
             //buildConfigField "int", "TYPE", "1"
             signingConfig signingConfigs.release
         }

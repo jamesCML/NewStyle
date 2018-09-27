@@ -10,7 +10,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.BitmapFactory;
 import android.graphics.PixelFormat;
@@ -40,7 +39,6 @@ import com.uubox.threads.AccInputThread;
 import com.uubox.tools.AOAConfigTool;
 import com.uubox.tools.BtnParamTool;
 import com.uubox.tools.SimpleUtil;
-import com.uubox.views.BtnParams;
 import com.uubox.views.GuiStep;
 import com.uubox.views.KeyboardEditWindowManager;
 import com.uubox.views.KeyboardFloatView;
@@ -50,9 +48,6 @@ import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 public class MainService extends Service implements SimpleUtil.INormalBack {
     private UsbManager mUSBManager;
@@ -76,6 +71,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
     @Override
     public void onCreate() {
         super.onCreate();
+        SimpleUtil.log("服务Oncreate");
         SimpleUtil.zoomx = (Integer) SimpleUtil.getFromShare(getBaseContext(), "ini", "zoomx", int.class);
         SimpleUtil.zoomy = (Integer) SimpleUtil.getFromShare(getBaseContext(), "ini", "zoomy", int.class);
         initWindowOnlyOnce();
@@ -86,10 +82,11 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        SimpleUtil.log("服务Start");
         HomeWatcherReceiver homeReceiver = new HomeWatcherReceiver();
         registerReceiver(homeReceiver, new IntentFilter("android.intent.action.CLOSE_SYSTEM_DIALOGS"));
         init();
-        SimpleUtil.log("服务启动");
+
         if (BtnParamTool.isShowKbFloatView(getBaseContext()) && mWindowManager.getDefaultDisplay().getRotation() * Surface.ROTATION_90 == 1) {
             SimpleUtil.log("开启小健位");
             SimpleUtil.runOnUIThread(new Runnable() {
@@ -110,7 +107,11 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         if (!isSurportUSB) {
             return;
         }
-
+        if (mParcelFileDescriptor != null) {
+            mHandler.removeMessages(HANDLE_SCAN_AOA);
+            SimpleUtil.log("already exits!");
+            return;
+        }
         //列出设备
      /*   HashMap<String, UsbDevice> deviceList = mUSBManager.getDeviceList();
         Iterator<UsbDevice> it = deviceList.values().iterator();
@@ -171,37 +172,57 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
     }
 
     private void openUsbAccessory(UsbAccessory usbAccessory) {
-        SimpleUtil.log("openUsbAccessory");
+        SimpleUtil.log("openUsbAccessory:" + this.hashCode());
+
         mParcelFileDescriptor = mUSBManager.openAccessory(usbAccessory);
+
         if (mParcelFileDescriptor == null) {
-            mHandler.removeMessages(HANDLE_SCAN_AOA);
-            SimpleUtil.log("already exits!");
+            SimpleUtil.addMsgBottomToTop(this, "与设备连接失败！请重新插拔数据线！", true);
             return;
         }
         FileDescriptor fileDescriptor = mParcelFileDescriptor.getFileDescriptor();
-        AccInputThread mAccInputThread = new AccInputThread(new FileInputStream(fileDescriptor), new FileOutputStream(fileDescriptor));
+
+        //final FileOutputStream fileOutputStream = new FileOutputStream(fileDescriptor);
+
+        final AccInputThread mAccInputThread = new AccInputThread(this, fileDescriptor);
         mAccInputThread.start();
         mAOAConfigTool.startConnect(mAccInputThread);
         SimpleUtil.log("openUsbAccessory sucessful!!!!!");
         mAOAConfigTool.setAOAInfo(usbAccessory.getManufacturer(), usbAccessory.getModel(), usbAccessory.getSerial());
-        byte[] result = mAOAConfigTool.writeWaitResult((byte) 0xb3, new byte[]{(byte) 0xa5, (byte) 0x04, (byte) 0xb3, (byte) 0x5c}, 3000);
-        if (result == null) {
-            SimpleUtil.log("读取版本信息出错");
-        } else {
-            SimpleUtil.mDeviceVersion = result[3] & 0xff;
-            SimpleUtil.log("获取版本信息:" + SimpleUtil.mDeviceVersion);
-            SimpleUtil.putOneInfoToMap("devver", SimpleUtil.mDeviceVersion + "");
-        }
+
+        /*SimpleUtil.runOnThread(new Runnable() {
+            @Override
+            public void run() {
+               try {
+                   SimpleUtil.sleep(3000);
+
+                   fileOutputStream.write(new byte[]{(byte) 0xa5, (byte) 0x05, (byte) 0xb2, (byte) 0x01, (byte) 0x5d});
+                   fileOutputStream.flush();
+                   SimpleUtil.log("发送数据成功！！！！！！！！！！！！！！！！！！！！！！");
+               }catch (Exception e)
+               {
+                   e.printStackTrace();
+                   SimpleUtil.log("发送失败！！！！！！！！！！！！！！！！！！！！！！！！！");
+               }
+            }
+        });*/
         mHandler.removeMessages(HANDLE_SCAN_AOA);
         mfloatingIv.setImageResource((Integer) mfloatingIv.getTag() == 1 ? R.mipmap.ic_folat_online : R.mipmap.ic_folat_online_edge);
 
-        SimpleUtil.notifyall_(10004, null);
-        SimpleUtil.runOnUIThread(new Runnable() {
+
+        SimpleUtil.runOnThread(new Runnable() {
             @Override
             public void run() {
-                checkConfigChange();
+                SimpleUtil.sleep(1500);
+                SimpleUtil.notifyall_(10004, null);
+                SimpleUtil.runOnUIThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        checkConfigChange();
+                    }
+                }, 200);
             }
-        }, 200);
+        });
 
     }
 
@@ -653,7 +674,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
                     //SimpleUtil.addMsgBottomToTop(getBaseContext(),"与设备之间的连接已经断开！",true);
                     //System.exit(0);
                     // SimpleUtil.log("HANDLE_SCAN_AOA:"+5);
-                    //mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 3000);
+                    // mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 3);
 
                 }
             });

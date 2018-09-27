@@ -1,31 +1,38 @@
 package com.uubox.threads;
 
+import android.content.Context;
+
+import com.uubox.tools.AOAConfigTool;
+import com.uubox.tools.Hex;
+import com.uubox.tools.SimpleUtil;
+
+import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
-import com.uubox.tools.Hex;
-import com.uubox.tools.SimpleUtil;
-
 public class AccInputThread extends Thread {
     private FileInputStream mFileInputStream;
-    private boolean flag = true;
     private FileOutputStream mFileOutputStream;
+    private FileDescriptor mFileDescriptor;
+    private Context mContext;
 
-    public AccInputThread(FileInputStream fileInputStream, FileOutputStream fileOutputStream) {
-        mFileInputStream = fileInputStream;
-        mFileOutputStream = fileOutputStream;
+    public AccInputThread(Context context, FileDescriptor fileDescriptor) {
+        mFileDescriptor = fileDescriptor;
+        mContext = context;
     }
 
     @Override
     public void run() {
-        int len;
-        byte[] buff = new byte[1024];
-        byte[] temp;
-        while (flag) {
-            try {
-                len = mFileInputStream.read(buff);
+        try {
+            int len;
+            byte[] buff = new byte[1024];
+            byte[] temp;
+            mFileInputStream = new FileInputStream(mFileDescriptor);
+            mFileOutputStream = new FileOutputStream(mFileDescriptor);
+            readDevVer();
+            while ((len = mFileInputStream.read(buff)) > 0) {
                 temp = Arrays.copyOfRange(buff, 0, len);
                 if (len <= 0) {
                     try {
@@ -39,21 +46,39 @@ public class AccInputThread extends Thread {
                     return;
                 }
                 SimpleUtil.notifyall_(10002, temp);
-            } catch (Exception e) {
-                e.printStackTrace();
-                SimpleUtil.log("AccInputThread is close see exception!");
-                flag = false;
-                try {
-                    mFileInputStream.close();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-                mFileInputStream = null;
-                SimpleUtil.notifyall_(10006, null);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            SimpleUtil.log("AccInputThread is close see exception!");
+            try {
+                mFileInputStream.close();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            mFileInputStream = null;
+            SimpleUtil.notifyall_(10006, null);
         }
     }
 
+    private void readDevVer() {
+        SimpleUtil.runOnThread(new Runnable() {
+            @Override
+            public void run() {
+                SimpleUtil.sleep(200);
+                byte[] result = AOAConfigTool.getInstance(mContext).writeWaitResult((byte) 0xb3, new byte[]{(byte) 0xa5, (byte) 0x04, (byte) 0xb3, (byte) 0x5c}, 3000);
+                if (result == null) {
+                    SimpleUtil.log("读取版本信息出错");
+                    SimpleUtil.addMsgBottomToTop(mContext, "读取设备版本失败！", true);
+                } else {
+                    SimpleUtil.mDeviceVersion = result[3] & 0xff;
+                    SimpleUtil.log("获取版本信息:" + SimpleUtil.mDeviceVersion);
+                    SimpleUtil.putOneInfoToMap("devver", SimpleUtil.mDeviceVersion + "");
+                }
+            }
+        });
+
+
+    }
     public boolean writeAcc(byte[] data) {
         try {
             if (mFileOutputStream == null) {

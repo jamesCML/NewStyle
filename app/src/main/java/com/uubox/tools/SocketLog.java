@@ -36,7 +36,7 @@ public class SocketLog extends Thread {
         while (true) {
             if (mBufferWriter == null) {
                 try {
-                    if (SimpleUtil.isNetLog) {
+                    if (SimpleUtil.isNetLog || SimpleUtil.DEBUG) {
                         Socket socket = new Socket("192.168.18.198", 11086);
                         mBufferWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
                     } else {

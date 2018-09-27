@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -502,7 +503,7 @@ public class BtnParamTool {
     private static void saveBtnParamsObjs(final Context context) {
 
 
-        XmlPugiElement ini_xml = XmlPugiElement.createXml("/data/data/" + CommonUtils.getAppPkgName(context) + "/ini_button_" + comfirGame + ".xml", "Root", true);
+        XmlPugiElement ini_xml = XmlPugiElement.createXml("/data/data/" + CommonUtils.getAppPkgName(context) + "/uubox_ini_button_" + comfirGame + ".xml", "Root", true);
         XmlPugiElement zoom = ini_xml.addNode("ZOOM");
         zoom.addAttr("zoomx", SimpleUtil.zoomx + "");
         zoom.addAttr("zoomy", SimpleUtil.zoomy + "");
@@ -519,12 +520,14 @@ public class BtnParamTool {
         }
         ini_xml.save();
         ini_xml.release();
+        final File file = new File("/data/data/" + CommonUtils.getAppPkgName(context) + "/uubox_ini_button_" + comfirGame + ".xml");
         String idkey = (String) SimpleUtil.getFromShare(context, "ini", "idkey", String.class, "");
-        new AliyuOSS(context).uploadFileToOSS("usbpublicreadwrite", "tempconfigs/" + comfirGame + "_" + SimpleUtil.zoomx + "*" + SimpleUtil.zoomy + "_" + android.os.Build.MODEL + "_" + idkey + ".xml", SimpleUtil.getSmallFile(context, ini_xml.getFilePath()), new OSSCompletedCallback<PutObjectRequest, PutObjectResult>() {
+        new AliyuOSS(context).uploadFileToOSS("usbpublicreadwrite", "tempconfigs/" + comfirGame + "_uubox_" + SimpleUtil.zoomx + "*" + SimpleUtil.zoomy + "_" + android.os.Build.MODEL + "_" + idkey + ".xml", SimpleUtil.getSmallFile(context, ini_xml.getFilePath()), new OSSCompletedCallback<PutObjectRequest, PutObjectResult>() {
 
             @Override
             public void onSuccess(PutObjectRequest request, PutObjectResult result) {
                 SimpleUtil.addMsgBottomToTop(context, "配置上传成功!", false);
+                file.delete();
             }
 
             @Override

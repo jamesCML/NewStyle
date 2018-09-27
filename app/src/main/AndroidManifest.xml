@@ -64,7 +64,7 @@
 
             <meta-data
                 android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
-                android:resource="@xml/accessory_filter" />
+                android:resource="${aoafilter}" />
 
 
             <intent-filter>
@@ -84,21 +84,6 @@
             android:name=".MainService"
             android:configChanges="orientation|keyboardHidden|mcc|mnc|locale|touchscreen|navigation|screenLayout|uiMode|screenSize|smallestScreenSize|layoutDirection|fontScale|keyboard">
 
-            <!--  <intent-filter >
-                  <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED">
-                  </action>
-              </intent-filter>-->
-            <!-- <meta-data android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" android:resource="@xml/device_filter">
-             </meta-data>-->
-
-
-            <!-- <intent-filter>
-                 <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"></action>
-             </intent-filter>
-             <meta-data android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
-                 android:resource="@xml/accessory_filter"
-                 >
-             </meta-data>-->
         </service>
 
         <receiver android:name=".GloableRec">

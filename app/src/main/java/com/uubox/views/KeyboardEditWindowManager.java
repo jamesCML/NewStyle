@@ -232,7 +232,7 @@ public class KeyboardEditWindowManager {
         }
 
         if (!SimpleUtil.mAOAInjectEable) {
-            SimpleUtil.log("notifyall_ 10004");
+            SimpleUtil.log("notifyall_2 10004");
 
             SimpleUtil.notifyall_(10004, null);
         }

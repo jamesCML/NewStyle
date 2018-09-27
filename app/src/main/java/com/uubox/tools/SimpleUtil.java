@@ -234,7 +234,7 @@ public class SimpleUtil {
     }
 
     public static void log(String msg) {
-        if (isNetLog)
+        if (isNetLog || SimpleUtil.DEBUG)
             SocketLogEx.getInstance().sendLog(getCurTime() + "  " + msg);
         if (isEnableOSSLog) {
             LogToFileUtils.write(msg);
