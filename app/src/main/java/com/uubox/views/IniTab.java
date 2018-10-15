@@ -128,7 +128,7 @@ public class IniTab {
         String gloabkeyconfig = (String) SimpleUtil.getFromShare(mContext, "ini", "gloabkeyconfig", String.class, "");
         final String[] sp0 = gloabkeyconfig.split("#Z%W#", -1);
         if (sp0.length < 2) {
-            SimpleUtil.addMsgBottomToTop(mContext, "配置加载出错！", true);
+            SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_configloadfail), true);
             return;
         }
         SimpleUtil.log("test当前使用:" + sp0[1] + "\n" + gloabkeyconfig);
@@ -156,7 +156,7 @@ public class IniTab {
         SimpleUtil.runOnThread(new Runnable() {
             @Override
             public void run() {
-                SimpleUtil.addWaitToTop(mContext, "正在加载，请稍后...");
+                SimpleUtil.addWaitToTop(mContext, mContext.getString(R.string.initab_loading_wait));
                 final boolean isMatch = AOAConfigTool.getInstance(mContext).AnysLeftRihgtConfigs(configsLeftData, configsRightData);
                 SimpleUtil.resetWaitTop(mContext);
                 SimpleUtil.runOnUIThread(new Runnable() {
@@ -166,7 +166,7 @@ public class IniTab {
                             configCopyRight.add((AOAConfigTool.Config) config.clone());
                         }
                         if (!isMatch && AOAConfigTool.getInstance(mContext).isAOAConnect()) {
-                            SimpleUtil.addMsgBottomToTop(mContext, "当前配置与设备配置不匹配！请重新写入配置！", true);
+                            SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_configsnotmatch), true);
                         }
                         for (AOAConfigTool.Config config : configsRightData) {
                             if (config.getIsUsed()) {
@@ -188,7 +188,7 @@ public class IniTab {
                             @Override
                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                 if (!AOAConfigTool.getInstance(mContext).isAOAConnect()) {
-                                    SimpleUtil.addMsgBottomToTop(mContext, "请先连接设备再调整配置！", true);
+                                    SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_condev), true);
                                     return;
                                 }
                                 if (configsRightData.get(position).getIsUsed()) {
@@ -211,9 +211,9 @@ public class IniTab {
                                 bqBar.setProgress(bqNum - 1);
                                 cfqBar.setProgress(cfqNum - 1);
                                 akBar.setProgress(akNum - 1);
-                                bq.setText("F2类型:步枪   灵敏度:" + bqNum);
-                                cfq.setText("F1类型:冲锋枪   灵敏度:" + cfqNum);
-                                ak.setText("F3类型:AK47   灵敏度:" + akNum);
+                                bq.setText(mContext.getString(R.string.initab_bq_lmd) + bqNum);
+                                cfq.setText(mContext.getString(R.string.initab_cfq_lmd) + cfqNum);
+                                ak.setText(mContext.getString(R.string.initab_ak_lmd) + akNum);
 
                                 int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "defaultgun", int.class, 0);
                                 ((RadioButton) radioGroup.getChildAt(defaultgun)).setChecked(true);
@@ -226,8 +226,8 @@ public class IniTab {
                         listLeft.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                             @Override
                             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                                if (configsLeftData.get(position).getmConfigName().endsWith("[官方]")) {
-                                    SimpleUtil.addMsgBottomToTop(mContext, "不能删除官方配置", true);
+                                if (SimpleUtil.isOfficialConfig(configsLeftData.get(position).getmConfigName())) {
+                                    SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_del_guanfang), true);
                                     return true;
                                 }
 
@@ -248,7 +248,7 @@ public class IniTab {
                                 SharedPreferences shareLib = mContext.getSharedPreferences(configsLeftData.get(position).getmBelongGame() + "_table", 0);
                                 boolean res = shareLib.edit().remove(configsLeftData.get(position).getmTabKey()).commit();
                                 SimpleUtil.log("delete iniconfig result:" + res);
-                                SimpleUtil.addMsgBottomToTop(mContext, "删除" + (res ? "成功" : "失败"), !res);
+                                SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_del) + (res ? mContext.getString(R.string.initab_sucessful) : mContext.getString(R.string.initab_fail)), !res);
                                 String newConfig = (String) SimpleUtil.getFromShare(mContext, "ini", "NewConfigNotWrite", String.class, "");
                                 if (!newConfig.isEmpty()) {
                                     if (configsLeftData.get(position).getmConfigName().equals(newConfig)) {
@@ -264,7 +264,7 @@ public class IniTab {
                                     if (file.exists()) {
                                         file.delete();
                                         SimpleUtil.delFromShare(mContext, "KeysConfigs", configsLeftData.get(position).getmBelongGame());
-                                        SimpleUtil.addMsgBottomToTop(mContext, "游戏[" + configsLeftData.get(position).getmBelongGame() + "]已清除", false);
+                                        SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_game) + "[" + configsLeftData.get(position).getmBelongGame() + "]" + mContext.getString(R.string.initab_haveclear), false);
                                         SimpleUtil.log("have delete the content " + configsLeftData.get(position).getmBelongGame());
                                     }
                                 }
@@ -278,16 +278,16 @@ public class IniTab {
                         changeGunTv.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                if (changeGunTv.getText().toString().contains("压枪")) {
+                                if (changeGunTv.getText().toString().contains(mContext.getString(R.string.initab_pressgun))) {
                                     view.findViewById(R.id.dialog_oversize_bar).setVisibility(View.GONE);
                                     listPar.setVisibility(View.GONE);
                                     gunPar.setVisibility(View.VISIBLE);
-                                    changeGunTv.setText("点击我跳转到配置选择列表");
+                                    changeGunTv.setText(R.string.initab_gotoconfiglist);
                                 } else {
                                     view.findViewById(R.id.dialog_oversize_bar).setVisibility(View.VISIBLE);
                                     listPar.setVisibility(View.VISIBLE);
                                     gunPar.setVisibility(View.GONE);
-                                    changeGunTv.setText("点击我跳转到压枪设置");
+                                    changeGunTv.setText(R.string.initab_gotogunpresslist);
                                 }
                             }
                         });
@@ -303,7 +303,7 @@ public class IniTab {
                                     if (id == 10014) {
                                         SimpleUtil.removeINormalCallback(this);
                                     } else {
-                                        SimpleUtil.addMsgBottomToTop(mContext, "请先连接设备再调整配置！", true);
+                                        SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_condev), true);
                                     }
                                     return;
                                 }
@@ -311,7 +311,7 @@ public class IniTab {
                                     AOAConfigTool.Config config = (AOAConfigTool.Config) obj;
 
                                     if (config.getIsUsed()) {
-                                        SimpleUtil.addMsgBottomToTop(mContext, "正在使用的配置不能取消！", true);
+                                        SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_curusedel), true);
                                         return;
                                     }
                                     SimpleUtil.saveToShare(mContext, config.getmTabValue(), "isDelete", true);
@@ -324,7 +324,7 @@ public class IniTab {
 
                                 } else if (id == 10008) {//增加一个配置
                                     if (configsRightData.size() == 4) {
-                                        SimpleUtil.addMsgBottomToTop(mContext, "当前最多支持写4个配置！", true);
+                                        SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_more4configs), true);
                                         return;
                                     }
                                     AOAConfigTool.Config config = (AOAConfigTool.Config) obj;
@@ -376,12 +376,12 @@ public class IniTab {
 
                                 } else if (id == 10014) {
                                     if (configCopyRight.size() != configsRightData.size() || (Boolean) SimpleUtil.getFromShare(mContext, "ini", "configschange", boolean.class)) {
-                                        SimpleUtil.addMsgBottomToTop(mContext, "检测到配置更新！自动写入！", false);
+                                        SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_checknewconfigs), false);
                                         view.findViewById(R.id.dialog_oversize_write).performClick();
                                     } else {
                                         for (int i = 0; i < configCopyRight.size(); i++) {
                                             if (!configCopyRight.get(i).equals(configsRightData.get(i)) || configCopyRight.get(i).getIsUsed() != configsRightData.get(i).getIsUsed()) {
-                                                SimpleUtil.addMsgBottomToTop(mContext, "检测到配置更新！自动写入！", false);
+                                                SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_checknewconfigs), false);
                                                 view.findViewById(R.id.dialog_oversize_write).performClick();
                                                 break;
                                             }
@@ -398,7 +398,7 @@ public class IniTab {
                             @Override
                             public void onClick(View v) {
                                 if (rightSize[0] > 1024) {
-                                    SimpleUtil.addMsgBottomToTop(mContext, "配置过大！", true);
+                                    SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_configbiger), true);
                                     return;
                                 }
                                 SimpleUtil.log("dialog_oversize_write==>");
@@ -424,15 +424,15 @@ public class IniTab {
                                 switch (seekBar.getId()) {
 
                                     case R.id.dialog_oversize_gun_cfq:
-                                        cfq.setText("F1类型:冲锋枪   灵敏度:" + progress);
+                                        cfq.setText(mContext.getString(R.string.initab_bq_lmd) + progress);
                                         SimpleUtil.saveToShare(mContext, sp0[2], "cfqNum", progress);
                                         break;
                                     case R.id.dialog_oversize_gun_bq:
-                                        bq.setText("F2类型:步枪   灵敏度:" + progress);
+                                        bq.setText(mContext.getString(R.string.initab_cfq_lmd) + progress);
                                         SimpleUtil.saveToShare(mContext, sp0[2], "bqNum", progress);
                                         break;
                                     case R.id.dialog_oversize_gun_ak:
-                                        ak.setText("F3类型:AK47   灵敏度:" + progress);
+                                        ak.setText(mContext.getString(R.string.initab_ak_lmd) + progress);
                                         SimpleUtil.saveToShare(mContext, sp0[2], "akNum", progress);
                                         break;
                                 }
@@ -469,9 +469,9 @@ public class IniTab {
                         bqBar.setProgress(bqNum - 1);
                         cfqBar.setProgress(cfqNum - 1);
                         akBar.setProgress(akNum - 1);
-                        bq.setText("F2类型:步枪   灵敏度:" + bqNum);
-                        cfq.setText("F1类型:冲锋枪  灵敏度:" + cfqNum);
-                        ak.setText("F3类型:AK47   灵敏度:" + akNum);
+                        bq.setText(mContext.getString(R.string.initab_bq_lmd) + bqNum);
+                        cfq.setText(mContext.getString(R.string.initab_cfq_lmd) + cfqNum);
+                        ak.setText(mContext.getString(R.string.initab_ak_lmd) + akNum);
 
                         int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "defaultgun", int.class, 0);
                         ((RadioButton) radioGroup.getChildAt(defaultgun)).setChecked(true);
@@ -482,13 +482,13 @@ public class IniTab {
                                 RadioButton radioButton = group.findViewById(checkedId);
                                 String text = radioButton.getText().toString();
                                 SimpleUtil.log("checkedId:" + text);
-                                if (text.contains("压枪")) {
+                                if (text.contains(mContext.getString(R.string.initab_pressgun))) {
                                     SimpleUtil.saveToShare(mContext, sp0[2], "defaultgun", 0);
-                                } else if (text.contains("冲锋枪")) {
+                                } else if (text.contains(mContext.getString(R.string.initab_cfq))) {
                                     SimpleUtil.saveToShare(mContext, sp0[2], "defaultgun", 1);
-                                } else if (text.contains("步枪")) {
+                                } else if (text.contains(mContext.getString(R.string.initab_bq))) {
                                     SimpleUtil.saveToShare(mContext, sp0[2], "defaultgun", 2);
-                                } else if (text.contains("AK")) {
+                                } else if (text.contains(mContext.getString(R.string.initab_ak))) {
                                     SimpleUtil.saveToShare(mContext, sp0[2], "defaultgun", 3);
                                 }
                                 SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
@@ -523,7 +523,7 @@ public class IniTab {
                         qaList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                             @Override
                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                SimpleUtil.addMsgtoTop(mContext, "帮助信息", "问:" + qaData.get(position).mQueston + "\n\n答:" + qaData.get(position).mAnswer, null, null, true);
+                                SimpleUtil.addMsgtoTop(mContext, mContext.getString(R.string.initab_helpinfo), mContext.getString(R.string.initab_ask) + qaData.get(position).mQueston + "\n\n" + mContext.getString(R.string.initab_answer) + qaData.get(position).mAnswer, null, null, true);
                             }
                         });
                     }
@@ -532,7 +532,7 @@ public class IniTab {
         });
 
 
-        addItem("我的配置");
+        addItem(mContext.getString(R.string.initab_myconfigs));
         mViewPageList.add(view);
 
         //KeyboardEditWindowManager.getInstance().init(mContext).addView(view, (7 * SimpleUtil.zoomy) / 8, (7 * SimpleUtil.zoomx) / 8);
@@ -541,7 +541,7 @@ public class IniTab {
     private void addHelper() {
         ViewGroup helperitem = (ViewGroup) LayoutInflater.from(mContext).inflate(R.layout.dialog_titlelist, null);
         ((View) helperitem.findViewById(R.id.dialogmsgyes).getParent()).setVisibility(View.GONE);
-        ((TextView) helperitem.findViewById(R.id.titlelist_title)).setText("帮助文档");
+        ((TextView) helperitem.findViewById(R.id.titlelist_title)).setText(R.string.initab_helpdoc);
         ListView listView = helperitem.findViewById(R.id.titlelist_list);
         String[] items = mContext.getResources().getStringArray(R.array.menu_ini_help_items);
         final List<String> data = new ArrayList<>();
@@ -568,7 +568,7 @@ public class IniTab {
             }
         });
 
-        addItem("帮助文档");
+        addItem(mContext.getString(R.string.initab_helpdoc));
         mViewPageList.add(helperitem);
 
 
@@ -587,7 +587,7 @@ public class IniTab {
             public void onClick(View v) {
 
                 if (changshang.getText().toString().isEmpty() || moshi.getText().toString().isEmpty() || xuliehao.getText().toString().isEmpty()) {
-                    SimpleUtil.addMsgBottomToTop(mContext, "信息不完整，不能为空！", true);
+                    SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_infoempty), true);
                     return;
                 }
 
@@ -603,33 +603,33 @@ public class IniTab {
     }
     private void addAbout() {
         View view = LayoutInflater.from(mContext).inflate(R.layout.iniabout, null);
-        ((TextView) (view.findViewById(R.id.iniabout_appver))).setText("应用版本:" + CommonUtils.getAppVersionName(mContext));
-        ((TextView) (view.findViewById(R.id.iniabout_devver))).setText("设备版本:" + (SimpleUtil.mDeviceVersion == 0 ? "读取版本失败" : SimpleUtil.mDeviceVersion));
-        ((TextView) (view.findViewById(R.id.iniabout_pix))).setText("分辨率:" + SimpleUtil.zoomx + "*" + SimpleUtil.zoomy);
-        SpannableStringBuilder spannableString = new SpannableStringBuilder("设备号:" + (String) SimpleUtil.getFromShare(mContext, "ini", "idkey", String.class, ""));
+        ((TextView) (view.findViewById(R.id.iniabout_appver))).setText(mContext.getString(R.string.initab_appver) + CommonUtils.getAppVersionName(mContext));
+        ((TextView) (view.findViewById(R.id.iniabout_devver))).setText(mContext.getString(R.string.initab_devber) + (SimpleUtil.mDeviceVersion == 0 ? mContext.getString(R.string.initab_redverfail) : SimpleUtil.mDeviceVersion));
+        ((TextView) (view.findViewById(R.id.iniabout_pix))).setText(mContext.getString(R.string.initab_pixs) + SimpleUtil.zoomx + "*" + SimpleUtil.zoomy);
+        SpannableStringBuilder spannableString = new SpannableStringBuilder(mContext.getString(R.string.initab_devnum) + (String) SimpleUtil.getFromShare(mContext, "ini", "idkey", String.class, ""));
         AbsoluteSizeSpan sizeSpan = new AbsoluteSizeSpan(50);
-        spannableString.setSpan(sizeSpan, 4, spannableString.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        spannableString.setSpan(sizeSpan, spannableString.toString().indexOf(':'), spannableString.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         ClickableSpan clickableSpan = new ClickableSpan() {
             @Override
             public void onClick(View widget) {
                 ClipboardManager myClipboard = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
                 myClipboard.setPrimaryClip(ClipData.newPlainText("text", (String) SimpleUtil.getFromShare(mContext, "ini", "idkey", String.class, "")));
-                SimpleUtil.addMsgBottomToTop(mContext, "设备号已经复制到剪贴板", false);
+                SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_devnumtoclip), false);
             }
         };
-        spannableString.setSpan(clickableSpan, 4, spannableString.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        spannableString.setSpan(clickableSpan, spannableString.toString().indexOf(':'), spannableString.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         ((TextView) (view.findViewById(R.id.iniabout_count))).setText(spannableString);
         ((TextView) (view.findViewById(R.id.iniabout_count))).setMovementMethod(LinkMovementMethod.getInstance());
 
         if (SimpleUtil.isSaveToXml) {
             view.findViewById(R.id.iniabout_savexml).setVisibility(View.VISIBLE);
-            ((TextView) (view.findViewById(R.id.iniabout_savexml))).setText("配置保存:允许");
+            ((TextView) (view.findViewById(R.id.iniabout_savexml))).setText(R.string.initab_confgsaveallow);
         }
         if (SimpleUtil.isEnableOSSLog) {
             view.findViewById(R.id.iniabout_correctlog).setVisibility(View.VISIBLE);
         }
 
-        addItem("基本信息");
+        addItem(mContext.getString(R.string.initab_baseinfo));
         mViewPageList.add(view);
     }
 

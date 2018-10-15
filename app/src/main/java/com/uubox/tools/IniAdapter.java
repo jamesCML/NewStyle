@@ -57,7 +57,7 @@ public class IniAdapter extends BaseAdapter {
         }
 
         holder.name.setText(data.get(position).name);
-        if (data.get(position).name.endsWith("[官方]")) {
+        if (SimpleUtil.isOfficialConfig(data.get(position).name)) {
             holder.name.setTextColor(context.getResources().getColor(R.color.truered));
         } else {
             holder.name.setTextColor(context.getResources().getColor(R.color.mk_white));

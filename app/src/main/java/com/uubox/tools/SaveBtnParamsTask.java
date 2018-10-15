@@ -3,6 +3,7 @@ package com.uubox.tools;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.uubox.padtool.R;
 import com.uubox.views.KeyboardEditWindowManager;
 import com.uubox.views.KeyboardView;
 
@@ -26,7 +27,7 @@ public class SaveBtnParamsTask extends AsyncTask<String, Integer, String> {
 
     @Override
     protected void onPreExecute() {
-        SimpleUtil.addWaitToTop(mContext, "正在保存，请稍后...");
+        SimpleUtil.addWaitToTop(mContext, mContext.getString(R.string.sbp_saveloading));
     }
 
     @Override
@@ -43,7 +44,7 @@ public class SaveBtnParamsTask extends AsyncTask<String, Integer, String> {
             // SimpleUtil.notifyall_(1, null);
         }
         SimpleUtil.resetWaitTop(mContext);
-        SimpleUtil.addMsgBottomToTop(mContext, "已保存到本地！", false);
+        SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.sbp_savelocal), false);
 
         if (isNewIni) {
             BtnParamTool.loadBtnParamsFromPrefs(mContext);

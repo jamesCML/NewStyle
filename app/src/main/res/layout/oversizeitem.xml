@@ -12,7 +12,7 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:text="游戏"
+            android:text="@string/initab_game"
             android:id="@+id/oversie_content"
             android:textSize="16sp"
             android:singleLine="true"
@@ -23,7 +23,7 @@
             android:layout_height="wrap_content" />
 
         <TextView
-            android:text="名称"
+            android:text="@string/initab_mingcheng"
             android:singleLine="true"
             android:ellipsize="middle"
             android:textColor="#bbffffff"
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content" />
 
         <TextView
-            android:text="容量"
+            android:text="@string/initab_cap"
             android:singleLine="true"
             android:ellipsize="middle"
             android:textColor="#88ffffff"

@@ -9,6 +9,7 @@ import com.alibaba.sdk.android.oss.callback.OSSCompletedCallback;
 import com.alibaba.sdk.android.oss.model.PutObjectRequest;
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.example.cgodawson.xml.XmlPugiElement;
+import com.uubox.padtool.R;
 import com.uubox.tools.AliyuOSS;
 import com.uubox.tools.BtnParamTool;
 import com.uubox.tools.CommonUtils;
@@ -121,13 +122,13 @@ public class IniTask extends AsyncTask<Void, Integer, Void> {
             }
             //----------------------------------------------------------------------------------
             if (SimpleUtil.isEnableOSSLog) {
-                SimpleUtil.addWaitToTop(mContext, "正在上传日志，请稍后...");
+                SimpleUtil.addWaitToTop(mContext, mContext.getString(R.string.ini_uplogloading));
                 new AliyuOSS(mContext).uploadFilesToOSS("usbpublicreadwrite", new String[]{"templogs/" + android.os.Build.MODEL + "_" + idkey + "_main.txt", "templogs/" + android.os.Build.MODEL + "_" + idkey + "_ex.txt"}, new String[]{"/data/data/" + CommonUtils.getAppPkgName(mContext) + "/uuboxiconbackground.png", "/data/data/" + CommonUtils.getAppPkgName(mContext) + "/uuboxicon.png"}, new OSSCompletedCallback<PutObjectRequest, PutObjectResult>() {
                     @Override
                     public void onSuccess(PutObjectRequest request, PutObjectResult result) {
                         if (request.getUploadFilePath().endsWith("uuboxicon.png")) {
                             SimpleUtil.resetWaitTop(mContext);
-                            SimpleUtil.addMsgBottomToTop(mContext, "日志上传成功!", false);
+                            SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.ini_uologok), false);
                             openOSSLOG();
                         }
                     }
@@ -136,7 +137,7 @@ public class IniTask extends AsyncTask<Void, Integer, Void> {
                     public void onFailure(PutObjectRequest request, ClientException clientException, ServiceException serviceException) {
                         if (request.getUploadFilePath().endsWith("uuboxicon.png")) {
                             SimpleUtil.resetWaitTop(mContext);
-                            SimpleUtil.addMsgBottomToTop(mContext, "日志上传失败!", true);
+                            SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.ini_uplogfail), true);
                             openOSSLOG();
                         }
                     }

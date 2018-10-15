@@ -2,6 +2,7 @@ package com.uubox.threads;
 
 import android.content.Context;
 
+import com.uubox.padtool.R;
 import com.uubox.tools.AOAConfigTool;
 import com.uubox.tools.Hex;
 import com.uubox.tools.SimpleUtil;
@@ -68,7 +69,7 @@ public class AccInputThread extends Thread {
                 byte[] result = AOAConfigTool.getInstance(mContext).writeWaitResult((byte) 0xb3, new byte[]{(byte) 0xa5, (byte) 0x04, (byte) 0xb3, (byte) 0x5c}, 3000);
                 if (result == null) {
                     SimpleUtil.log("读取版本信息出错");
-                    SimpleUtil.addMsgBottomToTop(mContext, "读取设备版本失败！", true);
+                    SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.ait_readdevverfail), true);
                 } else {
                     SimpleUtil.mDeviceVersion = result[3] & 0xff;
                     SimpleUtil.log("获取版本信息:" + SimpleUtil.mDeviceVersion);

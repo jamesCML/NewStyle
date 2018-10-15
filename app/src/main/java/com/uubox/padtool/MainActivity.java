@@ -6,6 +6,7 @@ import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Binder;
@@ -31,12 +32,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.alibaba.sdk.android.oss.ClientException;
-import com.alibaba.sdk.android.oss.ServiceException;
-import com.alibaba.sdk.android.oss.callback.OSSCompletedCallback;
-import com.alibaba.sdk.android.oss.model.PutObjectRequest;
-import com.alibaba.sdk.android.oss.model.PutObjectResult;
-import com.example.cgodawson.xml.XmlPugiElement;
 import com.pgyersdk.feedback.PgyerFeedbackManager;
 import com.pgyersdk.update.DownloadFileListener;
 import com.pgyersdk.update.PgyUpdateManager;
@@ -44,8 +39,7 @@ import com.pgyersdk.update.UpdateManagerListener;
 import com.pgyersdk.update.javabean.AppBean;
 import com.uubox.threads.IniTask;
 import com.uubox.toolex.ScreenUtils;
-import com.uubox.tools.AliyuOSS;
-import com.uubox.tools.BtnParamTool;
+
 import com.uubox.tools.CommonUtils;
 import com.uubox.tools.LogToFileUtils;
 import com.uubox.tools.SimpleUtil;
@@ -70,10 +64,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SimpleUtil.DEBUG = CommonUtils.getAppVersionName(this).contains("debug");
-
-
         SimpleUtil.log("MainActivity-------------create------------");
         setContentView(R.layout.activity_main);
+        if (getWindowManager().getDefaultDisplay().getRotation() * Surface.ROTATION_90 == 1) {
+            findViewById(R.id.main_parent).setBackgroundColor(Color.GREEN);
+        } else {
+            findViewById(R.id.main_parent).setBackgroundColor(Color.RED);
+        }
+
 
         int a = ScreenUtils.getScreenWidth();
         int b = ScreenUtils.getScreenHeight();
@@ -107,9 +105,18 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
         }
 
+        divAPPUSER();
 
     }
 
+    private void divAPPUSER() {
+        String appName = CommonUtils.getAppName(this);
+        if (appName.equals("UUBOX")) {
+            SimpleUtil.mAPPUSER = SimpleUtil.APPUSER.WISEGA;
+        } else if (appName.equals("FPSBOX")) {
+            SimpleUtil.mAPPUSER = SimpleUtil.APPUSER.FPS;
+        }
+    }
     @Override
     protected void onResume() {
         super.onResume();
@@ -126,7 +133,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         SimpleUtil.log("resume Liuhai:" + SimpleUtil.LIUHAI);
         if (isFloatPermissionOK()) {
             SimpleUtil.log("isFloatPermissionOK");
-            mLoadMsg.setText("进入游戏会自动显示游戏键位图!");
+            mLoadMsg.setText(R.string.main_entergameshowviews);
             runInit();
         } else {
             SimpleUtil.log("isFloatPermissionnotok");
@@ -190,16 +197,16 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mIsJugeFloat = true;
         if (Build.VERSION.SDK_INT >= 23) {
             if (!Settings.canDrawOverlays(getBaseContext())) {
-                mLoadMsg.setText("为了让应用正常运行，请开启【悬浮窗权限】");
-                mButton.setText("现在开启");
+                mLoadMsg.setText(R.string.main_openfloat);
+                mButton.setText(R.string.main_opennow);
                 return false;
             }
 
         } else {
             if (!getAppOps(this)) {
-                SimpleUtil.toast(MainActivity.this, "【悬浮窗权限】未开启！");
-                mLoadMsg.setText("为了让应用正常运行，请开启【悬浮窗权限】");
-                mButton.setText("现在开启");
+                SimpleUtil.toast(MainActivity.this, getString(R.string.main_floatnot));
+                mLoadMsg.setText(R.string.main_openfloat);
+                mButton.setText(R.string.main_opennow);
                 return false;
             }
         }
@@ -237,13 +244,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.loading_bt:
-                if (mLoadMsg.getText().toString().contains("悬浮窗")) {
+                if (mLoadMsg.getText().toString().contains(getString(R.string.main_float))) {
                     if (Build.VERSION.SDK_INT >= 23) {
                         Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                                 Uri.parse("package:" + getPackageName()));
                         startActivityForResult(intent, 789);
                     } else {
-                        Toast.makeText(MainActivity.this, "请打开悬浮窗", Toast.LENGTH_LONG).show();
+                        Toast.makeText(MainActivity.this, R.string.main_floatplease, Toast.LENGTH_LONG).show();
                     }
                     return;
                 }
@@ -308,17 +315,17 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                 SimpleUtil.log("蒲公英版本:" + appBean.getVersionCode());
                                 final boolean isForce = Integer.parseInt(appBean.getVersionCode()) % 2 == 0;
 
-                                SimpleUtil.popWindow(MainActivity.this, "版本更新", "发现新版本[" + appBean.getVersionName() + "]可更新\n当前应用版本[" + CommonUtils.getAppVersionName(MainActivity.this) + "]",
+                                SimpleUtil.popWindow(MainActivity.this, getString(R.string.main_verupdate), getString(R.string.main_findnewver) + appBean.getVersionName() + getString(R.string.main_updateenable) + "\n" + getString(R.string.main_curappver) + CommonUtils.getAppVersionName(MainActivity.this),
                                         new Runnable() {
                                             @Override
                                             public void run() {
                                                 mIsShowUpdate = false;
                                                 if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                                                    SimpleUtil.addMsgBottomToTop(MainActivity.this, "应用【存储权限】未打开，升级失败！", true);
+                                                    SimpleUtil.addMsgBottomToTop(MainActivity.this, getString(R.string.main_updatefail), true);
                                                     return;
                                                 }
-                                                SimpleUtil.addMsgBottomToTop(MainActivity.this, "开始下载...", false);
-                                                SimpleUtil.addWaitToTop(MainActivity.this, "升级进度 0%");
+                                                SimpleUtil.addMsgBottomToTop(MainActivity.this, getString(R.string.main_loadstart), false);
+                                                SimpleUtil.addWaitToTop(MainActivity.this, getString(R.string.main_loadproce0));
                                                 PgyUpdateManager.downLoadApk(appBean.getDownloadURL());
                                             }
                                         }, new Runnable() {
@@ -332,7 +339,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                                 }
 
                                             }
-                                        }, "下载", isForce ? "退出" : "取消", false, 0);//说明:双数表示强制升级，主要涉及一些重要结构调整必须升级 单数则不强制升级
+                                        }, getString(R.string.main_load), isForce ? getString(R.string.main_exit) : getString(R.string.main_cancel), false, 0);//说明:双数表示强制升级，主要涉及一些重要结构调整必须升级 单数则不强制升级
 
 
                                 //PgyUpdateManager.downLoadApk(appBean.getDownloadURL());
@@ -356,7 +363,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                 //下载失败
                                 // SimpleUtil.closeDialog(mContext);
                                 SimpleUtil.resetWaitTop(MainActivity.this);
-                                SimpleUtil.addMsgBottomToTop(MainActivity.this, "下载异常，升级失败！", true);
+                                SimpleUtil.addMsgBottomToTop(MainActivity.this, getString(R.string.main_updateexec), true);
 
                             }
 
@@ -365,7 +372,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                 SimpleUtil.log("download apk ok");
                                 // 使用蒲公英提供的安装方法提示用户 安装apk
                                 SimpleUtil.resetWaitTop(MainActivity.this);
-                                SimpleUtil.addMsgBottomToTop(MainActivity.this, "新版本下载成功！准备安装！", false);
+                                SimpleUtil.addMsgBottomToTop(MainActivity.this, getString(R.string.main_updateok), false);
                                 SimpleUtil.runOnUIThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -376,7 +383,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
                             @Override
                             public void onProgressUpdate(Integer... integers) {
-                                SimpleUtil.updateWaitTopMsg("升级进度 " + integers[0] + "%");
+                                SimpleUtil.updateWaitTopMsg(getString(R.string.main_updateproc) + integers[0] + "%");
                                 SimpleUtil.log("apkupdate download apk progress" + integers[0]);
                                 //SimpleUtil.updateWaiting(MainActivity.this,"升级中 "+integers[0]+"/100");
                             }
@@ -398,7 +405,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 mProgress.setVisibility(View.VISIBLE);
                 mButton.clearAnimation();
                 mButton.setVisibility(View.GONE);
-                mLoadMsg.setText("正在加载资源...");
+                mLoadMsg.setText(R.string.main_loadres);
             }
 
             @Override
@@ -414,9 +421,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     return;
                 }
 
-                mLoadMsg.setText("初始化完成！进入游戏会自动显示游戏键位图！");
+                mLoadMsg.setText(getString(R.string.main_entergameshowviews));
                 mProgress.setVisibility(View.GONE);
-                mButton.setText("点击我后台运行");
+                mButton.setText(R.string.main_backrun);
                 mButton.setVisibility(View.VISIBLE);
                 AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0);
                 alphaAnimation.setDuration(300);
@@ -514,7 +521,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     if (hint.contains("...")) {
                         SimpleUtil.log("找到编辑框");
                         editpanel = editText;
-                        editText.setHint("请输入您的反馈，最少10个文字，谢谢!");
+                        editText.setHint(R.string.main_feedbackhint);
                         editText.addTextChangedListener(new TextWatcher() {
                             @Override
                             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -535,7 +542,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 }
                 if (view2 instanceof Button) {
                     Button button = (Button) view2;
-                    if (button.getText().toString().contains("发送")) {
+                    if (button.getText().toString().contains(getString(R.string.main_feedbacksend))) {
                         SimpleUtil.log("找到发送按钮");
                         editpanel.setTag(button);
                         if (editpanel.getText().toString().length() < 10) {

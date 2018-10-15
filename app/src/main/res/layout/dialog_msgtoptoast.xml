@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@mipmap/msgtotop_bg_green"
     android:id="@+id/dialog_msgbottom_par"
     android:orientation="vertical">
 
@@ -13,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
-        android:text="配置数量过大，请删除一些"
+        android:text="@string/initab_databig"
         android:textColor="@color/lightred"
         android:textSize="16sp"
         android:textStyle="bold" />

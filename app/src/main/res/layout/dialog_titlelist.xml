@@ -45,7 +45,7 @@
             android:minHeight="40dp"
             android:minWidth="80dp"
             android:background="@drawable/dialog_message_bt_select"
-            android:text="确定" />
+            android:text="@string/ok" />
 
         <Button
             android:id="@+id/dialogmsgno"
@@ -55,6 +55,6 @@
             android:minHeight="40dp"
             android:minWidth="80dp"
             android:background="@drawable/dialog_message_bt_select"
-            android:text="取消" />
+            android:text="@string/main_cancel" />
     </LinearLayout>
 </LinearLayout>

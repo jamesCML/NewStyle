@@ -6,8 +6,8 @@
     "apkInfo": {
       "type": "MAIN",
       "splits": [],
-      "versionCode": 130,
-      "versionName": "2.2.9-release",
+      "versionCode": 132,
+      "versionName": "2.3.0-release",
       "enabled": true,
       "outputFile": "app-UUBox_Wisega-release.apk",
       "fullName": "UUBox_WisegaRelease",

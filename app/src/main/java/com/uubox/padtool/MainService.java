@@ -145,7 +145,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
 
         if (usbAccessories == null) {
             SimpleUtil.log("return usbAccessories list is null!!!!!!");
-            mfloatingIv.setImageResource((Integer) mfloatingIv.getTag() == 1 ? R.mipmap.ic_folat_offline : R.mipmap.ic_folat_offline_edge);
+            mfloatingIv.setImageResource(getAPPUserFloatIcon((Integer) mfloatingIv.getTag() == 0));
             //SimpleUtil.log("HANDLE_SCAN_AOA:"+2);
             //mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 3000);
             return;
@@ -171,13 +171,19 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
 
     }
 
+    private void restartApplication() {
+        final Intent intent = getPackageManager().getLaunchIntentForPackage(getPackageName());
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
     private void openUsbAccessory(UsbAccessory usbAccessory) {
         SimpleUtil.log("openUsbAccessory:" + this.hashCode());
 
         mParcelFileDescriptor = mUSBManager.openAccessory(usbAccessory);
 
         if (mParcelFileDescriptor == null) {
-            SimpleUtil.addMsgBottomToTop(this, "与设备连接失败！请重新插拔数据线！", true);
+            SimpleUtil.addMsgBottomToTop(this, getString(R.string.ms_condevfail), true);
+            //restartApplication();
             return;
         }
         FileDescriptor fileDescriptor = mParcelFileDescriptor.getFileDescriptor();
@@ -207,7 +213,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             }
         });*/
         mHandler.removeMessages(HANDLE_SCAN_AOA);
-        mfloatingIv.setImageResource((Integer) mfloatingIv.getTag() == 1 ? R.mipmap.ic_folat_online : R.mipmap.ic_folat_online_edge);
+        mfloatingIv.setImageResource(getAPPUserFloatIcon((Integer) mfloatingIv.getTag() == 0));
 
 
         SimpleUtil.runOnThread(new Runnable() {
@@ -485,7 +491,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             SimpleUtil.log("mWindowManager is not null!return!");
             return;
         }
-        setUpAsForeground("大吉大利，今晚吃鸡！");
+        setUpAsForeground(getString(R.string.ms_goodbess));
         mUSBManager = (UsbManager) getSystemService(Context.USB_SERVICE);
 
         mWindowManager = (WindowManager) getApplication().getSystemService(Context.WINDOW_SERVICE);
@@ -545,7 +551,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
     private void initFloating() {
         mfloatingIv = mlayout.findViewById(R.id.floating_imageView);
         //mfloatingentergame = mlayout.findViewById(R.id.floating_entergame);
-        mfloatingIv.setImageResource(R.mipmap.ic_folat_offline);
+        mfloatingIv.setImageResource(getAPPUserFloatIcon(false));
         mfloatingIv.getBackground().setAlpha(150);
         mfloatingIv.setTag(1);
         mGestureDetector = new GestureDetector(this, new MyOnGestureListener());
@@ -580,10 +586,29 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             @Override
             public void onAnimationEnd(Animator animation) {
                 mfloatingIv.setTag(0);
-                mfloatingIv.setImageResource((mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.ic_folat_offline_edge : R.mipmap.ic_folat_online_edge);
+                mfloatingIv.setImageResource(getAPPUserFloatIcon(true));
             }
         });
         animator.start();
+    }
+
+
+    private int getAPPUserFloatIcon(boolean atSide) {
+        switch (SimpleUtil.mAPPUSER) {
+            case WISEGA:
+                if (atSide) {
+                    return (mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.ic_folat_offline_edge : R.mipmap.ic_folat_online_edge;
+                } else {
+                    return (mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.ic_folat_offline : R.mipmap.ic_folat_online;
+                }
+            case FPS:
+                if (atSide) {
+                    return (mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.fps_float_online : R.mipmap.fps_float_online;
+                } else {
+                    return (mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.fps_float_online : R.mipmap.fps_float_online;
+                }
+        }
+        return 0;
     }
 
     /**
@@ -626,7 +651,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         } else if (id == 10003)//配置更新了
         {
             if (mAOAConfigTool.isAOAConnect()) {
-                SimpleUtil.addMsgBottomToTop(getBaseContext(), "检测到配置有更新，自动写入中...", false);
+                SimpleUtil.addMsgBottomToTop(getBaseContext(), getString(R.string.initab_checknewconfigs), false);
             }
             SimpleUtil.saveToShare(getBaseContext(), "ini", "configschange", true);
 
@@ -655,13 +680,6 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             SimpleUtil.runOnUIThread(new Runnable() {
                 @Override
                 public void run() {
-                    if ((Integer) mfloatingIv.getTag() == 1) {
-                        mfloatingIv.setImageResource((mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.ic_folat_offline : R.mipmap.ic_folat_online);
-
-                    } else {
-                        mfloatingIv.setImageResource((mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.ic_folat_offline_edge : R.mipmap.ic_folat_offline);
-
-                    }
 
                     if (mParcelFileDescriptor != null) {
                         try {
@@ -671,6 +689,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
                             e.printStackTrace();
                         }
                     }
+                    mfloatingIv.setImageResource(getAPPUserFloatIcon((Integer) mfloatingIv.getTag() == 0));
                     //SimpleUtil.addMsgBottomToTop(getBaseContext(),"与设备之间的连接已经断开！",true);
                     //System.exit(0);
                     // SimpleUtil.log("HANDLE_SCAN_AOA:"+5);
@@ -693,7 +712,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             switch (action) {
                 case MotionEvent.ACTION_DOWN:
                     //mfloatingIv.setTag(1);mfloatingIv.setImageDrawable(getDrawable((mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.app_icon0805001_gray : R.mipmap.app_icon0805001));
-                    mfloatingIv.setImageResource((mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.ic_folat_offline : R.mipmap.ic_folat_online);
+                    mfloatingIv.setImageResource(getAPPUserFloatIcon(false));
                     isMove = false;
                     mTouchStartX = (int) event.getRawX();
                     mTouchStartY = (int) event.getRawY();
@@ -732,14 +751,14 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             //点击悬浮窗未拖动，则打开按键编辑页面(增加：加载过程中不允许点击)
 
             if (mWindowManager.getDefaultDisplay().getRotation() * Surface.ROTATION_90 == 0) {
-                SimpleUtil.addMsgBottomToTop(getBaseContext(), "请先进入游戏！", true);
+                SimpleUtil.addMsgBottomToTop(getBaseContext(), getString(R.string.ms_entergamefirst), true);
                 return true;
             }
             if (!isMove && BtnParamTool.getPressFloatable()) {
 
                 KeyboardEditWindowManager.getInstance().init(getApplicationContext());
                 initViews();
-                GuiStep.getInstance().show(false, true);
+                //GuiStep.getInstance().show(false, true);
                 // 键位菜单界面不显示小图标
                 KeyboardFloatView.getInstance(getBaseContext()).dismiss();
 
@@ -840,7 +859,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
                         .setContentTitle(getString(R.string.app_name))
                         .setContentText(text)
                         .setTicker(text)
-                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.app_icon0805001))
+                        .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_folat_online))
                         .build();
             }
             startForeground(1, notification);

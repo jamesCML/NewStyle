@@ -51,7 +51,7 @@
             android:launchMode="singleTask"
             android:configChanges="orientation|keyboardHidden|mcc|mnc|locale|touchscreen|navigation|screenLayout|uiMode|screenSize|smallestScreenSize|layoutDirection|fontScale|keyboard"
             android:theme="@style/fullscreen"
-            android:label="@string/app_name">
+            android:label="${appname}">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

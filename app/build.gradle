@@ -6,7 +6,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 22
         versionCode 132
-        versionName "2.3.0"
+        versionName "2.3.0.1"
         flavorDimensions "versionCode"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -42,9 +42,9 @@ android {
             //buildConfigField "int", "TYPE", "1"
             signingConfig signingConfigs.release
         }
-        UUBox_XJ {
+        FPSBox_XJ {
             applicationId "com.fpsbox.padtool"
-            manifestPlaceholders = [app_icon: "@mipmap/ic_launcher", appname: "FPSBOX",aoafilter:"@xml/accessory_filter_xj"]
+            manifestPlaceholders = [app_icon: "@mipmap/fps_icon", appname: "FPSBOX",aoafilter:"@xml/accessory_filter_xj"]
             //buildConfigField "int", "TYPE", "1"
             signingConfig signingConfigs.release
         }

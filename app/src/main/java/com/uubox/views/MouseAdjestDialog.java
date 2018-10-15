@@ -53,8 +53,8 @@ public class MouseAdjestDialog implements View.OnClickListener, SeekBar.OnSeekBa
 
         mSeekBarMouse.setProgress(mInitmousesen);
         mSeekBarW.setProgress(mInitmousesrcollsen);
-        mTextMouseSensitivityX.setText("鼠标灵敏度:" + mInitmousesen);
-        mTextMouseSensitivityW.setText("滚轮灵敏度:" + mInitmousesrcollsen);
+        mTextMouseSensitivityX.setText(mContext.getString(R.string.mad_mouselmd) + mInitmousesen);
+        mTextMouseSensitivityW.setText(mContext.getString(R.string.mad_gunlunlmd) + mInitmousesrcollsen);
 
 
     }
@@ -104,10 +104,10 @@ public class MouseAdjestDialog implements View.OnClickListener, SeekBar.OnSeekBa
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         switch (seekBar.getId()) {
             case R.id.sbar_mouse_sensitivity_x:
-                mTextMouseSensitivityX.setText("鼠标灵敏度:" + progress);
+                mTextMouseSensitivityX.setText(mContext.getString(R.string.mad_mouselmd) + progress);
                 break;
             case R.id.sbar_mouse_Wheel:
-                mTextMouseSensitivityW.setText("滚轮灵敏度:" + progress);
+                mTextMouseSensitivityW.setText(mContext.getString(R.string.mad_gunlunlmd) + progress);
                 break;
         }
     }

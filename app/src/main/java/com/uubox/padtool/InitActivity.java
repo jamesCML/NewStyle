@@ -19,7 +19,7 @@ public class InitActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mTest = new TextView(this);
-        mTest.setText("第一次初始化...");
+        mTest.setText("Loading...");
         mTest.setTextSize(20);
         setContentView(mTest);
 

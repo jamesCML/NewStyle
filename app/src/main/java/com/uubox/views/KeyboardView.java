@@ -157,7 +157,7 @@ public class KeyboardView extends FrameLayout
             }
         };
         SimpleUtil.addINormalCallback(this);
-        GuiStep.getInstance().init(context, "skip_note");
+        //GuiStep.getInstance().init(context, "skip_note");
         LayoutInflater.from(context).inflate(R.layout.view_keyboard, this, true);
         findViews();
         initViews();
@@ -309,9 +309,9 @@ public class KeyboardView extends FrameLayout
         BtnParamTool.setComfirGame(gloabkeyconfig.split("#Z%W#", -1)[3]);
         KeyboardEditWindowManager.getInstance().hideOrShowBottomUIMenu(false);
         List<String> items = new ArrayList<>();
-        items.add("保存到当前配置");
-        items.add("保存到已有的配置");
-        items.add("新建一个配置");
+        items.add(getContext().getString(R.string.kbv_savetocurconfig));
+        items.add(getContext().getString(R.string.kbv_savetohasconfig));
+        items.add(getContext().getString(R.string.kbv_newoneconfig));
         List<Runnable> runnables = new ArrayList<>();
         runnables.add(new Runnable() {
             @Override
@@ -321,12 +321,12 @@ public class KeyboardView extends FrameLayout
                 if (curIni != null && !curIni.isEmpty()) {
                     iniName = curIni.split("#Z%W#", -1)[1];
                 }
-                if (iniName.endsWith("[官方]")) {
+                if (SimpleUtil.isOfficialConfig(iniName)) {
 
                     LinkedHashMap<String, String> items = new LinkedHashMap<>();
-                    items.put("配置名称", BtnParamTool.getComfirGame() + "_" + SimpleUtil.getSha1(System.currentTimeMillis() + "").substring(0, 5));
+                    items.put(getContext().getString(R.string.kbv_configname), BtnParamTool.getComfirGame() + "_" + SimpleUtil.getSha1(System.currentTimeMillis() + "").substring(0, 5));
 
-                    SimpleUtil.addEditToTop(getContext(), "保存配置", items, null, new Runnable() {
+                    SimpleUtil.addEditToTop(getContext(), getContext().getString(R.string.kbv_saveconfig), items, null, new Runnable() {
                         @Override
                         public void run() {
                             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
@@ -338,7 +338,7 @@ public class KeyboardView extends FrameLayout
 
                         }
                     }, newinietback);
-                    SimpleUtil.addMsgBottomToTop(getContext(), "当前使用官方配置,默认新建一个配置", true);
+                    SimpleUtil.addMsgBottomToTop(getContext(), getContext().getString(R.string.kbv_guanfangnewconfig), true);
                     return;
                 }
                 if (curIni == null || curIni.isEmpty()) {
@@ -378,12 +378,12 @@ public class KeyboardView extends FrameLayout
                 String gloabkeyconfig = (String) SimpleUtil.getFromShare(getContext(), "ini", "gloabkeyconfig", String.class, "");
                 if (gloabkeyconfig.isEmpty()) {
                     inibt_cur.setTextColor(Color.RED);
-                    inibt_cur.setText("当前没有使用任何配置");
+                    inibt_cur.setText(R.string.kbv_nouseconfig);
                 } else {
                     curName = gloabkeyconfig.split("#Z%W#", -1)[1];
                     inibt_cur.setTextColor(Color.YELLOW);
                     BtnParamTool.setComfirGame(gloabkeyconfig.split("#Z%W#", -1)[3]);
-                    inibt_cur.setText("当前使用:" + BtnParamTool.getComfirGame() + "/" + curName);
+                    inibt_cur.setText(getContext().getString(R.string.kb_curused) + BtnParamTool.getComfirGame() + "/" + curName);
 
                 }
 
@@ -405,10 +405,10 @@ public class KeyboardView extends FrameLayout
                     IniAdapter.IniObj iniObj = new IniAdapter.IniObj();
                     iniObj.name = sp[1];
                     iniObj.whole = value;
-                    iniObj.state = iniObj.name.equals(curName) ? "[使用中]" : null;
+                    iniObj.state = iniObj.name.equals(curName) ? getContext().getString(R.string.kbv_used) : null;
 
                     //发现官方配置，应该直接移除
-                    if (iniObj.name.endsWith("[官方]")) {
+                    if (SimpleUtil.isOfficialConfig(iniObj.name)) {
                         continue;
                     }
 
@@ -427,7 +427,7 @@ public class KeyboardView extends FrameLayout
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                        if (iniDatas.get(position).name.endsWith("[官方]")) {
+                        if (SimpleUtil.isOfficialConfig(iniDatas.get(position).name)) {
                             //SimpleUtil.toast(getContext().getString(R.string.msg_a5));
                             return;
                         }
@@ -455,9 +455,9 @@ public class KeyboardView extends FrameLayout
             @Override
             public void run() {
                 LinkedHashMap<String, String> items = new LinkedHashMap<>();
-                items.put("配置名称", BtnParamTool.getComfirGame() + "_" + SimpleUtil.getSha1(System.currentTimeMillis() + "").substring(0, 5));
+                items.put(getContext().getString(R.string.kbv_configname), BtnParamTool.getComfirGame() + "_" + SimpleUtil.getSha1(System.currentTimeMillis() + "").substring(0, 5));
 
-                SimpleUtil.addEditToTop(getContext(), "保存配置", items, null, new Runnable() {
+                SimpleUtil.addEditToTop(getContext(), getContext().getString(R.string.kbv_saveconfig), items, null, new Runnable() {
                     @Override
                     public void run() {
                         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
@@ -472,7 +472,7 @@ public class KeyboardView extends FrameLayout
             }
         });
 
-        SimpleUtil.addRadioGrouptoTop(getContext(), "保存", items, runnables, null, new Runnable() {
+        SimpleUtil.addRadioGrouptoTop(getContext(), getContext().getString(R.string.kbv_save), items, runnables, null, new Runnable() {
             @Override
             public void run() {
                 /*ConcurrentHashMap<Btn, BtnParams> params = BtnParamTool.getmBtnParams();
@@ -503,12 +503,12 @@ public class KeyboardView extends FrameLayout
             List<String> backs = (List<String>) obj;
             final String iniName = backs.get(0);
             if (!BtnParamTool.canSaveIniToXml(getContext(), iniName)) {
-                Toast.makeText(getContext(), "配置名称已经存在",
+                Toast.makeText(getContext(), R.string.kbv_confignameexist,
                         Toast.LENGTH_SHORT).show();
                 return;
             }
             if (iniName == null || iniName.isEmpty()) {
-                Toast.makeText(getContext(), "配置名称不能为空",
+                Toast.makeText(getContext(), R.string.kbv_confignameempty,
                         Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -527,8 +527,8 @@ public class KeyboardView extends FrameLayout
 
             KeyboardEditWindowManager.getInstance().removeTop();
             List<String> items = new ArrayList<>();
-            items.add("保存到游戏【" + BtnParamTool.getComfirGame() + "】");
-            items.add("新建游戏");
+            items.add(getContext().getString(R.string.kbv_savetogame) + "【" + BtnParamTool.getComfirGame() + "】");
+            items.add(getContext().getString(R.string.kbv_newgame));
             List<Runnable> tasks = new ArrayList<>();
             tasks.add(new Runnable() {
                 @Override
@@ -543,8 +543,8 @@ public class KeyboardView extends FrameLayout
                 @Override
                 public void run() {
                     LinkedHashMap<String, String> items = new LinkedHashMap<>();
-                    items.put("游戏名", "");
-                    SimpleUtil.addEditToTop(getContext(), "新建游戏", items, null, new Runnable() {
+                    items.put(getContext().getString(R.string.kbv_gamename), "");
+                    SimpleUtil.addEditToTop(getContext(), getContext().getString(R.string.kbv_newgame), items, null, new Runnable() {
                         @Override
                         public void run() {
                             KeyboardEditWindowManager.getInstance().close();
@@ -559,7 +559,7 @@ public class KeyboardView extends FrameLayout
                             final String newIniContentName = backs.get(0);
 
                             if (newIniContentName == null || newIniContentName.isEmpty()) {
-                                Toast.makeText(getContext(), "游戏名称不能为空！",
+                                Toast.makeText(getContext(), R.string.kbv_gamenameempty,
                                         Toast.LENGTH_SHORT).show();
                                 return;
                             }
@@ -567,7 +567,7 @@ public class KeyboardView extends FrameLayout
                             Iterator<String> allIt = allKeysConfigsTable.getAll().keySet().iterator();
                             while (allIt.hasNext()) {
                                 if (allIt.next().equals(newIniContentName)) {
-                                    Toast.makeText(getContext(), "游戏名称已存在！",
+                                    Toast.makeText(getContext(), R.string.kbv_gamenameexist,
                                             Toast.LENGTH_SHORT).show();
                                     return;
                                 }
@@ -584,7 +584,7 @@ public class KeyboardView extends FrameLayout
 
                 }
             });
-            SimpleUtil.addRadioGrouptoTop(getContext(), "保存配置", items, tasks, null, new Runnable() {
+            SimpleUtil.addRadioGrouptoTop(getContext(), getContext().getString(R.string.kbv_saveconfig), items, tasks, null, new Runnable() {
                 @Override
                 public void run() {
                     KeyboardEditWindowManager.getInstance().close();
@@ -624,7 +624,7 @@ public class KeyboardView extends FrameLayout
                 KeyboardEditWindowManager.getInstance().close();
             }
         } else if (v == mImgExit) {
-            SimpleUtil.addMsgtoTop(getContext(), "温馨提示", "确定退出程序吗？", new Runnable() {
+            SimpleUtil.addMsgtoTop(getContext(), getContext().getString(R.string.kbv_warmwarn), getContext().getString(R.string.kbv_exitapp), new Runnable() {
                 @Override
                 public void run() {
                     getContext().stopService(new Intent(getContext(), MainService.class));
@@ -651,14 +651,14 @@ public class KeyboardView extends FrameLayout
         }
         //第二次映射
         if (BtnParamTool.getBtnNormalBtn(btn).getKeyType() == 3) {
-            SimpleUtil.addMsgBottomToTop(getContext(), "key不能添加附属按键按键!", true);
+            SimpleUtil.addMsgBottomToTop(getContext(), getContext().getString(R.string.kbv_type3addkey), true);
             return;
         }
         if (BtnParamTool.getBtnNormalBtn(btn).img != null) {
             List<String> items = new ArrayList<>();
-            items.add("联动");
+            items.add(getContext().getString(R.string.kbv_union));
             // items.add("交替");
-            items.add("清除 " + btn);
+            items.add(getContext().getString(R.string.kbv_clear) + btn);
             List<Runnable> runnables = new ArrayList<>();
 
             runnables.add(new Runnable() {
@@ -676,7 +676,7 @@ public class KeyboardView extends FrameLayout
                     whatImg = null;
                 }
             });
-            SimpleUtil.addRadioGrouptoTop(getContext(), "选择模式", items, runnables, new Runnable() {
+            SimpleUtil.addRadioGrouptoTop(getContext(), getContext().getString(R.string.kbv_choicemod), items, runnables, new Runnable() {
                 @Override
                 public void run() {
                     dialogShow = false;
@@ -792,7 +792,7 @@ public class KeyboardView extends FrameLayout
             } else {
                 BtnParams params = (BtnParams) v.getTag();
                 if (params.getKeyType() == 3) {
-                    SimpleUtil.addMsgBottomToTop(getContext(), "固定按键不能移除！", true);
+                    SimpleUtil.addMsgBottomToTop(getContext(), getContext().getString(R.string.kbv_deltype3), true);
                     return;
                 }
                 // params.setmBackup(params.clone());
@@ -876,14 +876,6 @@ public class KeyboardView extends FrameLayout
             Btn btn = it.next();
             makeButtonView(btn, buttons.get(btn));
         }
-        GuiStep.getInstance().pushBuffToGui("key_union", "联动按钮，绿色标记，按钮同时触发");
-        GuiStep.getInstance().pushBuffToGui("key_reflect", "互斥按钮，红色标记，按钮交替触发");
-        GuiStep.getInstance().pushBuffToGui("key_normal", "普通按钮，蓝色标记，单点触发");
-
-        GuiStep.getInstance().addToGui(mLlClose, "保存按钮，当您调整好配置之后可以点击该按钮以保存配置");
-        GuiStep.getInstance().addToGui(mIvKeymap, "开关小健位，如果您已经熟悉了按键的位置，可以在这里点击关闭实时小健位");
-        GuiStep.getInstance().addToGui(mIvMenuBtnSetting, "设置功能，可以对游戏配置进行管理以及查看一些帮助文档");
-        GuiStep.getInstance().addToGui(mImgExit, "退出，点击退出按钮可以彻底退出程序");
     }
 
     //奇怪，用帧布局移除老是只移除基数的角标,增加一个列表保存所有的View
@@ -938,15 +930,15 @@ public class KeyboardView extends FrameLayout
         if (btn == Btn.L) {
             iv.setScaleListener(this);
             mIvMenuBtnL.setVisibility(GONE);
-            GuiStep.getInstance().addToGui(iv, "控制方向按键，如果您觉得按下【W】键人物不能疾跑，建议将该按键放大以达到效果");
+            //GuiStep.getInstance().addToGui(iv, "控制方向按键，如果您觉得按下【W】键人物不能疾跑，建议将该按键放大以达到效果");
         } else if (btn == Btn.R) {
             mIvMenuBtnR.setVisibility(GONE);
-            GuiStep.getInstance().addToGui(iv, "鼠标位置，可以通过点击打开【鼠标设置】界面，可以调节鼠标灵敏度和鼠标呼出方式");
+            //GuiStep.getInstance().addToGui(iv, "鼠标位置，可以通过点击打开【鼠标设置】界面，可以调节鼠标灵敏度和鼠标呼出方式");
         } else {
             if (BtnParamTool.getBtnNormalBtn(btn).getKeyType() == 1) {
-                GuiStep.getInstance().addtToBuff("key_union", iv);
+                //GuiStep.getInstance().addtToBuff("key_union", iv);
             } else {
-                GuiStep.getInstance().addtToBuff("key_reflect", iv);
+                //GuiStep.getInstance().addtToBuff("key_reflect", iv);
             }
         }
 
@@ -1040,7 +1032,7 @@ public class KeyboardView extends FrameLayout
             return;
         }
 
-        KeyboardEditWindowManager.getInstance().addView(new MouseAdjestDialog().create(getContext()), SimpleUtil.zoomy / 2, SimpleUtil.zoomx / 2);
+        KeyboardEditWindowManager.getInstance().addView(new MouseAdjestDialog().create(getContext()), 2 * SimpleUtil.zoomy / 3, 2 * SimpleUtil.zoomx / 3);
     }
 
     @Override
@@ -1093,12 +1085,12 @@ public class KeyboardView extends FrameLayout
         }
         if (SimpleUtil.isSaveToXml) {
             if (btnParams.iHaveChild() || btnParams.iAnChild()) {
-                SimpleUtil.addMsgBottomToTop(getContext(), "key只能只有一个按键!", true);
+                SimpleUtil.addMsgBottomToTop(getContext(), getContext().getString(R.string.kbv_type3onlyone), true);
                 return;
             }
             List<String> items = new ArrayList<>();
-            items.add("设定为按键类型");
-            items.add("删除 " + btnParams.getBelongBtn());
+            items.add(getContext().getString(R.string.kbv_settokeytype));
+            items.add(getContext().getString(R.string.kbv_del) + btnParams.getBelongBtn());
             List<Runnable> runnables = new ArrayList<>();
             runnables.add(new Runnable() {
                 @Override
@@ -1113,7 +1105,7 @@ public class KeyboardView extends FrameLayout
                     removeBtn(btnParams);
                 }
             });
-            SimpleUtil.addRadioGrouptoTop(getContext(), "按键操作", items, runnables, new Runnable() {
+            SimpleUtil.addRadioGrouptoTop(getContext(), getContext().getString(R.string.kbv_keyopreation), items, runnables, new Runnable() {
                 @Override
                 public void run() {
                     BtnParamTool.setBtnParamsChanged(true);
@@ -1133,7 +1125,7 @@ public class KeyboardView extends FrameLayout
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             if (v == mBarWhat) {
                 if (BtnParamTool.getBtnNormalBtn(Btn.Q).img != null) {
-                    SimpleUtil.addMsgBottomToTop(getContext(), "已经有一个自定义按钮", true);
+                    SimpleUtil.addMsgBottomToTop(getContext(), getContext().getString(R.string.kbv_hasakey), true);
                     return true;
                 }
                 return true;
@@ -1141,14 +1133,14 @@ public class KeyboardView extends FrameLayout
             } else if (v == mIvMenuBtnL) {
 
                 if (BtnParamTool.getBtnNormalBtn(Btn.L) != null && BtnParamTool.getBtnNormalBtn(Btn.L).img != null) {
-                    Toast.makeText(getContext(), "已经存在",
+                    Toast.makeText(getContext(), R.string.kbv_hasexist,
                             Toast.LENGTH_SHORT).show();
                     return true;
                 }
 
             } else if (v == mIvMenuBtnR) {
                 if (BtnParamTool.getBtnNormalBtn(Btn.R) != null && BtnParamTool.getBtnNormalBtn(Btn.R).img != null) {
-                    Toast.makeText(getContext(), "已经存在",
+                    Toast.makeText(getContext(), R.string.kbv_hasexist,
                             Toast.LENGTH_SHORT).show();
                     return true;
                 }
@@ -1194,25 +1186,25 @@ public class KeyboardView extends FrameLayout
     private void initEyes() {
         if (BtnParamTool.isShowKbFloatView(getContext())) {
             mIvKeymap.setImageResource(R.mipmap.keymap_show);
-            mTvKeymap.setText("显示");
+            mTvKeymap.setText(R.string.kbv_show);
             KeyboardFloatView.getInstance(getContext()).show();
         } else {
             mIvKeymap.setImageResource(R.mipmap.keymap_dismiss);
-            mTvKeymap.setText("隐藏");
+            mTvKeymap.setText(R.string.kbv_hide);
             KeyboardFloatView.getInstance(getContext()).dismiss();
         }
     }
 
     private void refreshKeymapBtn() {
 
-        if (mTvKeymap.getText().equals("显示")) {
+        if (mTvKeymap.getText().equals(R.string.kbv_show)) {
             mIvKeymap.setImageResource(R.mipmap.keymap_dismiss);
-            mTvKeymap.setText("隐藏");
+            mTvKeymap.setText(R.string.kbv_hide);
             BtnParamTool.setIsShowKbFloatView(getContext(), false);
             KeyboardFloatView.getInstance(getContext()).dismiss();
         } else {
             mIvKeymap.setImageResource(R.mipmap.keymap_show);
-            mTvKeymap.setText("显示");
+            mTvKeymap.setText(R.string.kbv_show);
             BtnParamTool.setIsShowKbFloatView(getContext(), true);
             KeyboardFloatView.getInstance(getContext()).show();
         }

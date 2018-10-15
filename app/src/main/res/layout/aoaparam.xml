@@ -14,7 +14,7 @@
 
         <TextView
             android:textColor="@color/rock_blue"
-            android:text="厂商信息:"
+            android:text="@string/aoa_changshang"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -22,7 +22,7 @@
             android:textSize="12sp"
             android:singleLine="true"
             android:id="@+id/aoaparam_changshang"
-            android:text="厂商信息:"
+            android:text="@string/aoa_changshang"
             android:layout_width="200dp"
             android:layout_height="wrap_content" />
     </LinearLayout>
@@ -36,7 +36,7 @@
 
         <TextView
             android:textColor="@color/rock_blue"
-            android:text="模        式:"
+            android:text="@string/aoamod"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -44,7 +44,7 @@
             android:textSize="12sp"
             android:singleLine="true"
             android:id="@+id/aoaparam_moshi"
-            android:text="模式:"
+            android:text="@string/aoamod"
             android:layout_width="200dp"
             android:layout_height="wrap_content" />
     </LinearLayout>
@@ -58,14 +58,14 @@
 
         <TextView
             android:textColor="@color/rock_blue"
-            android:text="序  列  号:"
+            android:text="@string/aoaser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <EditText
             android:textSize="12sp"
             android:id="@+id/aoaparam_xuliehao"
-            android:text="序列号:"
+            android:text="@string/aoaser"
             android:singleLine="true"
             android:layout_width="200dp"
             android:layout_height="wrap_content" />
@@ -73,7 +73,7 @@
 
     <Button
         android:id="@+id/aoaparam_ok"
-        android:text="确定"
+        android:text="@string/ok"
         android:layout_gravity="center"
         android:layout_margin="5dp"
         android:background="@drawable/dialog_message_box"

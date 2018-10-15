@@ -19,7 +19,7 @@
             android:layout_marginLeft="10dp"
             android:background="@drawable/dialog_message_bt_select"
             android:padding="1dp"
-            android:text="取消"
+            android:text="@string/main_cancel"
             android:textColor="@color/lightred"
             android:textStyle="bold"
             android:visibility="gone"/>
@@ -32,7 +32,7 @@
             android:layout_marginLeft="10dp"
             android:background="@drawable/configbutton"
             android:padding="3dp"
-            android:text="写入设备"
+            android:text="@string/initab_writetodev"
             android:textColor="@color/mk_white"
             android:textSize="22sp"/>
 
@@ -45,7 +45,7 @@
             android:layout_marginLeft="10dp"
             android:background="@drawable/configbutton"
             android:padding="3dp"
-            android:text="点击我跳转到压枪设置"
+            android:text="@string/initab_gotogunpresslist"
             android:textColor="@color/mk_white"
             android:textSize="22sp"/>
     </LinearLayout>
@@ -72,7 +72,7 @@
             android:layout_marginTop="5dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="未选中的配置"
+            android:text="@string/initab_unchoiceconfig"
             android:textColor="@color/lightred"
             android:textStyle="bold"/>
 
@@ -85,7 +85,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:padding="1dp"
-            android:text="选中的配置"
+            android:text="@string/initab_choiceconfigs"
             android:textColor="@color/mk_loading"
             android:textStyle="bold"/>
     </LinearLayout>
@@ -148,7 +148,7 @@
                 android:id="@+id/tv_tip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="武器键(1,2键)加枪类型键(F1,F2,F3)设置不同压枪效果,两把枪可分别配置, 武器键加ESC键关闭对应压枪"/>
+                android:text="@string/initab_gunpress_tip" />
 
             <TextView
                 android:id="@+id/dialog_oversize_gun_cfq_tv"
@@ -156,7 +156,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:layout_marginTop="10dp"
-                android:text="F1类型:冲锋枪  灵敏度:13"
+                android:text="@string/initab_cfqdefault"
                 android:textColor="@color/mk_white"/>
 
             <SeekBar
@@ -174,7 +174,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:layout_marginTop="5dp"
-                android:text="F2类型:步枪   灵敏度:16"
+                android:text="@string/initab_bqdefault"
                 android:textColor="@color/mk_white"/>
 
             <SeekBar
@@ -192,7 +192,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:layout_marginTop="10dp"
-                android:text="F3类型:AK47   灵敏度:20"
+                android:text="@string/initab_akdefault"
                 android:textColor="@color/mk_white"/>
 
             <SeekBar
@@ -209,7 +209,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
-                android:text="恢复默认"
+                android:text="@string/resetdefault"
                 android:textColor="@color/b1"/>
 
             <TextView
@@ -218,7 +218,7 @@
                 android:layout_gravity="left"
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="5dp"
-                android:text="开机默认配置选择:"
+                android:text="@string/initab_bootchoice"
                 android:textColor="@color/mk_white"
                 android:visibility="gone"/>
 
@@ -239,7 +239,7 @@
                     android:layout_marginRight="6dp"
                     android:button="@drawable/correctorerror_empty"
                     android:checked="true"
-                    android:text="关闭压枪"
+                    android:text="@string/initab_pressgunclose"
                     android:textColor="@color/mk_white"
                     android:textSize="12sp"></RadioButton>
 
@@ -249,7 +249,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="3dp"
                     android:button="@drawable/correctorerror_empty"
-                    android:text="默认使用冲锋枪"
+                    android:text="@string/initab_usecfqdefault"
                     android:textColor="@color/mk_white"
                     android:textSize="12sp"></RadioButton>
 
@@ -259,7 +259,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="3dp"
                     android:button="@drawable/correctorerror_empty"
-                    android:text="默认使用步枪"
+                    android:text="@string/initab_usebqdefault"
                     android:textColor="@color/mk_white"
                     android:textSize="12sp"></RadioButton>
 
@@ -269,7 +269,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="6dp"
                     android:button="@drawable/correctorerror_empty"
-                    android:text="默认使用AK47"
+                    android:text="@string/initab_useakdefault"
                     android:textColor="@color/mk_white"
                     android:textSize="12sp"></RadioButton>
             </RadioGroup>
@@ -286,7 +286,7 @@
                 android:layout_gravity="left"
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="5dp"
-                android:text="常见问题:"
+                android:text="@string/initab_problems"
                 android:textColor="@color/mk_white"/>
 
             <ListView

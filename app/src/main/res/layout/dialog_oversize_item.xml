@@ -27,7 +27,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:text="游戏"
+                android:text="@string/initab_game"
                 android:id="@+id/moveconfig_item_content"
                 android:textSize="16sp"
                 android:singleLine="true"
@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content" />
 
             <TextView
-                android:text="名称"
+                android:text="@string/initab_mingcheng"
                 android:singleLine="true"
                 android:ellipsize="middle"
                 android:textColor="#bbffffff"
@@ -49,7 +49,7 @@
                 android:layout_height="wrap_content" />
 
             <TextView
-                android:text="编号"
+                android:text="@string/initab_bianhao"
                 android:singleLine="true"
                 android:ellipsize="middle"
                 android:textColor="#bbffffff"
@@ -60,7 +60,7 @@
                 android:layout_height="wrap_content" />
 
             <TextView
-                android:text="快捷键"
+                android:text="@string/initab_fastkey"
                 android:singleLine="true"
                 android:ellipsize="middle"
                 android:textColor="#bbffffff"
@@ -77,7 +77,7 @@
             android:padding="2dp"
             android:visibility="gone"
             android:id="@+id/moveconfig_item_curuse"
-            android:text="使用中"
+            android:text="@string/kbv_used"
             android:textColor="@color/mk_white"
             android:background="@drawable/dialog_message_box"
             android:layout_width="wrap_content"

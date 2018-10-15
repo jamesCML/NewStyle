@@ -62,11 +62,11 @@ public class MoveConfigAdapter extends BaseAdapter {
         } else {
             holder = (Holder) view.getTag();
         }
-        holder.mContent.setText("游戏:" + mConfigs.get(position).getmBelongGame());
-        if (!mConfigs.get(position).getmConfigName().endsWith("[官方]")) {
-            holder.mName.setText("配置:" + mConfigs.get(position).getmConfigName());
+        holder.mContent.setText(mContext.getString(R.string.initab_game) + ":" + mConfigs.get(position).getmBelongGame());
+        if (!SimpleUtil.isOfficialConfig(mConfigs.get(position).getmConfigName())) {
+            holder.mName.setText(mContext.getString(R.string.ini_config) + ":" + mConfigs.get(position).getmConfigName());
         } else {
-            holder.mName.setText(Html.fromHtml("配置:<font color='#ff0000'>" + mConfigs.get(position).getmConfigName() + "</font>"));
+            holder.mName.setText(Html.fromHtml(mContext.getString(R.string.ini_config) + ":<font color='#ff0000'>" + mConfigs.get(position).getmConfigName() + "</font>"));
         }
         holder.mSize.setText("编号:" + mConfigs.get(position).getmConfigid());
         if (mConfigs.get(position).getIsDeleted()) {

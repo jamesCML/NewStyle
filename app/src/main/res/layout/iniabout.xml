@@ -12,7 +12,7 @@
         android:padding="3dp"
         android:textColor="@color/mk_white"
         android:textSize="20sp"
-        android:text="应用版本"
+        android:text="@string/initab_appver"
         android:id="@+id/iniabout_appver"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -23,7 +23,7 @@
         android:layout_marginTop="5dp"
         android:textColor="@color/mk_white"
         android:textSize="20sp"
-        android:text="设备版本"
+        android:text="@string/initab_devver"
         android:id="@+id/iniabout_devver"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -34,7 +34,7 @@
         android:layout_marginTop="5dp"
         android:textColor="@color/mk_white"
         android:textSize="20sp"
-        android:text="分辨率"
+        android:text="@string/initab_pixs"
         android:id="@+id/iniabout_pix"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -44,7 +44,7 @@
         android:layout_marginTop="5dp"
         android:textColor="@color/mk_white"
         android:textSize="20sp"
-        android:text="设备号"
+        android:text="@string/initab_devnum"
         android:id="@+id/iniabout_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -56,7 +56,7 @@
         android:layout_marginTop="5dp"
         android:textColor="@color/mk_white"
         android:textSize="20sp"
-        android:text="配置保存:允许"
+        android:text="@string/initab_confgsaveallow"
         android:id="@+id/iniabout_savexml"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -68,7 +68,7 @@
         android:layout_marginTop="5dp"
         android:textColor="@color/mk_white"
         android:textSize="20sp"
-        android:text="收集日志:允许"
+        android:text="@string/initab_logallow"
         android:id="@+id/iniabout_correctlog"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

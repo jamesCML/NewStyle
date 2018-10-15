@@ -10,8 +10,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:background="#00000000"
-        android:scaleType="fitStart"
-        android:src="@mipmap/app_icon0805001" />
+        android:scaleType="fitStart" />
     <!--<ImageView
         android:layout_marginLeft="30dp"
         android:adjustViewBounds="true"

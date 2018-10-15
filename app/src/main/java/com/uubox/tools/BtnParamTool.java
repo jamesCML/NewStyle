@@ -84,7 +84,7 @@ public class BtnParamTool {
         //SimpleUtil.log("updateGuanfangConfig,"+comfirGame+"\n"+new String(okxmlbuff));
         XmlPugiElement xmlPugiElement = new XmlPugiElement(okxmlbuff);
         if (!xmlPugiElement.loadSucess) {
-            SimpleUtil.addMsgBottomToTop(context, "配置解析出错！", true);
+            SimpleUtil.addMsgBottomToTop(context, context.getString(R.string.bpt_xmlparfail), true);
             return;
         }
         XmlPugiElement[] childs = xmlPugiElement.getAllChild();
@@ -422,7 +422,7 @@ public class BtnParamTool {
         SharedPreferences lib = context.getSharedPreferences(mSpFileName, 0);
         SharedPreferences.Editor editor = lib.edit();
         saveT0LocalXMLLib(editor);
-        if (sp[1].endsWith("[官方]") && !isFind) {
+        if (SimpleUtil.isOfficialConfig(sp[1]) && !isFind) {
             if (!sp[1].contains("刺激战场") && !sp[1].contains("全军出击") && !sp[1].contains("荒野行动") && !sp[1].contains("光荣使命")) {
                 SimpleUtil.editSaveToShare(editor, "isDelete", true);
             }
@@ -526,13 +526,13 @@ public class BtnParamTool {
 
             @Override
             public void onSuccess(PutObjectRequest request, PutObjectResult result) {
-                SimpleUtil.addMsgBottomToTop(context, "配置上传成功!", false);
+                SimpleUtil.addMsgBottomToTop(context, context.getString(R.string.bpt_upconfigok), false);
                 file.delete();
             }
 
             @Override
             public void onFailure(PutObjectRequest request, ClientException clientException, ServiceException serviceException) {
-                SimpleUtil.addMsgBottomToTop(context, "配置上传失败!", true);
+                SimpleUtil.addMsgBottomToTop(context, context.getString(R.string.apt_upconfigfail), true);
             }
         });
 

@@ -55,6 +55,7 @@ public class SimpleUtil {
     public static int LIUHAI;
     public static int mDeviceVersion;
     private static ConcurrentHashMap<String, String> mInfoMap = new ConcurrentHashMap<>();
+    public static APPUSER mAPPUSER = APPUSER.WISEGA;
     public static byte[] getAssertSmallFile(Context context, String path) {
         try {
             InputStream stream = context.getAssets().open(path);
@@ -736,4 +737,13 @@ public class SimpleUtil {
         });
 
     }
+
+    public static boolean isOfficialConfig(String gameconfig) {
+        return gameconfig.endsWith("[官方]") || gameconfig.endsWith("[Official]");
+    }
+
+    public enum APPUSER {
+        WISEGA, FPS
+    }
+
 }

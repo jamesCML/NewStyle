@@ -13,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.uubox.padtool.R;
 import com.uubox.threads.AccInputThread;
 import com.uubox.views.BtnParams;
 import com.uubox.views.BtnParamsHolder;
@@ -272,7 +273,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
     public void writeManyConfigs(final List<Config> allConfigs) {
         if (!isAOAConnect()) {
             SimpleUtil.log("aoa not connrct!writeManyConfigs fail!");
-            SimpleUtil.addMsgBottomToTop(mContext, "写入配置失败！", true);
+            SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.aoac_configwritefail), true);
             return;
         }
         SimpleUtil.log("准备开始写配置，其中分辨率:" + SimpleUtil.zoomx + "," + SimpleUtil.zoomy);
@@ -356,11 +357,11 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                         for (int i = 0; i < allConfigs.size(); i++) {
                             resetReq();
                             SimpleUtil.log("正在载入 " + allConfigs.get(i).getmBelongGame() + ":" + allConfigs.get(i).getmConfigName());
-                            SimpleUtil.updateWaitTopMsg("正在载入\n  " + allConfigs.get(i).getmBelongGame() + "\n    " + allConfigs.get(i).getmConfigName());
+                            SimpleUtil.updateWaitTopMsg(mContext.getString(R.string.aoac_loading) + "\n  " + allConfigs.get(i).getmBelongGame() + "\n    " + allConfigs.get(i).getmConfigName());
                             if (!diveSend(allConfigs.get(i).mData.all2Bytes(), index_)) {
                                 SimpleUtil.log("请求错误！" + Hex.toString(mReq.mReqResult) + "," + false);
                                 SimpleUtil.resetWaitTop(mContext);
-                                SimpleUtil.addMsgBottomToTop(mContext, "配置写入失败！", true);
+                                SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.aoac_configwritefail), true);
                                 return;
                             }
 
@@ -372,7 +373,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                         byte[] d0data = getDeviceConfigD0();
                         SimpleUtil.resetWaitTop(mContext);
                         if (d0data != null) {
-                            SimpleUtil.addMsgBottomToTop(mContext, "配置写入成功！", false);
+                            SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.aoac_configwritesuc), false);
                             SimpleUtil.saveToShare(mContext, "ini", "configschange", false);
                             SimpleUtil.saveToShare(mContext, "ini", "configsorderbytes", Hex.toString(d0data));
                             SimpleUtil.saveToShare(mContext, "ini", "NewConfigNotWrite", "");
@@ -381,7 +382,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                             }
                             SimpleUtil.notifyall_(10015, d0data);
                         } else {
-                            SimpleUtil.addMsgBottomToTop(mContext, "配置写入失败！", true);
+                            SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.aoac_configwritefail), true);
                         }
                         SimpleUtil.notifyall_(10012, d0data);
                         if (isNeedToCloseKeySet) {
@@ -399,7 +400,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
     private void sendAOAChangeInfo(String accessory_manufacturer, String accessory_model, String accessory_serial) {
         if (accessory_manufacturer == null || accessory_model == null || accessory_serial == null || accessory_manufacturer.length() > 8 || accessory_model.length() > 8 || accessory_serial.length() > 16
                 || accessory_manufacturer.isEmpty() || accessory_model.isEmpty() || accessory_serial.isEmpty()) {
-            SimpleUtil.addMsgBottomToTop(mContext, "AOA参数变更失败，字符串长度过长！", true);
+            SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.aoac_aoachangefail), true);
             return;
         }
 
@@ -423,7 +424,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
         writeWaitResult((byte) 0xe1, buff.all2Bytes(), 2000);
         SimpleUtil.log("更新AOA参数:" + Hex.toString(mReq.mReqResult));
         if (mReq.mReqResult != null && mReq.mReqResult.length > 3 && mReq.mReqResult[3] == 0) {
-            SimpleUtil.addMsgBottomToTop(mContext, "AOA参数变更" + (mReq.mReqResult[3] == 0 ? "成功" : "失败"), mReq.mReqResult[3] != 0);
+            SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.aoac_devparamfail) + (mReq.mReqResult[3] == 0 ? mContext.getString(R.string.initab_sucessful) : mContext.getString(R.string.initab_fail)), mReq.mReqResult[3] != 0);
             if (mReq.mReqResult[3] == 0) {
                 SimpleUtil.saveToShare(mContext, "ini", "aoaparamschange", false);
             }
@@ -481,7 +482,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
 
         //final byte[] d0 = Hex.parse("A5 14 D0 01 04 07 05 09 02 E2 00 00 00 00 00 00 00 00 00 87");
         if (d0 == null) {//为了排序，只能暂时获取来自存储的排序
-            SimpleUtil.addMsgBottomToTop(mContext, "读取设备配置信息失败！", true);
+            SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.aoac_readinfofail), true);
             SimpleUtil.log("get lib d0:" + configsorderbytes);
             d0 = Hex.parse(configsorderbytes);
         }
@@ -503,7 +504,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                 if (!isFind) {
                     config.setDeleted(true);
                     if (configsLeftData != null) {
-                        if (config.getmConfigName().endsWith("[官方]"))
+                        if (SimpleUtil.isOfficialConfig(config.getmConfigName()))
                             configsLeftData.add(0, config);
                         else
                             configsLeftData.add(config);
@@ -521,7 +522,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                     config.setDeleted(true);
                     if (configsLeftData != null) {
                         SimpleUtil.log("增加了一个到左边:" + config.getmConfigName());
-                        if (config.getmConfigName().endsWith("[官方]"))
+                        if (SimpleUtil.isOfficialConfig(config.getmConfigName()))
                             configsLeftData.add(0, config);
                         else
                             configsLeftData.add(config);

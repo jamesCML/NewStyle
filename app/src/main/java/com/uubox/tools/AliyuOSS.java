@@ -48,6 +48,7 @@ public class AliyuOSS {
     public ListObjectsResult listOSSFiles(String bucket, String content) {
         ListObjectsRequest listObjects = new ListObjectsRequest(bucket);
         listObjects.setPrefix(content);
+        listObjects.setMaxKeys(1000);
         try {
             return mOSSClient.listObjects(listObjects);
         } catch (ClientException e) {

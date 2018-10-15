@@ -25,16 +25,11 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:padding="4dp"
-                android:text="鼠标灵敏度调节"
+                android:text="@string/lay_mouselmd"
                 android:textColor="@color/mk_white"
                 android:textStyle="bold"/>
 
-            <Button
-                android:id="@+id/btn_reset_mousesbr"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="恢复默认"
-                android:textColor="@color/b1"/>
+
 
         </LinearLayout>
 
@@ -50,7 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_weight="3"
-                android:text="鼠标灵敏度:0"
+                android:text="@string/mouselmd0"
                 android:textColor="@color/mk_white"/>
 
             <SeekBar
@@ -79,7 +74,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_weight="3"
-                android:text="滚轮灵敏度:0"
+                android:text="@string/gunlunlmd0"
                 android:textColor="@color/mk_white"/>
 
             <SeekBar
@@ -104,4 +99,13 @@
         android:layout_gravity="right|top"
         android:layout_margin="5dp"
         android:src="@mipmap/frame_close"/>
+
+    <Button
+        android:layout_gravity="right|bottom"
+        android:layout_margin="5dp"
+        android:id="@+id/btn_reset_mousesbr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/resetdefault"
+        android:textColor="@color/b1" />
 </FrameLayout>
