@@ -20,7 +20,7 @@
             android:background="@drawable/dialog_message_bt_select"
             android:padding="1dp"
             android:text="@string/main_cancel"
-            android:textColor="@color/lightred"
+            android:textColor="#ff5959"
             android:textStyle="bold"
             android:visibility="gone"/>
 
@@ -60,8 +60,8 @@
         android:id="@+id/dialog_oversize_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="3dp"
-        android:layout_marginRight="3dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         android:background="#990000ff"
         android:orientation="horizontal">
 
@@ -73,8 +73,8 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/initab_unchoiceconfig"
-            android:textColor="@color/lightred"
-            android:textStyle="bold"/>
+            android:textColor="#ff5959"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/dialog_oversize_rightmsg"
@@ -86,8 +86,8 @@
             android:gravity="center"
             android:padding="1dp"
             android:text="@string/initab_choiceconfigs"
-            android:textColor="@color/mk_loading"
-            android:textStyle="bold"/>
+            android:textColor="#92E09D"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout

@@ -20,8 +20,10 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -59,7 +61,6 @@ public class KeyboardView extends FrameLayout
 
 
     public static final String TAG = "KeyboardView";
-    static private ArrayList keys;
     /**
      * 菜单栏
      */
@@ -78,7 +79,7 @@ public class KeyboardView extends FrameLayout
      */
     TextView mTvSave;
     LinearLayout mLlClose;
-    LinearLayout mLlKeymap;
+    LinearLayout meyesKeymap;
     ImageView mIvKeymap;
     TextView mTvKeymap;
     /**
@@ -158,7 +159,12 @@ public class KeyboardView extends FrameLayout
         };
         SimpleUtil.addINormalCallback(this);
         //GuiStep.getInstance().init(context, "skip_note");
-        LayoutInflater.from(context).inflate(R.layout.view_keyboard, this, true);
+        int layout = R.layout.view_keyboard;
+        if(SimpleUtil.mAPPUSER== SimpleUtil.APPUSER.AGP)
+        {
+            layout = R.layout.fire_view_keyboard;
+        }
+        LayoutInflater.from(context).inflate(layout, this, true);
         findViews();
         initViews();
         // 重新载入按钮参数
@@ -172,7 +178,12 @@ public class KeyboardView extends FrameLayout
         super(context, attrs);
         Log.i(TAG, "KeyboardView: ");
 
-        LayoutInflater.from(context).inflate(R.layout.view_keyboard, this, true);
+        int layout = R.layout.view_keyboard;
+        if(SimpleUtil.mAPPUSER== SimpleUtil.APPUSER.AGP)
+        {
+            layout = R.layout.fire_view_keyboard;
+        }
+        LayoutInflater.from(context).inflate(layout, this, true);
         findViews();
         initViews();
         // 重新载入按钮参数
@@ -181,7 +192,13 @@ public class KeyboardView extends FrameLayout
 
     }
 
+   private void animation_in()
+   {
 
+       TranslateAnimation translateAnimation = new TranslateAnimation(0,0,-100,0);
+       translateAnimation.setDuration(500);
+       mFlMenu.startAnimation(translateAnimation);
+   }
     private void findViews() {
         Log.i(TAG, "findViews: ");
         mFlMain = this.findViewById(R.id.fl_main);
@@ -189,7 +206,7 @@ public class KeyboardView extends FrameLayout
         mIvMenu = this.findViewById(R.id.iv_menu);
         mTvSave = this.findViewById(R.id.tv_save);
         mLlClose = findViewById(R.id.ll_close);
-        mLlKeymap = findViewById(R.id.ll_keymap);
+        meyesKeymap = findViewById(R.id.ll_keymap);
         mIvKeymap = findViewById(R.id.iv_keymap);
         mTvKeymap = findViewById(R.id.tv_keymap);
         mRlMenuBar = this.findViewById(R.id.rl_menu_bar);
@@ -204,24 +221,11 @@ public class KeyboardView extends FrameLayout
         // FIXME: 2017/9/18  测试页面 和 提示语  后续版本添加
 
         mImgExit = findViewById(R.id.iv_menu_btn_exit);
-        /**
-         * 新建数组存放所有按键
-         */
-        keys = new ArrayList<>(14);
-        keys.add(Btn.A);
-        keys.add(Btn.B);
-        keys.add(Btn.L);
-        keys.add(Btn.R);
-        keys.add(Btn.X);
-        keys.add(Btn.Y);
-        keys.add(Btn.UP);
-        keys.add(Btn.DOWN);
-        keys.add(Btn.RIGHT);
-        keys.add(Btn.LEFT);
-        keys.add(Btn.L2);
-        keys.add(Btn.L1);
-        keys.add(Btn.R2);
-        keys.add(Btn.R1);
+        if(SimpleUtil.mAPPUSER== SimpleUtil.APPUSER.AGP)
+        {
+
+            animation_in();
+        }
 
     }
 
@@ -237,7 +241,7 @@ public class KeyboardView extends FrameLayout
         mIvMenu.setOnClickListener(this);
         mTvSave.setOnClickListener(this);
         mLlClose.setOnClickListener(this);
-        mLlKeymap.setOnClickListener(this);
+        meyesKeymap.setOnClickListener(this);
         mImgExit.setOnClickListener(this);
         mIvMenuBtnSetting.setOnTouchListener(this);
         mIvMenuBtnL.setOnTouchListener(this);
@@ -503,12 +507,12 @@ public class KeyboardView extends FrameLayout
             List<String> backs = (List<String>) obj;
             final String iniName = backs.get(0);
             if (!BtnParamTool.canSaveIniToXml(getContext(), iniName)) {
-                Toast.makeText(getContext(), R.string.kbv_confignameexist,
+                Toast.makeText(getContext(), getContext().getString(R.string.kbv_confignameexist),
                         Toast.LENGTH_SHORT).show();
                 return;
             }
             if (iniName == null || iniName.isEmpty()) {
-                Toast.makeText(getContext(), R.string.kbv_confignameempty,
+                Toast.makeText(getContext(), getContext().getString(R.string.kbv_confignameempty),
                         Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -559,7 +563,7 @@ public class KeyboardView extends FrameLayout
                             final String newIniContentName = backs.get(0);
 
                             if (newIniContentName == null || newIniContentName.isEmpty()) {
-                                Toast.makeText(getContext(), R.string.kbv_gamenameempty,
+                                Toast.makeText(getContext(), getContext().getString(R.string.kbv_gamenameempty),
                                         Toast.LENGTH_SHORT).show();
                                 return;
                             }
@@ -567,7 +571,7 @@ public class KeyboardView extends FrameLayout
                             Iterator<String> allIt = allKeysConfigsTable.getAll().keySet().iterator();
                             while (allIt.hasNext()) {
                                 if (allIt.next().equals(newIniContentName)) {
-                                    Toast.makeText(getContext(), R.string.kbv_gamenameexist,
+                                    Toast.makeText(getContext(), getContext().getString(R.string.kbv_gamenameexist),
                                             Toast.LENGTH_SHORT).show();
                                     return;
                                 }
@@ -606,7 +610,7 @@ public class KeyboardView extends FrameLayout
             SimpleUtil.notifyall_(1, null);
 
 
-        } else if (v == mLlKeymap) {
+        } else if (v == meyesKeymap) {
             // 更新显示状态到配置中
             // 刷新键位按钮的UI
             refreshKeymapBtn();
@@ -768,7 +772,7 @@ public class KeyboardView extends FrameLayout
         SimpleUtil.log("vv3:" + vv);
         Log.i(TAG, "onDragStart: 在拖动开始" + v.toString());
         // 显示删除按钮
-        mIvMenu.setImageDrawable(getResources().getDrawable(R.mipmap.del));
+        mIvMenu.setVisibility(VISIBLE);
     }
 
 
@@ -834,14 +838,14 @@ public class KeyboardView extends FrameLayout
         }
 
         // 显示添加按钮
-        mIvMenu.setImageDrawable(getResources().getDrawable(R.mipmap.ic_menu_delete));
+        mIvMenu.setVisibility(GONE);
     }
 
     @Override
     public void onScaleStart(View v) {
         Log.i(TAG, "onScaleStart: " + v.toString());
         // 显示添加按钮
-        mIvMenu.setImageDrawable(getResources().getDrawable(R.mipmap.ic_menu_delete));
+        mIvMenu.setVisibility(VISIBLE);
     }
 
     @Override
@@ -1133,14 +1137,14 @@ public class KeyboardView extends FrameLayout
             } else if (v == mIvMenuBtnL) {
 
                 if (BtnParamTool.getBtnNormalBtn(Btn.L) != null && BtnParamTool.getBtnNormalBtn(Btn.L).img != null) {
-                    Toast.makeText(getContext(), R.string.kbv_hasexist,
+                    Toast.makeText(getContext(), getContext().getString(R.string.kbv_hasexist),
                             Toast.LENGTH_SHORT).show();
                     return true;
                 }
 
             } else if (v == mIvMenuBtnR) {
                 if (BtnParamTool.getBtnNormalBtn(Btn.R) != null && BtnParamTool.getBtnNormalBtn(Btn.R).img != null) {
-                    Toast.makeText(getContext(), R.string.kbv_hasexist,
+                    Toast.makeText(getContext(), getContext().getString(R.string.kbv_hasexist),
                             Toast.LENGTH_SHORT).show();
                     return true;
                 }
@@ -1196,8 +1200,7 @@ public class KeyboardView extends FrameLayout
     }
 
     private void refreshKeymapBtn() {
-
-        if (mTvKeymap.getText().equals(R.string.kbv_show)) {
+        if (mTvKeymap.getText().toString().equals(getContext().getString(R.string.kbv_show))) {
             mIvKeymap.setImageResource(R.mipmap.keymap_dismiss);
             mTvKeymap.setText(R.string.kbv_hide);
             BtnParamTool.setIsShowKbFloatView(getContext(), false);
@@ -1219,6 +1222,9 @@ public class KeyboardView extends FrameLayout
             setUse((AOAConfigTool.Config) obj);
         } else if (id == 10014) {
             mEnableSetting = true;
+        }else if (id == 10016) {//关闭了悬浮窗
+            SimpleUtil.log("debugr 悬浮窗关闭");
+            SimpleUtil.removeINormalCallback(this);
         }
     }
 

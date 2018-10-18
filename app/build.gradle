@@ -5,8 +5,8 @@ android {
         applicationId "com.uubox.padtool"
         minSdkVersion 19
         targetSdkVersion 22
-        versionCode 132
-        versionName "2.3.0.1"
+        versionCode 133
+        versionName "2.3.2"
         flavorDimensions "versionCode"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -38,13 +38,19 @@ android {
     productFlavors {
         UUBox_Wisega {
             applicationId "com.uubox.padtool"
-            manifestPlaceholders = [app_icon: "@mipmap/ic_launcher", appname: "UUBOX",aoafilter:"@xml/accessory_filter"]
+            manifestPlaceholders = [app_icon: "@mipmap/ic_launcher", appname: "UUBOX",aoafilter:"@xml/accessory_filter",pgyid: "84b6fb903f7085609d7aa3077f47379c"]
             //buildConfigField "int", "TYPE", "1"
             signingConfig signingConfigs.release
         }
-        FPSBox_XJ {
+        UUBox_FPS {
             applicationId "com.fpsbox.padtool"
-            manifestPlaceholders = [app_icon: "@mipmap/fps_icon", appname: "FPSBOX",aoafilter:"@xml/accessory_filter_xj"]
+            manifestPlaceholders = [app_icon: "@mipmap/ic_launcher", appname: "FPSBOX",aoafilter:"@xml/accessory_filter_xj",pgyid: "84b6fb903f7085609d7aa3077f47379c"]
+            //buildConfigField "int", "TYPE", "1"
+            signingConfig signingConfigs.release
+        }
+        UUBox_AGP {
+            applicationId "com.agp.padtool"
+            manifestPlaceholders = [app_icon: "@mipmap/ic_launcher", appname: "AGP",aoafilter:"@xml/accessory_filter_agp",pgyid: "1a5fb57d556d734879619a62eb0f9504"]
             //buildConfigField "int", "TYPE", "1"
             signingConfig signingConfigs.release
         }

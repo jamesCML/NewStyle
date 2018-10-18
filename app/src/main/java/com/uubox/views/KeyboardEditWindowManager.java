@@ -154,6 +154,7 @@ public class KeyboardEditWindowManager {
         //rootView.setVisibility(View.GONE);
         try {
             mWindowManager.removeView(rootView);
+            SimpleUtil.notifyall_(10016,null);
         } catch (Exception e) {
             SimpleUtil.log("hide the window catch the exception!");
         }

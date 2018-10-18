@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><resources>    <!--<usb-accessory model="@4" manufacturer="Mct" version="1.0"/>-->    <usb-accessory        manufacturer="nd"        model="agp"        version="1.0" /></resources>

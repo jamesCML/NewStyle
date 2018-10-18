@@ -52,7 +52,7 @@
     <string name="kbv_saveconfig">保存配置</string>
     <string name="kbv_guanfangnewconfig">当前使用官方配置,默认新建一个配置</string>
     <string name="kbv_nouseconfig">当前没有使用任何配置</string>
-    <string name="kbv_used">[使用中]</string>
+    <string name="kbv_used">使用中</string>
     <string name="kbv_save">保存</string>
     <string name="kbv_confignameexist">配置名称已经存在</string>
     <string name="kbv_confignameempty">配置名称不能为空</string>
@@ -152,6 +152,7 @@
     <string name="kbv_close">关闭</string>
     <string name="ifeedback">我要反馈</string>
     <string name="kb_curused">当前使用:</string>
+    <string name="movead_fastkey">快捷键:Ctrl+</string>
 
     <string-array name="menu_ini_help_items">
         <item>《映射按键设置》</item>

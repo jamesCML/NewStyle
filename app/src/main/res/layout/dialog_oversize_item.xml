@@ -10,9 +10,8 @@
         android:id="@+id/moveconfig_item_left"
         android:layout_gravity="center"
         android:src="@mipmap/item_left_arrow"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content" />
+        android:layout_width="40dp"
+        android:layout_height="40dp" />
 
     <FrameLayout
         android:layout_gravity="center"
@@ -88,10 +87,9 @@
         android:id="@+id/moveconfig_item_right"
         android:layout_gravity="center"
         android:src="@mipmap/item_right_arrow"
-        android:layout_width="0dp"
-        android:layout_weight="1"
+        android:layout_width="40dp"
         android:visibility="gone"
-        android:layout_height="wrap_content" />
+        android:layout_height="40dp" />
 
     <FrameLayout
         android:visibility="visible"

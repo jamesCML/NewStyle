@@ -76,10 +76,6 @@
 
 
         </activity>
-        <activity
-            android:name=".InitActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="landscape" />
         <service
             android:name=".MainService"
             android:configChanges="orientation|keyboardHidden|mcc|mnc|locale|touchscreen|navigation|screenLayout|uiMode|screenSize|smallestScreenSize|layoutDirection|fontScale|keyboard">
@@ -101,7 +97,7 @@
         </receiver>
         <meta-data
             android:name="PGYER_APPID"
-            android:value="84b6fb903f7085609d7aa3077f47379c" />
+            android:value="${pgyid}" />
         <meta-data
             android:name="android.max_aspect"
             android:value="2.1" />

@@ -139,22 +139,6 @@ public class KeyboardFloatView extends FrameLayout implements SimpleUtil.INormal
         if (params.iHaveChild()) {
             addView(params.getBtn2(), btn);
         }
-
-        /*if(BtnParamTool.getComfirGame().contains("刺激战场"))//fortest
-        {
-            if(btn== KeyboardView.Btn.NUM_1)
-            {
-                final ImageView finalIv = iv;
-                SimpleUtil.runOnUIThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        int[] postion = new int[2];
-                        finalIv.getLocationOnScreen(postion);
-                        SimpleUtil.log("num_1:"+postion[0]+","+postion[1]);
-                    }
-                },1000);
-            }
-        }*/
     }
     private void clearUI() {
         removeAllViews();

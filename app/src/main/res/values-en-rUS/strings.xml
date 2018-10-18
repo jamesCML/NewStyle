@@ -1,0 +1,176 @@
+<resources>
+    <string name="app_name">UUBox</string>
+    <string name="action_settings">Clear</string>
+    <string name="jump_over_str">Skip and don\'t show me this again</string>
+    <string name="welcome_tips">Welcome to use UUBox and press any button to continue</string>
+    <string name="vertical">X：</string>
+    <string name="horizontal">Y：</string>
+    <string name="wheel">Wheel：</string>
+    <string name="mouse_string">Mouse：</string>
+    <string name="initab_configloadfail">Error loading config file！</string>
+    <string name="initab_loading_wait">Loading...please wait...</string>
+    <string name="initab_configsnotmatch">The current config doesn\'t match the device, please re-write.</string>
+    <string name="initab_condev">Please connect the device before changing the config!</string>
+    <string name="initab_bq_lmd">F2 type:Rifle   Sensitivity:</string>
+    <string name="initab_cfq_lmd">F1 type:SMG   Sensitivity:</string>
+    <string name="initab_ak_lmd">F3 type:AK47   Sensitivity:</string>
+    <string name="initab_guanfang">[Official]</string>
+    <string name="initab_del_guanfang">Can\'t delete the official config</string>
+    <string name="initab_del">Delete</string>
+    <string name="initab_sucessful">Succeed</string>
+    <string name="initab_fail">Failed</string>
+    <string name="initab_game">Game</string>
+    <string name="initab_haveclear">Wiped</string>
+    <string name="initab_pressgun">Recoil pattern</string>
+    <string name="initab_gotoconfiglist">Config list</string>
+    <string name="initab_gotogunpresslist">Recoil pattern setting</string>
+    <string name="initab_curusedel">Config is using can\'t be canceled!</string>
+    <string name="initab_more4configs">Supports 4 configs at most</string>
+    <string name="initab_checknewconfigs">Config available,updating automatically</string>
+    <string name="initab_configbiger">Config error,overflow!</string>
+    <string name="initab_cfq">SMG</string>
+    <string name="initab_bq">Rifle</string>
+    <string name="initab_ak">AK</string>
+    <string name="initab_helpinfo">Help</string>
+    <string name="initab_ask">Question:</string>
+    <string name="initab_answer">Answer:</string>
+    <string name="initab_myconfigs">My config</string>
+    <string name="initab_helpdoc">Help</string>
+    <string name="initab_appver">App version:</string>
+    <string name="initab_devber">Device version:</string>
+    <string name="initab_redverfail">Version loading error</string>
+    <string name="initab_pixs">Resolution:</string>
+    <string name="initab_devnum">Device No:</string>
+    <string name="initab_devnumtoclip">Device number has been copied to clipboard</string>
+    <string name="initab_confgsaveallow">Save config:allow</string>
+    <string name="initab_baseinfo">Basic info</string>
+    <string name="initab_infoempty">Content can\'t be empty!</string>
+    <string name="kbv_savetocurconfig">Save changes</string>
+    <string name="kbv_savetohasconfig">Save changes to</string>
+    <string name="kbv_newoneconfig">New config</string>
+    <string name="kbv_configname">Config name</string>
+    <string name="kbv_saveconfig">Save config</string>
+    <string name="kbv_guanfangnewconfig">Currently using the official config,new config is created by default.</string>
+    <string name="kbv_nouseconfig">No config has been used</string>
+    <string name="kbv_used">Used</string>
+    <string name="kbv_save">Save</string>
+    <string name="kbv_confignameexist">Config name has been used</string>
+    <string name="kbv_confignameempty">Config name can\'t be blank</string>
+    <string name="kbv_savetogame">Save</string>
+    <string name="kbv_newgame">New game</string>
+    <string name="kbv_gamename">Game name</string>
+    <string name="kbv_gamenameempty">Content can\'t be blank！</string>
+    <string name="kbv_gamenameexist">Game name has been used！</string>
+    <string name="kbv_warmwarn">Warning</string>
+    <string name="kbv_exitapp">Are you sure you want to exit?</string>
+    <string name="kbv_type3addkey">key can\'t add auxiliary key!</string>
+    <string name="kbv_union">Linkage</string>
+    <string name="kbv_clear">Clear</string>
+    <string name="kbv_choicemod">Select mode</string>
+    <string name="kbv_deltype3">Can\'t remove fixed key!</string>
+    <string name="kbv_type3onlyone">Key only has one button!</string>
+    <string name="kbv_settokeytype">Set key type</string>
+    <string name="kbv_del">Delete</string>
+    <string name="kbv_keyopreation">keyboard operation</string>
+    <string name="kbv_hasakey">Already have a custom button</string>
+    <string name="kbv_hasexist">Occupied</string>
+    <string name="kbv_show">Show</string>
+    <string name="kbv_hide">Hide</string>
+    <string name="mad_mouselmd">Mouse:</string>
+    <string name="mad_gunlunlmd">Mouse wheel:</string>
+    <string name="aoac_loading">Loading</string>
+    <string name="aoac_configwritefail">Writing config file error！</string>
+    <string name="aoac_configwritesuc">Save successfully！</string>
+    <string name="aoac_aoachangefail">AOA parameter change error,string length overflow!</string>
+    <string name="aoac_devparamfail">AOA parameter change</string>
+    <string name="aoac_readinfofail">Loading config file failed！</string>
+    <string name="bpt_xmlparfail">Configuration parser error！</string>
+    <string name="bpt_upconfigok">Config uploaded successfully!</string>
+    <string name="apt_upconfigfail">Config uploaded failed!</string>
+    <string name="sbp_saveloading">Saving...</string>
+    <string name="sbp_savelocal">Saved to local storage</string>
+    <string name="ait_readdevverfail">Failed to load device version！</string>
+    <string name="ini_uplogloading">Uploading log file...please wait</string>
+    <string name="ini_uologok">Log uploaded successfully!</string>
+    <string name="ini_uplogfail">Log uploaded failed!</string>
+    <string name="main_entergameshowviews">The key will be displayed when entering the game!</string>
+    <string name="main_openfloat">Please active floating windows permission!</string>
+    <string name="main_opennow">Start now</string>
+    <string name="main_floatnot">Please actvie floating windows permission!</string>
+    <string name="main_float">Floating window</string>
+    <string name="main_floatplease">Open floating window please</string>
+    <string name="main_verupdate">Check for updates</string>
+    <string name="main_findnewver">Update available:</string>
+    <string name="main_updateenable">]The latest version:</string>
+    <string name="main_curappver">The current version:</string>
+    <string name="main_updatefail">Storage access permission is not active,update failed!</string>
+    <string name="main_loadstart">Downlaoding...</string>
+    <string name="main_loadproce0">UPdating: 0%</string>
+    <string name="main_load">Update</string>
+    <string name="main_exit">Later</string>
+    <string name="main_cancel">Cancel</string>
+    <string name="main_updateexec">Download error,upadte failed!</string>
+    <string name="main_updateok">Download completed！Ready to install！</string>
+    <string name="main_updateproc">Update progress</string>
+    <string name="main_loadres">Loading...</string>
+    <string name="main_backrun">Keep running in background</string>
+    <string name="main_feedbackhint">We want your feedback!please enter your comment at least 10 words.</string>
+    <string name="main_feedbacksend">Send</string>
+    <string name="ms_condevfail">Failed to connect to the device,please replug cable!</string>
+    <string name="ms_goodbess">Winner winner, chicken diner!</string>
+    <string name="ms_entergamefirst">Please enter the game!</string>
+    <string name="ini_config">Config</string>
+    <string name="main_backrunfeautre">Run in background on startup</string>
+    <string name="aoa_changshang">Manufacturer info:</string>
+    <string name="aoamod">AOA mode:</string>
+    <string name="aoaser">Seral numberx:</string>
+    <string name="ok">Comfirm</string>
+    <string name="lay_mouselmd">Mouse sensitivity</string>
+    <string name="resetdefault">Reset</string>
+    <string name="mouselmd0">Mouse sensitivity:0</string>
+    <string name="gunlunlmd0">Mouse wheel sensitivity:0</string>
+    <string name="initab_databig">Too many keys in config,please delete some keys.</string>
+    <string name="initab_writetodev">Write config</string>
+    <string name="initab_unchoiceconfig">Unselected config</string>
+    <string name="initab_choiceconfigs">Selected config</string>
+    <string name="initab_gunpress_tip">Weapon keys(1,2) + type keys(F1,F2,F3)set different effects of Recoil pattern, weapons can be configured separately. Weapon keys + ESC to close the corresponding effects of Recoil pattern.</string>
+    <string name="initab_bqdefault">F2 type:Rifle Sensitivity:16</string>
+    <string name="initab_akdefault">F3 type:AK47 Sensitivity:20</string>
+    <string name="initab_cfqdefault">F1 type:SMG Sensitivity:13</string>
+    <string name="initab_bootchoice">The default boot option:</string>
+    <string name="initab_pressgunclose">Close Recoil pattern feature</string>
+    <string name="initab_usecfqdefault">SMG used by default</string>
+    <string name="initab_usebqdefault">Rifle used by default</string>
+    <string name="initab_useakdefault">AK47 used by default</string>
+    <string name="initab_problems">FAQs:</string>
+    <string name="initab_mingcheng">Name</string>
+    <string name="initab_bianhao">No</string>
+    <string name="initab_fastkey">Hotkey</string>
+    <string name="initab_devver">Device version</string>
+    <string name="initab_logallow">Collect logs:allow</string>
+    <string name="initab_cap">Storage</string>
+    <string name="kbv_close">Close</string>
+    <string name="ifeedback">Feedback</string>
+    <string name="kb_curused">Current Used:</string>
+    <string name="movead_fastkey">Keys:Ctrl+</string>
+
+    <string-array name="menu_ini_help_items">
+        <item>《Key mapping setting》</item>
+    </string-array>
+    <string-array name="menu_ini_help_contents">
+        <item>
+              1.Add key:\n         &#160;&#160;Long press and hold the blank position that needs to be mapped, it will appear a "?" key, press the key to be set on the keyboard,the "?" will become the corresponding key, and tap the "Close" key will prompt whether to save.\n
+              2.Delete key:\n         &#160;&#160;Long press and hold the key to be deleted, a icon of red trash will appear at the top of the screen, drag the key to the trash icon to complete the deletion, tap the "Close" key will prompt whether to save.\n
+              3.Special key:\n         &#160;&#160;When the "?"key is dragged to the specified position, after pressing the key on the keyboard. If the key already exists, the key is considered to be the auxiliary key of the existing key, it is linkage type: The color of the attached key is green, when the type of key is pressed, the main and the auxiliary key are pressed at the same time.(Warning: deleting the main key will cause the auxiliary key to be delete together)\n
+              4.key zoom:\n         &#160;&#160;The direction key can be scaled by two fingers, after one finger presses the key, the other presses the other place at the screen, and the direction key can be scaled by moving the second finger.
+        </item>
+    </string-array>
+    <string-array name="gunqaitems">
+        <item>Does the M416 and SCAR both used the rifle recoil pattern parameters?`The rifle except the AK47 use the same parameters, all using rifle parameters.</item>
+        <item>When the sight isn\'t used,will shooting the floor?`It only support using sight, switching weapon(1,2) or Reloading bullets(R) will stop recoil pattern temporarily. When two people too close to ues the sight, you can stop recoil pattern temporarily by pressing R key.</item>
+        <item>Can two weapons be configured with different parameters in PUBG?`In PUBG, the main weapon closes recoil pattern through 1+ESC and configures the recoil pattern parameters through 1+F1,1+F2,1+F3. the second weapon closes recoil pattern through 2+ESC and configures the recoil pattern parameters through 2+F1,2+F2,2+F3. (other games are different in the way of swicthing weapon, it is recommended to configure to the same way)</item>
+        <item>Does it need to switch the recoil pattern configuration when switching the scope?`No,please change the firing and the scope sensitivity to about 23, no-scope and 8 times scope don't need to modify.</item>
+        <item>How to adjust the parameters of recoil pattern?`According to the habit, modify thee appropriate firing sensitivity(all the firing and scope sensitivity are the same), and then adjust the recoil pattern sensitivity to the best.</item>
+        <item>Why do different situations occur with the same weapon and the same recoil pattern parameter?`Different accessories, different shooting positions(standing, squatting and firing down)will slightly affect the range of the shoot floating, you can make up for a slight manual recoil pattern. Vertical grip has a great impact on the recoil pattern parameter, we recommend T-grid.</item>
+    </string-array>
+</resources>

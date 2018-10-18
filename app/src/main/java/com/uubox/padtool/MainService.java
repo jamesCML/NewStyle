@@ -39,14 +39,11 @@ import com.uubox.threads.AccInputThread;
 import com.uubox.tools.AOAConfigTool;
 import com.uubox.tools.BtnParamTool;
 import com.uubox.tools.SimpleUtil;
-import com.uubox.views.GuiStep;
 import com.uubox.views.KeyboardEditWindowManager;
 import com.uubox.views.KeyboardFloatView;
 import com.uubox.views.KeyboardView;
 
 import java.io.FileDescriptor;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class MainService extends Service implements SimpleUtil.INormalBack {
@@ -176,6 +173,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
+
     private void openUsbAccessory(UsbAccessory usbAccessory) {
         SimpleUtil.log("openUsbAccessory:" + this.hashCode());
 
@@ -594,7 +592,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
 
 
     private int getAPPUserFloatIcon(boolean atSide) {
-        switch (SimpleUtil.mAPPUSER) {
+        /*switch (SimpleUtil.mAPPUSER) {
             case WISEGA:
                 if (atSide) {
                     return (mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.ic_folat_offline_edge : R.mipmap.ic_folat_online_edge;
@@ -606,9 +604,13 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
                     return (mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.fps_float_online : R.mipmap.fps_float_online;
                 } else {
                     return (mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.fps_float_online : R.mipmap.fps_float_online;
-                }
+               }*/
+        if (atSide) {
+            return (mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.ic_folat_offline_edge : R.mipmap.ic_folat_online_edge;
+        } else {
+            return (mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.ic_folat_offline : R.mipmap.ic_folat_online;
         }
-        return 0;
+
     }
 
     /**
@@ -676,7 +678,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             });
         } else if (id == 10006)//AOA断开了
         {
-            SimpleUtil.log("AOA掉线了！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！");
+            SimpleUtil.log("xxxxxxxxxxxxxxxxxxxxxxxxx---AOA disconnect---xxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
             SimpleUtil.runOnUIThread(new Runnable() {
                 @Override
                 public void run() {
@@ -697,6 +699,10 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
 
                 }
             });
+        }
+        else if (id == 10016)//悬浮窗关闭了
+        {
+            mfloatingIv.setVisibility(View.VISIBLE);
         }
 
     }
@@ -755,7 +761,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
                 return true;
             }
             if (!isMove && BtnParamTool.getPressFloatable()) {
-
+                mfloatingIv.setVisibility(View.GONE);
                 KeyboardEditWindowManager.getInstance().init(getApplicationContext());
                 initViews();
                 //GuiStep.getInstance().show(false, true);

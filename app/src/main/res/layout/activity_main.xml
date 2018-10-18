@@ -2,7 +2,6 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     android:id="@+id/main_parent">
 
     <LinearLayout
@@ -10,45 +9,63 @@
         android:orientation="vertical"
         android:layout_gravity="center"
         android:gravity="center"
-        android:layout_width="400dp"
-        android:layout_height="250dp">
-
-        <ProgressBar
-            android:visibility="gone"
-            android:layout_gravity="center"
-            android:id="@+id/loading_pro"
-            android:layout_width="193dp"
-            android:layout_height="69dp" />
-
-        <TextView
-            android:layout_marginTop="5dp"
-            android:id="@+id/loading_msg"
-            android:text=""
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
 
-        <Button
-            android:layout_marginTop="5dp"
-            android:id="@+id/loading_bt"
-            android:textStyle="bold"
-            android:layout_gravity="center"
-            android:text=""
-            android:background="@color/transparent"
-            android:textColor="@color/color_union_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
 
-        <CheckBox
-            android:id="@+id/loading_cb"
-            android:visibility="gone"
-            android:text="@string/main_backrunfeautre"
-            android:textColor="@color/lightred"
-            android:textStyle="bold"
-            android:textSize="10sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:orientation="vertical">
+            <ImageView
+                android:visibility="gone"
+                android:id="@+id/main_log"
+                android:src="@mipmap/main_logo"
+                android:layout_width="80dp"
+                android:layout_height="80dp" />
+
+
+            <TextView
+                android:layout_marginTop="20dp"
+                android:id="@+id/loading_msg"
+                android:text=""
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+
+       <FrameLayout
+           android:layout_weight="1"
+           android:layout_width="match_parent"
+           android:layout_height="0dp">
+           <TextView
+               android:visibility="gone"
+               android:paddingLeft="5dp"
+               android:paddingRight="5dp"
+               android:paddingTop="2dp"
+               android:paddingBottom="2dp"
+               android:id="@+id/loading_bt"
+               android:textStyle="bold"
+               android:layout_gravity="center"
+               android:text=""
+               android:background="@drawable/clicktoback_bg"
+               android:textColor="@color/font_blue"
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content" />
+       </FrameLayout>
+
     </LinearLayout>
+
+
+    <ProgressBar
+        android:visibility="gone"
+        android:layout_gravity="center"
+        android:id="@+id/loading_pro"
+        android:layout_width="193dp"
+        android:layout_height="69dp" />
 
     <TextView
         android:text="@string/ifeedback"

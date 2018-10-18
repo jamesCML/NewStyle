@@ -66,7 +66,7 @@ public class MoveConfigAdapter extends BaseAdapter {
         if (!SimpleUtil.isOfficialConfig(mConfigs.get(position).getmConfigName())) {
             holder.mName.setText(mContext.getString(R.string.ini_config) + ":" + mConfigs.get(position).getmConfigName());
         } else {
-            holder.mName.setText(Html.fromHtml(mContext.getString(R.string.ini_config) + ":<font color='#ff0000'>" + mConfigs.get(position).getmConfigName() + "</font>"));
+            holder.mName.setText(Html.fromHtml(mContext.getString(R.string.ini_config) + ":<font color='#ff5959'>" + mConfigs.get(position).getmConfigName() + "</font>"));
         }
         holder.mSize.setText("编号:" + mConfigs.get(position).getmConfigid());
         if (mConfigs.get(position).getIsDeleted()) {
@@ -78,7 +78,7 @@ public class MoveConfigAdapter extends BaseAdapter {
             holder.mRightArrow.setVisibility(View.GONE);
             holder.mLeftArrow.setVisibility(View.VISIBLE);
             holder.mFastkey.setVisibility(View.VISIBLE);
-            holder.mFastkey.setText("快捷键:Ctrl+" + (position + 1));
+            holder.mFastkey.setText(mContext.getString(R.string.movead_fastkey) + (position + 1));
             holder.mOriPar.setVisibility(View.VISIBLE);
         }
         holder.mCuruse.setVisibility(mConfigs.get(position).getIsUsed() ? View.VISIBLE : View.GONE);

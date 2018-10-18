@@ -323,7 +323,9 @@ public class SimpleUtil {
          * id--10002AOA接口数据分发
          * id--10004悬浮窗口关闭通知
          * */
+        //log("debugr listener size:"+mCallBacks.size());
         for (INormalBack callback : mCallBacks) {
+            //log("debugr notify:"+callback);
             callback.back(id, obj);
         }
     }
@@ -743,7 +745,7 @@ public class SimpleUtil {
     }
 
     public enum APPUSER {
-        WISEGA, FPS
+        WISEGA, FPS, AGP
     }
 
 }

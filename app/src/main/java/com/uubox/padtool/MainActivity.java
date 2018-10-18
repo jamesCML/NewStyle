@@ -6,9 +6,7 @@ import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
@@ -41,14 +39,11 @@ import com.uubox.threads.IniTask;
 import com.uubox.toolex.ScreenUtils;
 
 import com.uubox.tools.CommonUtils;
-import com.uubox.tools.LogToFileUtils;
 import com.uubox.tools.SimpleUtil;
-import com.uubox.tools.SocketLog;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Random;
 
 
 /**
@@ -57,7 +52,7 @@ import java.util.Random;
 public class MainActivity extends Activity implements View.OnClickListener {
     private ProgressBar mProgress;
     private TextView mLoadMsg;
-    private Button mButton;
+    private TextView mButton;
     private boolean mIsJugeFloat;
 
     @Override
@@ -66,11 +61,20 @@ public class MainActivity extends Activity implements View.OnClickListener {
         SimpleUtil.DEBUG = CommonUtils.getAppVersionName(this).contains("debug");
         SimpleUtil.log("MainActivity-------------create------------");
         setContentView(R.layout.activity_main);
-        if (getWindowManager().getDefaultDisplay().getRotation() * Surface.ROTATION_90 == 1) {
-            findViewById(R.id.main_parent).setBackgroundColor(Color.GREEN);
-        } else {
-            findViewById(R.id.main_parent).setBackgroundColor(Color.RED);
+        divAPPUSER();
+        if(SimpleUtil.mAPPUSER== SimpleUtil.APPUSER.AGP)
+        {
+            findViewById(R.id.main_log).setVisibility(View.VISIBLE);
+            if (getWindowManager().getDefaultDisplay().getRotation() * Surface.ROTATION_90 == 1) {
+                findViewById(R.id.main_parent).setBackgroundResource(R.mipmap.start_bg_l);
+            } else {
+                findViewById(R.id.main_parent).setBackgroundResource(R.mipmap.start_bg_p);
+            }
         }
+        else{
+            findViewById(R.id.main_parent).setBackgroundResource(R.mipmap.load_bg);
+        }
+
 
 
         int a = ScreenUtils.getScreenWidth();
@@ -105,7 +109,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
         }
 
-        divAPPUSER();
+
 
     }
 
@@ -115,6 +119,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
             SimpleUtil.mAPPUSER = SimpleUtil.APPUSER.WISEGA;
         } else if (appName.equals("FPSBOX")) {
             SimpleUtil.mAPPUSER = SimpleUtil.APPUSER.FPS;
+        }else if (appName.equals("AGP")) {
+            SimpleUtil.mAPPUSER = SimpleUtil.APPUSER.AGP;
         }
     }
     @Override
@@ -122,15 +128,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
         super.onResume();
         SimpleUtil.log("MainActivity-------------resume------------" + hashCode() + " pid:" + Process.myPid());
 
-        int jLH = (Integer) SimpleUtil.getFromShare(this, "ini", "LH", int.class, -1);
+        /*int jLH = (Integer) SimpleUtil.getFromShare(this, "ini", "LH", int.class, -1);
         //jLH = -1;
         if (jLH == -1)//需要判断一下刘海屏
         {
             startActivityForResult(new Intent(this, InitActivity.class), 11111);
             return;
-        }
-        SimpleUtil.LIUHAI = jLH;
-        SimpleUtil.log("resume Liuhai:" + SimpleUtil.LIUHAI);
+        }*/
+        SimpleUtil.LIUHAI = 0;
         if (isFloatPermissionOK()) {
             SimpleUtil.log("isFloatPermissionOK");
             mLoadMsg.setText(R.string.main_entergameshowviews);
@@ -294,6 +299,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
         if (mIsShowUpdate) {
             return;
         }
+        if(SimpleUtil.mAPPUSER== SimpleUtil.APPUSER.FPS)//小鸡用自己的平台
+        {
+            exeIniTask();
+            return;
+        }
         SimpleUtil.runOnUIThread(new Runnable() {
             @Override
             public void run() {
@@ -307,13 +317,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                 //没有更新是回调此方法
                                 SimpleUtil.log("there is no new version");
                                 exeIniTask();
-                            }
+                        }
 
                             @Override
                             public void onUpdateAvailable(final AppBean appBean) {
                                 mIsShowUpdate = true;
                                 SimpleUtil.log("蒲公英版本:" + appBean.getVersionCode());
-                                final boolean isForce = Integer.parseInt(appBean.getVersionCode()) % 2 == 0;
+                                final boolean isForce = false;
 
                                 SimpleUtil.popWindow(MainActivity.this, getString(R.string.main_verupdate), getString(R.string.main_findnewver) + appBean.getVersionName() + getString(R.string.main_updateenable) + "\n" + getString(R.string.main_curappver) + CommonUtils.getAppVersionName(MainActivity.this),
                                         new Runnable() {
