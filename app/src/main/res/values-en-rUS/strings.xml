@@ -52,12 +52,12 @@
     <string name="kbv_saveconfig">Save config</string>
     <string name="kbv_guanfangnewconfig">Currently using the official config,new config is created by default.</string>
     <string name="kbv_nouseconfig">No config has been used</string>
-    <string name="kbv_used">Used</string>
+    <string name="kbv_used">Using</string>
     <string name="kbv_save">Save</string>
     <string name="kbv_confignameexist">Config name has been used</string>
     <string name="kbv_confignameempty">Config name can\'t be blank</string>
     <string name="kbv_savetogame">Save</string>
-    <string name="kbv_newgame">New game</string>
+    <string name="kbv_newgame">New</string>
     <string name="kbv_gamename">Game name</string>
     <string name="kbv_gamenameempty">Content can\'t be blank！</string>
     <string name="kbv_gamenameexist">Game name has been used！</string>
@@ -159,9 +159,9 @@
     </string-array>
     <string-array name="menu_ini_help_contents">
         <item>
-              1.Add key:\n         &#160;&#160;Long press and hold the blank position that needs to be mapped, it will appear a "?" key, press the key to be set on the keyboard,the "?" will become the corresponding key, and tap the "Close" key will prompt whether to save.\n
+              1.Add key:\n         &#160;&#160;Long press and hold the blank position that needs to be mapped, it will appear a \"?\" key, press the key to be set on the keyboard,the \"?\" will become the corresponding key, and tap the "Close" key will prompt whether to save.\n
               2.Delete key:\n         &#160;&#160;Long press and hold the key to be deleted, a icon of red trash will appear at the top of the screen, drag the key to the trash icon to complete the deletion, tap the "Close" key will prompt whether to save.\n
-              3.Special key:\n         &#160;&#160;When the "?"key is dragged to the specified position, after pressing the key on the keyboard. If the key already exists, the key is considered to be the auxiliary key of the existing key, it is linkage type: The color of the attached key is green, when the type of key is pressed, the main and the auxiliary key are pressed at the same time.(Warning: deleting the main key will cause the auxiliary key to be delete together)\n
+              3.Special key:\n         &#160;&#160;When the \"?\"key is dragged to the specified position, after pressing the key on the keyboard. If the key already exists, the key is considered to be the auxiliary key of the existing key, it is linkage type: The color of the attached key is green, when the type of key is pressed, the main and the auxiliary key are pressed at the same time.(Warning: deleting the main key will cause the auxiliary key to be delete together)\n
               4.key zoom:\n         &#160;&#160;The direction key can be scaled by two fingers, after one finger presses the key, the other presses the other place at the screen, and the direction key can be scaled by moving the second finger.
         </item>
     </string-array>
@@ -169,7 +169,7 @@
         <item>Does the M416 and SCAR both used the rifle recoil pattern parameters?`The rifle except the AK47 use the same parameters, all using rifle parameters.</item>
         <item>When the sight isn\'t used,will shooting the floor?`It only support using sight, switching weapon(1,2) or Reloading bullets(R) will stop recoil pattern temporarily. When two people too close to ues the sight, you can stop recoil pattern temporarily by pressing R key.</item>
         <item>Can two weapons be configured with different parameters in PUBG?`In PUBG, the main weapon closes recoil pattern through 1+ESC and configures the recoil pattern parameters through 1+F1,1+F2,1+F3. the second weapon closes recoil pattern through 2+ESC and configures the recoil pattern parameters through 2+F1,2+F2,2+F3. (other games are different in the way of swicthing weapon, it is recommended to configure to the same way)</item>
-        <item>Does it need to switch the recoil pattern configuration when switching the scope?`No,please change the firing and the scope sensitivity to about 23, no-scope and 8 times scope don't need to modify.</item>
+        <item>Does it need to switch the recoil pattern configuration when switching the scope?`No,please change the firing and the scope sensitivity to about 23, no-scope and 8 times scope don\'t need to modify.</item>
         <item>How to adjust the parameters of recoil pattern?`According to the habit, modify thee appropriate firing sensitivity(all the firing and scope sensitivity are the same), and then adjust the recoil pattern sensitivity to the best.</item>
         <item>Why do different situations occur with the same weapon and the same recoil pattern parameter?`Different accessories, different shooting positions(standing, squatting and firing down)will slightly affect the range of the shoot floating, you can make up for a slight manual recoil pattern. Vertical grip has a great impact on the recoil pattern parameter, we recommend T-grid.</item>
     </string-array>

@@ -29,16 +29,11 @@ public class InitActivity extends Activity {
 
                 int[] position = new int[2];
                 getWindow().getDecorView().getLocationOnScreen(position);
-                SimpleUtil.log("检测到停靠屏幕位置为:" + position[0]);
                 if (position[0] != 0)//有刘海屏
                 {
-                    SimpleUtil.log("检测到刘海屏");
                     SimpleUtil.LIUHAI = getStatusBarHeight();
                 }
                 SimpleUtil.saveToShare(getBaseContext(), "ini", "LH", SimpleUtil.LIUHAI);
-                int jLH = (Integer) SimpleUtil.getFromShare(InitActivity.this, "ini", "LH", int.class, -1);
-
-                SimpleUtil.log("jLiuhai:" + jLH);
                 finish();
             }
         }, 500);

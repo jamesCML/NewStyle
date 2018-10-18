@@ -134,7 +134,7 @@ public class KeyboardFloatView extends FrameLayout implements SimpleUtil.INormal
             layoutParams.topMargin -= iv.getMeasuredHeight() / 2;
         }
         iv.setBackgroundResource(BtnParamTool.getBtnBelongColor(params));
-        SimpleUtil.log("小健位:" + btn + "," + layoutParams.leftMargin + "," + layoutParams.topMargin);
+        //SimpleUtil.log("小健位:" + btn + "," + layoutParams.leftMargin + "," + layoutParams.topMargin);
         addView(iv, layoutParams);
         if (params.iHaveChild()) {
             addView(params.getBtn2(), btn);
