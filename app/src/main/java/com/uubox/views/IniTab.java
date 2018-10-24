@@ -206,7 +206,7 @@ public class IniTab {
                                 sp0[2] = gamesha;
                                 int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "cfqNum", int.class, 13);
                                 int bqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "bqNum", int.class, 16);
-                                int akNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "akNum", int.class, 19);
+                                int akNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "akNum", int.class, 20);
                                 SimpleUtil.log("刷新获取存储的压枪值:" + bqNum + "." + cfqNum + "," + akNum);
                                 bqBar.setProgress(bqNum - 1);
                                 cfqBar.setProgress(cfqNum - 1);

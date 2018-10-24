@@ -137,6 +137,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }*/
         SimpleUtil.LIUHAI = 0;
         if (isFloatPermissionOK()) {
+            mButton.setVisibility(View.GONE);
             SimpleUtil.log("isFloatPermissionOK");
             mLoadMsg.setText(R.string.main_entergameshowviews);
             runInit();
@@ -204,6 +205,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             if (!Settings.canDrawOverlays(getBaseContext())) {
                 mLoadMsg.setText(R.string.main_openfloat);
                 mButton.setText(R.string.main_opennow);
+                mButton.setVisibility(View.VISIBLE);
                 return false;
             }
 
@@ -212,6 +214,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 SimpleUtil.toast(MainActivity.this, getString(R.string.main_floatnot));
                 mLoadMsg.setText(R.string.main_openfloat);
                 mButton.setText(R.string.main_opennow);
+                mButton.setVisibility(View.VISIBLE);
                 return false;
             }
         }

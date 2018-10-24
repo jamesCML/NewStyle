@@ -38,6 +38,7 @@ import android.widget.LinearLayout;
 import com.uubox.threads.AccInputThread;
 import com.uubox.tools.AOAConfigTool;
 import com.uubox.tools.BtnParamTool;
+import com.uubox.tools.CommonUtils;
 import com.uubox.tools.SimpleUtil;
 import com.uubox.views.KeyboardEditWindowManager;
 import com.uubox.views.KeyboardFloatView;
@@ -211,7 +212,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             }
         });*/
         mHandler.removeMessages(HANDLE_SCAN_AOA);
-        mfloatingIv.setImageResource(getAPPUserFloatIcon((Integer) mfloatingIv.getTag() == 0));
+
 
 
         SimpleUtil.runOnThread(new Runnable() {
@@ -222,6 +223,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
                 SimpleUtil.runOnUIThread(new Runnable() {
                     @Override
                     public void run() {
+                        mfloatingIv.setImageResource(getAPPUserFloatIcon((Integer) mfloatingIv.getTag() == 0));
                         checkConfigChange();
                     }
                 }, 200);
@@ -862,7 +864,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             Notification notification = null;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
                 notification = new Notification.Builder(this)
-                        .setContentTitle(getString(R.string.app_name))
+                        .setContentTitle(CommonUtils.getAppName(this))
                         .setContentText(text)
                         .setTicker(text)
                         .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_folat_online))

@@ -40,6 +40,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -744,6 +745,44 @@ public class SimpleUtil {
         return gameconfig.endsWith("[官方]") || gameconfig.endsWith("[Official]");
     }
 
+    public static boolean isZh(Context context) {
+        Locale locale = context.getResources().getConfiguration().locale;
+        String language = locale.getLanguage();
+        if (language.endsWith("zh"))
+            return true;
+        else
+            return false;
+    }
+
+    public static String zhChange(Context context, String str) {
+        if (!SimpleUtil.isZh(context)) {
+            return str.replace("[官方]", "[Official]")
+                    .replace("小米枪战", "Millet gunfight")
+                    .replace("荒野行动", "Wilderness action")
+                    .replace("穿越火线", "Cross Fire")
+                    .replace("终结者", "Terminator")
+                    .replace("丛林法则", "Law of the jungle")
+                    .replace("光荣使命", "Passion Leads Army")
+                    .replace("绝地求生之全军出击", "PUBG Tecent")
+                    .replace("绝地求生之刺激战场", "PUBG");
+        }
+        return str;
+    }
+
+    public static String entozhChange(Context context, String str) {
+        if (!SimpleUtil.isZh(context)) {
+            return
+                    str.replace("Millet gunfight", "小米枪战")
+                            .replace("Wilderness action", "荒野行动")
+                            .replace("Cross Fire", "穿越火线")
+                            .replace("Terminator", "终结者")
+                            .replace("Law of the jungle", "丛林法则")
+                            .replace("Passion Leads Army", "光荣使命")
+                            .replace("PUBG Tecent", "绝地求生之全军出击")
+                            .replace("PUBG", "绝地求生之刺激战场");
+        }
+        return str;
+    }
     public enum APPUSER {
         WISEGA, FPS, AGP
     }

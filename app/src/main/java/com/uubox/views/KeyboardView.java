@@ -196,7 +196,7 @@ public class KeyboardView extends FrameLayout
    {
 
        TranslateAnimation translateAnimation = new TranslateAnimation(0,0,-100,0);
-       translateAnimation.setDuration(500);
+       translateAnimation.setDuration(200);
        mFlMenu.startAnimation(translateAnimation);
    }
     private void findViews() {
@@ -387,7 +387,7 @@ public class KeyboardView extends FrameLayout
                     curName = gloabkeyconfig.split("#Z%W#", -1)[1];
                     inibt_cur.setTextColor(Color.YELLOW);
                     BtnParamTool.setComfirGame(gloabkeyconfig.split("#Z%W#", -1)[3]);
-                    inibt_cur.setText(getContext().getString(R.string.kb_curused) + BtnParamTool.getComfirGame() + "/" + curName);
+                    inibt_cur.setText(getContext().getString(R.string.kb_curused) + SimpleUtil.zhChange(getContext(), BtnParamTool.getComfirGame()) + "/" + SimpleUtil.zhChange(getContext(), curName));
 
                 }
 
@@ -459,7 +459,7 @@ public class KeyboardView extends FrameLayout
             @Override
             public void run() {
                 LinkedHashMap<String, String> items = new LinkedHashMap<>();
-                items.put(getContext().getString(R.string.kbv_configname), BtnParamTool.getComfirGame() + "_" + SimpleUtil.getSha1(System.currentTimeMillis() + "").substring(0, 5));
+                items.put(getContext().getString(R.string.kbv_configname), SimpleUtil.zhChange(getContext(), BtnParamTool.getComfirGame()) + "_" + SimpleUtil.getSha1(System.currentTimeMillis() + "").substring(0, 5));
 
                 SimpleUtil.addEditToTop(getContext(), getContext().getString(R.string.kbv_saveconfig), items, null, new Runnable() {
                     @Override
@@ -531,7 +531,7 @@ public class KeyboardView extends FrameLayout
 
             KeyboardEditWindowManager.getInstance().removeTop();
             List<String> items = new ArrayList<>();
-            items.add(getContext().getString(R.string.kbv_savetogame) + "【" + BtnParamTool.getComfirGame() + "】");
+            items.add(getContext().getString(R.string.kbv_savetogame) + "【" + SimpleUtil.zhChange(getContext(), BtnParamTool.getComfirGame()) + "】");
             items.add(getContext().getString(R.string.kbv_newgame));
             List<Runnable> tasks = new ArrayList<>();
             tasks.add(new Runnable() {
