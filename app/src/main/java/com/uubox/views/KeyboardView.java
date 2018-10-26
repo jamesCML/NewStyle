@@ -773,6 +773,7 @@ public class KeyboardView extends FrameLayout
         Log.i(TAG, "onDragStart: 在拖动开始" + v.toString());
         // 显示删除按钮
         mIvMenu.setVisibility(VISIBLE);
+        SimpleUtil.anim_shake(mIvMenu);
     }
 
 
@@ -837,7 +838,7 @@ public class KeyboardView extends FrameLayout
 
         }
 
-        // 显示添加按钮
+        mIvMenu.clearAnimation();
         mIvMenu.setVisibility(GONE);
     }
 
@@ -846,6 +847,7 @@ public class KeyboardView extends FrameLayout
         Log.i(TAG, "onScaleStart: " + v.toString());
         // 显示添加按钮
         mIvMenu.setVisibility(VISIBLE);
+        SimpleUtil.anim_shake(mIvMenu);
     }
 
     @Override
@@ -990,8 +992,10 @@ public class KeyboardView extends FrameLayout
             return null;
         }
 
-        return new RectF(view.getX(), view.getY(), view.getX() + view.getWidth(),
-                view.getY() + view.getHeight());
+        int[] xy = new int[2];
+        view.getLocationInWindow(xy);
+        return new RectF(xy[0], xy[1], xy[0] + view.getWidth(),
+                xy[1] + view.getHeight());
     }
 
     /**

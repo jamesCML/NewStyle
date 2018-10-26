@@ -39,16 +39,9 @@ public class BtnParamTool {
 
     public static final int DEFAULT_SLIDE_FREQUENCY = 30;
     private static final String KEY_IS_SHOW_KB_FLOAT_VIEW = "is_show_kb_float_view";
-    private static final String TAG = "BtnParamTool";
     public static boolean mIsInjectionEnabled = false;
     private static TimerTask mLeftJoystickTimerTask;
-    /**
-     * 右摇杆定时任务，用于实现右摇杆的滑动模式
-     */
     private static TimerTask mRightJoystickTimerTask;
-    /**
-     * 按钮参数集
-     */
     private static ConcurrentHashMap<KeyboardView.Btn, BtnParams> mBtnParams =
             new ConcurrentHashMap<KeyboardView.Btn, BtnParams>();
     private static boolean mHasBtnParamsChanged = false;
@@ -64,8 +57,6 @@ public class BtnParamTool {
     private static String comfirGame = "";
     private static boolean pressFloatable = true;
 
-    private static boolean isScreenChange;
-
     private List<XmlPugiElement> getChild(XmlPugiElement element) {
         List<XmlPugiElement> results = new ArrayList<>();
         String parentName = element.getName();
@@ -80,8 +71,6 @@ public class BtnParamTool {
     }
 
     public static void updateGuanfangConfig(Context context, byte[] okxmlbuff) {
-
-        //SimpleUtil.log("updateGuanfangConfig,"+comfirGame+"\n"+new String(okxmlbuff));
         XmlPugiElement xmlPugiElement = new XmlPugiElement(okxmlbuff);
         if (!xmlPugiElement.loadSucess) {
             SimpleUtil.addMsgBottomToTop(context, context.getString(R.string.bpt_xmlparfail), true);
@@ -118,7 +107,6 @@ public class BtnParamTool {
             }
 
         }
-
         saveBtnParams(context, (comfirGame + System.currentTimeMillis()) + "#Z%W#" + comfirGame + "[官方]#Z%W#" + comfirGame + "[官方]");
         xmlPugiElement.release();
 
@@ -131,9 +119,6 @@ public class BtnParamTool {
             enumValues.add(btn.name());
         }
         return enumValues;
-    }
-    public static void setIsScreenChange(boolean change) {
-        isScreenChange = change;
     }
 
     private static void setParam(BtnParams btnParam, XmlPugiElement element, int zoomx, int zoomy) {
@@ -151,20 +136,8 @@ public class BtnParamTool {
 
     }
 
-    //由于json强转，部分手机异常，现在采用解析字符串的方式进行
-    private static KeyboardView.Btn getByKey(String key) {
-        return KeyboardView.Btn.valueOf(key);
-    }
-
-
     public static ConcurrentHashMap<KeyboardView.Btn, BtnParams> getmBtnParams() {
         return mBtnParams;
-    }
-
-
-    private static int getPrefInt(Context context, final String spFileName, final String key,
-                                  final int defaultValue) {
-        return (Integer) SimpleUtil.getFromShare(context, spFileName, key, int.class, defaultValue);
     }
 
     public static void loadBtnParamsFromPrefs(Context context) {
@@ -175,14 +148,6 @@ public class BtnParamTool {
         SimpleUtil.log("=============开始加载默认配置参数=============");
         SimpleUtil.log("当前运行的游戏:" + comfirGame);
         mBtnParams.clear();
-
-       /* if (comfirGame.contains("丛林法则") || comfirGame.contains("光荣使命") ||
-                comfirGame.contains("小米枪战") || comfirGame.contains("穿越火线") || comfirGame.contains("终结者")
-                || comfirGame.contains("全军出击") || comfirGame.contains("刺激战场") || comfirGame.contains("荒野行动")) {
-            SimpleUtil.log("[预加载官方配置]");
-            loadIniFile(context, comfirGame + ".xml", comfirGame + "[官方]#Z%W#" + comfirGame + "[官方]");
-            mBtnParams.clear();
-        }*/
         mHasBtnParamsChanged = false;
         String gloabkeyconfig = (String) SimpleUtil.getFromShare(context, "ini", "gloabkeyconfig", String.class, "");
         SimpleUtil.log("默认使用==>" + gloabkeyconfig);
@@ -446,7 +411,6 @@ public class BtnParamTool {
 
             SimpleUtil.saveToShare(context, "KeysConfigs", comfirGame, System.currentTimeMillis());
             if (sharedPreferences.getAll().size() == 0 || sp[1].equals(sp[2])) {
-                //sharedPreferences.edit().putString("default", wholeName).commit();
                 SimpleUtil.saveToShare(context, "ini", "gloabkeyconfig", wholeName + "#Z%W#" + comfirGame);
                 SimpleUtil.saveToShare(sharedPreferences.edit(), sp[0], wholeName);
                 pressFloatable = true;
@@ -573,21 +537,6 @@ public class BtnParamTool {
         return SimpleUtil.saveToShare(context, "ini", "gloabkeyconfig", "default#Z%W#" + configname + "#Z%W#" + configsha + "#Z%W#" + belonggame);
 
     }
-    public static int getBtnRepeatType(final KeyboardView.Btn btn) {
-        if (btn == null || mBtnParams == null || !mBtnParams.containsKey(btn)) {
-            return 0;
-        }
-
-        return mBtnParams.get(btn).getKeyType();
-    }
-
-    public static boolean isBtnHasChild(final KeyboardView.Btn btn) {
-        if (btn == null || mBtnParams == null || !mBtnParams.containsKey(btn)) {
-            return false;
-        }
-
-        return mBtnParams.get(btn).isParent();
-    }
 
     public static int getBtnBelongColor(final BtnParams params) {
 
@@ -600,24 +549,6 @@ public class BtnParamTool {
                 return R.mipmap.circle_huchi;
         }
         return 0;
-    }
-
-    public static void setBtnRepeatType(final KeyboardView.Btn btn, final int type) {
-        if (btn == null || mBtnParams == null || !mBtnParams.containsKey(btn)) {
-            return;
-        }
-        BtnParams params = mBtnParams.get(btn);
-        params.setKeyType(type);
-        mBtnParams.replace(btn, params);
-        mHasBtnParamsChanged = true;
-    }
-
-    public static boolean getBtnRepeatSwitch(final KeyboardView.Btn btn) {
-        if (btn == null || mBtnParams == null || !mBtnParams.containsKey(btn)) {
-            return false;
-        }
-
-        return mBtnParams.get(btn).isKeyRepeatSwitch();
     }
 
     public static BtnParams getBtnRepeatBtn2(final KeyboardView.Btn btn) {
@@ -645,15 +576,6 @@ public class BtnParamTool {
         //mBtnParams.replace(btn, params);
         mHasBtnParamsChanged = true;
     }
-
-    public static int getBtnPositionX(final KeyboardView.Btn btn) {
-        if (btn == null || mBtnParams == null || !mBtnParams.containsKey(btn)) {
-            return -1;
-        }
-
-        return mBtnParams.get(btn).getX();
-    }
-
     public static void setBtnPositionX(final KeyboardView.Btn btn, final int x) {
         if (btn == null || mBtnParams == null || !mBtnParams.containsKey(btn)) {
             return;
@@ -664,13 +586,6 @@ public class BtnParamTool {
         mHasBtnParamsChanged = true;
     }
 
-    public static int getBtnPositionY(final KeyboardView.Btn btn) {
-        if (btn == null || mBtnParams == null || !mBtnParams.containsKey(btn)) {
-            return -1;
-        }
-
-        return mBtnParams.get(btn).getY();
-    }
 
     public static void setBtnPositionY(final KeyboardView.Btn btn, final int y) {
         if (btn == null || mBtnParams == null || !mBtnParams.containsKey(btn)) {
@@ -690,14 +605,6 @@ public class BtnParamTool {
         }
 
         return mBtnParams.get(btn).getR();
-    }
-
-    public static boolean getBtnParent(final KeyboardView.Btn btn) {
-        if (btn == null || mBtnParams == null || !mBtnParams.containsKey(btn)) {
-            return false;
-        }
-
-        return mBtnParams.get(btn).isParent();
     }
 
     public static void setBtnRadius(final KeyboardView.Btn btn, final int r) {
@@ -735,14 +642,6 @@ public class BtnParamTool {
         //        setPrefInt(context, mSpFileName, joystick.getPrefMode(), mode);
     }
 
-    public static int getJoystickMode(final Context context, final KeyboardView.Btn joystick) {
-        if (joystick == null || mBtnParams == null || !mBtnParams.containsKey(joystick)) {
-            return -1;
-        }
-
-        return mBtnParams.get(joystick).getMode();
-    }
-
     public static void setJoystickStep(final Context context, final KeyboardView.Btn joystick,
                                        final int step) {
         if (joystick == null || mBtnParams == null || !mBtnParams.containsKey(joystick)) {
@@ -756,14 +655,6 @@ public class BtnParamTool {
         //        setPrefInt(context, mSpFileName, joystick.getPrefStep(), step);
     }
 
-    public static int getJoystickStep(final Context context, final KeyboardView.Btn joystick) {
-        if (joystick == null || mBtnParams == null || !mBtnParams.containsKey(joystick)) {
-            return -1;
-        }
-
-        return mBtnParams.get(joystick).getStep();
-    }
-
     public static void setJoystickFrequency(final Context context, final KeyboardView.Btn joystick,
                                             final int frequency) {
         if (joystick == null || mBtnParams == null || !mBtnParams.containsKey(joystick)) {
@@ -774,14 +665,6 @@ public class BtnParamTool {
         params.setFrequency(frequency);
         mBtnParams.replace(joystick, params);
         mHasBtnParamsChanged = true;
-    }
-
-    public static int getJoystickFrequency(final Context context, final KeyboardView.Btn joystick) {
-        if (joystick == null || mBtnParams == null || !mBtnParams.containsKey(joystick)) {
-            return -1;
-        }
-
-        return mBtnParams.get(joystick).getFrequency();
     }
 
     public static boolean hasBtnParamsChanged() {

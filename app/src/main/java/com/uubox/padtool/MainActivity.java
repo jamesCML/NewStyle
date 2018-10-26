@@ -75,8 +75,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
             findViewById(R.id.main_parent).setBackgroundResource(R.mipmap.load_bg);
         }
 
-
-
         int a = ScreenUtils.getScreenWidth();
         int b = ScreenUtils.getScreenHeight();
         SimpleUtil.zoomx = Math.min(a, b);

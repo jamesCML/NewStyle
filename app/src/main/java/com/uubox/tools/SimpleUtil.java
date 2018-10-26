@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 import android.widget.EditText;
@@ -769,6 +770,15 @@ public class SimpleUtil {
         return str;
     }
 
+    public static void anim_shake(final View view) {
+
+        Animation rotateAnim = new RotateAnimation(-5, 5, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+
+        rotateAnim.setDuration(100);
+        rotateAnim.setRepeatMode(Animation.REVERSE);
+        rotateAnim.setRepeatCount(10000);
+        view.startAnimation(rotateAnim);
+    }
     public static String entozhChange(Context context, String str) {
         if (!SimpleUtil.isZh(context)) {
             return

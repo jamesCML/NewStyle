@@ -186,34 +186,12 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             return;
         }
         FileDescriptor fileDescriptor = mParcelFileDescriptor.getFileDescriptor();
-
-        //final FileOutputStream fileOutputStream = new FileOutputStream(fileDescriptor);
-
         final AccInputThread mAccInputThread = new AccInputThread(this, fileDescriptor);
         mAccInputThread.start();
         mAOAConfigTool.startConnect(mAccInputThread);
         SimpleUtil.log("openUsbAccessory sucessful!!!!!");
         mAOAConfigTool.setAOAInfo(usbAccessory.getManufacturer(), usbAccessory.getModel(), usbAccessory.getSerial());
-
-        /*SimpleUtil.runOnThread(new Runnable() {
-            @Override
-            public void run() {
-               try {
-                   SimpleUtil.sleep(3000);
-
-                   fileOutputStream.write(new byte[]{(byte) 0xa5, (byte) 0x05, (byte) 0xb2, (byte) 0x01, (byte) 0x5d});
-                   fileOutputStream.flush();
-                   SimpleUtil.log("发送数据成功！！！！！！！！！！！！！！！！！！！！！！");
-               }catch (Exception e)
-               {
-                   e.printStackTrace();
-                   SimpleUtil.log("发送失败！！！！！！！！！！！！！！！！！！！！！！！！！");
-               }
-            }
-        });*/
         mHandler.removeMessages(HANDLE_SCAN_AOA);
-
-
 
         SimpleUtil.runOnThread(new Runnable() {
             @Override
