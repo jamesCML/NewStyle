@@ -85,10 +85,6 @@ dependencies {
 
     implementation 'com.aliyun.dpa:oss-android-sdk:+'
     implementation 'com.squareup.okio:okio:1.9.0'
-    //implementation 'com.squareup.okio:okio:1.9.0'
-    //implementation files('libs/aliyun-java-sdk-core-3.7.1.jar')
-    //implementation files('libs/aliyun-java-sdk-sts-3.0.0.jar')
-    //implementation files('libs/json-lib-2.4-jdk15.jar')
 
-    //implementation files('libs/javax.servlet-api-3.1.0.jar')
+    api 'com.clj.fastble:FastBleLib:2.1.4'
 }

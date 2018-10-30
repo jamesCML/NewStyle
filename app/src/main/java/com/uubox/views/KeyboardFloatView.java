@@ -58,8 +58,9 @@ public class KeyboardFloatView extends FrameLayout implements SimpleUtil.INormal
     }
 
     public void show() {
-        SimpleUtil.log("mIsAdded:" + mIsAdded);
-        if (mIsAdded) {
+
+        SimpleUtil.log("显示小健位:" + mIsAdded);
+        if (mIsAdded || !SimpleUtil.screenstate) {
             return;
         }
         // 重新载入按钮参数

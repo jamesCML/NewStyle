@@ -425,6 +425,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 {
                     SimpleUtil.log("\n\n\n\n\n****************启动检测到横屏***********************");
                     SimpleUtil.log("已经初始化，直接进入");
+                    SimpleUtil.screenstate = true;
                     SimpleUtil.LIUHAI = (Integer) SimpleUtil.getFromShare(MainActivity.this, "ini", "LH", int.class, -1);
                     Intent intent = new Intent(MainActivity.this, MainService.class);
                     startService(intent);

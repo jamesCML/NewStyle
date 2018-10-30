@@ -427,6 +427,9 @@ public class SimpleUtil {
         });
     }
 
+    public static void addMsgtoTopNoRes(final Context context, final String title, final String msg) {
+        addMsgtoTop(context, title, msg, null, null, true);
+    }
     public static String getCurTime() {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         return simpleDateFormat.format(new Date());
@@ -649,7 +652,8 @@ public class SimpleUtil {
             @Override
             public void run() {
                 if (waitViewTop != null) {
-                    return;
+                    log("已经存在等待窗口，则关闭重新建立");
+                    resetWaitTop(context);
                 }
                 waitViewTop = LayoutInflater.from(context).inflate(R.layout.waiting, null);
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(zoomy / 3, 4 * (zoomx / 5));
@@ -778,6 +782,13 @@ public class SimpleUtil {
         rotateAnim.setRepeatMode(Animation.REVERSE);
         rotateAnim.setRepeatCount(10000);
         view.startAnimation(rotateAnim);
+    }
+
+    public static byte[] getBytesWithSumCheck(byte[] data) {
+        byte sumCheck = sumCheck(data);
+        ByteArrayList bytes = new ByteArrayList(data);
+        bytes.add(sumCheck);
+        return bytes.all2Bytes();
     }
     public static String entozhChange(Context context, String str) {
         if (!SimpleUtil.isZh(context)) {

@@ -95,6 +95,25 @@
                 <action android:name="android.intent.action.USER_PRESENT" />
             </intent-filter>
         </receiver>
+
+        <service
+            android:name="com.uubox.cjble.BTService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.hexad.bluezime.disconnect" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.hexad.bluezime.connect" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.hexad.bluezime.featurechange" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.hexad.bluezime.getconfig" />
+            </intent-filter>
+        </service>
+
         <meta-data
             android:name="PGYER_APPID"
             android:value="${pgyid}" />
