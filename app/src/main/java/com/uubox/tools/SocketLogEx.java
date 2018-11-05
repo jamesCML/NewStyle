@@ -33,7 +33,7 @@ public class SocketLogEx extends Thread {
 
             if (mBufferWriter == null) {
                 try {
-                    Socket socket = new Socket("192.168.18.198", 11087);
+                    Socket socket = new Socket("192.168.18.199", 11087);
                     mBufferWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
                 } catch (Exception e) {
                     // e.printStackTrace();

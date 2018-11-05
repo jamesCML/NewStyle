@@ -157,7 +157,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
         LinkedHashMap<KeyboardView.Btn, BtnParams> xmlConfig = BtnParamTool.getButtonParamsFromXML(mContext, config.mTabValue);
         SimpleUtil.log("加载xml数据到configbuff:" + config.getmBelongGame() + "/" + config.getmConfigName());
         ByteArrayList cj_cfg_t = new ByteArrayList();
-        cj_cfg_t.add((byte) 0x35);//show mouse board key,暂时鼠标中建，可能键码不对
+        cj_cfg_t.add((byte) 0x35);//show mouse board key,暂时鼠标中建
         cj_cfg_t.add((byte) 0xf2);//show mouse mouse key
 
         cj_cfg_t.add((byte) 0xe2);//alter
@@ -193,7 +193,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
         cj_cfg_t.add(Hex.fromShortB((short) (OAODEVICE_Y - turnY(gunlun.getEy()))));
         cj_cfg_t.add(Hex.fromShortB((short) turnX(gunlun.getEx())));
 
-        //开始索引：33
+        //开始索引：29(30个)
         byte[] tempContainer = new byte[18];
 
 
@@ -236,9 +236,9 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
 
                 if (btnParams.iHaveChild()) {
                     BtnParams btnParams2 = btnParams.getBtn2();
-                    //SimpleUtil.log("我有子按键按键:" + btnParams2.toString());
+                    SimpleUtil.log("我有子按键按键:" + btnParams2.toString());
                     if (btnParams2.getKeyType() == 1) {
-                        //SimpleUtil.log("添加联动按键:" + btnParams2.toString());
+                        SimpleUtil.log("添加联动按键:" + btnParams2.toString());
                         keyPoints.add(packKeyData2(mBtMap.get(key2), 0, OAODEVICE_Y - turnY(btnParams2.getEy()), turnX(btnParams2.getEx()), btnParams.getKeyType() == 3 ? KEYMODE.MP_KEY : KEYMODE.MP_TOUCH));
                     }
 
@@ -276,6 +276,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
             SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.aoac_configwritefail), true);
             return;
         }
+
         SimpleUtil.log("准备开始写配置，其中分辨率:" + SimpleUtil.zoomx + "," + SimpleUtil.zoomy);
         SimpleUtil.runOnThread(new Runnable() {
             @Override
@@ -309,6 +310,18 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                                 bytes.add(data2);
                                 config.setmData(bytes);
                                 //break;
+                            }
+                        }
+
+
+                        //先判断按键是否超出255
+                        for (Config config : allConfigs) {
+                            int len = config.mData.all2Bytes().length;
+                            SimpleUtil.log(config.mConfigName + "->配置长度:" + len);
+                            if (len >= 255) {
+                                SimpleUtil.resetWaitTop(mContext);
+                                SimpleUtil.addMsgBottomToTop(mContext, config.getmConfigName() + "->" + mContext.getString(R.string.initab_databig), true);
+                                return;
                             }
                         }
 

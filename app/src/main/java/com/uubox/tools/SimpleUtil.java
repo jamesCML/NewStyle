@@ -51,7 +51,7 @@ public class SimpleUtil {
     public static int zoomy;
     public static boolean isSaveToXml = false;
     public static boolean isEnableOSSLog = false;
-    public static boolean isNetLog = false;
+    public static boolean isNetLog = true;//testfor
     public static boolean screenstate;
     public static boolean mAOAInjectEable;
     public static int LIUHAI;
