@@ -135,7 +135,7 @@
     <string name="initab_choiceconfigs">Selected config</string>
     <string name="initab_gunpress_tip">Weapon keys(1,2) + type keys(F1,F2,F3)set different effects of Recoil pattern, weapons can be configured separately. Weapon keys + ESC to close the corresponding effects of Recoil pattern.</string>
     <string name="initab_bqdefault">F2 type:Rifle Sensitivity:16</string>
-    <string name="initab_akdefault">F3 type:AK47 Sensitivity:20</string>
+    <string name="initab_akdefault">F3 type:AK47 Sensitivity:22</string>
     <string name="initab_cfqdefault">F1 type:SMG Sensitivity:13</string>
     <string name="initab_bootchoice">The default boot option:</string>
     <string name="initab_pressgunclose">Close Recoil pattern feature</string>
@@ -153,6 +153,18 @@
     <string name="ifeedback">Feedback</string>
     <string name="kb_curused">Current Used:</string>
     <string name="movead_fastkey">Keys:Ctrl+</string>
+    <string name="ble_getdevverok">获取设备版本成功:</string>
+    <string name="getdevimgok">获取设备Img成功:</string>
+    <string name="ble_sameimg">不能升级到相同的固件！</string>
+    <string name="ble_otafail">升级失败！</string>
+    <string name="ble_updating">正在升级</string>
+    <string name="ble_otaoffdev">警告！升级过程中请不要关闭设备，否则可能会导致设备损坏！</string>
+    <string name="ble_otaok">设备升级成功！</string>
+    <string name="ble_otanewver">检测到新的固件,准备升级</string>
+    <string name="ble_otamcuupdate">检测到MCU需要升级...</string>
+    <string name="ble_otaoffdont">升级中，请勿关闭设备...</string>
+    <string name="ota_mcuok">MCU升级成功！</string>
+    <string name="ble_mcufail">MCU升级失败！</string>
 
     <string-array name="menu_ini_help_items">
         <item>《Key mapping setting》</item>

@@ -36,7 +36,7 @@ public class BTJobsManager implements BTService.IStateCallBack, BTService.IBLENo
     private String mDevMod;
     private Context mContext;
     private boolean mOTAUpdating;
-
+    public final static boolean OPEN = false;
     private BTJobsManager() {
     }
 

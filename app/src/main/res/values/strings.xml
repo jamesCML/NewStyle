@@ -135,7 +135,7 @@
     <string name="initab_choiceconfigs">选中的配置</string>
     <string name="initab_gunpress_tip">武器键(1,2键)加枪类型键(F1,F2,F3)设置不同压枪效果,两把枪可分别配置, 武器键加ESC键关闭对应压枪</string>
     <string name="initab_bqdefault">F2类型:步枪 灵敏度:16</string>
-    <string name="initab_akdefault">F3类型:AK47 灵敏度:20</string>
+    <string name="initab_akdefault">F3类型:AK47 灵敏度:22</string>
     <string name="initab_cfqdefault">F1类型:冲锋枪 灵敏度:13</string>
     <string name="initab_bootchoice">开机默认配置选择:</string>
     <string name="initab_pressgunclose">关闭压枪</string>
@@ -153,6 +153,18 @@
     <string name="ifeedback">我要反馈</string>
     <string name="kb_curused">当前使用:</string>
     <string name="movead_fastkey">快捷键:Ctrl+</string>
+    <string name="ble_getdevverok">获取设备版本成功:</string>
+    <string name="getdevimgok">获取设备Img成功:</string>
+    <string name="ble_sameimg">不能升级到相同的固件！</string>
+    <string name="ble_otafail">升级失败！</string>
+    <string name="ble_updating">正在升级</string>
+    <string name="ble_otaoffdev">警告！升级过程中请不要关闭设备，否则可能会导致设备损坏！</string>
+    <string name="ble_otaok">设备升级成功！</string>
+    <string name="ble_otanewver">检测到新的固件,准备升级</string>
+    <string name="ble_otamcuupdate">检测到MCU需要升级...</string>
+    <string name="ble_otaoffdont">升级中，请勿关闭设备...</string>
+    <string name="ota_mcuok">MCU升级成功！</string>
+    <string name="ble_mcufail">MCU升级失败！</string>
 
     <string-array name="menu_ini_help_items">
         <item>《映射按键设置》</item>

@@ -203,7 +203,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
 
         int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "cfqNum", int.class, 13);
         int bqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "bqNum", int.class, 16);
-        int akNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "akNum", int.class, 20);
+        int akNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "akNum", int.class, 22);
         tempContainer[0] = (byte) bqNum;
         tempContainer[1] = (byte) cfqNum;
         tempContainer[2] = (byte) akNum;
@@ -294,7 +294,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                                 //压枪数据重新构造一下
                                 int bqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "bqNum", int.class, 16);
                                 int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "cfqNum", int.class, 13);
-                                int akNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "akNum", int.class, 20);
+                                int akNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "akNum", int.class, 22);
                                 int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "defaultgun", int.class, 0);
 
                                 SimpleUtil.log("重新调整一下压枪灵敏度、压枪：" + bqNum + "," + cfqNum + "," + akNum + "," + defaultgun);

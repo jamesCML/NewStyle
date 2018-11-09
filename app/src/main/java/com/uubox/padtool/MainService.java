@@ -77,7 +77,9 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         SimpleUtil.addINormalCallback(this);
         mAOAConfigTool = AOAConfigTool.getInstance(this);
         mUSBManager = (UsbManager) getSystemService(Context.USB_SERVICE);
-        BTJobsManager.getInstance().bindBTService(this);
+        if (BTJobsManager.OPEN) {
+            BTJobsManager.getInstance().bindBTService(this);
+        }
     }
 
     @Override
@@ -442,16 +444,18 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             SimpleUtil.screenstate = false;
             hideFloatViews();
         }
-        SimpleUtil.runOnUIThread(new Runnable() {
-            @Override
-            public void run() {
-                SimpleUtil.log("当前升级状态:" + BTJobsManager.getInstance().isOTAUpdating());
-                if (BTJobsManager.getInstance().isOTAUpdating()) {
+        if (BTJobsManager.OPEN) {
+            SimpleUtil.runOnUIThread(new Runnable() {
+                @Override
+                public void run() {
+                    SimpleUtil.log("当前升级状态:" + BTJobsManager.getInstance().isOTAUpdating());
+                    if (BTJobsManager.getInstance().isOTAUpdating()) {
 
-                    SimpleUtil.addWaitToTop(MainService.this, "");
+                        SimpleUtil.addWaitToTop(MainService.this, "");
+                    }
                 }
-            }
-        }, 500);
+            }, 500);
+        }
     }
 
     private void hideFloatViews() {
