@@ -55,25 +55,45 @@ public class APPStartCheckOTA extends Thread implements SimpleUtil.INormalBack, 
             @Override
             public void callback(int mode, int arg1, int arg2, Object obj) {
                 if (mode == 6) {
-                    if (arg1 == 3) {
+                    if (arg1 == 2) {
                         fwVersion = (String) obj;
                         if (fwVersion.isEmpty()) {
                             mICheckOTABack.checkresult(3);
                             release();
                         }
                         SimpleUtil.log("得到设备峰位版本:" + fwVersion + "，下面获取服务器版本，请稍后...");
-                        baseRemoteOTA = new WisegaHttpRemoteOTA(fwVersion, update.getCurImage());
-                        Thread getserverfwThread = new Thread(baseRemoteOTA);
-                        getserverfwThread.start();
+                        SimpleUtil.updateWaiting((Activity) mContext, "获取设备版本成功:" + fwVersion);
+                        if (update.getCurImage() != null && baseRemoteOTA == null) {
+                            baseRemoteOTA = new WisegaHttpRemoteOTA(fwVersion, update.getCurImage());
+                            Thread getserverfwThread = new Thread(baseRemoteOTA);
+                            getserverfwThread.start();
+                            //SimpleUtil.notifyall_(BaseRemoteOTA.FWVERSION_CALLBACK, "3120");//本地
+                        }
+
                     } else if (arg1 == 4) {//峰位版本读取失败
                         mICheckOTABack.checkresult(3);
                         release();
+                    } else if (arg1 == 3) {
+                        SimpleUtil.updateWaiting((Activity) mContext, "获取设备Img成功:" + update.getCurImage());
+                        if (fwVersion != null && baseRemoteOTA == null) {
+                            baseRemoteOTA = new WisegaHttpRemoteOTA(fwVersion, update.getCurImage());
+                            Thread getserverfwThread = new Thread(baseRemoteOTA);
+                            getserverfwThread.start();
+                            //SimpleUtil.notifyall_(BaseRemoteOTA.FWVERSION_CALLBACK, "3120");//本地
+                        }
                     }
                 } else if (mode == 4) {
-                    if (arg1 == 0)//设置interval失败
+                    if (arg1 == 0)
                     {
-
+                        //SimpleUtil.updateWaiting((Activity) mContext, "温馨提示", "升级失败！");
+                    } else if (arg1 == 1) {
+                        SimpleUtil.addMsgtoTopNoRes(mContext, "温馨提示", "不能升级到相同的固件！");
+                        release();
                     }
+
+                } else if (mode == 5) {
+                    SimpleUtil.addMsgtoTopNoRes(mContext, "温馨提示", "升级失败！");
+                    release();
                 } else if (mode == 2)//进度条初始化
                 {
                     mMaxProc = arg1;
@@ -82,7 +102,7 @@ public class APPStartCheckOTA extends Thread implements SimpleUtil.INormalBack, 
                     int proc = arg1;
                     float percent = (proc * 1.0f) / mMaxProc;
                     DecimalFormat df = new DecimalFormat("0.00%");
-                    SimpleUtil.updateWaitTopMsg("升级中[" + df.format(percent) + "]\n警告！升级过程中请不要关闭设备，否则可能会导致设备损坏！");
+                    SimpleUtil.updateWaiting((Activity) mContext, "正在升级" + df.format(percent) + "]\n警告！升级过程中请不要关闭设备，否则可能会导致设备损坏！");
                     if (proc == mMaxProc) {
                         //SimpleUtil.updateWaiting((Activity) mContext,mContext.getString(R.string.update_success));
                         SimpleUtil.addMsgtoTopNoRes(mContext, "温馨提示", "设备升级成功！");

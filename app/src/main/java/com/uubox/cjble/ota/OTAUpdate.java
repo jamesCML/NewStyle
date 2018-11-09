@@ -223,6 +223,7 @@ public class OTAUpdate implements Runnable, BTService.IBLENotify {
                         }
 
                         if (type != mTargImgHdr.imgType) {
+                            iotaCallBack.callback(6, 4, 0, fwVersion);
                             SimpleUtil.log("we comfirm the second img not equal the first img,so we think it is fail!");
                             return;
                         }
@@ -396,7 +397,10 @@ public class OTAUpdate implements Runnable, BTService.IBLENotify {
     }
 
     private void update() {
-
+        if (mFileImgHdr.imgType == mTargImgHdr.imgType) {
+            iotaCallBack.callback(4, 1, 0, null);
+            return;
+        }
         int delay = (Integer) SimpleUtil.getFromShare(context, "ini", "otadelay", int.class, 20);
         SimpleUtil.log("otadelay:" + delay);
         //准备发送数据
@@ -485,7 +489,7 @@ public class OTAUpdate implements Runnable, BTService.IBLENotify {
                             if (BTJobsManager.getInstance().getGatt() == null) {
                                 mProgramming = false;
                                 SimpleUtil.log("GATT writeCharacteristic failed:" + retryCount);
-                                iotaCallBack.callback(4, 0, 0, null);
+                                iotaCallBack.callback(5, 0, 0, null);
                                 return;
                             }
 
@@ -522,7 +526,7 @@ public class OTAUpdate implements Runnable, BTService.IBLENotify {
                     } else {
                         mProgramming = false;
                         SimpleUtil.log("GATT writeCharacteristic failed:" + retryCount);
-                        iotaCallBack.callback(4, 0, 0, null);
+                        iotaCallBack.callback(5, 0, 0, null);
                     }
                     if (!success) {
                         //if (success!=0) {
