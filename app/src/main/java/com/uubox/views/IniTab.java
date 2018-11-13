@@ -24,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -132,19 +133,93 @@ public class IniTab {
             return;
         }
         SimpleUtil.log("test当前使用:" + sp0[1] + "\n" + gloabkeyconfig);
+
         final View view = LayoutInflater.from(mContext).inflate(R.layout.dialog_oversize, null);
         final View listPar = view.findViewById(R.id.dialog_oversize_list_par);
         final View gunPar = view.findViewById(R.id.dialog_oversize_gun_par);
 
-        final TextView cfq = view.findViewById(R.id.dialog_oversize_gun_cfq_tv);
-        final TextView bq = view.findViewById(R.id.dialog_oversize_gun_bq_tv);
-        final TextView ak = view.findViewById(R.id.dialog_oversize_gun_ak_tv);
+        final TextView cfq = view.findViewById(R.id.dialog_oversize_gun_cfq_sen);
+        final TextView bq = view.findViewById(R.id.dialog_oversize_gun_bq_sen);
+        final TextView ak = view.findViewById(R.id.dialog_oversize_gun_ak_sen);
 
-        final SeekBar cfqBar = view.findViewById(R.id.dialog_oversize_gun_cfq);
-        final SeekBar bqBar = view.findViewById(R.id.dialog_oversize_gun_bq);
-        final SeekBar akBar = view.findViewById(R.id.dialog_oversize_gun_ak);
-        final Button resetBtn = view.findViewById(R.id.btn_reset_gun);
+        View.OnClickListener click = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                switch (v.getId()) {
+                    case R.id.cfq_add:
+                        String text = cfq.getText().toString();
+                        int cur = Integer.parseInt(text) + 1;
+                        if (cur >= 100) {
+                            cur = 99;
+                        }
+                        cfq.setText(cur + "");
+                        SimpleUtil.saveToShare(mContext, sp0[2], "cfqNum", cur);
+                        break;
+                    case R.id.bq_add:
+                        text = bq.getText().toString();
+                        cur = Integer.parseInt(text) + 1;
+                        if (cur >= 100) {
+                            cur = 99;
+                        }
+                        bq.setText(cur + "");
+                        SimpleUtil.saveToShare(mContext, sp0[2], "bqNum", cur);
+                        break;
+                    case R.id.ak_add:
+                        text = ak.getText().toString();
+                        cur = Integer.parseInt(text) + 1;
+                        if (cur >= 100) {
+                            cur = 99;
+                        }
+                        ak.setText(cur + "");
+                        SimpleUtil.saveToShare(mContext, sp0[2], "akNum", cur);
+                        break;
+                    case R.id.cfq_sub:
+                        text = cfq.getText().toString();
+                        cur = Integer.parseInt(text) - 1;
+                        if (cur <= 0) {
+                            cur = 0;
+                        }
+                        cfq.setText(cur + "");
+                        SimpleUtil.saveToShare(mContext, sp0[2], "cfqNum", cur);
+                        break;
+                    case R.id.bq_sub:
+                        text = bq.getText().toString();
+                        cur = Integer.parseInt(text) - 1;
+                        if (cur <= 0) {
+                            cur = 0;
+                        }
+                        bq.setText(cur + "");
+                        SimpleUtil.saveToShare(mContext, sp0[2], "bqNum", cur);
+                        break;
+                    case R.id.ak_sub:
+                        text = ak.getText().toString();
+                        cur = Integer.parseInt(text) - 1;
+                        if (cur <= 0) {
+                            cur = 0;
+                        }
+                        ak.setText(cur + "");
+                        SimpleUtil.saveToShare(mContext, sp0[2], "akNum", cur);
+                        break;
+                    case R.id.btn_reset_gun:
+                        bq.setText(16 + "");
+                        cfq.setText(13 + "");
+                        ak.setText(22 + "");
+                        SimpleUtil.saveToShare(mContext, sp0[2], "cfqNum", 13);
+                        SimpleUtil.saveToShare(mContext, sp0[2], "bqNum", 16);
+                        SimpleUtil.saveToShare(mContext, sp0[2], "akNum", 22);
+                        break;
+                }
+                SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
+            }
+        };
+        view.findViewById(R.id.cfq_add).setOnClickListener(click);
+        view.findViewById(R.id.cfq_sub).setOnClickListener(click);
+        view.findViewById(R.id.bq_add).setOnClickListener(click);
+        view.findViewById(R.id.bq_sub).setOnClickListener(click);
+        view.findViewById(R.id.ak_add).setOnClickListener(click);
+        view.findViewById(R.id.ak_sub).setOnClickListener(click);
+        view.findViewById(R.id.btn_reset_gun).setOnClickListener(click);
         final RadioGroup radioGroup = view.findViewById(R.id.dialog_oversize_gun_rg);
 
         final List<AOAConfigTool.Config> configsLeftData = new ArrayList<>();
@@ -208,12 +283,9 @@ public class IniTab {
                                 int bqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "bqNum", int.class, 16);
                                 int akNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "akNum", int.class, 22);
                                 SimpleUtil.log("刷新获取存储的压枪值:" + bqNum + "." + cfqNum + "," + akNum);
-                                bqBar.setProgress(bqNum - 1);
-                                cfqBar.setProgress(cfqNum - 1);
-                                akBar.setProgress(akNum - 1);
-                                bq.setText(mContext.getString(R.string.initab_bq_lmd) + bqNum);
-                                cfq.setText(mContext.getString(R.string.initab_cfq_lmd) + cfqNum);
-                                ak.setText(mContext.getString(R.string.initab_ak_lmd) + akNum);
+                                bq.setText(bqNum + "");
+                                cfq.setText(cfqNum + "");
+                                ak.setText(akNum + "");
 
                                 int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "defaultgun", int.class, 0);
                                 ((RadioButton) radioGroup.getChildAt(defaultgun)).setChecked(true);
@@ -414,64 +486,13 @@ public class IniTab {
                             }
                         });
 
-                        SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
-                            @Override
-                            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                                progress += 1;
-                                if (progress >= 100) {
-                                    progress = 99;
-                                }
-                                switch (seekBar.getId()) {
-
-                                    case R.id.dialog_oversize_gun_cfq:
-                                        cfq.setText(mContext.getString(R.string.initab_bq_lmd) + progress);
-                                        SimpleUtil.saveToShare(mContext, sp0[2], "cfqNum", progress);
-                                        break;
-                                    case R.id.dialog_oversize_gun_bq:
-                                        bq.setText(mContext.getString(R.string.initab_cfq_lmd) + progress);
-                                        SimpleUtil.saveToShare(mContext, sp0[2], "bqNum", progress);
-                                        break;
-                                    case R.id.dialog_oversize_gun_ak:
-                                        ak.setText(mContext.getString(R.string.initab_ak_lmd) + progress);
-                                        SimpleUtil.saveToShare(mContext, sp0[2], "akNum", progress);
-                                        break;
-                                }
-                            }
-
-                            @Override
-                            public void onStartTrackingTouch(SeekBar seekBar) {
-
-                            }
-
-                            @Override
-                            public void onStopTrackingTouch(SeekBar seekBar) {
-                                //SimpleUtil.addMsgBottomToTop(mContext, "修改成功", false);
-                                SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
-                            }
-                        };
-                        akBar.setOnSeekBarChangeListener(seekBarChangeListener);
-                        bqBar.setOnSeekBarChangeListener(seekBarChangeListener);
-                        cfqBar.setOnSeekBarChangeListener(seekBarChangeListener);
-                        resetBtn.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                cfqBar.setProgress(12);
-                                bqBar.setProgress(15);
-                                akBar.setProgress(19);
-                                SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
-
-                            }
-                        });
                         int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "cfqNum", int.class, 13);
                         int bqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "bqNum", int.class, 16);
                         int akNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "akNum", int.class, 22);
                         SimpleUtil.log("获取存储的压枪值:" + bqNum + "." + cfqNum + "," + akNum);
-                        bqBar.setProgress(bqNum - 1);
-                        cfqBar.setProgress(cfqNum - 1);
-                        akBar.setProgress(akNum - 1);
-                        bq.setText(mContext.getString(R.string.initab_bq_lmd) + bqNum);
-                        cfq.setText(mContext.getString(R.string.initab_cfq_lmd) + cfqNum);
-                        ak.setText(mContext.getString(R.string.initab_ak_lmd) + akNum);
+                        bq.setText(bqNum + "");
+                        cfq.setText(cfqNum + "");
+                        ak.setText(akNum + "");
 
                         int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "defaultgun", int.class, 0);
                         ((RadioButton) radioGroup.getChildAt(defaultgun)).setChecked(true);
@@ -535,7 +556,7 @@ public class IniTab {
         addItem(mContext.getString(R.string.initab_myconfigs));
         mViewPageList.add(view);
 
-        //KeyboardEditWindowManager.getInstance().init(mContext).addView(view, (7 * SimpleUtil.zoomy) / 8, (7 * SimpleUtil.zoomx) / 8);
+
     }
 
     private void addHelper() {
@@ -604,7 +625,7 @@ public class IniTab {
     private void addAbout() {
         View view = LayoutInflater.from(mContext).inflate(R.layout.iniabout, null);
         ((TextView) (view.findViewById(R.id.iniabout_appver))).setText(mContext.getString(R.string.initab_appver) + CommonUtils.getAppVersionName(mContext));
-        ((TextView) (view.findViewById(R.id.iniabout_devver))).setText(mContext.getString(R.string.initab_devber) + (SimpleUtil.mDeviceVersion == 0 ? mContext.getString(R.string.initab_redverfail) : SimpleUtil.mDeviceVersion));
+        ((TextView) (view.findViewById(R.id.iniabout_devver))).setText(mContext.getString(R.string.initab_devber) + (SimpleUtil.mDeviceVersion == null ? mContext.getString(R.string.initab_redverfail) : SimpleUtil.mDeviceVersion));
         ((TextView) (view.findViewById(R.id.iniabout_pix))).setText(mContext.getString(R.string.initab_pixs) + SimpleUtil.zoomx + "*" + SimpleUtil.zoomy);
         SpannableStringBuilder spannableString = new SpannableStringBuilder(mContext.getString(R.string.initab_devnum) + (String) SimpleUtil.getFromShare(mContext, "ini", "idkey", String.class, ""));
         AbsoluteSizeSpan sizeSpan = new AbsoluteSizeSpan(50);

@@ -71,8 +71,8 @@ public class AccInputThread extends Thread {
                     SimpleUtil.log("读取版本信息出错");
                     SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.ait_readdevverfail), true);
                 } else {
-                    SimpleUtil.mDeviceVersion = result[3] & 0xff;
-                    SimpleUtil.log("获取版本信息:" + SimpleUtil.mDeviceVersion);
+                    SimpleUtil.mDeviceVersion = Hex.toString(new byte[]{result[3]});
+                    SimpleUtil.log("获取版本信息:" + SimpleUtil.mDeviceVersion + "  data:" + Hex.toString(result));
                     SimpleUtil.putOneInfoToMap("devver", SimpleUtil.mDeviceVersion + "");
                 }
             }

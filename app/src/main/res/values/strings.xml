@@ -127,16 +127,16 @@
     <string name="ok">确定</string>
     <string name="lay_mouselmd">鼠标灵敏度调节</string>
     <string name="resetdefault">恢复默认</string>
-    <string name="mouselmd0">鼠标灵敏度:0</string>
-    <string name="gunlunlmd0">滚轮灵敏度:0</string>
+    <string name="mouselmd">鼠标</string>
+    <string name="gunlunlmd">滚轮</string>
     <string name="initab_databig">配置数量过大，请删除一些</string>
     <string name="initab_writetodev">写入设备</string>
     <string name="initab_unchoiceconfig">未选中的配置</string>
     <string name="initab_choiceconfigs">选中的配置</string>
-    <string name="initab_gunpress_tip">武器键(1,2键)加枪类型键(F1,F2,F3)设置不同压枪效果,两把枪可分别配置, 武器键加ESC键关闭对应压枪</string>
-    <string name="initab_bqdefault">F2类型:步枪 灵敏度:16</string>
-    <string name="initab_akdefault">F3类型:AK47 灵敏度:22</string>
-    <string name="initab_cfqdefault">F1类型:冲锋枪 灵敏度:13</string>
+    <string name="initab_gunpress_tip">&#160;&#160;&#160;&#160;武器键(1,2键)加枪类型键(F1,F2,F3)设置不同压枪效果,两把枪可分别配置, 武器键加ESC键关闭对应压枪</string>
+    <string name="initab_bqdefault">F2类型:步枪</string>
+    <string name="initab_akdefault">F3类型:AK47</string>
+    <string name="initab_cfqdefault">F1类型:冲锋枪</string>
     <string name="initab_bootchoice">开机默认配置选择:</string>
     <string name="initab_pressgunclose">关闭压枪</string>
     <string name="initab_usecfqdefault">默认使用冲锋枪</string>
@@ -165,6 +165,7 @@
     <string name="ble_otaoffdont">升级中，请勿关闭设备...</string>
     <string name="ota_mcuok">MCU升级成功！</string>
     <string name="ble_mcufail">MCU升级失败！</string>
+    <string name="adjustgunsen">压枪灵敏度调整</string>
 
     <string-array name="menu_ini_help_items">
         <item>《映射按键设置》</item>

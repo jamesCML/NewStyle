@@ -208,7 +208,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
         tempContainer[1] = (byte) cfqNum;
         tempContainer[2] = (byte) akNum;
         tempContainer[3] = (byte) configID_;
-
+        SimpleUtil.log("鼠标灵敏度:" + mouse_step + ",滚轮灵敏度:" + gunlun_step + ",冲锋枪:" + cfqNum + ",步枪:" + bqNum + ",AK:" + akNum);
         SimpleUtil.log("configID:" + config.mTabValue + "   " + tempContainer[3]);
 
         int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "defaultgun", int.class, 0);
