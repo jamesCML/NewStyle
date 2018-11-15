@@ -591,7 +591,14 @@ public class KeyboardView extends FrameLayout
             SimpleUtil.addRadioGrouptoTop(getContext(), getContext().getString(R.string.kbv_saveconfig), items, tasks, null, new Runnable() {
                 @Override
                 public void run() {
-                    KeyboardEditWindowManager.getInstance().close();
+                    BtnParamTool.loadBtnParamsFromPrefs(getContext());
+                    loadUi();
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            KeyboardEditWindowManager.getInstance().close();
+                        }
+                    }, 100);
                 }
             });
 

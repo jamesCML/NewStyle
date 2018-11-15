@@ -232,16 +232,19 @@ public class IniTab {
             @Override
             public void run() {
                 SimpleUtil.addWaitToTop(mContext, mContext.getString(R.string.initab_loading_wait));
-                final boolean isMatch = AOAConfigTool.getInstance(mContext).AnysLeftRihgtConfigs(configsLeftData, configsRightData);
+                final String isMatch = AOAConfigTool.getInstance(mContext).AnysLeftRihgtConfigs(configsLeftData, configsRightData);
+                if (isMatch.equals("local")) {
+                    SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.aoac_readinfofail), true);
+                } else if (!isMatch.equals("match")) {
+                    SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_configsnotmatch), true);
+                    SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
+                }
                 SimpleUtil.resetWaitTop(mContext);
                 SimpleUtil.runOnUIThread(new Runnable() {
                     @Override
                     public void run() {
                         for (AOAConfigTool.Config config : configsRightData) {
                             configCopyRight.add((AOAConfigTool.Config) config.clone());
-                        }
-                        if (!isMatch && AOAConfigTool.getInstance(mContext).isAOAConnect()) {
-                            SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_configsnotmatch), true);
                         }
                         for (AOAConfigTool.Config config : configsRightData) {
                             if (config.getIsUsed()) {

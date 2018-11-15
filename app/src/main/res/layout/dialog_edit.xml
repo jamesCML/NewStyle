@@ -35,33 +35,5 @@
             android:orientation="vertical"></LinearLayout>
     </ScrollView>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="20dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/dialogmsgyes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/dialog_message_bt_select"
-            android:layout_marginRight="20dp"
-            android:minHeight="40dp"
-            android:minWidth="80dp"
-            android:text="@string/ok" />
-
-        <Button
-            android:id="@+id/dialogmsgno"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/dialog_message_bt_select"
-            android:layout_marginLeft="20dp"
-            android:minHeight="40dp"
-            android:minWidth="80dp"
-            android:text="@string/main_cancel" />
-    </LinearLayout>
+    <include layout="@layout/yesnobottombar" />
 </LinearLayout>

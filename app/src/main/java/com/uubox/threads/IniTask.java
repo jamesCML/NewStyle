@@ -13,6 +13,7 @@ import com.uubox.padtool.R;
 import com.uubox.tools.AliyuOSS;
 import com.uubox.tools.BtnParamTool;
 import com.uubox.tools.CommonUtils;
+import com.uubox.tools.Hex;
 import com.uubox.tools.LogToFileUtils;
 import com.uubox.tools.SimpleUtil;
 import com.uubox.tools.SocketLog;
@@ -64,23 +65,37 @@ public class IniTask extends AsyncTask<Void, Integer, Void> {
 
             int curConfigVer = (Integer) SimpleUtil.getFromShare(mContext, "ini", "configver", int.class);
             SimpleUtil.log("服务器配置版本:" + configVersion + ",当前配置版本:" + curConfigVer);
+            String saveorder = (String) SimpleUtil.getFromShare(mContext, "ini", "configsorderbytes", String.class, null);
+            SimpleUtil.log("当前存储顺序:" + saveorder);
+            //A5 14 D0 03 08 03 02 01 03 43 18 00 00 00 00 00 00 00 00 F8
+            byte[] virtulorder = null;
+            if (saveorder == null)//第一次使用,要构造一个默认存储顺序
+            {
+                virtulorder = new byte[20];
+            }
             if (curConfigVer < configVersion) {
-                String[] games = {"荒野行动", "绝地求生之刺激战场", "绝地求生之全军出击", "终结者", "穿越火线", "小米枪战", "丛林法则", "光荣使命"};
-                for (String game : games) {
-                    boolean isExist = aliyuOSS.isExistFile("usbdata", "keycongfigs2/" + game + "_" + SimpleUtil.zoomx + "" + SimpleUtil.zoomy + ".xml");
-                    SimpleUtil.log("正在获取配置:" + game + "  ->" + isExist);
-                    buff = aliyuOSS.getObjectBuff("usbdata", isExist ? "keycongfigs2/" + game + "_" + SimpleUtil.zoomx + "" + SimpleUtil.zoomy + ".xml" : "keycongfigs2/" + game + "_10802160.xml");
+                String[] games = {"绝地求生之刺激战场", "绝地求生之全军出击", "荒野行动", "穿越火线", "终结者", "小米枪战", "丛林法则", "光荣使命"};
+                for (int i = 0; i < games.length; i++) {
+                    boolean isExist = aliyuOSS.isExistFile("usbdata", "keycongfigs2/" + games[i] + "_" + SimpleUtil.zoomx + "" + SimpleUtil.zoomy + ".xml");
+                    SimpleUtil.log("正在获取配置:" + games[i] + "  ->" + isExist);
+                    buff = aliyuOSS.getObjectBuff("usbdata", isExist ? "keycongfigs2/" + games[i] + "_" + SimpleUtil.zoomx + "" + SimpleUtil.zoomy + ".xml" : "keycongfigs2/" + games[i] + "_10802160.xml");
                     if (buff == null) {
                         return null;
                     }
-                    BtnParamTool.setComfirGame(game);
+                    BtnParamTool.setComfirGame(games[i]);
                     BtnParamTool.updateGuanfangConfig(mContext, buff);
-
+                    if (i < 4) {
+                        virtulorder[4 + i] = (byte) (i + 1);
+                        if (i == 0) {
+                            virtulorder[3] = 1;
+                        }
+                    }
                 }
-
                 SimpleUtil.saveToShare(mContext, "ini", "configver", configVersion);
             }
-
+            if (saveorder == null) {
+                SimpleUtil.saveToShare(mContext, "ini", "configsorderbytes", Hex.toString(virtulorder));
+            }
             //获取可以配置xml的白名单
             XmlPugiElement savexmlids = config.getFirstChildByName("savexmlids");
             //free:任意的 forbiden:禁止 grep:白名单过滤

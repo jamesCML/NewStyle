@@ -95,7 +95,7 @@ public class BtnParamTool {
             BtnParams btnParam = new BtnParams();
             btnParam.setBelongBtn(key);
             setParam(btnParam, element, zoomx, zoomy);
-            // SimpleUtil.log("put:"+btnParam.toString());
+            SimpleUtil.log("put:" + btnParam.toString());
             mBtnParams.put(key, btnParam);
             //需要加载子按键
             if (btnParam.iHaveChild()) {
@@ -357,7 +357,7 @@ public class BtnParamTool {
                     break;
                 }
             }
-            if (!isFind) {
+            if (!isFind) {//configsID 从1开始
                 mSpFileName = SimpleUtil.getSha1(sp[2] + sp[0]);
                 SimpleUtil.log("it is a new config===>" + mSpFileName);
 

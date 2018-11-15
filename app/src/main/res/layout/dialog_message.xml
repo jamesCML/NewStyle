@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/parent_4"
-    android:background="@mipmap/gunqabox">
+    android:background="@drawable/dialog_message_box_b">
 
     <TextView
         android:id="@+id/dialogmsgtitle"
@@ -35,42 +35,12 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:padding="4dp"
-            android:text="t"
+            android:text=""
             android:textColor="@color/mk_white"
             android:textSize="15sp" />
     </ScrollView>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="20dp"
-        android:gravity="center"
-        android:id="@+id/temp20180515"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/dialogmsgyes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="20dp"
-            android:minHeight="40dp"
-            android:minWidth="80dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:background="@drawable/dialog_message_bt_select"
-            android:text="@string/ok" />
-
-        <Button
-            android:id="@+id/dialogmsgno"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:minHeight="40dp"
-            android:minWidth="80dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:background="@drawable/dialog_message_bt_select"
-            android:text="@string/main_cancel" />
-    </LinearLayout>
+    <include
+        layout="@layout/yesnobottombar"
+        android:id="@+id/temp20180515" />
 </RelativeLayout>

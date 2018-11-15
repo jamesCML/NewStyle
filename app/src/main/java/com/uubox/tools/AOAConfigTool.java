@@ -94,7 +94,6 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
         SharedPreferences allKeysConfigsTable = mContext.getSharedPreferences("KeysConfigs", 0);
         Map<String, ?> maps = allKeysConfigsTable.getAll();
         Iterator<String> allIt = maps.keySet().iterator();
-        byte index = 0;
         while (allIt.hasNext()) {
             String key = allIt.next();
             SimpleUtil.log("游戏:" + key);
@@ -120,23 +119,23 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                 //SimpleUtil.log("游戏 "+subKey+":"+subValue);
                 String[] sp = subValue.split("#Z%W#", -1);
                 config.mTabValue = sp[2];
-                config.setDeleted((Boolean) SimpleUtil.getFromShare(mContext, sp[2], "isDelete", boolean.class, false));
-                SimpleUtil.log("配置 " + sp[1] + "         +++++++++++++++++++++++++ " + index);
-                config.mConfigName = sp[1];
-                if (sp0[1].equals(sp[1])) {
-                    defaultConfig = index;
-                    config.mIsUsed = true;
-                }
+                //config.setDeleted((Boolean) SimpleUtil.getFromShare(mContext, sp[2], "isDelete", boolean.class, false));
 
-                index++;
+                config.mConfigName = sp[1];
+                /*if (sp0[1].equals(sp[1])) {//由最后分配决定该使用谁
+                    config.mIsUsed = true;
+                }*/
                 int configID_ = (Integer) SimpleUtil.getFromShare(mContext, sp[2], "configID", int.class);
+                SimpleUtil.log("配置 " + sp[1] + "         +++++++++++++++++++++++++ID: " + configID_);
                 config.setmConfigid((byte) configID_);
-                if (config.mIsUsed) {
+               /* if (config.mIsUsed) {
                     SimpleUtil.log("默认配置放到第一位");
                     allConfigs.add(0, config);
                 } else {
                     allConfigs.add(config);
-                }
+                }*/
+
+                allConfigs.add(config);
             }
 
            /* if(index==2)
@@ -446,7 +445,11 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
     public void writeDefaultConfigs() {
         List<Config> configsRightData = new ArrayList<>();
         List<Config> configsLeftData = new ArrayList<>();
-        AnysLeftRihgtConfigs(configsLeftData, configsRightData);
+        String result = AnysLeftRihgtConfigs(configsLeftData, configsRightData);
+        if (result == null) {
+            SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.aoac_readinfofail), true);
+            return;
+        }
 
         //特殊处理新建的配置
         String newConfig = (String) SimpleUtil.getFromShare(mContext, "ini", "NewConfigNotWrite", String.class, "");
@@ -474,113 +477,87 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
         writeManyConfigs(configsRightData);
     }
 
-    public boolean AnysLeftRihgtConfigs(List<Config> configsLeftData, List<Config> configsRightData) {
-        final List<AOAConfigTool.Config> mConfigs = loadConfigs();
-        byte[] d0 = getDeviceConfigD0();
-        //byte[] d0 = Hex.parse("A5 14 D0 03 03 02 09 01 02 92 00 00 00 00 00 00 00 00 00 2F");
+    public String AnysLeftRihgtConfigs(List<Config> configsLeftData, List<Config> configsRightData) {
+        byte[] deviceorder = getDeviceConfigD0();
         String configsorderbytes = (String) SimpleUtil.getFromShare(mContext, "ini", "configsorderbytes", String.class, null);
-        byte[] d1 = Hex.parse(configsorderbytes);
-        SimpleUtil.log("get d0:\n" + Hex.toString(d0) + "\nget d1:\n" + configsorderbytes);
-        boolean isOrderEqual = false;
-        if (d0 != null && d1 != null) {
-            isOrderEqual = Arrays.equals(Arrays.copyOfRange(d0, 4, 8), Arrays.copyOfRange(d1, 4, 8));
+        byte[] saveorder = Hex.parse(configsorderbytes);
+        SimpleUtil.log("设备顺序:" + Hex.toString(deviceorder) + "\n本地顺序:" + Hex.toString(saveorder));
+        final List<AOAConfigTool.Config> mConfigs = loadConfigs();
+        if (deviceorder == null) {
+            SimpleUtil.log("读取不到设备配置信息,先用本地存储展示");
+            orderConfigs(mConfigs, saveorder, configsLeftData, configsRightData);
+            return "local";
         }
+        //byte[] d0 = Hex.parse("A5 14 D0 03 03 02 09 01 02 92 00 00 00 00 00 00 00 00 00 2F");
+        boolean isOrderEqual = Arrays.equals(Arrays.copyOfRange(deviceorder, 4, 8), Arrays.copyOfRange(saveorder, 4, 8));
+
         if (isOrderEqual) {
-            if (d1[3] != d0[3]) {
-                SimpleUtil.log("检测到配置切换:" + d1[3] + "-->" + d0[3]);
-                d1[3] = d0[3];
-                SimpleUtil.saveToShare(mContext, "ini", "configsorderbytes", Hex.toString(d1));
+            SimpleUtil.log("顺序相同");
+            if (saveorder[3] != deviceorder[3]) {
+                SimpleUtil.log("仅检测到配置有切换过程");
+                SimpleUtil.log("检测到配置切换:" + saveorder[3] + "-->" + deviceorder[3]);
+                saveorder[3] = deviceorder[3];
+                SimpleUtil.saveToShare(mContext, "ini", "configsorderbytes", Hex.toString(deviceorder));
+                orderConfigs(mConfigs, saveorder, configsLeftData, configsRightData);
+                return "changeused";
             }
-        }
-
-        //final byte[] d0 = Hex.parse("A5 14 D0 01 04 07 05 09 02 E2 00 00 00 00 00 00 00 00 00 87");
-        if (d0 == null) {//为了排序，只能暂时获取来自存储的排序
-            SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.aoac_readinfofail), true);
-            SimpleUtil.log("get lib d0:" + configsorderbytes);
-            d0 = Hex.parse(configsorderbytes);
-        }
-
-        AOAConfigTool.Config[] rightOrder = new AOAConfigTool.Config[4];
-        SimpleUtil.log("准备分配配置到左右，其中d0:" + Hex.toString(d0));
-        for (AOAConfigTool.Config config : mConfigs) {
-            if (d0 != null) {
-                boolean isFind = false;
-                config.setmIsUsed(false);
-                for (int order = 0; order < 4; order++) {
-                    if (config.getmConfigid() == Arrays.copyOfRange(d0, 4, 8)[order]) {
-                        config.setDeleted(false);
-                        rightOrder[order] = config;
-                        isFind = true;
+            orderConfigs(mConfigs, saveorder, configsLeftData, configsRightData);
+        } else {
+            SimpleUtil.log("顺序不相同");
+            //第一，确认已存在的本地配置顺序是否完全包含设备的顺序
+            byte[] deviceconfigorder = Arrays.copyOfRange(deviceorder, 4, 8);
+            boolean isContainConfig = false;
+            for (byte b : deviceconfigorder) {
+                for (Config config : mConfigs) {
+                    if (config.getmConfigid() == b) {
+                        isContainConfig = true;
                         break;
                     }
                 }
-                if (!isFind) {
-                    config.setDeleted(true);
-                    if (configsLeftData != null) {
-                        if (SimpleUtil.isOfficialConfig(config.getmConfigName()))
-                            configsLeftData.add(0, config);
-                        else
-                            configsLeftData.add(config);
-                    }
+                if (!isContainConfig) {
+                    break;
                 }
-                continue;
+            }
+            if (!isContainConfig) {
+                SimpleUtil.log("检测到本地顺序不包含设备顺序，则已本地顺序排序");
+                orderConfigs(mConfigs, saveorder, configsLeftData, configsRightData);
             } else {
-                if (!config.getIsDeleted() && configsRightData.size() < 4) {
-                    config.setDeleted(false);
-                    configsRightData.add(config);
-                    SimpleUtil.log("增加了一个到右边:" + config.getmConfigName());
-                    //rightSize[0] += config.getmSize();
-                } else {
-                    config.setmIsUsed(false);
-                    config.setDeleted(true);
-                    if (configsLeftData != null) {
-                        SimpleUtil.log("增加了一个到左边:" + config.getmConfigName());
-                        if (SimpleUtil.isOfficialConfig(config.getmConfigName()))
-                            configsLeftData.add(0, config);
-                        else
-                            configsLeftData.add(config);
-                    }
-                }
+                SimpleUtil.log("根据设备顺序排序");
+                orderConfigs(mConfigs, deviceorder, configsLeftData, configsRightData);
+                SimpleUtil.saveToShare(mContext, "ini", "configsorderbytes", Hex.toString(deviceorder));
             }
-
+            return "notmatch";
         }
 
-        if (d0 != null && d0[3] - 1 >= 0 && d0[3] - 1 < 4 && rightOrder[d0[3] - 1] != null) {//匹配不上
-            rightOrder[d0[3] - 1].setmIsUsed(true);
-            for (AOAConfigTool.Config one : rightOrder) {
-                if (one != null)
-                    configsRightData.add(one);
-            }
-        } else {//只能先放一点了
-            SimpleUtil.log("匹配不上，则放一点");
-            for (AOAConfigTool.Config one : rightOrder) {
-                if (one != null) {
-                    SimpleUtil.log("符合4个的非空的先放在右边:" + one.getmConfigName());
-                    configsRightData.add(one);
-                }
-            }
 
-
-            Iterator<Config> it = configsLeftData.iterator();
-            while (it.hasNext()) {
-                Config leftOne = it.next();
-                if (configsRightData.size() != 4) {
-                    if (leftOne.mConfigName.contains("刺激战场") || leftOne.mConfigName.contains("全军出击") || leftOne.mConfigName.contains("荒野行动") || leftOne.mConfigName.contains("光荣使命")) {
-                        leftOne.setDeleted(false);
-                        configsRightData.add(leftOne);
-                        SimpleUtil.log("把左边的一个增加到右边:" + leftOne.getmConfigName());
-                        it.remove();
-                    }
-                }
-            }
-
-            configsRightData.get(0).setmIsUsed(true);
-
-        }
-        //SimpleUtil.log("device order use is null:"+(rightOrder[d0[3] - 1]==null));
-        return d0 != null && d1 != null && d0[3] - 1 >= 0 && isOrderEqual && rightOrder[d0[3] - 1] != null;
+        return "match";
     }
 
+    private void orderConfigs(List<Config> mConfigs, byte[] order, List<Config> configLeft, List<Config> configRight) {
+        byte[] configorder = Arrays.copyOfRange(order, 4, 8);
+        SimpleUtil.log("范围顺序:" + Hex.toString(configorder));
+
+        for (byte b : configorder) {
+            for (Config config : mConfigs) {
+                SimpleUtil.log("排序1:" + config.toString());
+                if (config.getmConfigid() == b) {
+                    config.setDeleted(false);
+                    configRight.add(config);
+                }
+
+            }
+        }
+        //设置一下使用者
+        configRight.get(order[3] - 1).setmIsUsed(true);
+        for (Config config : mConfigs) {
+            SimpleUtil.log("排序2:" + config.toString());
+            if (config.getIsDeleted()) {
+                config.setDeleted(true);
+                configLeft.add(config);
+            }
+
+        }
+    }
     public boolean openOrCloseRecKeycode(boolean open) {
         if (!isAOAConnect()) {
             SimpleUtil.log("aoa not connrct!openOrCloseRecKeycode fail!");
@@ -918,10 +895,16 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
         private ByteArrayList mData;
         private boolean mIsUsed;
         private int mSize;
-        private boolean mIsDeleted;
+        private boolean mIsDeleted = true;
         private String mTabValue;
         private byte mConfigid;
         private String mTabKey;
+
+        @Override
+        public String toString() {
+            return "游戏:" + mBelongGame + ",配置:" + mConfigName + ",使用情况:" + mIsUsed + ",长度:" + mSize + ",移除:" + mIsDeleted + ",配置ID:" + mConfigid
+                    + ",配置键:" + mTabKey + ",配置值:" + mTabValue;
+        }
 
         public String getmBelongGame() {
             return mBelongGame;

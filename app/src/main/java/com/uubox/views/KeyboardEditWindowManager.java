@@ -10,6 +10,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.uubox.padtool.R;
+import com.uubox.tools.AOAConfigTool;
 import com.uubox.tools.BtnParamTool;
 import com.uubox.tools.SimpleUtil;
 
@@ -63,11 +64,11 @@ public class KeyboardEditWindowManager {
         }
 //            mLayoutParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
         // 不响应按键事件和触屏事件**********
-        mLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;//这个窗口永远不会收到触摸事件。
+        mLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;//这个窗口永远不会收到触摸事件。
         // mLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;//即使这个窗口是可调焦的（它 FLAG_NOT_FOCUSABLE没有设置），允许窗口外的任何指针事件被发送到窗口后面的窗口。
         //| WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE//这个窗口不会获得按键输入焦点，所以用户不能向其发送按键或其他按钮事件。
         //| WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;//反转FLAG_NOT_FOCUSABLE窗口与当前方法的交互方式
-        // 默认格式会导致重影，所以需要设置为其他格式|WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+        // 默认格式会导致重影，所以需要设置为其他格式|WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL//FLAG_NOT_FOCUSABLE
         mLayoutParams.format = PixelFormat.RGBA_8888;
         mLayoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
         mLayoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
@@ -104,17 +105,23 @@ public class KeyboardEditWindowManager {
             return Holder.instance;
         }
         removeView(rootView.getChildAt(rootView.getChildCount() - 1));
+        SimpleUtil.log("悬浮窗剩余:" + rootView.getChildCount());
         if (rootView.getChildCount() == 0) {
             close();
+        } else if (rootView.getChildCount() == 1) {
+            AOAConfigTool.getInstance(mContext).openOrCloseRecKeycode(true);
         }
         return Holder.instance;
     }
 
     public KeyboardEditWindowManager removeView(View view) {
         //mWindowManager.removeView(view);
+        SimpleUtil.log("悬浮窗剩余:" + rootView.getChildCount());
         rootView.removeView(view);
         if (rootView.getChildCount() == 0) {
             close();
+        } else if (rootView.getChildCount() == 1) {
+            AOAConfigTool.getInstance(mContext).openOrCloseRecKeycode(true);
         }
         return Holder.instance;
     }
@@ -125,6 +132,10 @@ public class KeyboardEditWindowManager {
             return Holder.instance;
         }
         rootView.addView(view);
+        SimpleUtil.log("悬浮窗增加到:" + rootView.getChildCount());
+        if (rootView.getChildCount() > 1) {
+            AOAConfigTool.getInstance(mContext).openOrCloseRecKeycode(false);
+        }
         return Holder.instance;
     }
 
@@ -176,6 +187,10 @@ public class KeyboardEditWindowManager {
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(width, height);
         params.gravity = Gravity.CENTER;
         rootView.addView(view, params);
+        SimpleUtil.log("悬浮窗增加到:" + rootView.getChildCount());
+        if (rootView.getChildCount() > 1) {
+            AOAConfigTool.getInstance(mContext).openOrCloseRecKeycode(false);
+        }
         return Holder.instance;
     }
 

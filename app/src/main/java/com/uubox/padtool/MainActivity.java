@@ -361,7 +361,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                 //更新检测失败回调
 
                                 e.printStackTrace();
-                                //  SimpleUtil.log("check update failed ");
+                                SimpleUtil.log("检查更新失败 ");
+                                exeIniTask();
                             }
                         })
                         //注意 ：
