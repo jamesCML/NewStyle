@@ -107,8 +107,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
         }
 
-
-
     }
 
     private void divAPPUSER() {

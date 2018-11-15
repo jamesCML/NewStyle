@@ -722,12 +722,8 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
             }
             resetReq();
         } else if (!SimpleUtil.mAOAInjectEable) {
-            if (data[1] == 0x08 || data[1] == 0x07) {
+            if (data[1] == 0x08 || data[1] == 0x07 || data[1] == 0x12) {
                 KeyboardView.Btn btn = null;
-               /*byte mouseCode = (byte) (0xf0|data[3]);
-               byte keyboardCode = data[10];
-               byte fnCode = (byte) (0xe0|data[9]);*/
-
                 if (data[3] != 0)//先看鼠标数据
                 {
                     if (data[3] == 0x01) {
