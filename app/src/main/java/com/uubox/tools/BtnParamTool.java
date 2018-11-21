@@ -609,6 +609,9 @@ public class BtnParamTool {
         return mBtnParams.get(btn).getR();
     }
 
+    public static void putBtnParam(KeyboardView.Btn btn, BtnParams params) {
+        mBtnParams.put(btn, params);
+    }
     public static void setBtnRadius(final KeyboardView.Btn btn, final int r) {
         if (btn == null || mBtnParams == null || !mBtnParams.containsKey(btn)) {
             return;

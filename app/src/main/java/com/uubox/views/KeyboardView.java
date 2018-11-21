@@ -229,6 +229,36 @@ public class KeyboardView extends FrameLayout
 
     }
 
+    private void addButton(BtnParams param) {
+        DragImageView img = new DragImageView(getContext());
+        Drawable drawable = getBtnDrawable(param);
+        if (drawable != null) {
+            img.setImageDrawable(drawable);
+        }
+
+        img.setDragListener(this);
+        img.setClickListener(this);
+
+        int with = 0, height = 0;
+        if (param.getBelongBtn() == Btn.L) {
+            img.setScaleListener(this);
+            with = 260;
+            height = 260;
+            param.setR(130);
+        } else if (param.getBelongBtn() == Btn.R) {
+            with = 128;
+            height = 128;
+            param.setR(64);
+        }
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(with, height);
+        params.leftMargin = SimpleUtil.zoomy / 2;
+        params.topMargin = SimpleUtil.zoomx / 2;
+        addView(img, params);
+        param.img = img;
+        param.img.setTag(param);
+        BtnParamTool.putBtnParam(param.getBelongBtn(), param);
+        BtnParamTool.setBtnParamsChanged(true);
+    }
     private void initViews() {
 
         /**
@@ -1152,6 +1182,10 @@ public class KeyboardView extends FrameLayout
                             Toast.LENGTH_SHORT).show();
                     return true;
                 }
+                BtnParams param = new BtnParams();
+                param.setBelongBtn(Btn.L);
+                addButton(param);
+                mIvMenuBtnL.setVisibility(GONE);
 
             } else if (v == mIvMenuBtnR) {
                 if (BtnParamTool.getBtnNormalBtn(Btn.R) != null && BtnParamTool.getBtnNormalBtn(Btn.R).img != null) {
@@ -1159,6 +1193,10 @@ public class KeyboardView extends FrameLayout
                             Toast.LENGTH_SHORT).show();
                     return true;
                 }
+                BtnParams param = new BtnParams();
+                param.setBelongBtn(Btn.R);
+                addButton(param);
+                mIvMenuBtnR.setVisibility(GONE);
             } else if (v == mIvMenuBtnSetting) {
                 showTab();
                 return true;
@@ -1171,15 +1209,7 @@ public class KeyboardView extends FrameLayout
                 mHandler.sendMessageDelayed(message, 800);
                 return true;
             }
-            DragShadowBuilder mysBuilder = new DragShadowBuilder(v);
-            v.startDrag(null, mysBuilder, null, 0);
-            mCopyingBtn = v;
-            //震动提示
-            vibrator = (Vibrator) getContext().getSystemService(Service.VIBRATOR_SERVICE);
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-                vibrator.vibrate(30);
-            } else {
-            }
+
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
             if (System.currentTimeMillis() - mWhatAddTime < 700) {
                 mHandler.removeMessages(HANDLE_ADDWHAT);
