@@ -70,7 +70,7 @@ public class SimpleUtil {
         return null;
     }
 
-    public static byte[] getSmallFile(Context context, String path) {
+    public static byte[] getSmallFile(String path) {
         try {
             File file = new File(path);
             if (!file.exists()) {
@@ -343,10 +343,10 @@ public class SimpleUtil {
                 alertDialog.setCanceledOnTouchOutside(false);
                 alertDialog.setCancelable(false);
                 if (ok != null) {
-                    ((Button) view.findViewById(R.id.dialogmsgyes)).setText(ok);
+                    ((TextView) view.findViewById(R.id.dialogmsgyes)).setText(ok);
                 }
                 if (no != null) {
-                    ((Button) view.findViewById(R.id.dialogmsgno)).setText(no);
+                    ((TextView) view.findViewById(R.id.dialogmsgno)).setText(no);
                 }
                 if (isHideno) {
                     view.findViewById(R.id.dialogmsgno).setVisibility(View.GONE);

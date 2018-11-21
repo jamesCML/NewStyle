@@ -146,7 +146,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private void runInit() {
         SimpleUtil.log("runInit initask execute");
-        checkUpdate(500);
+        checkUpdate(2000);
     }
 
     @Override
@@ -324,7 +324,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                 SimpleUtil.log("蒲公英版本:" + appBean.getVersionCode());
                                 final boolean isForce = false;
 
-                                SimpleUtil.popWindow(MainActivity.this, getString(R.string.main_verupdate), getString(R.string.main_findnewver) + appBean.getVersionName() + getString(R.string.main_updateenable) + "\n" + getString(R.string.main_curappver) + CommonUtils.getAppVersionName(MainActivity.this),
+                                SimpleUtil.popWindow(MainActivity.this, getString(R.string.main_verupdate), getString(R.string.main_findnewver) + appBean.getVersionName() + getString(R.string.main_updateenable) + "\n" + getString(R.string.main_updatemsg) + "\n" + appBean.getReleaseNote(),
                                         new Runnable() {
                                             @Override
                                             public void run() {

@@ -508,6 +508,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
             byte[] deviceconfigorder = Arrays.copyOfRange(deviceorder, 4, 8);
             boolean isContainConfig = false;
             for (byte b : deviceconfigorder) {
+                isContainConfig = false;
                 for (Config config : mConfigs) {
                     if (config.getmConfigid() == b) {
                         isContainConfig = true;
@@ -535,7 +536,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
 
     private void orderConfigs(List<Config> mConfigs, byte[] order, List<Config> configLeft, List<Config> configRight) {
         byte[] configorder = Arrays.copyOfRange(order, 4, 8);
-        SimpleUtil.log("范围顺序:" + Hex.toString(configorder));
+        SimpleUtil.log("范围顺序:" + Hex.toString(configorder) + "\n总顺序:" + Hex.toString(order));
 
         for (byte b : configorder) {
             for (Config config : mConfigs) {

@@ -101,7 +101,7 @@
     <string name="main_floatplease">Open floating window please</string>
     <string name="main_verupdate">Check for updates</string>
     <string name="main_findnewver">Update available:</string>
-    <string name="main_updateenable">]The latest version:</string>
+    <string name="main_updateenable">The latest version:</string>
     <string name="main_curappver">The current version:</string>
     <string name="main_updatefail">Storage access permission is not active,update failed!</string>
     <string name="main_loadstart">Downlaoding...</string>
@@ -166,6 +166,7 @@
     <string name="ota_mcuok">MCU upgrade success！</string>
     <string name="ble_mcufail">MCU upgrade failed！</string>
     <string name="adjustgunsen">Adjustment of press sensitivity</string>
+    <string name="main_updatemsg">Update Content</string>
 
     <string-array name="menu_ini_help_items">
         <item>《Key mapping setting》</item>

@@ -351,7 +351,7 @@ public class BtnParamTool {
                 SimpleUtil.log("key:" + key + ",value:" + value);
                 String[] valuesp = value.split("#Z%W#");
                 if (valuesp[1].equals(sp[1])) {
-                    SimpleUtil.log("已经存在了一个配置了，则直接保存进去即可！");
+                    SimpleUtil.log("已经存在了一个配置了，则直接保存进去即可，不再需要赋予ID！");
                     mSpFileName = valuesp[2];
                     isFind = true;
                     break;
@@ -369,11 +369,13 @@ public class BtnParamTool {
                     SimpleUtil.saveToShare(context, mSpFileName, "configID", 1);
                 } else {
                     byte[] ids = Hex.parse(configIDs);
+                    SimpleUtil.log("IDS:" + Hex.toString(ids));
                     for (int i = 0; i < 100; i++) {
                         if (ids[i] == 0) {
                             ids[i] = (byte) (ids[i - 1] + 1);
                             SimpleUtil.saveToShare(context, "ini", "configsID", Hex.toString(ids));
                             SimpleUtil.saveToShare(context, mSpFileName, "configID", (int) ids[i]);
+                            SimpleUtil.log("新ID值:" + ids[i] + "  >>" + sp[1]);
                             break;
                         }
                     }
@@ -486,7 +488,7 @@ public class BtnParamTool {
         ini_xml.release();
         final File file = new File("/data/data/" + CommonUtils.getAppPkgName(context) + "/uubox_ini_button_" + comfirGame + ".xml");
         String idkey = (String) SimpleUtil.getFromShare(context, "ini", "idkey", String.class, "");
-        new AliyuOSS(context).uploadFileToOSS("usbpublicreadwrite", "tempconfigs/" + comfirGame + "_uubox_" + SimpleUtil.zoomx + "*" + SimpleUtil.zoomy + "_" + android.os.Build.MODEL + "_" + idkey + ".xml", SimpleUtil.getSmallFile(context, ini_xml.getFilePath()), new OSSCompletedCallback<PutObjectRequest, PutObjectResult>() {
+        new AliyuOSS(context).uploadFileToOSS("usbpublicreadwrite", "tempconfigs/" + comfirGame + "_uubox_" + SimpleUtil.zoomx + "*" + SimpleUtil.zoomy + "_" + android.os.Build.MODEL + "_" + idkey + ".xml", SimpleUtil.getSmallFile(ini_xml.getFilePath()), new OSSCompletedCallback<PutObjectRequest, PutObjectResult>() {
 
             @Override
             public void onSuccess(PutObjectRequest request, PutObjectResult result) {
