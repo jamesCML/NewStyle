@@ -253,7 +253,7 @@ public class KeyboardView extends FrameLayout
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(with, height);
         params.leftMargin = SimpleUtil.zoomy / 2;
         params.topMargin = SimpleUtil.zoomx / 2;
-        addView(img, params);
+        mFlMain.addView(img, params);
         param.img = img;
         param.img.setTag(param);
         BtnParamTool.putBtnParam(param.getBelongBtn(), param);
@@ -1057,10 +1057,13 @@ public class KeyboardView extends FrameLayout
                 BtnParamTool.resetRepeatBtnParams(subParams.getBelongBtn());
                 subParams.img = null;
             }
+            if (btnParams.getBelongBtn() == Btn.L) {
+                mIvMenuBtnL.setVisibility(VISIBLE);
+            } else if (btnParams.getBelongBtn() == Btn.R) {
+                mIvMenuBtnR.setVisibility(VISIBLE);
+            }
             BtnParamTool.resetBtnParams(btnParams.getBelongBtn());
             btnParams.img = null;
-
-
         }
 
     }
@@ -1166,7 +1169,6 @@ public class KeyboardView extends FrameLayout
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        Log.d("touch event", "getX=" + event.getX() + ",getY=" + event.getY());
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             if (v == mBarWhat) {
                 if (BtnParamTool.getBtnNormalBtn(Btn.Q).img != null) {
