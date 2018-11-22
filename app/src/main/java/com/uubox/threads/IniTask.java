@@ -66,12 +66,13 @@ public class IniTask extends AsyncTask<Void, Integer, Void> {
 
             int curConfigVer = (Integer) SimpleUtil.getFromShare(mContext, "ini", "configver", int.class);
             SimpleUtil.log("服务器配置版本:" + configVersion + ",当前配置版本:" + curConfigVer);
-
+            int appvercode = CommonUtils.getAppVersionCode(mContext);
+            int storevercode = (Integer) SimpleUtil.getFromShare(mContext, "ini", "storevercode", int.class);
             String saveorder = (String) SimpleUtil.getFromShare(mContext, "ini", "configsorderbytes", String.class, null);
             SimpleUtil.log("当前存储顺序:" + saveorder);
             //A5 14 D0 03 08 03 02 01 03 43 18 00 00 00 00 00 00 00 00 F8
             byte[] virtulorder = curConfigVer == 0 ? new byte[20] : Hex.parse(saveorder);
-            if (curConfigVer < configVersion) {
+            if (curConfigVer < configVersion || appvercode != storevercode) {//为了防止旧版本已经拉取了配置，需要增加一次新版本升级检测再拉取一次配置
                 XmlPugiElement[] gameElements = keyconfigs.getAllChild();
                 // SimpleUtil.log("游戏:"+game.getValue());
                 //String[] games = {"绝地求生之刺激战场", "绝地求生之全军出击", "荒野行动", "穿越火线", "终结者", "小米枪战", "丛林法则", "光荣使命"};
@@ -102,6 +103,7 @@ public class IniTask extends AsyncTask<Void, Integer, Void> {
                 SimpleUtil.saveToShare(mContext, "ini", "configsorderbytes", Hex.toString(virtulorder));
             }
             SimpleUtil.saveToShare(mContext, "ini", "configver", configVersion);
+            SimpleUtil.saveToShare(mContext, "ini", "storevercode", appvercode);
             //获取可以配置xml的白名单
             XmlPugiElement savexmlids = config.getFirstChildByName("savexmlids");
             //free:任意的 forbiden:禁止 grep:白名单过滤
