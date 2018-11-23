@@ -19,6 +19,7 @@ import com.uubox.tools.LogToFileUtils;
 import com.uubox.tools.SimpleUtil;
 import com.uubox.tools.SocketLog;
 
+import java.util.List;
 import java.util.Random;
 
 public class IniTask extends AsyncTask<Void, Integer, Void> {
@@ -79,9 +80,20 @@ public class IniTask extends AsyncTask<Void, Integer, Void> {
                 for (int i = 0; i < gameElements.length; i++) {
                     String game = gameElements[i].getValue();
                     boolean isExist = aliyuOSS.isExistFile("usbdata", "keycongfigs2/" + game + "_" + SimpleUtil.zoomx + "" + SimpleUtil.zoomy + ".xml");
-                    SimpleUtil.log("正在获取配置:" + game + "  ->" + isExist);
-                    buff = aliyuOSS.getObjectBuff("usbdata", isExist ? "keycongfigs2/" + game + "_" + SimpleUtil.zoomx + "" + SimpleUtil.zoomy + ".xml" : "keycongfigs2/" + game + "_10802160.xml");
+                    if (!isExist) {
+                        List<String> files = aliyuOSS.listOSSFiles2("usbdata", "keycongfigs2/" + game);
+                        if (files.size() == 0) {
+                            SimpleUtil.log("没有找到游戏配置");
+                            continue;
+                        }
+                        SimpleUtil.log("加载第一个游戏配置:" + files.get(0));
+                        buff = aliyuOSS.getObjectBuff("usbdata", files.get(0));
+                    } else {
+                        SimpleUtil.log("找到匹配的游戏配置:" + game + "_" + SimpleUtil.zoomx + "" + SimpleUtil.zoomy + ".xml");
+                        buff = aliyuOSS.getObjectBuff("usbdata", "keycongfigs2/" + game + "_" + SimpleUtil.zoomx + "" + SimpleUtil.zoomy + ".xml");
+                    }
                     if (buff == null) {
+                        SimpleUtil.log("获取到空的配置");
                         return null;
                     }
                     BtnParamTool.setComfirGame(game);

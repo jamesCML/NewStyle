@@ -14,11 +14,14 @@ import com.alibaba.sdk.android.oss.model.GetObjectRequest;
 import com.alibaba.sdk.android.oss.model.GetObjectResult;
 import com.alibaba.sdk.android.oss.model.ListObjectsRequest;
 import com.alibaba.sdk.android.oss.model.ListObjectsResult;
+import com.alibaba.sdk.android.oss.model.OSSObjectSummary;
 import com.alibaba.sdk.android.oss.model.PutObjectRequest;
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class AliyuOSS {
     private OSSClient mOSSClient;
@@ -45,6 +48,27 @@ public class AliyuOSS {
         }
     }
 
+    public synchronized List<String> listOSSFiles2(String bucket, String content) {
+        List<String> result = new ArrayList<>();
+        ListObjectsRequest listObjects = new ListObjectsRequest(bucket);
+        listObjects.setPrefix(content);
+        try {
+            ListObjectsResult objects = mOSSClient.listObjects(listObjects);
+            List<OSSObjectSummary> lists = objects.getObjectSummaries();
+
+            for (OSSObjectSummary summary : lists) {
+                if (summary.getKey().equals(content + "/")) {
+                    continue;
+                }
+                result.add(summary.getKey());
+            }
+        } catch (ClientException e) {
+            e.printStackTrace();
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
     public ListObjectsResult listOSSFiles(String bucket, String content) {
         ListObjectsRequest listObjects = new ListObjectsRequest(bucket);
         listObjects.setPrefix(content);
