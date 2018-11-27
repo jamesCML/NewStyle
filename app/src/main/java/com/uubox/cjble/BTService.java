@@ -315,12 +315,12 @@ public class BTService extends Service {
         @Override
         public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             //Log.i("zhiwan", "RRRRRRRRRR:[" + characteristic.getUuid().toString() + "]" + Hex.toString(characteristic.getValue()));
-            notifyAllEx(1, gatt, characteristic, status);
+            notifyAllEx(BLEMODTYPE.READ, gatt, characteristic, status);
         }
 
         @Override
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-            notifyAllEx(2, gatt, characteristic, status);
+            notifyAllEx(BLEMODTYPE.WRITE, gatt, characteristic, status);
             // Log.i(TAG,"SDK-Write:"+characteristic.getUuid().toString()+":"+Hex.toString(characteristic.getValue()));
         }
 
@@ -328,7 +328,7 @@ public class BTService extends Service {
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
 //            Log.i(TAG, "CCCCCCCC:[" + characteristic.getUuid().toString() + "]" + Hex.toString(characteristic.getValue()));
             handleRecData(characteristic);
-            notifyAllEx(3, gatt, characteristic, -100);
+            notifyAllEx(BLEMODTYPE.CHANGE, gatt, characteristic, -100);
         }
 
         @Override
@@ -485,7 +485,7 @@ public class BTService extends Service {
         return result;
     }
 
-    private void notifyAllEx(int mode, BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+    private void notifyAllEx(BLEMODTYPE mode, BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
         for (IBLENotify ibleNotify : notifies) {
             ibleNotify.notify(mode, gatt, characteristic, status);
         }
@@ -545,6 +545,7 @@ public class BTService extends Service {
                     .setContentTitle(getString(R.string.app_name))
                     .setContentText(text)
                     .setTicker(text)
+                    .setSmallIcon(R.mipmap.ic_folat_online)
                     .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_folat_online))
                     .build();
         }
@@ -572,12 +573,13 @@ public class BTService extends Service {
 
     public enum EState {STOPSCAN, TIMEOUTANDRESET, STARTSCAN, CONNECTED, CONNECTING, CONNECTFAIL, DISCONNECTED, USERDISCONNECTED, DISCONNECTING, SCANNING, SCANOVER}
 
+    public enum BLEMODTYPE {READ, WRITE, CHANGE}
     public interface IStateCallBack {
         void connectstate(int type, EState state, Object obj);
     }
 
     public interface IBLENotify {
-        void notify(int mode, BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status);
+        void notify(BLEMODTYPE mode, BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status);
     }
 
     public interface IKeyMouseData {

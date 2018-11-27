@@ -20,8 +20,8 @@ import com.uubox.views.BtnParamsHolder;
 import com.uubox.views.KeyboardView;
 
 public class AOAConfigTool implements SimpleUtil.INormalBack {
-    private final int OAODEVICE_X = 4095;
-    private final int OAODEVICE_Y = 2304;
+    private int OAODEVICE_X = 4095;
+    private int OAODEVICE_Y = 2304;
     private AccInputThread mAccInputThread;
     private Context mContext;
     private static AOAConfigTool mInstance;
@@ -153,6 +153,10 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
             SimpleUtil.log("loadXmlToConfigData fail!config is null!");
             return;
         }
+
+        //根据版本号转换一下，16
+        byte[] dever = Hex.parse(SimpleUtil.mDeviceVersion);
+        OAODEVICE_Y = dever[0] >= 0x16 ? 4095 : 2304;
         LinkedHashMap<KeyboardView.Btn, BtnParams> xmlConfig = BtnParamTool.getButtonParamsFromXML(mContext, config.mTabValue);
         SimpleUtil.log("加载xml数据到configbuff:" + config.getmBelongGame() + "/" + config.getmConfigName());
         ByteArrayList cj_cfg_t = new ByteArrayList();
@@ -200,14 +204,14 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
         int configID_ = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "configID", int.class);
         //压枪灵敏度
 
-        int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "cfqNum", int.class, 13);
-        int bqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "bqNum", int.class, 16);
-        int akNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "akNum", int.class, 22);
-        tempContainer[0] = (byte) bqNum;
-        tempContainer[1] = (byte) cfqNum;
-        tempContainer[2] = (byte) akNum;
+        int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "cfqNum", int.class, SimpleUtil.PRESSGUN_CFQ);
+        int bqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "bqNum", int.class, SimpleUtil.PRESSGUN_BQ);
+        int akNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "akNum", int.class, SimpleUtil.PRESSGUN_AK);
+        tempContainer[0] = dever[0] >= 0x16 ? (byte) cfqNum : (byte) (cfqNum * 2304 / 4095 + 1);
+        tempContainer[1] = dever[0] >= 0x16 ? (byte) bqNum : (byte) (bqNum * 2304 / 4095 + 1);
+        tempContainer[2] = dever[0] >= 0x16 ? (byte) akNum : (byte) (akNum * 2304 / 4095 + 1);
         tempContainer[3] = (byte) configID_;
-        SimpleUtil.log("鼠标灵敏度:" + mouse_step + ",滚轮灵敏度:" + gunlun_step + ",冲锋枪:" + cfqNum + ",步枪:" + bqNum + ",AK:" + akNum);
+        SimpleUtil.log("鼠标灵敏度:" + mouse_step + ",滚轮灵敏度:" + gunlun_step + ",冲锋枪:" + tempContainer[0] + ",步枪:" + tempContainer[1] + ",AK:" + tempContainer[2]);
         SimpleUtil.log("configID:" + config.mTabValue + "   " + tempContainer[3]);
 
         int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "defaultgun", int.class, 0);
@@ -231,14 +235,14 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                             btnParams.img.getLocationOnScreen(position);
                             SimpleUtil.log("实际位置:" + Arrays.toString(position));
                         }*/
-                keyPoints.add(packKeyData2(mBtMap.get(key2), 0, OAODEVICE_Y - turnY(btnParams.getEy()), turnX(btnParams.getEx()), btnParams.getKeyType() == 3 ? KEYMODE.MP_KEY : KEYMODE.MP_TOUCH));
+                keyPoints.add(packKeyData2(mBtMap.get(key2), 0, OAODEVICE_Y - turnY(btnParams.getEy()), turnX(btnParams.getEx()), btnParams.getKeyType() == 3 ? KEYMODE.MP_TOUCH : KEYMODE.MP_TOUCH));//testfor
 
                 if (btnParams.iHaveChild()) {
                     BtnParams btnParams2 = btnParams.getBtn2();
                     SimpleUtil.log("我有子按键按键:" + btnParams2.toString());
                     if (btnParams2.getKeyType() == 1) {
                         SimpleUtil.log("添加联动按键:" + btnParams2.toString());
-                        keyPoints.add(packKeyData2(mBtMap.get(key2), 0, OAODEVICE_Y - turnY(btnParams2.getEy()), turnX(btnParams2.getEx()), btnParams.getKeyType() == 3 ? KEYMODE.MP_KEY : KEYMODE.MP_TOUCH));
+                        keyPoints.add(packKeyData2(mBtMap.get(key2), 0, OAODEVICE_Y - turnY(btnParams2.getEy()), turnX(btnParams2.getEx()), btnParams.getKeyType() == 3 ? KEYMODE.MP_TOUCH : KEYMODE.MP_TOUCH));
                     }
 
                 }
@@ -259,23 +263,31 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
         long time = System.currentTimeMillis();
         resetReq();
         mReq.mReqType = type;
-        mAccInputThread.writeAcc(data);
+        writeFinalData(data);
         while ((System.currentTimeMillis() - time) < timeout && mReq.mReqResult == null) ;
         return mReq.mReqResult;
     }
 
+    private boolean writeFinalData(byte[] data) {
+        return mAccInputThread.writeAcc(data);
+    }
     public void setReq(byte reqType, byte[] result) {
         resetReq();
         mReq.mReqType = reqType;
         mReq.mReqResult = result;
     }
     public void writeManyConfigs(final List<Config> allConfigs) {
+        if (SimpleUtil.mDeviceVersion == null) {
+            SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_redverfail), true);
+            return;
+        }
         if (!isAOAConnect()) {
             SimpleUtil.log("aoa not connrct!writeManyConfigs fail!");
             SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.aoac_configwritefail), true);
             return;
         }
-
+        final byte[] dever = Hex.parse(SimpleUtil.mDeviceVersion);
+        OAODEVICE_Y = dever[0] >= 0x16 ? 4095 : 2304;
         SimpleUtil.log("准备开始写配置，其中分辨率:" + SimpleUtil.zoomx + "," + SimpleUtil.zoomy);
         SimpleUtil.runOnThread(new Runnable() {
             @Override
@@ -291,16 +303,15 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                             loadXmlToConfigData(config);
                             if (config.getIsUsed()) {
                                 //压枪数据重新构造一下
-                                int bqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "bqNum", int.class, 16);
-                                int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "cfqNum", int.class, 13);
-                                int akNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "akNum", int.class, 22);
+                                int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "cfqNum", int.class, SimpleUtil.PRESSGUN_CFQ);
+                                int bqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "bqNum", int.class, SimpleUtil.PRESSGUN_BQ);
+                                int akNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "akNum", int.class, SimpleUtil.PRESSGUN_AK);
                                 int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "defaultgun", int.class, 0);
-
-                                SimpleUtil.log("重新调整一下压枪灵敏度、压枪：" + bqNum + "," + cfqNum + "," + akNum + "," + defaultgun);
                                 byte[] data = config.getmData().all2Bytes();
-                                data[32] = (byte) cfqNum;
-                                data[33] = (byte) bqNum;
-                                data[34] = (byte) akNum;
+                                data[32] = dever[0] >= 0x16 ? (byte) cfqNum : (byte) (cfqNum * 2304 / 4095 + 1);
+                                data[33] = dever[0] >= 0x16 ? (byte) bqNum : (byte) (bqNum * 2304 / 4095 + 1);
+                                data[34] = dever[0] >= 0x16 ? (byte) akNum : (byte) (akNum * 2304 / 4095 + 1);
+                                SimpleUtil.log("重新调整一下压枪灵敏度、压枪：" + data[32] + "," + data[33] + "," + data[34] + "," + defaultgun);
                                 //[35]正在使用的gameid
                                 data[36] = (byte) defaultgun;//压枪设置，如开启、使用哪一把枪等
                                 byte[] data2 = Arrays.copyOfRange(data, 1, data.length);
@@ -353,7 +364,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
 
                         resetReq();
                         mReq.mReqType = (byte) 0xc0;
-                        mAccInputThread.writeAcc(c0Data.all2Bytes());
+                        writeFinalData(c0Data.all2Bytes());
                         long time = System.currentTimeMillis();
                         while ((System.currentTimeMillis() - time) < 3000 && mReq.mReqResult == null)
                             ;
@@ -443,6 +454,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
         }
     }
     public void writeDefaultConfigs() {
+
         List<Config> configsRightData = new ArrayList<>();
         List<Config> configsLeftData = new ArrayList<>();
         String result = AnysLeftRihgtConfigs(configsLeftData, configsRightData);
@@ -567,8 +579,8 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
         SimpleUtil.log((open ? "打开" : "关闭") + "接收按键");
         mReq.mReqType = (byte) 0xb2;
         mReq.mReqResult = null;
-        return open ? mAccInputThread.writeAcc(new byte[]{(byte) 0xa5, (byte) 0x05, (byte) 0xb2, (byte) 0x01, (byte) 0x5d}) :
-                mAccInputThread.writeAcc(new byte[]{(byte) 0xa5, (byte) 0x05, (byte) 0xb2, (byte) 0x00, (byte) 0x5c});
+        return open ? writeFinalData(new byte[]{(byte) 0xa5, (byte) 0x05, (byte) 0xb2, (byte) 0x01, (byte) 0x5d}) :
+                writeFinalData(new byte[]{(byte) 0xa5, (byte) 0x05, (byte) 0xb2, (byte) 0x00, (byte) 0x5c});
     }
 
     public void removeDataRec() {
@@ -589,7 +601,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
         bytes.add(readIndex);
         bytes.add((byte) 0x00);
         bytes.add(SimpleUtil.sumCheck(bytes.all2Bytes()));
-        return mAccInputThread.writeAcc(bytes.all2Bytes());
+        return writeFinalData(bytes.all2Bytes());
     }
 
     private int turnX(int x) {
@@ -657,7 +669,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
 
             long time = System.currentTimeMillis();
             mReq.mReqType = type;
-            boolean result = mAccInputThread.writeAcc(configSend.all2Bytes());
+            boolean result = writeFinalData(configSend.all2Bytes());
             while ((System.currentTimeMillis() - time) < 5000 && mReq.mReqResult == null) ;
             if (mReq.mReqResult == null || !result || mReq.mReqResult[3] != 0x00) {
                 return false;

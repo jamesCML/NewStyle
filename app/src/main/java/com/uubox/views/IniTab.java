@@ -37,12 +37,15 @@ import com.alibaba.sdk.android.oss.ServiceException;
 import com.alibaba.sdk.android.oss.callback.OSSCompletedCallback;
 import com.alibaba.sdk.android.oss.model.PutObjectRequest;
 import com.alibaba.sdk.android.oss.model.PutObjectResult;
+import com.clj.fastble.callback.BleWriteCallback;
+import com.clj.fastble.exception.BleException;
 import com.pgyersdk.update.DownloadFileListener;
 import com.pgyersdk.update.PgyUpdateManager;
 import com.pgyersdk.update.UpdateManagerListener;
 import com.pgyersdk.update.javabean.AppBean;
 import com.uubox.adapters.GunQaAdapter;
 import com.uubox.adapters.MoveConfigAdapter;
+import com.uubox.cjble.BTJobsManager;
 import com.uubox.padtool.R;
 import com.uubox.tools.AOAConfigTool;
 import com.uubox.tools.AliyuOSS;
@@ -125,7 +128,18 @@ public class IniTab {
     }
 
     private void WriteConfigs() {
+        BTJobsManager.getInstance().writeDefault(new byte[]{(byte) 0xa5, (byte) 0x04, (byte) 0xb3, (byte) 0x5c}, new BleWriteCallback() {
+            @Override
+            public void onWriteSuccess() {
+                SimpleUtil.log("蓝牙发送成功！");
+            }
 
+            @Override
+            public void onWriteFailure(BleException exception) {
+
+                SimpleUtil.log("蓝牙发送失败>" + exception.toString());
+            }
+        });
         String gloabkeyconfig = (String) SimpleUtil.getFromShare(mContext, "ini", "gloabkeyconfig", String.class, "");
         final String[] sp0 = gloabkeyconfig.split("#Z%W#", -1);
         if (sp0.length < 2) {
@@ -202,12 +216,12 @@ public class IniTab {
                         SimpleUtil.saveToShare(mContext, sp0[2], "akNum", cur);
                         break;
                     case R.id.btn_reset_gun:
-                        bq.setText(16 + "");
-                        cfq.setText(13 + "");
-                        ak.setText(22 + "");
-                        SimpleUtil.saveToShare(mContext, sp0[2], "cfqNum", 13);
-                        SimpleUtil.saveToShare(mContext, sp0[2], "bqNum", 16);
-                        SimpleUtil.saveToShare(mContext, sp0[2], "akNum", 22);
+                        cfq.setText(SimpleUtil.PRESSGUN_CFQ + "");
+                        bq.setText(SimpleUtil.PRESSGUN_BQ + "");
+                        ak.setText(SimpleUtil.PRESSGUN_AK + "");
+                        SimpleUtil.saveToShare(mContext, sp0[2], "cfqNum", SimpleUtil.PRESSGUN_CFQ);
+                        SimpleUtil.saveToShare(mContext, sp0[2], "bqNum", SimpleUtil.PRESSGUN_BQ);
+                        SimpleUtil.saveToShare(mContext, sp0[2], "akNum", SimpleUtil.PRESSGUN_AK);
                         break;
                 }
                 SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
@@ -282,9 +296,9 @@ public class IniTab {
 
                                 //这里刷新一下UI
                                 sp0[2] = gamesha;
-                                int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "cfqNum", int.class, 13);
-                                int bqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "bqNum", int.class, 16);
-                                int akNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "akNum", int.class, 22);
+                                int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "cfqNum", int.class, SimpleUtil.PRESSGUN_CFQ);
+                                int bqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "bqNum", int.class, SimpleUtil.PRESSGUN_BQ);
+                                int akNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "akNum", int.class, SimpleUtil.PRESSGUN_AK);
                                 SimpleUtil.log("刷新获取存储的压枪值:" + bqNum + "." + cfqNum + "," + akNum);
                                 bq.setText(bqNum + "");
                                 cfq.setText(cfqNum + "");
@@ -489,9 +503,9 @@ public class IniTab {
                             }
                         });
 
-                        int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "cfqNum", int.class, 13);
-                        int bqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "bqNum", int.class, 16);
-                        int akNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "akNum", int.class, 22);
+                        int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "cfqNum", int.class, SimpleUtil.PRESSGUN_CFQ);
+                        int bqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "bqNum", int.class, SimpleUtil.PRESSGUN_BQ);
+                        int akNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "akNum", int.class, SimpleUtil.PRESSGUN_AK);
                         SimpleUtil.log("获取存储的压枪值:" + bqNum + "." + cfqNum + "," + akNum);
                         bq.setText(bqNum + "");
                         cfq.setText(cfqNum + "");

@@ -62,7 +62,7 @@ public class APPStartCheckOTA extends Thread implements SimpleUtil.INormalBack, 
                             release();
                         }
                         SimpleUtil.log("得到设备峰位版本:" + fwVersion + "，下面获取服务器版本，请稍后...");
-                        SimpleUtil.updateWaiting((Activity) mContext, mContext.getString(R.string.ble_getdevverok) + fwVersion);
+                        SimpleUtil.updateWaiting(mContext.getString(R.string.ble_getdevverok) + fwVersion);
                         if (update.getCurImage() != null && baseRemoteOTA == null) {
                             baseRemoteOTA = new WisegaHttpRemoteOTA(fwVersion, update.getCurImage());
                             Thread getserverfwThread = new Thread(baseRemoteOTA);
@@ -74,7 +74,7 @@ public class APPStartCheckOTA extends Thread implements SimpleUtil.INormalBack, 
                         mICheckOTABack.checkresult(3);
                         release();
                     } else if (arg1 == 3) {
-                        SimpleUtil.updateWaiting((Activity) mContext, mContext.getString(R.string.getdevimgok) + update.getCurImage());
+                        SimpleUtil.updateWaiting(mContext.getString(R.string.getdevimgok) + update.getCurImage());
                         if (fwVersion != null && baseRemoteOTA == null) {
                             baseRemoteOTA = new WisegaHttpRemoteOTA(fwVersion, update.getCurImage());
                             Thread getserverfwThread = new Thread(baseRemoteOTA);
@@ -102,7 +102,7 @@ public class APPStartCheckOTA extends Thread implements SimpleUtil.INormalBack, 
                     int proc = arg1;
                     float percent = (proc * 1.0f) / mMaxProc;
                     DecimalFormat df = new DecimalFormat("0.00%");
-                    SimpleUtil.updateWaiting((Activity) mContext, mContext.getString(R.string.ble_updating) + "[" + df.format(percent) + "]\n" + mContext.getString(R.string.ble_otaoffdev));
+                    SimpleUtil.updateWaiting(mContext.getString(R.string.ble_updating) + "[" + df.format(percent) + "]\n" + mContext.getString(R.string.ble_otaoffdev));
                     if (proc == mMaxProc) {
                         //SimpleUtil.updateWaiting((Activity) mContext,mContext.getString(R.string.update_success));
                         SimpleUtil.addMsgtoTopNoRes(mContext, mContext.getString(R.string.kbv_warmwarn), mContext.getString(R.string.ble_otaok));
@@ -172,14 +172,14 @@ public class APPStartCheckOTA extends Thread implements SimpleUtil.INormalBack, 
                 {
                     if (Integer.parseInt(fwVersion.substring(0, 2)) < Integer.parseInt(server_fw.substring(0, 2)))//峰位版本太小，需要下载升级
                     {
-                        SimpleUtil.updateWaiting((Activity) mContext, mContext.getString(R.string.ble_otanewver) + "[" + update.getCurImage() + "]");
+                        SimpleUtil.updateWaiting(mContext.getString(R.string.ble_otanewver) + "[" + update.getCurImage() + "]");
                         baseRemoteOTA.wantImg();
                         //本地
                         //SimpleUtil.notifyall_(BaseRemoteOTA.OKBUFF_CALLBACK, new ByteArrayList(SimpleUtil.getAssertSmallFile("P10_"+(update.getCurImage().equals("A")?"B":"A")+"_add_bd_crc_oad_V3120_20181017.bin")));
                         return;
                     } else//需要升级MCU
                     {
-                        SimpleUtil.updateWaiting((Activity) mContext, mContext.getString(R.string.ble_otamcuupdate));
+                        SimpleUtil.updateWaiting(mContext.getString(R.string.ble_otamcuupdate));
                         SimpleUtil.sleep(1000);
                         sendMCUCMD();
                         return;
@@ -206,8 +206,8 @@ public class APPStartCheckOTA extends Thread implements SimpleUtil.INormalBack, 
     }
 
     @Override
-    public void notify(int mode, BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-        if (mode == 3) {
+    public void notify(BTService.BLEMODTYPE mode, BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+        if (mode == BTService.BLEMODTYPE.CHANGE) {
             byte[] data = characteristic.getValue();
             if (data == null || data.length < 5) {
                 return;

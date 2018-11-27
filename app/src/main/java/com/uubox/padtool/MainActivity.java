@@ -21,6 +21,7 @@ import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
@@ -58,6 +59,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         SimpleUtil.DEBUG = CommonUtils.getAppVersionName(this).contains("debug");
         SimpleUtil.log("MainActivity-------------create------------");
         setContentView(R.layout.activity_main);
@@ -146,7 +148,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private void runInit() {
         SimpleUtil.log("runInit initask execute");
-        checkUpdate(2000);
+        checkUpdate(200);
     }
 
     @Override
@@ -294,7 +296,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     private boolean mIsShowUpdate;
-    private void checkUpdate(int delay) {
+
+    private void checkUpdate(final int delay) {
         if (mIsShowUpdate) {
             return;
         }
@@ -303,9 +306,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
             exeIniTask();
             return;
         }
-        SimpleUtil.runOnUIThread(new Runnable() {
+        SimpleUtil.runOnThread(new Runnable() {
             @Override
             public void run() {
+                SimpleUtil.sleep(delay);
+                SimpleUtil.log("开始检查新版本");
                 new PgyUpdateManager.Builder()
                         .setForced(true)
                         .setUserCanRetry(false)
@@ -399,7 +404,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                             }
                         }).register();
             }
-        }, delay);
+        });
     }
 
     @Override

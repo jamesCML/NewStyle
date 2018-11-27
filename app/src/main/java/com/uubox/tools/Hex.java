@@ -143,7 +143,6 @@ public class Hex {
         return b;
     }
 
-    //ת��short ������ 2�ֽ� ���
     public static byte[] fromShortB(short val) {
         byte[] b = new byte[2];
         b[1] = (byte) (val & 0xff);

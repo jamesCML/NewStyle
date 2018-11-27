@@ -206,7 +206,6 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
                     @Override
                     public void run() {
                         mfloatingIv.setImageResource(getAPPUserFloatIcon((Integer) mfloatingIv.getTag() == 0));
-                        checkConfigChange();
                     }
                 }, 200);
             }

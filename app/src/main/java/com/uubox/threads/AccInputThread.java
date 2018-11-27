@@ -74,6 +74,10 @@ public class AccInputThread extends Thread {
                     SimpleUtil.mDeviceVersion = Hex.toString(new byte[]{result[3]});
                     SimpleUtil.log("获取版本信息:" + SimpleUtil.mDeviceVersion + "  data:" + Hex.toString(result));
                     SimpleUtil.putOneInfoToMap("devver", SimpleUtil.mDeviceVersion + "");
+                    boolean ischange = (Boolean) SimpleUtil.getFromShare(mContext, "ini", "configschange", boolean.class);
+                    if (ischange) {
+                        SimpleUtil.notifyall_(10003, null);
+                    }
                 }
             }
         });

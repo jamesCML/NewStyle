@@ -6,7 +6,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 22
         versionCode 149
-        versionName "2.3.9"
+        versionName "2.3.9.4"
         flavorDimensions "versionCode"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -76,7 +76,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation files('libs/pad-server-v3.0.8.jar')
     implementation(name: 'xml-debug', ext: 'aar')
-    implementation 'com.pgyersdk:sdk:3.0.0'
+    implementation 'com.pgyersdk:sdk:3.0.2'
     implementation 'com.squareup.okhttp3:okhttp:3.4.1'
     /*implementation 'com.aliyun.dpa:oss-android-sdk:+'
 

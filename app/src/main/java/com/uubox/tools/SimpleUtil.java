@@ -58,6 +58,9 @@ public class SimpleUtil {
     public static String mDeviceVersion;
     private static ConcurrentHashMap<String, String> mInfoMap = new ConcurrentHashMap<>();
     public static APPUSER mAPPUSER = APPUSER.WISEGA;
+    public static final int PRESSGUN_CFQ = 23;
+    public static final int PRESSGUN_BQ = 28;
+    public static final int PRESSGUN_AK = 39;
     public static byte[] getAssertSmallFile(Context context, String path) {
         try {
             InputStream stream = context.getAssets().open(path);
@@ -245,7 +248,7 @@ public class SimpleUtil {
         if (!DEBUG) {
             return;
         }
-        Log.i("CJLOG", msg);
+        Log.i("UUBOXLOG", msg);
     }
 
     public static void loge(String msg) {
@@ -719,8 +722,8 @@ public class SimpleUtil {
 
     }
 
-    public static void updateWaiting(Activity activity, final String msg) {
-        activity.runOnUiThread(new Runnable() {
+    public static void updateWaiting(final String msg) {
+        runOnUIThread(new Runnable() {
             @Override
             public void run() {
                 if (waiting == null || !waiting.isShowing() || waittingMsg == null) {

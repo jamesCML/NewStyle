@@ -43,14 +43,13 @@
         android:icon="${app_icon}"
         android:label="${appname}"
         android:supportsRtl="true"
-        android:theme="@style/fullscreen"
+        android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
         tools:replace="android:label">
         <activity
             android:screenOrientation="sensor"
             android:name=".MainActivity"
             android:launchMode="singleTask"
             android:configChanges="orientation|keyboardHidden|mcc|mnc|locale|touchscreen|navigation|screenLayout|uiMode|screenSize|smallestScreenSize|layoutDirection|fontScale|keyboard"
-            android:theme="@style/fullscreen"
             android:label="${appname}">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

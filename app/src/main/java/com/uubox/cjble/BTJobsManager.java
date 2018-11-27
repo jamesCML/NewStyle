@@ -36,7 +36,7 @@ public class BTJobsManager implements BTService.IStateCallBack, BTService.IBLENo
     private String mDevMod;
     private Context mContext;
     private boolean mOTAUpdating;
-    public final static boolean OPEN = false;
+    public final static boolean OPEN = true;
     private BTJobsManager() {
     }
 
@@ -192,8 +192,9 @@ public class BTJobsManager implements BTService.IStateCallBack, BTService.IBLENo
     }
 
     @Override
-    public void notify(int mode, final BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-        if (mode == 1) {
+    public void notify(BTService.BLEMODTYPE mode, final BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+        SimpleUtil.log("蓝牙数据 mode:" + mode + " 服务:" + characteristic.getUuid().toString() + " 数据:" + Hex.toString(characteristic.getValue()));
+        if (mode == BTService.BLEMODTYPE.READ) {
 
             if (characteristic.getUuid().toString().equals("00002a24-0000-1000-8000-00805f9b34fb")) {
                 Map<String, List<String>> modeMap = new HashMap<>();

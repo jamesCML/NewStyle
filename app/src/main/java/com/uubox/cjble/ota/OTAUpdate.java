@@ -588,8 +588,8 @@ public class OTAUpdate implements Runnable, BTService.IBLENotify {
 
         BTJobsManager.getInstance().addBLENotify(new BTService.IBLENotify() {
             @Override
-            public void notify(int mode, BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-                if (mode == 3) {
+            public void notify(BTService.BLEMODTYPE mode, BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+                if (mode == BTService.BLEMODTYPE.CHANGE) {
                     byte[] data = characteristic.getValue();
                     if (data[2] == (byte) 0x12 && data.length >= 6) {
 
@@ -647,10 +647,10 @@ public class OTAUpdate implements Runnable, BTService.IBLENotify {
     }
 
     @Override
-    public void notify(int mode, BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+    public void notify(BTService.BLEMODTYPE mode, BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
         if (oadImageNotify_UUID.equals(characteristic.getUuid().toString())) {
             //chara back
-            if (mode == 3) {
+            if (mode == BTService.BLEMODTYPE.CHANGE) {
 
                 byte[] imageData = characteristic.getValue();
                 if (imageData.length > 4) {
@@ -668,7 +668,7 @@ public class OTAUpdate implements Runnable, BTService.IBLENotify {
 
         } else if (dISFirmwareREV_UUID.equals(characteristic.getUuid().toString())) {
 
-            if (mode == 1) {
+            if (mode == BTService.BLEMODTYPE.READ) {
                 byte[] fwData = characteristic.getValue();
                 SimpleUtil.log("get fw brand:" + Hex.toString(fwData));
                 try {
@@ -682,7 +682,7 @@ public class OTAUpdate implements Runnable, BTService.IBLENotify {
             }
         } else if (oadBlockRequest_UUID.equals(characteristic.getUuid().toString())) {
             //chara back
-            if (mode == 2) {
+            if (mode == BTService.BLEMODTYPE.WRITE) {
                 byte[] data = characteristic.getValue();
 
                 if (equalBytes(data, curWrite)) {
