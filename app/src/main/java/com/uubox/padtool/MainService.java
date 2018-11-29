@@ -80,6 +80,8 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         if (BTJobsManager.OPEN) {
             BTJobsManager.getInstance().bindBTService(this);
         }
+
+        // AOAConfigTool.getInstance(this).bleDiveSend(Hex.parse("01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f 10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e"),(byte)0xdd);
     }
 
     @Override
@@ -592,20 +594,20 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         /*switch (SimpleUtil.mAPPUSER) {
             case WISEGA:
                 if (atSide) {
-                    return (mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.ic_folat_offline_edge : R.mipmap.ic_folat_online_edge;
+                    return (mAOAConfigTool == null || !mAOAConfigTool.isConnect()) ? R.mipmap.ic_folat_offline_edge : R.mipmap.ic_folat_online_edge;
                 } else {
-                    return (mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.ic_folat_offline : R.mipmap.ic_folat_online;
+                    return (mAOAConfigTool == null || !mAOAConfigTool.isConnect()) ? R.mipmap.ic_folat_offline : R.mipmap.ic_folat_online;
                 }
             case FPS:
                 if (atSide) {
-                    return (mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.fps_float_online : R.mipmap.fps_float_online;
+                    return (mAOAConfigTool == null || !mAOAConfigTool.isConnect()) ? R.mipmap.fps_float_online : R.mipmap.fps_float_online;
                 } else {
-                    return (mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.fps_float_online : R.mipmap.fps_float_online;
+                    return (mAOAConfigTool == null || !mAOAConfigTool.isConnect()) ? R.mipmap.fps_float_online : R.mipmap.fps_float_online;
                }*/
         if (atSide) {
-            return (mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.ic_folat_offline_edge : R.mipmap.ic_folat_online_edge;
+            return (mAOAConfigTool == null || !mAOAConfigTool.isConnect()) ? R.mipmap.ic_folat_offline_edge : R.mipmap.ic_folat_online_edge;
         } else {
-            return (mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.ic_folat_offline : R.mipmap.ic_folat_online;
+            return (mAOAConfigTool == null || !mAOAConfigTool.isConnect()) ? R.mipmap.ic_folat_offline : R.mipmap.ic_folat_online;
         }
 
     }
@@ -649,7 +651,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             //SimpleUtil.log("MainService rec:"+Hex.toString((byte[])obj));
         } else if (id == 10003)//配置更新了
         {
-            if (mAOAConfigTool.isAOAConnect()) {
+            if (mAOAConfigTool.isConnect()) {
                 SimpleUtil.addMsgBottomToTop(getBaseContext(), getString(R.string.initab_checknewconfigs), false);
             }
             SimpleUtil.saveToShare(getBaseContext(), "ini", "configschange", true);
@@ -714,7 +716,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             int action = event.getAction();
             switch (action) {
                 case MotionEvent.ACTION_DOWN:
-                    //mfloatingIv.setTag(1);mfloatingIv.setImageDrawable(getDrawable((mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) ? R.mipmap.app_icon0805001_gray : R.mipmap.app_icon0805001));
+                    //mfloatingIv.setTag(1);mfloatingIv.setImageDrawable(getDrawable((mAOAConfigTool == null || !mAOAConfigTool.isConnect()) ? R.mipmap.app_icon0805001_gray : R.mipmap.app_icon0805001));
                     mfloatingIv.setImageResource(getAPPUserFloatIcon(false));
                     isMove = false;
                     mTouchStartX = (int) event.getRawX();
@@ -778,7 +780,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
 
     private void checkConfigChange() {
 
-        if (mAOAConfigTool == null || !mAOAConfigTool.isAOAConnect()) {
+        if (mAOAConfigTool == null || !mAOAConfigTool.isConnect()) {
             return;
         }
         SimpleUtil.runOnUIThread(new Runnable() {

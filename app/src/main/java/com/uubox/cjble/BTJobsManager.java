@@ -16,8 +16,10 @@ import android.widget.TextView;
 
 import com.clj.fastble.BleManager;
 import com.clj.fastble.callback.BleWriteCallback;
+import com.clj.fastble.exception.BleException;
 import com.uubox.cjble.ota.APPStartCheckOTA;
 import com.uubox.padtool.R;
+import com.uubox.tools.AOAConfigTool;
 import com.uubox.tools.Hex;
 import com.uubox.tools.SimpleUtil;
 
@@ -85,6 +87,9 @@ public class BTJobsManager implements BTService.IStateCallBack, BTService.IBLENo
         return mGatt;
     }
 
+    public boolean isBLEConnected() {
+        return mBinder != null && mBinder.getBleGatt() != null;
+    }
     public void writeDefault(byte[] data, BleWriteCallback bleWriteCallback) {
         mBinder.writeDefault(data, bleWriteCallback);
     }
@@ -120,15 +125,19 @@ public class BTJobsManager implements BTService.IStateCallBack, BTService.IBLENo
 
                 //非人为因素需要重连
                 if (state == BTService.EState.USERDISCONNECTED || state == BTService.EState.DISCONNECTED) {//连接断开
+                    mGatt = null;
+                    SimpleUtil.notifyall_(10006, null);
 
                 } else if (state == BTService.EState.CONNECTFAIL) {
                     BleManager.getInstance().cancelScan();
                 } else if (state == BTService.EState.DISCONNECTED) {
                     BleManager.getInstance().cancelScan();
+                    SimpleUtil.notifyall_(10006, null);
                 } else if (state == BTService.EState.CONNECTED)//连接成功开始发验证信息
                 {
                     mGatt = mBinder.getBleGatt();
                     getModeInfo();
+                    SimpleUtil.notifyall_(10020, null);
                 }
                 break;
             case 2:
@@ -193,7 +202,7 @@ public class BTJobsManager implements BTService.IStateCallBack, BTService.IBLENo
 
     @Override
     public void notify(BTService.BLEMODTYPE mode, final BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-        SimpleUtil.log("蓝牙数据 mode:" + mode + " 服务:" + characteristic.getUuid().toString() + " 数据:" + Hex.toString(characteristic.getValue()));
+        // SimpleUtil.log("蓝牙数据 mode:" + mode + " 服务:" + characteristic.getUuid().toString() + " 数据:" + Hex.toString(characteristic.getValue()));
         if (mode == BTService.BLEMODTYPE.READ) {
 
             if (characteristic.getUuid().toString().equals("00002a24-0000-1000-8000-00805f9b34fb")) {
@@ -262,7 +271,7 @@ public class BTJobsManager implements BTService.IStateCallBack, BTService.IBLENo
             @Override
             public void checkresult(int enter) {
                 if (enter == 1) {
-
+                    readDever();
                 } else if (enter == 3) {
                     SimpleUtil.log("设备版本读取失败!");
                 } else if (enter == 4) {
@@ -273,6 +282,22 @@ public class BTJobsManager implements BTService.IStateCallBack, BTService.IBLENo
         appStartCheckOTA.start();
     }
 
+    private void readDever() {
+        SimpleUtil.log("蓝牙开始读取版本");
+        byte[] result = AOAConfigTool.getInstance(mContext).writeWaitResult((byte) 0xb3, new byte[]{(byte) 0xa5, (byte) 0x04, (byte) 0xb3, (byte) 0x5c}, 3000);
+        if (result == null) {
+            SimpleUtil.log("读取版本信息出错");
+            SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.ait_readdevverfail), true);
+        } else {
+            SimpleUtil.mDeviceVersion = Hex.toString(new byte[]{result[3]});
+            SimpleUtil.log("获取版本信息:" + SimpleUtil.mDeviceVersion + "  data:" + Hex.toString(result));
+            SimpleUtil.putOneInfoToMap("devver", SimpleUtil.mDeviceVersion + "");
+            boolean ischange = (Boolean) SimpleUtil.getFromShare(mContext, "ini", "configschange", boolean.class);
+            if (ischange) {
+                SimpleUtil.notifyall_(10003, null);
+            }
+        }
+    }
     private void initModeStr(Map<String, List<String>> modeMap, List<String> modes) {
         //model
         modes.add("CJ007");

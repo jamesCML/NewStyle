@@ -38,6 +38,7 @@ public class WisegaHttpRemoteOTA extends BaseRemoteOTA {
             @Override
             public void onFailure(Call call, IOException e) {
                 SimpleUtil.log("请求失败！" + e);
+                SimpleUtil.notifyall_(DOWNLOADEER_CALLBACK, null);
             }
 
             @Override

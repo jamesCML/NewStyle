@@ -78,7 +78,7 @@
     <string name="kbv_hide">隐藏</string>
     <string name="mad_mouselmd">鼠标灵敏度:</string>
     <string name="mad_gunlunlmd">滚轮灵敏度:</string>
-    <string name="aoac_loading">正在载入</string>
+    <string name="aoac_loading">正在写入</string>
     <string name="aoac_configwritefail">配置写入失败！</string>
     <string name="aoac_configwritesuc">配置写入成功！</string>
     <string name="aoac_aoachangefail">AOA参数变更失败，字符串长度过长！</string>

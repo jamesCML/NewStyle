@@ -2,6 +2,7 @@ package com.uubox.threads;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.Xml;
 
 import com.alibaba.sdk.android.oss.ClientException;
@@ -19,6 +20,7 @@ import com.uubox.tools.LogToFileUtils;
 import com.uubox.tools.SimpleUtil;
 import com.uubox.tools.SocketLog;
 
+import java.io.File;
 import java.util.List;
 import java.util.Random;
 
@@ -79,19 +81,41 @@ public class IniTask extends AsyncTask<Void, Integer, Void> {
                 //String[] games = {"绝地求生之刺激战场", "绝地求生之全军出击", "荒野行动", "穿越火线", "终结者", "小米枪战", "丛林法则", "光荣使命"};
                 for (int i = 0; i < gameElements.length; i++) {
                     String game = gameElements[i].getValue();
-                    boolean isExist = aliyuOSS.isExistFile("usbdata", "keycongfigs2/" + game + "_" + SimpleUtil.zoomx + "" + SimpleUtil.zoomy + ".xml");
-                    if (!isExist) {
-                        List<String> files = aliyuOSS.listOSSFiles2("usbdata", "keycongfigs2/" + game);
-                        if (files.size() == 0) {
-                            SimpleUtil.log("没有找到游戏配置");
-                            continue;
+
+                    //增加一个本地测试接口
+                    if (7 == 77) {//testfor
+                        File root = new File(Environment.getExternalStorageDirectory().getPath() + "/Zhiwan/cfg");
+                        File[] configs = root.listFiles();
+                        String path = null;
+                        for (File f : configs) {
+                            if (f.getName().equals(game + "_" + SimpleUtil.zoomx + "" + SimpleUtil.zoomy + ".xml")) {
+                                path = f.getPath();
+                            }
                         }
-                        SimpleUtil.log("加载第一个游戏配置:" + files.get(0));
-                        buff = aliyuOSS.getObjectBuff("usbdata", files.get(0));
+                        if (path == null) {
+                            SimpleUtil.log("加载第一个游戏配置:" + configs[0].getName());
+                            buff = SimpleUtil.getSmallFile(configs[0].getPath());
+                        } else {
+                            SimpleUtil.log("找到匹配的游戏配置:" + game + "_" + SimpleUtil.zoomx + "" + SimpleUtil.zoomy + ".xml");
+                            buff = SimpleUtil.getSmallFile(path);
+                        }
                     } else {
-                        SimpleUtil.log("找到匹配的游戏配置:" + game + "_" + SimpleUtil.zoomx + "" + SimpleUtil.zoomy + ".xml");
-                        buff = aliyuOSS.getObjectBuff("usbdata", "keycongfigs2/" + game + "_" + SimpleUtil.zoomx + "" + SimpleUtil.zoomy + ".xml");
+                        boolean isExist = aliyuOSS.isExistFile("usbdata", "keycongfigs2/" + game + "_" + SimpleUtil.zoomx + "" + SimpleUtil.zoomy + ".xml");
+                        if (!isExist) {
+                            List<String> files = aliyuOSS.listOSSFiles2("usbdata", "keycongfigs2/" + game);
+                            if (files.size() == 0) {
+                                SimpleUtil.log("没有找到游戏配置");
+                                continue;
+                            }
+                            SimpleUtil.log("加载第一个游戏配置:" + files.get(0));
+                            buff = aliyuOSS.getObjectBuff("usbdata", files.get(0));
+                        } else {
+                            SimpleUtil.log("找到匹配的游戏配置:" + game + "_" + SimpleUtil.zoomx + "" + SimpleUtil.zoomy + ".xml");
+                            buff = aliyuOSS.getObjectBuff("usbdata", "keycongfigs2/" + game + "_" + SimpleUtil.zoomx + "" + SimpleUtil.zoomy + ".xml");
+                        }
                     }
+
+
                     if (buff == null) {
                         SimpleUtil.log("获取到空的配置");
                         return null;

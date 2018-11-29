@@ -48,9 +48,9 @@ public class BTService extends Service {
 
     private static final String XJ_ET_UUID_SERVICE = "00000000-0000-1000-8000-00805f9b34fb";
     //    private static final String ET_UUID_SERVICE = "0000ffe0-0000-1000-8000-00805f9b34fb";
-    private static final String ET_UUID_SERVICE = "0000ffe0-0000-1000-8000-00805f9b34fb";
-    private static final String ET_UUID_WRITE = "0000ffe1-0000-1000-8000-00805f9b34fb";
-    private static final String ET_UUID_NOTIFY = "0000ffe2-0000-1000-8000-00805f9b34fb";
+    public static final String ET_UUID_SERVICE = "0000ffe0-0000-1000-8000-00805f9b34fb";
+    public static final String ET_UUID_WRITE = "0000ffe1-0000-1000-8000-00805f9b34fb";
+    public static final String ET_UUID_NOTIFY = "0000ffe2-0000-1000-8000-00805f9b34fb";
     /**
      * K100's UUID
      */
@@ -432,7 +432,7 @@ public class BTService extends Service {
 
     private void handleRecData(BluetoothGattCharacteristic characteristic) {
         byte[] data = characteristic.getValue();
-        Log.i("zhiwan", "sdk-handleRecData: data = " + Hex.toString(data));
+        //Log.i("zhiwan", "sdk-handleRecData: data = " + Hex.toString(data));
         if (data.length < 3) {
             return;
         }
@@ -524,7 +524,8 @@ public class BTService extends Service {
                 if (bleWriteCallback != null)
                     bleWriteCallback.onWriteFailure(new OtherException("gatt writeCharacteristic fail"));
             } else {
-                bleWriteCallback.onWriteSuccess();
+                if (bleWriteCallback != null)
+                    bleWriteCallback.onWriteSuccess();
             }
         } else {
             if (bleWriteCallback != null)

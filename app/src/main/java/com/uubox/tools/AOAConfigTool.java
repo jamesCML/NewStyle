@@ -1,5 +1,7 @@
 package com.uubox.tools;
 
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -12,14 +14,17 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
+import com.uubox.cjble.BTJobsManager;
+import com.uubox.cjble.BTService;
 import com.uubox.padtool.R;
 import com.uubox.threads.AccInputThread;
 import com.uubox.views.BtnParams;
 import com.uubox.views.BtnParamsHolder;
 import com.uubox.views.KeyboardView;
 
-public class AOAConfigTool implements SimpleUtil.INormalBack {
+public class AOAConfigTool implements SimpleUtil.INormalBack, BTService.IBLENotify {
     private int OAODEVICE_X = 4095;
     private int OAODEVICE_Y = 2304;
     private AccInputThread mAccInputThread;
@@ -60,19 +65,21 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
     }
 
     public byte[] getDeviceConfigD0() {
-        if (!isAOAConnect()) {
+        if (!isConnect()) {
             SimpleUtil.log("aoa not connrct!pullDeviceConfigs fail!");
             return null;
         }
+        SimpleUtil.log("拉取D0");
         ByteArrayList data = new ByteArrayList();
         data.add((byte) 0xa5);
         data.add((byte) 0x05);
         data.add((byte) 0xd0);
+        data.add((byte) 0x00);
         data.add(SimpleUtil.sumCheck(data.all2Bytes()));
-        writeWaitResult((byte) 0xd0, data.all2Bytes(), 2000);
-        if (mReq.mReqResult != null) {
-            SimpleUtil.log("pullDeviceConfigs ok:" + Hex.toString(mReq.mReqResult));
-            return Arrays.copyOf(mReq.mReqResult, mReq.mReqResult.length);
+        byte[] result = writeWaitResult((byte) 0xd0, data.all2Bytes(), 2000);
+        if (result != null) {
+            SimpleUtil.log("pullDeviceConfigs ok:" + result);
+            return result;
         }
         return null;
     }
@@ -257,31 +264,51 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
         config.mSize = config.mData.all2Bytes().length;
     }
 
-    private Req mReq = new Req();
-
+    //private Req mReq = new Req();
+    private Vector<Req> mReqs = new Vector<>();
     public byte[] writeWaitResult(byte type, byte[] data, long timeout) {
         long time = System.currentTimeMillis();
-        resetReq();
-        mReq.mReqType = type;
+        addReq(type);
         writeFinalData(data);
-        while ((System.currentTimeMillis() - time) < timeout && mReq.mReqResult == null) ;
-        return mReq.mReqResult;
+        while ((System.currentTimeMillis() - time) < timeout && !isResultOK(type)) ;
+        return getReqResult(type);
     }
 
-    private boolean writeFinalData(byte[] data) {
-        return mAccInputThread.writeAcc(data);
+    private byte[] mBLEWriteBack;
+
+    private synchronized boolean writeFinalData(byte[] data) {
+        if (mAccInputThread != null && mAccInputThread.isConnect()) {
+            return mAccInputThread.writeAcc(data);
+        } else {
+            if (data.length <= 20) {
+                long time = System.currentTimeMillis();
+                for (int i = 0; i < 5; i++) {
+                    mBLEWriteBack = null;
+                    BTJobsManager.getInstance().writeDefault(data, null);
+                    while ((System.currentTimeMillis() - time < 3000) && !Arrays.equals(mBLEWriteBack, data))
+                        ;
+                    //SimpleUtil.log("比对是否发送成功:"+Hex.toString(mBLEWriteBack)+"/"+Hex.toString(data));
+                    if (Arrays.equals(mBLEWriteBack, data)) {
+                        mBLEWriteBack = null;
+                        SimpleUtil.sleep(15);
+                        return true;
+                    }
+                    SimpleUtil.log("蓝牙数据重发:" + Hex.toString(data));
+                }
+            } else {
+                return bleDiveSend(data, data[2]);
+            }
+            return false;
+        }
+
     }
-    public void setReq(byte reqType, byte[] result) {
-        resetReq();
-        mReq.mReqType = reqType;
-        mReq.mReqResult = result;
-    }
+
     public void writeManyConfigs(final List<Config> allConfigs) {
         if (SimpleUtil.mDeviceVersion == null) {
             SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_redverfail), true);
             return;
         }
-        if (!isAOAConnect()) {
+        if (!isConnect()) {
             SimpleUtil.log("aoa not connrct!writeManyConfigs fail!");
             SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.aoac_configwritefail), true);
             return;
@@ -298,119 +325,126 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
                 new BtnParamsHolder(mContext).preareLoadConfigs(allConfigs, new BtnParamsHolder.IMeasureResult() {
                     @Override
                     public void measurefinish() {
+                        SimpleUtil.runOnThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                for (AOAConfigTool.Config config : allConfigs) {
+                                    loadXmlToConfigData(config);
+                                    if (config.getIsUsed()) {
+                                        //压枪数据重新构造一下
+                                        int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "cfqNum", int.class, SimpleUtil.PRESSGUN_CFQ);
+                                        int bqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "bqNum", int.class, SimpleUtil.PRESSGUN_BQ);
+                                        int akNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "akNum", int.class, SimpleUtil.PRESSGUN_AK);
+                                        int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "defaultgun", int.class, 0);
+                                        byte[] data = config.getmData().all2Bytes();
+                                        data[32] = dever[0] >= 0x16 ? (byte) cfqNum : (byte) (cfqNum * 2304 / 4095 + 1);
+                                        data[33] = dever[0] >= 0x16 ? (byte) bqNum : (byte) (bqNum * 2304 / 4095 + 1);
+                                        data[34] = dever[0] >= 0x16 ? (byte) akNum : (byte) (akNum * 2304 / 4095 + 1);
+                                        SimpleUtil.log("重新调整一下压枪灵敏度、压枪：" + data[32] + "," + data[33] + "," + data[34] + "," + defaultgun);
+                                        //[35]正在使用的gameid
+                                        data[36] = (byte) defaultgun;//压枪设置，如开启、使用哪一把枪等
+                                        byte[] data2 = Arrays.copyOfRange(data, 1, data.length);
+                                        ByteArrayList bytes = new ByteArrayList();
+                                        bytes.add(SimpleUtil.sumCheck(data2));
+                                        bytes.add(data2);
+                                        config.setmData(bytes);
+                                        //break;
+                                    }
+                                }
 
-                        for (AOAConfigTool.Config config : allConfigs) {
-                            loadXmlToConfigData(config);
-                            if (config.getIsUsed()) {
-                                //压枪数据重新构造一下
-                                int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "cfqNum", int.class, SimpleUtil.PRESSGUN_CFQ);
-                                int bqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "bqNum", int.class, SimpleUtil.PRESSGUN_BQ);
-                                int akNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "akNum", int.class, SimpleUtil.PRESSGUN_AK);
-                                int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "defaultgun", int.class, 0);
-                                byte[] data = config.getmData().all2Bytes();
-                                data[32] = dever[0] >= 0x16 ? (byte) cfqNum : (byte) (cfqNum * 2304 / 4095 + 1);
-                                data[33] = dever[0] >= 0x16 ? (byte) bqNum : (byte) (bqNum * 2304 / 4095 + 1);
-                                data[34] = dever[0] >= 0x16 ? (byte) akNum : (byte) (akNum * 2304 / 4095 + 1);
-                                SimpleUtil.log("重新调整一下压枪灵敏度、压枪：" + data[32] + "," + data[33] + "," + data[34] + "," + defaultgun);
-                                //[35]正在使用的gameid
-                                data[36] = (byte) defaultgun;//压枪设置，如开启、使用哪一把枪等
-                                byte[] data2 = Arrays.copyOfRange(data, 1, data.length);
-                                ByteArrayList bytes = new ByteArrayList();
-                                bytes.add(SimpleUtil.sumCheck(data2));
-                                bytes.add(data2);
-                                config.setmData(bytes);
-                                //break;
-                            }
-                        }
+
+                                //先判断按键是否超出255
+                                for (Config config : allConfigs) {
+                                    int len = config.mData.all2Bytes().length;
+                                    SimpleUtil.log(config.mConfigName + "->配置长度:" + len);
+                                    if (len >= 255) {
+                                        SimpleUtil.resetWaitTop(mContext);
+                                        SimpleUtil.addMsgBottomToTop(mContext, config.getmConfigName() + "->" + mContext.getString(R.string.initab_databig), true);
+                                        return;
+                                    }
+                                }
 
 
-                        //先判断按键是否超出255
-                        for (Config config : allConfigs) {
-                            int len = config.mData.all2Bytes().length;
-                            SimpleUtil.log(config.mConfigName + "->配置长度:" + len);
-                            if (len >= 255) {
+                                short totlen = 0;
+                                int defaultIndex = 0;
+                                byte[] gameList = new byte[4];
+                                //构建C0
+                                SimpleUtil.log("构造C0:" + allConfigs.size());
+                                for (int i = 0; i < allConfigs.size(); i++) {
+                                    totlen += allConfigs.get(i).getmSize();
+                                    if (allConfigs.get(i).getIsUsed()) {
+                                        defaultIndex = i + 1;
+                                    }
+                                    gameList[i] = allConfigs.get(i).getmConfigid();
+                                }
+
+                                ByteArrayList c0Data = new ByteArrayList();
+                                c0Data.add((byte) 0xa5);
+                                c0Data.add((byte) 0x14);
+                                c0Data.add((byte) 0xc0);
+                                c0Data.add((byte) defaultIndex);
+                                c0Data.add(gameList);
+                                c0Data.add(Hex.fromShortB(totlen));
+                                byte[] leave = new byte[9];
+                                leave[0] = (byte) Build.VERSION.SDK_INT;//发送安卓版本信息
+                                c0Data.add(leave);
+
+                                c0Data.add(SimpleUtil.sumCheck(c0Data.all2Bytes()));
+
+                                addReq((byte) 0xc0);
+                                writeFinalData(c0Data.all2Bytes());
+                                long time = System.currentTimeMillis();
+                                while ((System.currentTimeMillis() - time) < 3000 && !isResultOK((byte) 0xc0))
+                                    ;
+                                if (isResultOK((byte) 0xc0)) {
+                                    if (getReqResult((byte) 0xc0)[3] != 0) {
+                                        SimpleUtil.log("发送C0失败！！！");
+                                        return;
+                                    }
+                                }
+                                SimpleUtil.log("发送C0成功！！！");
+
+                                byte index_ = (byte) 0xc1;
+                                for (int i = 0; i < allConfigs.size(); i++) {
+                                    SimpleUtil.log("正在载入 " + allConfigs.get(i).getmBelongGame() + ":" + allConfigs.get(i).getmConfigName());
+                                    SimpleUtil.updateWaitTopMsg(mContext.getString(R.string.aoac_loading) + "\n  " + allConfigs.get(i).getmBelongGame() + "\n    " + allConfigs.get(i).getmConfigName());
+                                    if (isAOAConnect() && !diveSend(allConfigs.get(i).mData.all2Bytes(), index_)) {
+                                        SimpleUtil.log("请求错误AOA分包发送！");
+                                        SimpleUtil.resetWaitTop(mContext);
+                                        SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.aoac_configwritefail), true);
+                                        return;
+                                    } else if (isBLEConnect() && !bleDiveSend(allConfigs.get(i).mData.all2Bytes(), index_)) {
+                                        SimpleUtil.log("请求错误蓝牙分包发送！");
+                                        SimpleUtil.resetWaitTop(mContext);
+                                        SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.aoac_configwritefail), true);
+                                        return;
+                                    }
+
+                                    index_++;
+                                }
+                                SimpleUtil.log("保底配置顺序，查询一下！！！");
+                                //保底配置顺序，查询一下
+                                byte[] d0data = getDeviceConfigD0();
                                 SimpleUtil.resetWaitTop(mContext);
-                                SimpleUtil.addMsgBottomToTop(mContext, config.getmConfigName() + "->" + mContext.getString(R.string.initab_databig), true);
-                                return;
+                                if (d0data != null) {
+                                    SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.aoac_configwritesuc), false);
+                                    SimpleUtil.saveToShare(mContext, "ini", "configschange", false);
+                                    SimpleUtil.saveToShare(mContext, "ini", "configsorderbytes", Hex.toString(d0data));
+                                    SimpleUtil.saveToShare(mContext, "ini", "NewConfigNotWrite", "");
+                                    if ((Boolean) SimpleUtil.getFromShare(mContext, "ini", "aoaparamschange", boolean.class)) {
+                                        sendAOAChangeInfo("AAABBCC" + (uuu++), "LALALA", "0000000012345678");
+                                    }
+                                    SimpleUtil.notifyall_(10015, d0data);
+                                } else {
+                                    SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.aoac_configwritefail), true);
+                                }
+                                SimpleUtil.notifyall_(10012, d0data);
+                                if (isNeedToCloseKeySet) {
+                                    openOrCloseRecKeycode(false);
+                                }
                             }
-                        }
+                        });
 
-
-                        short totlen = 0;
-                        int defaultIndex = 0;
-                        byte[] gameList = new byte[4];
-                        //构建C0
-                        SimpleUtil.log("构造C0:" + allConfigs.size());
-                        for (int i = 0; i < allConfigs.size(); i++) {
-                            totlen += allConfigs.get(i).getmSize();
-                            if (allConfigs.get(i).getIsUsed()) {
-                                defaultIndex = i + 1;
-                            }
-                            gameList[i] = allConfigs.get(i).getmConfigid();
-                        }
-
-                        ByteArrayList c0Data = new ByteArrayList();
-                        c0Data.add((byte) 0xa5);
-                        c0Data.add((byte) 0x14);
-                        c0Data.add((byte) 0xc0);
-                        c0Data.add((byte) defaultIndex);
-                        c0Data.add(gameList);
-                        c0Data.add(Hex.fromShortB(totlen));
-                        byte[] leave = new byte[9];
-                        leave[0] = (byte) Build.VERSION.SDK_INT;//发送安卓版本信息
-                        c0Data.add(leave);
-
-                        c0Data.add(SimpleUtil.sumCheck(c0Data.all2Bytes()));
-
-                        resetReq();
-                        mReq.mReqType = (byte) 0xc0;
-                        writeFinalData(c0Data.all2Bytes());
-                        long time = System.currentTimeMillis();
-                        while ((System.currentTimeMillis() - time) < 3000 && mReq.mReqResult == null)
-                            ;
-                        if (mReq.mReqResult != null) {
-                            if (mReq.mReqResult[3] != 0) {
-                                SimpleUtil.log("发送C0失败！！！");
-                                return;
-                            }
-                        }
-                        SimpleUtil.log("发送C0成功！！！");
-
-                        byte index_ = (byte) 0xc1;
-                        for (int i = 0; i < allConfigs.size(); i++) {
-                            resetReq();
-                            SimpleUtil.log("正在载入 " + allConfigs.get(i).getmBelongGame() + ":" + allConfigs.get(i).getmConfigName());
-                            SimpleUtil.updateWaitTopMsg(mContext.getString(R.string.aoac_loading) + "\n  " + allConfigs.get(i).getmBelongGame() + "\n    " + allConfigs.get(i).getmConfigName());
-                            if (!diveSend(allConfigs.get(i).mData.all2Bytes(), index_)) {
-                                SimpleUtil.log("请求错误！" + Hex.toString(mReq.mReqResult) + "," + false);
-                                SimpleUtil.resetWaitTop(mContext);
-                                SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.aoac_configwritefail), true);
-                                return;
-                            }
-
-                            index_++;
-                            resetReq();
-                        }
-                        SimpleUtil.log("保底配置顺序，查询一下！！！");
-                        //保底配置顺序，查询一下
-                        byte[] d0data = getDeviceConfigD0();
-                        SimpleUtil.resetWaitTop(mContext);
-                        if (d0data != null) {
-                            SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.aoac_configwritesuc), false);
-                            SimpleUtil.saveToShare(mContext, "ini", "configschange", false);
-                            SimpleUtil.saveToShare(mContext, "ini", "configsorderbytes", Hex.toString(d0data));
-                            SimpleUtil.saveToShare(mContext, "ini", "NewConfigNotWrite", "");
-                            if ((Boolean) SimpleUtil.getFromShare(mContext, "ini", "aoaparamschange", boolean.class)) {
-                                sendAOAChangeInfo("AAABBCC" + (uuu++), "LALALA", "0000000012345678");
-                            }
-                            SimpleUtil.notifyall_(10015, d0data);
-                        } else {
-                            SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.aoac_configwritefail), true);
-                        }
-                        SimpleUtil.notifyall_(10012, d0data);
-                        if (isNeedToCloseKeySet) {
-                            openOrCloseRecKeycode(false);
-                        }
                     }
                 });
 
@@ -419,6 +453,15 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
 
     }
 
+    public boolean isAOAConnect() {
+        return mAccInputThread != null && mAccInputThread.isConnect();
+    }
+
+    public boolean isBLEConnect() {
+        return BTJobsManager.getInstance().isBLEConnected();
+    }
+
+    //testfor写设备版本判断
     static int uuu = 1;
     private void sendAOAChangeInfo(String accessory_manufacturer, String accessory_model, String accessory_serial) {
         if (accessory_manufacturer == null || accessory_model == null || accessory_serial == null || accessory_manufacturer.length() > 8 || accessory_model.length() > 8 || accessory_serial.length() > 16
@@ -444,14 +487,14 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
         buff.add(new byte[29]);
         buff.add(SimpleUtil.sumCheck(buff.all2Bytes()));
         SimpleUtil.log("AOA参数变更:" + Hex.toString(buff.all2Bytes()));
-        writeWaitResult((byte) 0xe1, buff.all2Bytes(), 2000);
-        SimpleUtil.log("更新AOA参数:" + Hex.toString(mReq.mReqResult));
+        writeWaitResult((byte) 0xe1, buff.all2Bytes(), 2000);//testfor
+       /* SimpleUtil.log("更新AOA参数:" + Hex.toString(mReq.mReqResult));
         if (mReq.mReqResult != null && mReq.mReqResult.length > 3 && mReq.mReqResult[3] == 0) {
             SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.aoac_devparamfail) + (mReq.mReqResult[3] == 0 ? mContext.getString(R.string.initab_sucessful) : mContext.getString(R.string.initab_fail)), mReq.mReqResult[3] != 0);
             if (mReq.mReqResult[3] == 0) {
                 SimpleUtil.saveToShare(mContext, "ini", "aoaparamschange", false);
             }
-        }
+        }*/
     }
     public void writeDefaultConfigs() {
 
@@ -552,7 +595,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
 
         for (byte b : configorder) {
             for (Config config : mConfigs) {
-                SimpleUtil.log("排序1:" + config.toString());
+                //SimpleUtil.log("排序1:" + config.toString());
                 if (config.getmConfigid() == b) {
                     config.setDeleted(false);
                     configRight.add(config);
@@ -563,7 +606,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
         //设置一下使用者
         configRight.get(order[3] - 1).setmIsUsed(true);
         for (Config config : mConfigs) {
-            SimpleUtil.log("排序2:" + config.toString());
+            //SimpleUtil.log("排序2:" + config.toString());
             if (config.getIsDeleted()) {
                 config.setDeleted(true);
                 configLeft.add(config);
@@ -572,18 +615,17 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
         }
     }
     public boolean openOrCloseRecKeycode(boolean open) {
-        if (!isAOAConnect()) {
+        if (!isConnect()) {
             SimpleUtil.log("aoa not connrct!openOrCloseRecKeycode fail!");
             return false;
         }
         SimpleUtil.log((open ? "打开" : "关闭") + "接收按键");
-        mReq.mReqType = (byte) 0xb2;
-        mReq.mReqResult = null;
+        addReq((byte) 0xb2);
         return open ? writeFinalData(new byte[]{(byte) 0xa5, (byte) 0x05, (byte) 0xb2, (byte) 0x01, (byte) 0x5d}) :
                 writeFinalData(new byte[]{(byte) 0xa5, (byte) 0x05, (byte) 0xb2, (byte) 0x00, (byte) 0x5c});
     }
 
-    public void removeDataRec() {
+   /* public void removeDataRec() {
         SimpleUtil.removeINormalCallback(this);
     }
 
@@ -602,7 +644,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
         bytes.add((byte) 0x00);
         bytes.add(SimpleUtil.sumCheck(bytes.all2Bytes()));
         return writeFinalData(bytes.all2Bytes());
-    }
+    }*/
 
     private int turnX(int x) {
         return (OAODEVICE_X * x) / SimpleUtil.zoomy;
@@ -641,12 +683,10 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
     }
 
     private boolean diveSend(byte[] totalBuffer, byte type) {
-
-        SimpleUtil.log("开始分包写入配置:\n" + Hex.toString(totalBuffer) + ",len:" + totalBuffer.length);
+        SimpleUtil.log("AOA开始分包写入配置:\n" + Hex.toString(totalBuffer) + ",len:" + totalBuffer.length);
         int count = totalBuffer.length / 59;
         int offset = 0;
         while (offset < totalBuffer.length) {
-            resetReq();
             ByteArrayList configSend = new ByteArrayList();
             configSend.add((byte) 0xa5);
             configSend.add((byte) 0x00);
@@ -668,10 +708,10 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
 
 
             long time = System.currentTimeMillis();
-            mReq.mReqType = type;
+            addReq(type);
             boolean result = writeFinalData(configSend.all2Bytes());
-            while ((System.currentTimeMillis() - time) < 5000 && mReq.mReqResult == null) ;
-            if (mReq.mReqResult == null || !result || mReq.mReqResult[3] != 0x00) {
+            while ((System.currentTimeMillis() - time) < 5000 && !isResultOK(type)) ;
+            if (!isResultOK(type) || !result || getReqResult(type)[3] != 0x00) {
                 return false;
             }
 
@@ -680,6 +720,47 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
 
     }
 
+    private boolean bleDiveSend(byte[] totalBuffer, byte type) {
+        addReq(type);
+        SimpleUtil.log("蓝牙调试开始分包写入配置:\n" + Hex.toString(totalBuffer) + ",len:" + totalBuffer.length);
+        ByteArrayList buff = new ByteArrayList();
+        buff.add((byte) 0);
+        buff.add(totalBuffer);
+        totalBuffer = buff.all2Bytes();
+        int count = totalBuffer.length / 15 + 1;
+        int offset = 0;
+        for (int pk = 0; pk < count; pk++) {
+            ByteArrayList configSend = new ByteArrayList();
+            configSend.add((byte) 0xa4);
+            configSend.add((byte) 0x00);
+            configSend.add(type);
+            configSend.add((byte) (pk + 1));
+            if (count == 1) {
+                configSend.add(totalBuffer);
+            } else if (offset + 15 < totalBuffer.length) {
+                configSend.add(Arrays.copyOfRange(totalBuffer, offset, offset += 15));
+            } else {
+                configSend.add(Arrays.copyOfRange(totalBuffer, offset, totalBuffer.length));
+                offset = totalBuffer.length;
+            }
+            configSend.set(1, new byte[]{(byte) (configSend.all2Bytes().length + 1)});
+            byte checksum = SimpleUtil.sumCheck(configSend.all2Bytes());
+            configSend.add(checksum);
+
+            //SimpleUtil.log("蓝牙调试 分包->" + Hex.toString(configSend.all2Bytes()));
+            writeFinalData(configSend.all2Bytes());
+        }
+
+        long time = System.currentTimeMillis();
+        SimpleUtil.log("发送完毕，等待请求:" + Hex.toString(type) + "当前线程:" + Thread.currentThread().getName());
+        while ((System.currentTimeMillis() - time) < 5000 && !isResultOK(type)) ;
+        if (!isResultOK(type) || getReqResult(type)[3] != 0x00) {
+            SimpleUtil.log("蓝牙分包写入失败!");
+            return false;
+        }
+        return true;
+
+    }
     @Override
     public void back(int id, Object obj) {
         if (id == 10002)//AOA数据接口
@@ -692,13 +773,14 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
             }
 
             if (data[0] == (byte) 0xa5) {
-                if (mReq.mReqType != 0)//有请求待返回
+                if (mReqs.size() != 0)//有请求待返回
                 {
-                    SimpleUtil.log("有请求码");
-                    if (mReq.mReqType == data[2])//符合请求码，则填入OK数据
+                    SimpleUtil.log("有请求码:" + mReqs.size() + "   " + getReqCodeString());
+
+                    if (isContainType(data[2]))//符合请求码，则填入OK数据
                     {
-                        SimpleUtil.log("符合请求码，返回数据");
-                        mReq.mReqResult = data;
+                        SimpleUtil.log("符合请求码，返回数据:" + Hex.toString(data[2]));
+                        mReqs.get(mReqs.indexOf(new Req(data[2]))).mReqResult = data;
                     }
                 } else {
                     SimpleUtil.log("没有请求码:" + Hex.toString(data));
@@ -720,20 +802,30 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
 
             handleSpecil(data);
 
+        } else if (id == 10020)//蓝牙连接成功！
+        {
+            BTJobsManager.getInstance().addBLENotify(this);
         }
     }
 
     private void handleSpecil(byte[] data) {
-        if (mReq.mReqType == (byte) 0xb2)//读键盘数据请求
+        if (isContainType((byte) 0xb2))//读键盘数据请求
         {
-            if (data[3] == 0x00) {
-                SimpleUtil.mAOAInjectEable = true;
-                //SimpleUtil.addMsgBottomToTop(mContext, "已关闭按键配置调整", true);
-            } else if (data[3] == 0x01) {
-                SimpleUtil.mAOAInjectEable = false;
-                //SimpleUtil.addMsgBottomToTop(mContext, "已开启按键配置调整", false);
+
+            if (data[2] == (byte) 0xb2) {
+                SimpleUtil.log("handle读取键盘数据请求:0xb2");
+                if (data[3] == 0x00) {
+                    SimpleUtil.mAOAInjectEable = true;
+                    removeType((byte) 0xb2);
+                    //SimpleUtil.addMsgBottomToTop(mContext, "已关闭按键配置调整", true);
+                } else if (data[3] == 0x01) {
+                    SimpleUtil.mAOAInjectEable = false;
+                    removeType((byte) 0xb2);
+                    //SimpleUtil.addMsgBottomToTop(mContext, "已开启按键配置调整", false);
+                }
             }
-            resetReq();
+
+            //resetReq();
         } else if (!SimpleUtil.mAOAInjectEable) {
             if (data[1] == 0x08 || data[1] == 0x07 || data[1] == 0x12) {
                 KeyboardView.Btn btn = null;
@@ -782,14 +874,15 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
     }
 
 
-    public boolean isAOAConnect() {
-        return mAccInputThread != null && mAccInputThread.isConnect();
+    public boolean isConnect() {
+        return (mAccInputThread != null && mAccInputThread.isConnect()) || (BTJobsManager.getInstance().isBLEConnected());
     }
 
-    public void resetReq() {
+  /*  public void resetReq() {
+        SimpleUtil.log("请求重置！");
         mReq.mReqType = 0x00;
         mReq.mReqResult = null;
-    }
+    }*/
 
     private HashMap<KeyboardView.Btn, Byte> mBtMap = new HashMap<>();
 
@@ -887,6 +980,24 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
             }
         }
         return null;
+    }
+
+    @Override
+    public void notify(BTService.BLEMODTYPE mode, BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+        SimpleUtil.log("蓝牙数据AOA mode:" + mode + " 服务:" + characteristic.getUuid().toString() + " 数据:" + Hex.toString(characteristic.getValue()));
+        if (mode == BTService.BLEMODTYPE.CHANGE) {
+            if (characteristic.getUuid().toString().equals(BTService.ET_UUID_NOTIFY)) {
+
+                SimpleUtil.notifyall_(10002, characteristic.getValue());
+
+            }
+        } else if (mode == BTService.BLEMODTYPE.WRITE) {
+            if (characteristic.getUuid().toString().equals(BTService.ET_UUID_WRITE)) {
+
+                mBLEWriteBack = characteristic.getValue();
+
+            }
+        }
     }
 
     enum KEYMODE                //5
@@ -989,9 +1100,68 @@ public class AOAConfigTool implements SimpleUtil.INormalBack {
         }
     }
 
+    private byte[] getReqResult(byte type) {
+        Req tmp = new Req(type);
+        if (!mReqs.contains(tmp)) {
+            SimpleUtil.log("没有请求的队列:" + Hex.toString(type));
+            return null;
+        }
+        byte[] result = mReqs.remove(mReqs.indexOf(tmp)).mReqResult;
+        SimpleUtil.log("获取结果移除请求码:" + Hex.toString(type) + " 列表:" + getReqCodeString());
+        return result;
+    }
 
+    private boolean removeType(byte type) {
+        Req tmp = new Req(type);
+        if (!mReqs.contains(tmp)) {
+            SimpleUtil.log("移除请求码失败:" + Hex.toString(type) + " 列表:" + getReqCodeString());
+            return false;
+        }
+        mReqs.remove(mReqs.indexOf(tmp));
+        SimpleUtil.log("手动移除请求码:" + Hex.toString(type) + " 列表:" + getReqCodeString());
+        return true;
+    }
+
+    private boolean isResultOK(byte type) {
+        Req tmp = new Req(type);
+        if (!mReqs.contains(tmp)) {
+            return false;
+        }
+        return mReqs.get(mReqs.indexOf(tmp)).mReqResult != null;
+    }
+
+    private boolean isContainType(byte type) {
+        return mReqs.contains(new Req(type));
+    }
+
+    private String getReqCodeString() {
+        StringBuilder sb = new StringBuilder("请求码列表:");
+        for (Req req : mReqs) {
+            sb.append(Hex.toString(req.mReqType)).append(" ");
+        }
+        return sb.toString();
+    }
+
+    private boolean addReq(byte type) {
+        Req tmp = new Req(type);
+        if (mReqs.contains(tmp)) {
+            return true;
+        }
+        boolean result = mReqs.add(tmp);
+        SimpleUtil.log("增加请求码:" + Hex.toString(type));
+        return result;
+    }
     class Req {
         byte mReqType;//当前请求码类型
         byte[] mReqResult;//请求结果数据
+
+        public Req(byte type) {
+            mReqType = type;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            return this.mReqType == ((Req) obj).mReqType;
+        }
     }
 }

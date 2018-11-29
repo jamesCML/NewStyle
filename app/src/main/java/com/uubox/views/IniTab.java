@@ -1,14 +1,10 @@
 package com.uubox.views;
 
-import android.Manifest;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.Spannable;
@@ -24,34 +20,18 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.alibaba.sdk.android.oss.ClientException;
-import com.alibaba.sdk.android.oss.ServiceException;
-import com.alibaba.sdk.android.oss.callback.OSSCompletedCallback;
-import com.alibaba.sdk.android.oss.model.PutObjectRequest;
-import com.alibaba.sdk.android.oss.model.PutObjectResult;
-import com.clj.fastble.callback.BleWriteCallback;
-import com.clj.fastble.exception.BleException;
-import com.pgyersdk.update.DownloadFileListener;
-import com.pgyersdk.update.PgyUpdateManager;
-import com.pgyersdk.update.UpdateManagerListener;
-import com.pgyersdk.update.javabean.AppBean;
 import com.uubox.adapters.GunQaAdapter;
 import com.uubox.adapters.MoveConfigAdapter;
-import com.uubox.cjble.BTJobsManager;
 import com.uubox.padtool.R;
 import com.uubox.tools.AOAConfigTool;
-import com.uubox.tools.AliyuOSS;
 import com.uubox.tools.CommonUtils;
 import com.uubox.tools.Hex;
-import com.uubox.tools.LogToFileUtils;
 import com.uubox.tools.SimpleUtil;
 
 import java.io.File;
@@ -128,18 +108,6 @@ public class IniTab {
     }
 
     private void WriteConfigs() {
-        BTJobsManager.getInstance().writeDefault(new byte[]{(byte) 0xa5, (byte) 0x04, (byte) 0xb3, (byte) 0x5c}, new BleWriteCallback() {
-            @Override
-            public void onWriteSuccess() {
-                SimpleUtil.log("蓝牙发送成功！");
-            }
-
-            @Override
-            public void onWriteFailure(BleException exception) {
-
-                SimpleUtil.log("蓝牙发送失败>" + exception.toString());
-            }
-        });
         String gloabkeyconfig = (String) SimpleUtil.getFromShare(mContext, "ini", "gloabkeyconfig", String.class, "");
         final String[] sp0 = gloabkeyconfig.split("#Z%W#", -1);
         if (sp0.length < 2) {
@@ -279,7 +247,7 @@ public class IniTab {
                         listRight.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                             @Override
                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                if (!AOAConfigTool.getInstance(mContext).isAOAConnect()) {
+                                if (!AOAConfigTool.getInstance(mContext).isConnect()) {
                                     SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_condev), true);
                                     return;
                                 }
@@ -388,7 +356,7 @@ public class IniTab {
                                 if (id < 10007 || id > 10014) {
                                     return;
                                 }
-                                if (!AOAConfigTool.getInstance(mContext).isAOAConnect()) {
+                                if (!AOAConfigTool.getInstance(mContext).isConnect()) {
                                     if (id == 10014) {
                                         SimpleUtil.removeINormalCallback(this);
                                     } else {

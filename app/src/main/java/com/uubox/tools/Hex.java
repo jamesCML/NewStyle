@@ -404,5 +404,9 @@ public class Hex {
         return outStr.substring(32 - cut);
 
     }
+
+    public static String toString(byte b) {
+        return toString(new byte[]{b});
+    }
 }
 
