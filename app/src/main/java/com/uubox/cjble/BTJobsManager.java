@@ -135,9 +135,10 @@ public class BTJobsManager implements BTService.IStateCallBack, BTService.IBLENo
                     SimpleUtil.notifyall_(10006, null);
                 } else if (state == BTService.EState.CONNECTED)//连接成功开始发验证信息
                 {
+                    SimpleUtil.notifyall_(10020, null);
                     mGatt = mBinder.getBleGatt();
                     getModeInfo();
-                    SimpleUtil.notifyall_(10020, null);
+
                 }
                 break;
             case 2:

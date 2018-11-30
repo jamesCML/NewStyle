@@ -242,14 +242,14 @@ public class AOAConfigTool implements SimpleUtil.INormalBack, BTService.IBLENoti
                             btnParams.img.getLocationOnScreen(position);
                             SimpleUtil.log("实际位置:" + Arrays.toString(position));
                         }*/
-                keyPoints.add(packKeyData2(mBtMap.get(key2), 0, OAODEVICE_Y - turnY(btnParams.getEy()), turnX(btnParams.getEx()), btnParams.getKeyType() == 3 ? KEYMODE.MP_TOUCH : KEYMODE.MP_TOUCH));//testfor
+                keyPoints.add(packKeyData2(mBtMap.get(key2), 0, OAODEVICE_Y - turnY(btnParams.getEy()), turnX(btnParams.getEx()), btnParams.getKeyType() == 3 ? KEYMODE.MP_KEY : KEYMODE.MP_TOUCH));//testfor
 
                 if (btnParams.iHaveChild()) {
                     BtnParams btnParams2 = btnParams.getBtn2();
                     SimpleUtil.log("我有子按键按键:" + btnParams2.toString());
                     if (btnParams2.getKeyType() == 1) {
                         SimpleUtil.log("添加联动按键:" + btnParams2.toString());
-                        keyPoints.add(packKeyData2(mBtMap.get(key2), 0, OAODEVICE_Y - turnY(btnParams2.getEy()), turnX(btnParams2.getEx()), btnParams.getKeyType() == 3 ? KEYMODE.MP_TOUCH : KEYMODE.MP_TOUCH));
+                        keyPoints.add(packKeyData2(mBtMap.get(key2), 0, OAODEVICE_Y - turnY(btnParams2.getEy()), turnX(btnParams2.getEx()), btnParams.getKeyType() == 3 ? KEYMODE.MP_KEY : KEYMODE.MP_TOUCH));
                     }
 
                 }

@@ -692,10 +692,10 @@ public class KeyboardView extends FrameLayout
         }
 
         //第二次映射
-        /*if (BtnParamTool.getBtnNormalBtn(btn).getKeyType() == 3) {//testfor
+        if (BtnParamTool.getBtnNormalBtn(btn).getKeyType() == 3) {//testfor
             SimpleUtil.addMsgBottomToTop(getContext(), getContext().getString(R.string.kbv_type3addkey), true);
             return;
-        }*/
+        }
         if (BtnParamTool.getBtnNormalBtn(btn).img != null) {
             List<String> items = new ArrayList<>();
             items.add(getContext().getString(R.string.kbv_union));

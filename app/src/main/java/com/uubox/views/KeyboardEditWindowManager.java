@@ -6,7 +6,9 @@ import android.os.Build;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 
 import com.uubox.padtool.R;
@@ -133,10 +135,27 @@ public class KeyboardEditWindowManager {
         }
         rootView.addView(view);
         SimpleUtil.log("悬浮窗增加到:" + rootView.getChildCount());
-        if (rootView.getChildCount() > 1) {
+        if (isHaveEdit(view)) {
             AOAConfigTool.getInstance(mContext).openOrCloseRecKeycode(false);
         }
         return Holder.instance;
+    }
+
+    private boolean isHaveEdit(View view) {
+        if (!(view instanceof ViewGroup)) {
+            return false;
+        }
+        ViewGroup root = (ViewGroup) view;
+        for (int i = 0; i < root.getChildCount(); i++) {
+            if (root.getChildAt(i) instanceof ViewGroup) {
+                return isHaveEdit(root.getChildAt(i));
+            } else {
+                if (root.getChildAt(i) instanceof EditText) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public void addView(View view, FrameLayout.LayoutParams params) {
@@ -188,7 +207,7 @@ public class KeyboardEditWindowManager {
         params.gravity = Gravity.CENTER;
         rootView.addView(view, params);
         SimpleUtil.log("悬浮窗增加到:" + rootView.getChildCount());
-        if (rootView.getChildCount() > 1) {
+        if (isHaveEdit(view)) {
             AOAConfigTool.getInstance(mContext).openOrCloseRecKeycode(false);
         }
         return Holder.instance;

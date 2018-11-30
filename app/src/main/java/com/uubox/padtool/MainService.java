@@ -702,6 +702,8 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         else if (id == 10016)//悬浮窗关闭了
         {
             mfloatingIv.setVisibility(View.VISIBLE);
+        } else if (id == 10020) {
+            mfloatingIv.setImageResource(getAPPUserFloatIcon((Integer) mfloatingIv.getTag() == 0));
         }
 
     }
