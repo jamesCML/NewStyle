@@ -19,6 +19,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -123,11 +125,43 @@ public class IniTab {
         final TextView cfq = view.findViewById(R.id.dialog_oversize_gun_cfq_sen);
         final TextView bq = view.findViewById(R.id.dialog_oversize_gun_bq_sen);
         final TextView ak = view.findViewById(R.id.dialog_oversize_gun_ak_sen);
+        final CheckBox automouse = view.findViewById(R.id.dialog_oversize_automouse);
+        final CheckBox tpcfg = view.findViewById(R.id.dialog_oversize_tpcfg);
+        CompoundButton.OnCheckedChangeListener onCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                switch (buttonView.getId()) {
+                    case R.id.dialog_oversize_automouse:
 
+                        if ((Boolean) SimpleUtil.getFromShare(mContext, sp0[2], "automouse", boolean.class, true) != isChecked) {
+                            SimpleUtil.log("调试cb自动鼠标:" + isChecked);
+                            boolean resul = SimpleUtil.saveToShare(mContext, sp0[2], "automouse", isChecked);
+                            SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
+                        }
+
+                        break;
+                    case R.id.dialog_oversize_tpcfg:
+
+                        if ((Boolean) SimpleUtil.getFromShare(mContext, sp0[2], "tpcfg", boolean.class, false) != isChecked) {
+                            SimpleUtil.log("调试cb投屏配置:" + isChecked);
+                            SimpleUtil.saveToShare(mContext, sp0[2], "tpcfg", isChecked);
+                            SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
+                        }
+                        break;
+                }
+
+            }
+        };
+        automouse.setOnCheckedChangeListener(onCheckedChangeListener);
+        tpcfg.setOnCheckedChangeListener(onCheckedChangeListener);
+        boolean b1 = (Boolean) SimpleUtil.getFromShare(mContext, sp0[2], "automouse", boolean.class, true);
+        boolean b2 = (Boolean) SimpleUtil.getFromShare(mContext, sp0[2], "tpcfg", boolean.class, false);
+        SimpleUtil.log("调试cb:" + b1 + "," + b2);
+        automouse.setChecked(b1);
+        tpcfg.setChecked(b2);
         View.OnClickListener click = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 switch (v.getId()) {
                     case R.id.cfq_add:
                         String text = cfq.getText().toString();
@@ -190,6 +224,9 @@ public class IniTab {
                         SimpleUtil.saveToShare(mContext, sp0[2], "cfqNum", SimpleUtil.PRESSGUN_CFQ);
                         SimpleUtil.saveToShare(mContext, sp0[2], "bqNum", SimpleUtil.PRESSGUN_BQ);
                         SimpleUtil.saveToShare(mContext, sp0[2], "akNum", SimpleUtil.PRESSGUN_AK);
+
+                        //tpcfg.setChecked(false);
+                        //automouse.setChecked(true);
                         break;
                 }
                 SimpleUtil.saveToShare(mContext, "ini", "configschange", true);

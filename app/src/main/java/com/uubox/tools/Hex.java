@@ -408,5 +408,58 @@ public class Hex {
     public static String toString(byte b) {
         return toString(new byte[]{b});
     }
+
+    public static byte setBit(byte b, int pos, boolean set1) {
+        if (pos > 7 || pos < 0) {
+            return b;
+        }
+        if (set1) {
+            switch (pos) {
+                case 0:
+                    return (byte) (b | 0x80);
+                case 1:
+                    return (byte) (b | 0x40);
+                case 2:
+                    return (byte) (b | 0x20);
+                case 3:
+                    return (byte) (b | 0x10);
+                case 4:
+                    return (byte) (b | 0x08);
+                case 5:
+                    return (byte) (b | 0x04);
+                case 6:
+                    return (byte) (b | 0x02);
+                case 7:
+                    return (byte) (b | 0x01);
+                default:
+                    return b;
+
+            }
+        } else {
+            switch (pos) {
+                case 0:
+                    return (byte) (b & 0x7f);
+                case 1:
+                    return (byte) (b & 0xbf);
+                case 2:
+                    return (byte) (b & 0xdf);
+                case 3:
+                    return (byte) (b & 0xef);
+                case 4:
+                    return (byte) (b & 0xf7);
+                case 5:
+                    return (byte) (b & 0xfb);
+                case 6:
+                    return (byte) (b & 0xfd);
+                case 7:
+                    return (byte) (b & 0xfe);
+                default:
+                    return b;
+
+            }
+        }
+
+
+    }
 }
 

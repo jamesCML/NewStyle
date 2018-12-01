@@ -692,7 +692,7 @@ public class KeyboardView extends FrameLayout
         }
 
         //第二次映射
-        if (BtnParamTool.getBtnNormalBtn(btn).getKeyType() == 3) {//testfor
+        if (BtnParamTool.getBtnNormalBtn(btn).getKeyType() == 3) {
             SimpleUtil.addMsgBottomToTop(getContext(), getContext().getString(R.string.kbv_type3addkey), true);
             return;
         }

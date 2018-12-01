@@ -120,19 +120,20 @@ public class BTJobsManager implements BTService.IStateCallBack, BTService.IBLENo
 
     @Override
     public void connectstate(int type, BTService.EState state, Object obj) {
+        SimpleUtil.log("蓝牙状态回调:type->" + type + ",state->" + state);
         switch (type) {
             case 1:
 
                 //非人为因素需要重连
                 if (state == BTService.EState.USERDISCONNECTED || state == BTService.EState.DISCONNECTED) {//连接断开
+                    //BleManager.getInstance().cancelScan();
+                    if (mGatt != null) {
+                        SimpleUtil.notifyall_(10006, null);
+                    }
                     mGatt = null;
-                    SimpleUtil.notifyall_(10006, null);
 
                 } else if (state == BTService.EState.CONNECTFAIL) {
                     BleManager.getInstance().cancelScan();
-                } else if (state == BTService.EState.DISCONNECTED) {
-                    BleManager.getInstance().cancelScan();
-                    SimpleUtil.notifyall_(10006, null);
                 } else if (state == BTService.EState.CONNECTED)//连接成功开始发验证信息
                 {
                     SimpleUtil.notifyall_(10020, null);
@@ -284,20 +285,32 @@ public class BTJobsManager implements BTService.IStateCallBack, BTService.IBLENo
     }
 
     private void readDever() {
-        SimpleUtil.log("蓝牙开始读取版本");
-        byte[] result = AOAConfigTool.getInstance(mContext).writeWaitResult((byte) 0xb3, new byte[]{(byte) 0xa5, (byte) 0x04, (byte) 0xb3, (byte) 0x5c}, 3000);
-        if (result == null) {
-            SimpleUtil.log("读取版本信息出错");
-            SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.ait_readdevverfail), true);
-        } else {
-            SimpleUtil.mDeviceVersion = Hex.toString(new byte[]{result[3]});
-            SimpleUtil.log("获取版本信息:" + SimpleUtil.mDeviceVersion + "  data:" + Hex.toString(result));
-            SimpleUtil.putOneInfoToMap("devver", SimpleUtil.mDeviceVersion + "");
-            boolean ischange = (Boolean) SimpleUtil.getFromShare(mContext, "ini", "configschange", boolean.class);
-            if (ischange) {
-                SimpleUtil.notifyall_(10003, null);
+        SimpleUtil.runOnThread(new Runnable() {
+            @Override
+            public void run() {
+                SimpleUtil.log("蓝牙开始读取版本");
+                byte[] result = null;
+                for (int i = 0; i < 3; i++) {
+                    result = AOAConfigTool.getInstance(mContext).writeWaitResult((byte) 0xb3, new byte[]{(byte) 0xa5, (byte) 0x04, (byte) 0xb3, (byte) 0x5c}, 3000);
+                    if (result != null) {
+                        break;
+                    }
+                }
+                if (result == null) {
+                    SimpleUtil.log("读取版本信息出错");
+
+                } else {
+                    SimpleUtil.mDeviceVersion = Hex.toString(result[3]);
+                    SimpleUtil.log("获取版本信息:" + SimpleUtil.mDeviceVersion + "  data:" + Hex.toString(result));
+                    SimpleUtil.putOneInfoToMap("devver", SimpleUtil.mDeviceVersion + "");
+                    SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_devver) + ":" + SimpleUtil.mDeviceVersion, false);
+                    boolean ischange = (Boolean) SimpleUtil.getFromShare(mContext, "ini", "configschange", boolean.class);
+                    if (ischange) {
+                        SimpleUtil.notifyall_(10003, null);
+                    }
+                }
             }
-        }
+        });
     }
     private void initModeStr(Map<String, List<String>> modeMap, List<String> modes) {
         //model

@@ -168,7 +168,7 @@ public class APPStartCheckOTA extends Thread implements SimpleUtil.INormalBack, 
             case BaseRemoteOTA.FWVERSION_CALLBACK:
                 String server_fw = (String) obj;
                 SimpleUtil.log("得到服务器峰位版本:" + server_fw);
-                if (!server_fw.isEmpty() && Integer.parseInt(fwVersion) < Integer.parseInt(server_fw))//设备版本小于服务器版本！
+                if (!server_fw.isEmpty() && Integer.parseInt(fwVersion) < Integer.parseInt(server_fw))//设备版本小于服务器版本！//waitdo
                 {
                     if (Integer.parseInt(fwVersion.substring(0, 2)) < Integer.parseInt(server_fw.substring(0, 2)))//峰位版本太小，需要下载升级
                     {

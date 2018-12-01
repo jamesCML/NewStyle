@@ -66,14 +66,22 @@ public class AccInputThread extends Thread {
             @Override
             public void run() {
                 SimpleUtil.sleep(200);
-                byte[] result = AOAConfigTool.getInstance(mContext).writeWaitResult((byte) 0xb3, new byte[]{(byte) 0xa5, (byte) 0x04, (byte) 0xb3, (byte) 0x5c}, 3000);
+
+                byte[] result = null;
+                for (int i = 0; i < 3; i++) {
+                    result = AOAConfigTool.getInstance(mContext).writeWaitResult((byte) 0xb3, new byte[]{(byte) 0xa5, (byte) 0x04, (byte) 0xb3, (byte) 0x5c}, 3000);
+                    if (result != null) {
+                        break;
+                    }
+                }
                 if (result == null) {
                     SimpleUtil.log("读取版本信息出错");
-                    SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.ait_readdevverfail), true);
+
                 } else {
-                    SimpleUtil.mDeviceVersion = Hex.toString(new byte[]{result[3]});
+                    SimpleUtil.mDeviceVersion = Hex.toString(result[3]);
                     SimpleUtil.log("获取版本信息:" + SimpleUtil.mDeviceVersion + "  data:" + Hex.toString(result));
                     SimpleUtil.putOneInfoToMap("devver", SimpleUtil.mDeviceVersion + "");
+                    SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_devver) + ":" + SimpleUtil.mDeviceVersion, false);
                     boolean ischange = (Boolean) SimpleUtil.getFromShare(mContext, "ini", "configschange", boolean.class);
                     if (ischange) {
                         SimpleUtil.notifyall_(10003, null);

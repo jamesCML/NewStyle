@@ -55,7 +55,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private TextView mLoadMsg;
     private TextView mButton;
     private boolean mIsJugeFloat;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

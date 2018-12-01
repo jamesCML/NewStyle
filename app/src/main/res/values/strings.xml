@@ -21,9 +21,9 @@
     <string name="initab_fail">失败</string>
     <string name="initab_game">游戏</string>
     <string name="initab_haveclear">已清除</string>
-    <string name="initab_pressgun">压枪</string>
+    <string name="initab_pressgun">其它</string>
     <string name="initab_gotoconfiglist">点击我跳转到配置选择列表</string>
-    <string name="initab_gotogunpresslist">点击我跳转到压枪设置</string>
+    <string name="initab_gotogunpresslist">点击我跳转到其它设置</string>
     <string name="initab_curusedel">正在使用的配置不能取消！</string>
     <string name="initab_more4configs">当前最多支持写4个配置！</string>
     <string name="initab_checknewconfigs">检测到配置更新！自动写入！</string>
@@ -133,7 +133,7 @@
     <string name="initab_writetodev">写入设备</string>
     <string name="initab_unchoiceconfig">未选中的配置</string>
     <string name="initab_choiceconfigs">选中的配置</string>
-    <string name="initab_gunpress_tip">&#160;&#160;&#160;&#160;武器键(1,2键)加枪类型键(F1,F2,F3)设置不同压枪效果,两把枪可分别配置, 武器键加ESC键关闭对应压枪</string>
+    <string name="initab_gunpress_tip">&#160;&#160;&#160;&#160;压枪说明:武器键(1,2键)加枪类型键(F1,F2,F3)设置不同压枪效果,两把枪可分别配置, 武器键加ESC键关闭对应压枪</string>
     <string name="initab_bqdefault">F2类型:步枪</string>
     <string name="initab_akdefault">F3类型:AK47</string>
     <string name="initab_cfqdefault">F1类型:冲锋枪</string>
@@ -167,6 +167,8 @@
     <string name="ble_mcufail">MCU升级失败！</string>
     <string name="adjustgunsen">压枪灵敏度调整</string>
     <string name="main_updatemsg">更新内容</string>
+    <string name="initab_automouse">打开地图背包自动呼出鼠标</string>
+    <string name="initab_tpcfg">该配置属于投屏配置</string>
 
     <string-array name="menu_ini_help_items">
         <item>《映射按键设置》</item>

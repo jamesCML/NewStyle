@@ -214,15 +214,19 @@ public class AOAConfigTool implements SimpleUtil.INormalBack, BTService.IBLENoti
         int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "cfqNum", int.class, SimpleUtil.PRESSGUN_CFQ);
         int bqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "bqNum", int.class, SimpleUtil.PRESSGUN_BQ);
         int akNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "akNum", int.class, SimpleUtil.PRESSGUN_AK);
+        boolean automouse = (Boolean) SimpleUtil.getFromShare(mContext, config.mTabValue, "automouse", boolean.class, true);
+        boolean tpcfg = (Boolean) SimpleUtil.getFromShare(mContext, config.mTabValue, "tpcfg", boolean.class, false);
         tempContainer[0] = dever[0] >= 0x16 ? (byte) cfqNum : (byte) (cfqNum * 2304 / 4095 + 1);
         tempContainer[1] = dever[0] >= 0x16 ? (byte) bqNum : (byte) (bqNum * 2304 / 4095 + 1);
         tempContainer[2] = dever[0] >= 0x16 ? (byte) akNum : (byte) (akNum * 2304 / 4095 + 1);
         tempContainer[3] = (byte) configID_;
-        SimpleUtil.log("鼠标灵敏度:" + mouse_step + ",滚轮灵敏度:" + gunlun_step + ",冲锋枪:" + tempContainer[0] + ",步枪:" + tempContainer[1] + ",AK:" + tempContainer[2]);
+        tempContainer[4] = Hex.setBit(tempContainer[4], 7, automouse);
+        tempContainer[4] = Hex.setBit(tempContainer[4], 6, tpcfg);
+        SimpleUtil.log("鼠标灵敏度:" + mouse_step + ",滚轮灵敏度:" + gunlun_step + ",冲锋枪:" + tempContainer[0] + ",步枪:" + tempContainer[1] + ",AK:" + tempContainer[2] + " 自动鼠标:" + automouse + ",投屏:" + tpcfg);
         SimpleUtil.log("configID:" + config.mTabValue + "   " + tempContainer[3]);
 
-        int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "defaultgun", int.class, 0);
-        tempContainer[4] = (byte) defaultgun;
+        //int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "defaultgun", int.class, 0);
+        // tempContainer[4] = (byte) defaultgun;
         cj_cfg_t.add(tempContainer);
 
         ByteArrayList keyPoints = new ByteArrayList();
@@ -242,7 +246,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack, BTService.IBLENoti
                             btnParams.img.getLocationOnScreen(position);
                             SimpleUtil.log("实际位置:" + Arrays.toString(position));
                         }*/
-                keyPoints.add(packKeyData2(mBtMap.get(key2), 0, OAODEVICE_Y - turnY(btnParams.getEy()), turnX(btnParams.getEx()), btnParams.getKeyType() == 3 ? KEYMODE.MP_KEY : KEYMODE.MP_TOUCH));//testfor
+                keyPoints.add(packKeyData2(mBtMap.get(key2), 0, OAODEVICE_Y - turnY(btnParams.getEy()), turnX(btnParams.getEx()), btnParams.getKeyType() == 3 ? KEYMODE.MP_KEY : KEYMODE.MP_TOUCH));
 
                 if (btnParams.iHaveChild()) {
                     BtnParams btnParams2 = btnParams.getBtn2();
@@ -266,7 +270,8 @@ public class AOAConfigTool implements SimpleUtil.INormalBack, BTService.IBLENoti
 
     //private Req mReq = new Req();
     private Vector<Req> mReqs = new Vector<>();
-    public byte[] writeWaitResult(byte type, byte[] data, long timeout) {
+
+    public synchronized byte[] writeWaitResult(byte type, byte[] data, long timeout) {
         long time = System.currentTimeMillis();
         addReq(type);
         writeFinalData(data);
@@ -277,6 +282,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack, BTService.IBLENoti
     private byte[] mBLEWriteBack;
 
     private synchronized boolean writeFinalData(byte[] data) {
+        SimpleUtil.log("最后数据:" + mAccInputThread + ",isconnect:" + (mAccInputThread != null && mAccInputThread.isConnect()));
         if (mAccInputThread != null && mAccInputThread.isConnect()) {
             return mAccInputThread.writeAcc(data);
         } else {
@@ -336,13 +342,18 @@ public class AOAConfigTool implements SimpleUtil.INormalBack, BTService.IBLENoti
                                         int bqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "bqNum", int.class, SimpleUtil.PRESSGUN_BQ);
                                         int akNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "akNum", int.class, SimpleUtil.PRESSGUN_AK);
                                         int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "defaultgun", int.class, 0);
+                                        boolean automouse = (Boolean) SimpleUtil.getFromShare(mContext, config.mTabValue, "automouse", boolean.class, true);
+                                        boolean tpcfg = (Boolean) SimpleUtil.getFromShare(mContext, config.mTabValue, "tpcfg", boolean.class, false);
                                         byte[] data = config.getmData().all2Bytes();
                                         data[32] = dever[0] >= 0x16 ? (byte) cfqNum : (byte) (cfqNum * 2304 / 4095 + 1);
                                         data[33] = dever[0] >= 0x16 ? (byte) bqNum : (byte) (bqNum * 2304 / 4095 + 1);
                                         data[34] = dever[0] >= 0x16 ? (byte) akNum : (byte) (akNum * 2304 / 4095 + 1);
-                                        SimpleUtil.log("重新调整一下压枪灵敏度、压枪：" + data[32] + "," + data[33] + "," + data[34] + "," + defaultgun);
+                                        SimpleUtil.log("重新调整一下压枪灵敏度、压枪：" + data[32] + "," + data[33] + "," + data[34] + "," + defaultgun + " 自动鼠标:" + automouse + ",投屏:" + tpcfg);
                                         //[35]正在使用的gameid
-                                        data[36] = (byte) defaultgun;//压枪设置，如开启、使用哪一把枪等
+                                        //data[36] = (byte) defaultgun;//压枪设置，如开启、使用哪一把枪等
+                                        data[36] = Hex.setBit(data[36], 7, automouse);
+                                        data[36] = Hex.setBit(data[36], 6, tpcfg);
+                                        SimpleUtil.log("特殊设置:" + Hex.toString(data[36]));
                                         byte[] data2 = Arrays.copyOfRange(data, 1, data.length);
                                         ByteArrayList bytes = new ByteArrayList();
                                         bytes.add(SimpleUtil.sumCheck(data2));
@@ -1142,7 +1153,10 @@ public class AOAConfigTool implements SimpleUtil.INormalBack, BTService.IBLENoti
         return sb.toString();
     }
 
-    private boolean addReq(byte type) {
+    private synchronized boolean addReq(byte type) {
+        long time = System.currentTimeMillis();
+        while (mReqs.size() != 0 && (System.currentTimeMillis() - time) < 3000) ;
+        SimpleUtil.log("指令增加时间:" + (System.currentTimeMillis() - time));
         Req tmp = new Req(type);
         if (mReqs.contains(tmp)) {
             return true;

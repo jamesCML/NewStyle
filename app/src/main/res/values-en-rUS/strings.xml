@@ -21,9 +21,9 @@
     <string name="initab_fail">Failed</string>
     <string name="initab_game">Game</string>
     <string name="initab_haveclear">Wiped</string>
-    <string name="initab_pressgun">Recoil pattern</string>
+    <string name="initab_pressgun">其它</string>
     <string name="initab_gotoconfiglist">Config list</string>
-    <string name="initab_gotogunpresslist">Recoil pattern setting</string>
+    <string name="initab_gotogunpresslist">Other setting</string>
     <string name="initab_curusedel">Config is using can\'t be canceled!</string>
     <string name="initab_more4configs">Supports 4 configs at most</string>
     <string name="initab_checknewconfigs">Config available,updating automatically</string>
@@ -133,7 +133,7 @@
     <string name="initab_writetodev">Write config</string>
     <string name="initab_unchoiceconfig">Unselected config</string>
     <string name="initab_choiceconfigs">Selected config</string>
-    <string name="initab_gunpress_tip">Weapon keys(1,2) + type keys(F1,F2,F3)set different effects of Recoil pattern, weapons can be configured separately. Weapon keys + ESC to close the corresponding effects of Recoil pattern.</string>
+    <string name="initab_gunpress_tip">Press gun instructions:Weapon keys(1,2) + type keys(F1,F2,F3)set different effects of Recoil pattern, weapons can be configured separately. Weapon keys + ESC to close the corresponding effects of Recoil pattern.</string>
     <string name="initab_bqdefault">F2 type:Rifle</string>
     <string name="initab_akdefault">F3 type:AK47</string>
     <string name="initab_cfqdefault">F1 type:SMG</string>
@@ -167,6 +167,8 @@
     <string name="ble_mcufail">MCU upgrade failed！</string>
     <string name="adjustgunsen">Adjustment of press sensitivity</string>
     <string name="main_updatemsg">Update Content</string>
+    <string name="initab_automouse">Open the map knapsack and exhale the mouse automatically</string>
+    <string name="initab_tpcfg">This configuration belongs to the projection configuration</string>
 
     <string-array name="menu_ini_help_items">
         <item>《Key mapping setting》</item>

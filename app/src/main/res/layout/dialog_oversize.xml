@@ -146,14 +146,201 @@
             android:orientation="vertical"
             android:padding="10dp">
 
-            <TextView
-                android:layout_margin="5dp"
-                android:textStyle="bold"
-                android:textColor="@color/white"
-                android:layout_gravity="left"
+            <LinearLayout
+                android:padding="8dp"
+                android:layout_margin="8dp"
+                android:background="@drawable/dialog_message_box_w"
+                android:orientation="horizontal"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/adjustgunsen" />
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_gravity="center"
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_margin="3dp"
+                        android:textStyle="bold"
+                        android:textColor="@color/white"
+                        android:layout_gravity="left"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/adjustgunsen" />
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_margin="15dp"
+                        android:layout_gravity="left"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:textSize="10sp"
+                            android:layout_marginRight="15dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="@string/initab_cfqdefault"
+                            android:textColor="@color/mk_white" />
+
+                        <ImageView
+                            android:id="@+id/cfq_sub"
+                            android:background="@mipmap/gunsub"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp" />
+
+                        <TextView
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginRight="8dp"
+                            android:textSize="8sp"
+                            android:layout_gravity="center"
+                            android:id="@+id/dialog_oversize_gun_cfq_sen"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="13"
+                            android:textColor="@color/mk_white" />
+
+                        <ImageView
+                            android:id="@+id/cfq_add"
+                            android:background="@mipmap/gunadd"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+
+                        android:orientation="horizontal"
+                        android:layout_margin="15dp"
+                        android:layout_gravity="right"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:textSize="10sp"
+                            android:layout_marginRight="15dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="@string/initab_bqdefault"
+                            android:textColor="@color/mk_white" />
+
+                        <ImageView
+                            android:id="@+id/bq_sub"
+                            android:background="@mipmap/gunsub"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp" />
+
+                        <TextView
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginRight="8dp"
+                            android:textSize="8sp"
+                            android:layout_gravity="center"
+                            android:id="@+id/dialog_oversize_gun_bq_sen"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="16"
+                            android:textColor="@color/mk_white" />
+
+                        <ImageView
+                            android:id="@+id/bq_add"
+                            android:background="@mipmap/gunadd"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_gravity="right"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginRight="15dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_marginRight="15dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:textSize="10sp"
+                            android:text="@string/initab_akdefault"
+                            android:textColor="@color/mk_white" />
+
+                        <ImageView
+                            android:id="@+id/ak_sub"
+                            android:background="@mipmap/gunsub"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp" />
+
+                        <TextView
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginRight="8dp"
+                            android:textSize="8sp"
+                            android:layout_gravity="center"
+                            android:id="@+id/dialog_oversize_gun_ak_sen"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="22"
+                            android:textColor="@color/mk_white" />
+
+                        <ImageView
+                            android:id="@+id/ak_add"
+                            android:background="@mipmap/gunadd"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp" />
+                    </LinearLayout>
+
+                    <TextView
+
+                        android:id="@+id/btn_reset_gun"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="3dp"
+                        android:layout_gravity="right"
+                        android:text="@string/resetdefault"
+                        android:textSize="8sp"
+                        android:background="@drawable/gunaddsub_bg"
+                        android:padding="7dp"
+                        android:textColor="@color/b1" />
+                </LinearLayout>
+
+                <View
+                    android:background="@color/grey_1"
+                    android:layout_width="1px"
+                    android:layout_height="match_parent" />
+
+                <LinearLayout
+                    android:layout_gravity="center"
+                    android:padding="5dp"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <CheckBox
+                        android:text="@string/initab_automouse"
+                        android:id="@+id/dialog_oversize_automouse"
+                        android:textColor="@color/mk_white"
+                        android:textSize="10sp"
+                        android:layout_marginTop="10dp"
+                        android:paddingHorizontal="5dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <CheckBox
+                        android:text="@string/initab_tpcfg"
+                        android:id="@+id/dialog_oversize_tpcfg"
+                        android:textColor="@color/mk_white"
+                        android:textSize="10sp"
+                        android:layout_marginTop="10dp"
+                        android:paddingHorizontal="5dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/tv_tip"
                 android:textSize="10sp"
@@ -161,149 +348,6 @@
                 android:layout_height="wrap_content"
                 android:text="@string/initab_gunpress_tip" />
 
-            <LinearLayout
-                android:layout_margin="8dp"
-                android:background="@drawable/dialog_message_box_w"
-                android:layout_gravity="center"
-                android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_margin="15dp"
-                    android:layout_gravity="left"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:textSize="10sp"
-                        android:layout_marginRight="15dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="@string/initab_cfqdefault"
-                        android:textColor="@color/mk_white" />
-
-                    <ImageView
-                        android:id="@+id/cfq_sub"
-                        android:background="@mipmap/gunsub"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp" />
-
-                    <TextView
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginRight="8dp"
-                        android:textSize="8sp"
-                        android:layout_gravity="center"
-                        android:id="@+id/dialog_oversize_gun_cfq_sen"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="13"
-                        android:textColor="@color/mk_white" />
-
-                    <ImageView
-                        android:id="@+id/cfq_add"
-                        android:background="@mipmap/gunadd"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp" />
-                </LinearLayout>
-
-                <LinearLayout
-
-                    android:orientation="horizontal"
-                    android:layout_margin="15dp"
-                    android:layout_gravity="right"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:textSize="10sp"
-                        android:layout_marginRight="15dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:text="@string/initab_bqdefault"
-                        android:textColor="@color/mk_white" />
-
-                    <ImageView
-                        android:id="@+id/bq_sub"
-                        android:background="@mipmap/gunsub"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp" />
-
-                    <TextView
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginRight="8dp"
-                        android:textSize="8sp"
-                        android:layout_gravity="center"
-                        android:id="@+id/dialog_oversize_gun_bq_sen"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="16"
-                        android:textColor="@color/mk_white" />
-
-                    <ImageView
-                        android:id="@+id/bq_add"
-                        android:background="@mipmap/gunadd"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_gravity="right"
-                    android:orientation="horizontal"
-                    android:layout_margin="15dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:layout_marginRight="15dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:textSize="10sp"
-                        android:text="@string/initab_akdefault"
-                        android:textColor="@color/mk_white" />
-
-                    <ImageView
-                        android:id="@+id/ak_sub"
-                        android:background="@mipmap/gunsub"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp" />
-
-                    <TextView
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginRight="8dp"
-                        android:textSize="8sp"
-                        android:layout_gravity="center"
-                        android:id="@+id/dialog_oversize_gun_ak_sen"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="22"
-                        android:textColor="@color/mk_white" />
-
-                    <ImageView
-                        android:id="@+id/ak_add"
-                        android:background="@mipmap/gunadd"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp" />
-                </LinearLayout>
-            </LinearLayout>
-
-
-            <TextView
-
-                android:id="@+id/btn_reset_gun"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_gravity="right"
-                android:text="@string/resetdefault"
-                android:textSize="8sp"
-                android:background="@drawable/gunaddsub_bg"
-                android:padding="7dp"
-                android:textColor="@color/b1"/>
 
             <TextView
                 android:layout_width="wrap_content"

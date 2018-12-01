@@ -661,6 +661,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             mAOAConfigTool.writeDefaultConfigs();
         } else if (id == 10004) {
             boolean ischange = (Boolean) SimpleUtil.getFromShare(getBaseContext(), "ini", "configschange", boolean.class);
+            SimpleUtil.log("ischange:" + ischange);
             if (!ischange) {
                 mAOAConfigTool.openOrCloseRecKeycode(false);
             } else {//需要写完配置之后自己关闭
@@ -703,7 +704,12 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         {
             mfloatingIv.setVisibility(View.VISIBLE);
         } else if (id == 10020) {
-            mfloatingIv.setImageResource(getAPPUserFloatIcon((Integer) mfloatingIv.getTag() == 0));
+            SimpleUtil.runOnUIThread(new Runnable() {
+                @Override
+                public void run() {
+                    mfloatingIv.setImageResource(getAPPUserFloatIcon((Integer) mfloatingIv.getTag() == 0));
+                }
+            });
         }
 
     }
