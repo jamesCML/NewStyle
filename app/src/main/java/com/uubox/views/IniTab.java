@@ -666,8 +666,8 @@ public class IniTab {
         ((TextView) (view.findViewById(R.id.iniabout_devver))).setText(mContext.getString(R.string.initab_devber) + (SimpleUtil.mDeviceVersion == null ? mContext.getString(R.string.initab_redverfail) : SimpleUtil.mDeviceVersion));
         ((TextView) (view.findViewById(R.id.iniabout_pix))).setText(mContext.getString(R.string.initab_pixs) + SimpleUtil.zoomx + "*" + SimpleUtil.zoomy);
         SpannableStringBuilder spannableString = new SpannableStringBuilder(mContext.getString(R.string.initab_devnum) + (String) SimpleUtil.getFromShare(mContext, "ini", "idkey", String.class, ""));
-        AbsoluteSizeSpan sizeSpan = new AbsoluteSizeSpan(50);
-        spannableString.setSpan(sizeSpan, spannableString.toString().indexOf(':'), spannableString.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        AbsoluteSizeSpan sizeSpan = new AbsoluteSizeSpan(40);
+        spannableString.setSpan(sizeSpan, spannableString.toString().indexOf(':') + 1, spannableString.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         ClickableSpan clickableSpan = new ClickableSpan() {
             @Override
             public void onClick(View widget) {
@@ -676,7 +676,7 @@ public class IniTab {
                 SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_devnumtoclip), false);
             }
         };
-        spannableString.setSpan(clickableSpan, spannableString.toString().indexOf(':'), spannableString.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        spannableString.setSpan(clickableSpan, spannableString.toString().indexOf(':') + 1, spannableString.length(), Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         ((TextView) (view.findViewById(R.id.iniabout_count))).setText(spannableString);
         ((TextView) (view.findViewById(R.id.iniabout_count))).setMovementMethod(LinkMovementMethod.getInstance());
 
@@ -684,8 +684,25 @@ public class IniTab {
             view.findViewById(R.id.iniabout_savexml).setVisibility(View.VISIBLE);
             ((TextView) (view.findViewById(R.id.iniabout_savexml))).setText(R.string.initab_confgsaveallow);
         }
-        if (SimpleUtil.isEnableOSSLog) {
-            view.findViewById(R.id.iniabout_correctlog).setVisibility(View.VISIBLE);
+        if (SimpleUtil.isEnableOSSLog || SimpleUtil.isNetLog) {
+            int logtype = (Integer) SimpleUtil.getFromShare(mContext, "ini", "logtype", int.class, 1);
+            final TextView logtv = view.findViewById(R.id.iniabout_correctlog);
+            logtv.setVisibility(View.VISIBLE);
+            logtv.append("(" + mContext.getString(R.string.initab_outpath) + ":" + (logtype == 1 ? "Cloud" : "Local") + ")");
+            logtv.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (logtv.getText().toString().contains("Cloud")) {
+                        SimpleUtil.saveToShare(mContext, "ini", "logtype", 2);
+                        logtv.setText(mContext.getString(R.string.initab_logallow) + "(" + mContext.getString(R.string.initab_outpath) + ":Local" + ")");
+                    } else {
+                        SimpleUtil.saveToShare(mContext, "ini", "logtype", 1);
+                        logtv.setText(mContext.getString(R.string.initab_logallow) + "(" + mContext.getString(R.string.initab_outpath) + ":Cloud" + ")");
+                    }
+                    SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_storechange), false);
+                    return true;
+                }
+            });
         }
 
         addItem(mContext.getString(R.string.initab_baseinfo));

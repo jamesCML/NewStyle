@@ -169,6 +169,8 @@
     <string name="main_updatemsg">更新内容</string>
     <string name="initab_automouse">打开地图背包自动呼出鼠标</string>
     <string name="initab_tpcfg">该配置属于投屏配置</string>
+    <string name="initab_outpath">输出路径</string>
+    <string name="initab_storechange">存储更改！</string>
 
     <string-array name="menu_ini_help_items">
         <item>《映射按键设置》</item>

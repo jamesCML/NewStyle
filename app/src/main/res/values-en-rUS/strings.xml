@@ -169,7 +169,8 @@
     <string name="main_updatemsg">Update Content</string>
     <string name="initab_automouse">Open the map knapsack and exhale the mouse automatically</string>
     <string name="initab_tpcfg">This configuration belongs to the projection configuration</string>
-
+    <string name="initab_outpath">Output path</string>
+    <string name="initab_storechange">存储更改！</string>
     <string-array name="menu_ini_help_items">
         <item>《Key mapping setting》</item>
     </string-array>

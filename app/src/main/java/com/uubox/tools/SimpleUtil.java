@@ -49,8 +49,8 @@ public class SimpleUtil {
     public static boolean DEBUG;
     public static int zoomx;
     public static int zoomy;
-    public static boolean isSaveToXml = false;
-    public static boolean isEnableOSSLog = false;
+    public static boolean isSaveToXml;
+    public static boolean isEnableOSSLog;
     public static boolean isNetLog;
     public static boolean screenstate;
     public static boolean mAOAInjectEable;
@@ -239,9 +239,9 @@ public class SimpleUtil {
     }
 
     public static void log(String msg) {
-        if (isNetLog || SimpleUtil.DEBUG)
+        if (isNetLog || SimpleUtil.DEBUG) {
             SocketLogEx.getInstance().sendLog(getCurTime() + "  " + msg);
-        if (isEnableOSSLog) {
+        } else if (isEnableOSSLog) {
             LogToFileUtils.write(msg);
         }
         if (!DEBUG) {

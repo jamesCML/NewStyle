@@ -167,16 +167,21 @@ public class IniTask extends AsyncTask<Void, Integer, Void> {
                 XmlPugiElement[] correctlogids_childs = correctlogids.getAllChild();
                 for (XmlPugiElement correctlogid : correctlogids_childs) {
                     if (correctlogid.getValue().equals(idkey)) {
-
-                        SimpleUtil.isEnableOSSLog = true;
-                        SimpleUtil.isNetLog = false;
-                        SimpleUtil.log(idkey + " 允许保存LOG!");
+                        SimpleUtil.log(idkey + " 允许保存LOG!查看输出类型！");
+                        int logtype = (Integer) SimpleUtil.getFromShare(mContext, "ini", "logtype", int.class, 1);
+                        if (logtype == 1) {
+                            SimpleUtil.isEnableOSSLog = true;
+                            SimpleUtil.log("阿里云日志");
+                        } else if (logtype == 2) {
+                            SimpleUtil.isNetLog = true;
+                            SimpleUtil.log("本地日志");
+                        }
                         break;
                     }
                 }
             } else if (correctlogids_rules.equals("free")) {
                 SimpleUtil.isEnableOSSLog = true;
-                SimpleUtil.isNetLog = false;
+                SimpleUtil.isNetLog = true;
 
             }
             //----------------------------------------------------------------------------------
