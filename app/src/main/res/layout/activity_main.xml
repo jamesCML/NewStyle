@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="15dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/main_parent">
@@ -28,9 +29,17 @@
             <TextView
                 android:layout_marginTop="20dp"
                 android:id="@+id/loading_msg"
+                android:textColor="@color/grey_white"
                 android:text=""
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
+
+            <ProgressBar
+                android:visibility="visible"
+                android:layout_gravity="center"
+                android:id="@+id/loading_pro"
+                android:layout_width="193dp"
+                android:layout_height="69dp" />
         </LinearLayout>
 
 
@@ -39,7 +48,7 @@
            android:layout_width="match_parent"
            android:layout_height="0dp">
            <TextView
-               android:visibility="gone"
+               android:visibility="visible"
                android:paddingLeft="5dp"
                android:paddingRight="5dp"
                android:paddingTop="2dp"
@@ -49,20 +58,13 @@
                android:layout_gravity="center"
                android:text=""
                android:background="@drawable/clicktoback_bg"
-               android:textColor="@color/font_blue"
+               android:textColor="@color/mk_loading"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content" />
        </FrameLayout>
 
     </LinearLayout>
 
-
-    <ProgressBar
-        android:visibility="visible"
-        android:layout_gravity="center"
-        android:id="@+id/loading_pro"
-        android:layout_width="193dp"
-        android:layout_height="69dp" />
 
     <TextView
         android:text="@string/ifeedback"

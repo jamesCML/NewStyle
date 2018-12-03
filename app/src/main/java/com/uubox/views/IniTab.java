@@ -110,13 +110,6 @@ public class IniTab {
     }
 
     private void WriteConfigs() {
-        String gloabkeyconfig = (String) SimpleUtil.getFromShare(mContext, "ini", "gloabkeyconfig", String.class, "");
-        final String[] sp0 = gloabkeyconfig.split("#Z%W#", -1);
-        if (sp0.length < 2) {
-            SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_configloadfail), true);
-            return;
-        }
-        SimpleUtil.log("test当前使用:" + sp0[1] + "\n" + gloabkeyconfig);
 
         final View view = LayoutInflater.from(mContext).inflate(R.layout.dialog_oversize, null);
         final View listPar = view.findViewById(R.id.dialog_oversize_list_par);
@@ -127,118 +120,7 @@ public class IniTab {
         final TextView ak = view.findViewById(R.id.dialog_oversize_gun_ak_sen);
         final CheckBox automouse = view.findViewById(R.id.dialog_oversize_automouse);
         final CheckBox tpcfg = view.findViewById(R.id.dialog_oversize_tpcfg);
-        CompoundButton.OnCheckedChangeListener onCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                switch (buttonView.getId()) {
-                    case R.id.dialog_oversize_automouse:
 
-                        if ((Boolean) SimpleUtil.getFromShare(mContext, sp0[2], "automouse", boolean.class, true) != isChecked) {
-                            SimpleUtil.log("调试cb自动鼠标:" + isChecked);
-                            boolean resul = SimpleUtil.saveToShare(mContext, sp0[2], "automouse", isChecked);
-                            SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
-                        }
-
-                        break;
-                    case R.id.dialog_oversize_tpcfg:
-
-                        if ((Boolean) SimpleUtil.getFromShare(mContext, sp0[2], "tpcfg", boolean.class, false) != isChecked) {
-                            SimpleUtil.log("调试cb投屏配置:" + isChecked);
-                            SimpleUtil.saveToShare(mContext, sp0[2], "tpcfg", isChecked);
-                            SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
-                        }
-                        break;
-                }
-
-            }
-        };
-        automouse.setOnCheckedChangeListener(onCheckedChangeListener);
-        tpcfg.setOnCheckedChangeListener(onCheckedChangeListener);
-        boolean b1 = (Boolean) SimpleUtil.getFromShare(mContext, sp0[2], "automouse", boolean.class, true);
-        boolean b2 = (Boolean) SimpleUtil.getFromShare(mContext, sp0[2], "tpcfg", boolean.class, false);
-        SimpleUtil.log("调试cb:" + b1 + "," + b2);
-        automouse.setChecked(b1);
-        tpcfg.setChecked(b2);
-        View.OnClickListener click = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (v.getId()) {
-                    case R.id.cfq_add:
-                        String text = cfq.getText().toString();
-                        int cur = Integer.parseInt(text) + 1;
-                        if (cur >= 100) {
-                            cur = 99;
-                        }
-                        cfq.setText(cur + "");
-                        SimpleUtil.saveToShare(mContext, sp0[2], "cfqNum", cur);
-                        break;
-                    case R.id.bq_add:
-                        text = bq.getText().toString();
-                        cur = Integer.parseInt(text) + 1;
-                        if (cur >= 100) {
-                            cur = 99;
-                        }
-                        bq.setText(cur + "");
-                        SimpleUtil.saveToShare(mContext, sp0[2], "bqNum", cur);
-                        break;
-                    case R.id.ak_add:
-                        text = ak.getText().toString();
-                        cur = Integer.parseInt(text) + 1;
-                        if (cur >= 100) {
-                            cur = 99;
-                        }
-                        ak.setText(cur + "");
-                        SimpleUtil.saveToShare(mContext, sp0[2], "akNum", cur);
-                        break;
-                    case R.id.cfq_sub:
-                        text = cfq.getText().toString();
-                        cur = Integer.parseInt(text) - 1;
-                        if (cur <= 0) {
-                            cur = 0;
-                        }
-                        cfq.setText(cur + "");
-                        SimpleUtil.saveToShare(mContext, sp0[2], "cfqNum", cur);
-                        break;
-                    case R.id.bq_sub:
-                        text = bq.getText().toString();
-                        cur = Integer.parseInt(text) - 1;
-                        if (cur <= 0) {
-                            cur = 0;
-                        }
-                        bq.setText(cur + "");
-                        SimpleUtil.saveToShare(mContext, sp0[2], "bqNum", cur);
-                        break;
-                    case R.id.ak_sub:
-                        text = ak.getText().toString();
-                        cur = Integer.parseInt(text) - 1;
-                        if (cur <= 0) {
-                            cur = 0;
-                        }
-                        ak.setText(cur + "");
-                        SimpleUtil.saveToShare(mContext, sp0[2], "akNum", cur);
-                        break;
-                    case R.id.btn_reset_gun:
-                        cfq.setText(SimpleUtil.PRESSGUN_CFQ + "");
-                        bq.setText(SimpleUtil.PRESSGUN_BQ + "");
-                        ak.setText(SimpleUtil.PRESSGUN_AK + "");
-                        SimpleUtil.saveToShare(mContext, sp0[2], "cfqNum", SimpleUtil.PRESSGUN_CFQ);
-                        SimpleUtil.saveToShare(mContext, sp0[2], "bqNum", SimpleUtil.PRESSGUN_BQ);
-                        SimpleUtil.saveToShare(mContext, sp0[2], "akNum", SimpleUtil.PRESSGUN_AK);
-
-                        //tpcfg.setChecked(false);
-                        //automouse.setChecked(true);
-                        break;
-                }
-                SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
-            }
-        };
-        view.findViewById(R.id.cfq_add).setOnClickListener(click);
-        view.findViewById(R.id.cfq_sub).setOnClickListener(click);
-        view.findViewById(R.id.bq_add).setOnClickListener(click);
-        view.findViewById(R.id.bq_sub).setOnClickListener(click);
-        view.findViewById(R.id.ak_add).setOnClickListener(click);
-        view.findViewById(R.id.ak_sub).setOnClickListener(click);
-        view.findViewById(R.id.btn_reset_gun).setOnClickListener(click);
         final RadioGroup radioGroup = view.findViewById(R.id.dialog_oversize_gun_rg);
 
         final List<AOAConfigTool.Config> configsLeftData = new ArrayList<>();
@@ -262,6 +144,135 @@ public class IniTab {
                 SimpleUtil.runOnUIThread(new Runnable() {
                     @Override
                     public void run() {
+                        String gloabkeyconfig = (String) SimpleUtil.getFromShare(mContext, "ini", "gloabkeyconfig", String.class, "");
+                        final String[] sp0 = gloabkeyconfig.split("#Z%W#", -1);
+                        if (sp0.length < 2) {
+                            SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_configloadfail), true);
+                            return;
+                        }
+                        SimpleUtil.log("test当前使用:" + sp0[1] + "\n" + gloabkeyconfig);
+
+                        //
+                        CompoundButton.OnCheckedChangeListener onCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
+                            @Override
+                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                                switch (buttonView.getId()) {
+                                    case R.id.dialog_oversize_automouse:
+
+                                        if ((Boolean) SimpleUtil.getFromShare(mContext, sp0[2], "automouse", boolean.class, true) != isChecked) {
+                                            SimpleUtil.log("自动鼠标:" + isChecked);
+                                            SimpleUtil.saveToShare(mContext, sp0[2], "automouse", isChecked);
+                                            SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
+                                        }
+
+                                        break;
+                                    case R.id.dialog_oversize_tpcfg:
+
+                                        if ((Boolean) SimpleUtil.getFromShare(mContext, sp0[2], "tpcfg", boolean.class, false) != isChecked) {
+                                            SimpleUtil.log("投屏配置:" + isChecked);
+                                            SimpleUtil.saveToShare(mContext, sp0[2], "tpcfg", isChecked);
+                                            SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
+                                        }
+                                        break;
+                                }
+
+                            }
+                        };
+                        automouse.setOnCheckedChangeListener(onCheckedChangeListener);
+                        tpcfg.setOnCheckedChangeListener(onCheckedChangeListener);
+
+
+                        boolean b1 = (Boolean) SimpleUtil.getFromShare(mContext, sp0[2], "automouse", boolean.class, true);
+                        boolean b2 = (Boolean) SimpleUtil.getFromShare(mContext, sp0[2], "tpcfg", boolean.class, false);
+                        SimpleUtil.log("cb:" + b1 + "," + b2);
+                        automouse.setChecked(b1);
+                        tpcfg.setChecked(b2);
+                        View.OnClickListener click = new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                switch (v.getId()) {
+                                    case R.id.cfq_add:
+                                        String text = cfq.getText().toString();
+                                        int cur = Integer.parseInt(text) + 1;
+                                        if (cur >= 100) {
+                                            cur = 99;
+                                        }
+                                        cfq.setText(cur + "");
+                                        SimpleUtil.saveToShare(mContext, sp0[2], "cfqNum", cur);
+                                        break;
+                                    case R.id.bq_add:
+                                        text = bq.getText().toString();
+                                        cur = Integer.parseInt(text) + 1;
+                                        if (cur >= 100) {
+                                            cur = 99;
+                                        }
+                                        bq.setText(cur + "");
+                                        SimpleUtil.saveToShare(mContext, sp0[2], "bqNum", cur);
+                                        break;
+                                    case R.id.ak_add:
+                                        text = ak.getText().toString();
+                                        cur = Integer.parseInt(text) + 1;
+                                        if (cur >= 100) {
+                                            cur = 99;
+                                        }
+                                        ak.setText(cur + "");
+                                        SimpleUtil.saveToShare(mContext, sp0[2], "akNum", cur);
+                                        break;
+                                    case R.id.cfq_sub:
+                                        text = cfq.getText().toString();
+                                        cur = Integer.parseInt(text) - 1;
+                                        if (cur <= 0) {
+                                            cur = 0;
+                                        }
+                                        cfq.setText(cur + "");
+                                        SimpleUtil.saveToShare(mContext, sp0[2], "cfqNum", cur);
+                                        break;
+                                    case R.id.bq_sub:
+                                        text = bq.getText().toString();
+                                        cur = Integer.parseInt(text) - 1;
+                                        if (cur <= 0) {
+                                            cur = 0;
+                                        }
+                                        bq.setText(cur + "");
+                                        SimpleUtil.saveToShare(mContext, sp0[2], "bqNum", cur);
+                                        break;
+                                    case R.id.ak_sub:
+                                        text = ak.getText().toString();
+                                        cur = Integer.parseInt(text) - 1;
+                                        if (cur <= 0) {
+                                            cur = 0;
+                                        }
+                                        ak.setText(cur + "");
+                                        SimpleUtil.saveToShare(mContext, sp0[2], "akNum", cur);
+                                        break;
+                                    case R.id.btn_reset_gun:
+                                        cfq.setText(SimpleUtil.PRESSGUN_CFQ + "");
+                                        bq.setText(SimpleUtil.PRESSGUN_BQ + "");
+                                        ak.setText(SimpleUtil.PRESSGUN_AK + "");
+                                        SimpleUtil.saveToShare(mContext, sp0[2], "cfqNum", SimpleUtil.PRESSGUN_CFQ);
+                                        SimpleUtil.saveToShare(mContext, sp0[2], "bqNum", SimpleUtil.PRESSGUN_BQ);
+                                        SimpleUtil.saveToShare(mContext, sp0[2], "akNum", SimpleUtil.PRESSGUN_AK);
+
+                                        //tpcfg.setChecked(false);
+                                        //automouse.setChecked(true);
+                                        break;
+                                }
+                                SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
+                            }
+                        };
+                        view.findViewById(R.id.cfq_add).setOnClickListener(click);
+                        view.findViewById(R.id.cfq_sub).setOnClickListener(click);
+                        view.findViewById(R.id.bq_add).setOnClickListener(click);
+                        view.findViewById(R.id.bq_sub).setOnClickListener(click);
+                        view.findViewById(R.id.ak_add).setOnClickListener(click);
+                        view.findViewById(R.id.ak_sub).setOnClickListener(click);
+                        view.findViewById(R.id.btn_reset_gun).setOnClickListener(click);
+
+
+
+
+
+
                         for (AOAConfigTool.Config config : configsRightData) {
                             configCopyRight.add((AOAConfigTool.Config) config.clone());
                         }
@@ -304,13 +315,18 @@ public class IniTab {
                                 int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "cfqNum", int.class, SimpleUtil.PRESSGUN_CFQ);
                                 int bqNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "bqNum", int.class, SimpleUtil.PRESSGUN_BQ);
                                 int akNum = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "akNum", int.class, SimpleUtil.PRESSGUN_AK);
+                                boolean automouse_ = (Boolean) SimpleUtil.getFromShare(mContext, sp0[2], "automouse", boolean.class, true);
+                                boolean tpcfg_ = (Boolean) SimpleUtil.getFromShare(mContext, sp0[2], "tpcfg", boolean.class, false);
+                                automouse.setChecked(automouse_);
+                                tpcfg.setChecked(tpcfg_);
                                 SimpleUtil.log("刷新获取存储的压枪值:" + bqNum + "." + cfqNum + "," + akNum);
                                 bq.setText(bqNum + "");
                                 cfq.setText(cfqNum + "");
                                 ak.setText(akNum + "");
 
-                                int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "defaultgun", int.class, 0);
-                                ((RadioButton) radioGroup.getChildAt(defaultgun)).setChecked(true);
+                                SimpleUtil.saveToShare(mContext, "ini", "gloabkeyconfig", "default#Z%W#" + configsRightData.get(position).getmConfigName() + "#Z%W#" + configsRightData.get(position).getmTabValue() + "#Z%W#" + configsRightData.get(position).getmBelongGame());
+                                //int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, sp0[2], "defaultgun", int.class, 0);
+                                //((RadioButton) radioGroup.getChildAt(defaultgun)).setChecked(true);
 
 
                                 configsRightData.get(position).setmIsUsed(true);

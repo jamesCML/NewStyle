@@ -142,7 +142,6 @@ public class SimpleUtil {
      * @return
      */
     public static boolean saveToShare(Context context, String lib, String key, Object value) {
-
         SharedPreferences preferences = context.getSharedPreferences(lib, 0);
         SharedPreferences.Editor edit = preferences.edit();
         if (value instanceof Integer) {

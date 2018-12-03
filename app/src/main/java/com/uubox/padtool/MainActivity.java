@@ -6,6 +6,7 @@ import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
@@ -62,10 +63,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
         SimpleUtil.DEBUG = CommonUtils.getAppVersionName(this).contains("debug");
         SimpleUtil.log("MainActivity-------------create------------");
         setContentView(R.layout.activity_main);
+        mProgress = findViewById(R.id.loading_pro);
+        mLoadMsg = findViewById(R.id.loading_msg);
+        mButton = findViewById(R.id.loading_bt);
         divAPPUSER();
         if(SimpleUtil.mAPPUSER== SimpleUtil.APPUSER.AGP)
         {
             findViewById(R.id.main_log).setVisibility(View.VISIBLE);
+            mButton.setTextColor(getResources().getColor(R.color.grey_4));
             if (getWindowManager().getDefaultDisplay().getRotation() * Surface.ROTATION_90 == 1) {
                 findViewById(R.id.main_parent).setBackgroundResource(R.mipmap.start_bg_l);
             } else {
@@ -74,6 +79,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
         else{
             findViewById(R.id.main_parent).setBackgroundResource(R.mipmap.load_bg);
+            mButton.setBackgroundColor(Color.TRANSPARENT);
         }
 
         int a = ScreenUtils.getScreenWidth();
@@ -90,9 +96,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         SimpleUtil.saveToShare(this, "ini", "zoomy", SimpleUtil.zoomy);
 
         SimpleUtil.log("屏幕分辨率:" + SimpleUtil.zoomx + "," + SimpleUtil.zoomy);
-        mProgress = findViewById(R.id.loading_pro);
-        mLoadMsg = findViewById(R.id.loading_msg);
-        mButton = findViewById(R.id.loading_bt);
+
         mButton.setOnClickListener(this);
         findViewById(R.id.loading_feedback).setOnClickListener(this);
 

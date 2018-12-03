@@ -93,10 +93,6 @@ public class AOAConfigTool implements SimpleUtil.INormalBack, BTService.IBLENoti
         List<Config> allConfigs = new ArrayList<>();
         byte defaultConfig = -1;
 
-        String gloabkeyconfig = (String) SimpleUtil.getFromShare(mContext, "ini", "gloabkeyconfig", String.class, "");
-        String[] sp0 = gloabkeyconfig.split("#Z%W#", -1);
-        SimpleUtil.log("当前使用:" + sp0[1]);
-
         // LinkedHashMap<String, ArrayList<LinkedHashMap<KeyboardView.Btn, BtnParams>>> mapData = new LinkedHashMap<>();
         SharedPreferences allKeysConfigsTable = mContext.getSharedPreferences("KeysConfigs", 0);
         Map<String, ?> maps = allKeysConfigsTable.getAll();
@@ -616,6 +612,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack, BTService.IBLENoti
         }
         //设置一下使用者
         configRight.get(order[3] - 1).setmIsUsed(true);
+        SimpleUtil.saveToShare(mContext, "ini", "gloabkeyconfig", "default#Z%W#" + configRight.get(order[3] - 1).mConfigName + "#Z%W#" + configRight.get(order[3] - 1).getmTabValue() + "#Z%W#" + configRight.get(order[3] - 1).getmBelongGame());
         for (Config config : mConfigs) {
             //SimpleUtil.log("排序2:" + config.toString());
             if (config.getIsDeleted()) {
