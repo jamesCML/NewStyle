@@ -158,8 +158,13 @@ public class IniTask extends AsyncTask<Void, Integer, Void> {
             } else if (rules.equals("free")) {
                 SimpleUtil.isSaveToXml = true;
             }
+
             //----------------------------------------------------------------------------------
             //获取可以收集log的白名单
+            //设置局域网IP
+            XmlPugiElement localip = config.getFirstChildByName("LOCALIP");
+            SimpleUtil.mLOCALIP = localip.getValue();
+            SimpleUtil.log("LOCALIP:" + SimpleUtil.mLOCALIP.trim());
             XmlPugiElement correctlogids = config.getFirstChildByName("correctlogids");
             //free:任意的 forbiden:禁止 grep:白名单过滤
             String correctlogids_rules = correctlogids.getAttr("rules");
@@ -184,6 +189,8 @@ public class IniTask extends AsyncTask<Void, Integer, Void> {
                 SimpleUtil.isNetLog = true;
 
             }
+
+
             //----------------------------------------------------------------------------------
             if (SimpleUtil.isEnableOSSLog) {
                 SimpleUtil.addWaitToTop(mContext, mContext.getString(R.string.ini_uplogloading));

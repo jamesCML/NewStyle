@@ -61,7 +61,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         SimpleUtil.DEBUG = CommonUtils.getAppVersionName(this).contains("debug");
-        SimpleUtil.log("MainActivity-------------create------------");
+        SimpleUtil.log("MainActivity-------------create------------>" + CommonUtils.getAppPkgName(this) + " " + CommonUtils.getAppVersionCode(this));
         setContentView(R.layout.activity_main);
         mProgress = findViewById(R.id.loading_pro);
         mLoadMsg = findViewById(R.id.loading_msg);
@@ -128,7 +128,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
     protected void onResume() {
         super.onResume();
         SimpleUtil.log("MainActivity-------------resume------------" + hashCode() + " pid:" + Process.myPid());
-
         /*int jLH = (Integer) SimpleUtil.getFromShare(this, "ini", "LH", int.class, -1);
         //jLH = -1;
         if (jLH == -1)//需要判断一下刘海屏

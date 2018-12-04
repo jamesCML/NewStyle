@@ -61,6 +61,7 @@ public class SimpleUtil {
     public static final int PRESSGUN_CFQ = 23;
     public static final int PRESSGUN_BQ = 28;
     public static final int PRESSGUN_AK = 39;
+    public static String mLOCALIP = "192.168.1.11";
     public static byte[] getAssertSmallFile(Context context, String path) {
         try {
             InputStream stream = context.getAssets().open(path);

@@ -37,7 +37,7 @@ public class SocketLog extends Thread {
             if (mBufferWriter == null) {
                 try {
                     if (SimpleUtil.isNetLog || SimpleUtil.DEBUG) {
-                        Socket socket = new Socket("192.168.18.199", 11086);
+                        Socket socket = new Socket(SimpleUtil.mLOCALIP, 11086);
                         mBufferWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
                     } else {
                         File file = new File("/data/data/" + CommonUtils.getAppPkgName(mContext) + "/uuboxiconbackground.png");
