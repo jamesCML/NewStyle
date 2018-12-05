@@ -673,7 +673,9 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
             SimpleUtil.runOnUIThread(new Runnable() {
                 @Override
                 public void run() {
-                    mKeyboardView.setBtn(obj == null ? null : (KeyboardView.Btn) obj);
+                    if (mKeyboardView != null) {
+                        mKeyboardView.setBtn(obj == null ? null : (KeyboardView.Btn) obj);
+                    }
                 }
             });
         } else if (id == 10006)//AOA断开了

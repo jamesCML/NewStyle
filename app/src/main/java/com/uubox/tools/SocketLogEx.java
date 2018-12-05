@@ -22,7 +22,9 @@ public class SocketLogEx extends Thread {
         synchronized (SocketLogEx.class) {
             if (mInstance == null) {
                 mInstance = new SocketLogEx();
-                mInstance.start();
+                if (!mInstance.isAlive()) {
+                    mInstance.start();
+                }
             }
             return mInstance;
         }

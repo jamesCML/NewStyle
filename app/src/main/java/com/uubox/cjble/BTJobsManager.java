@@ -152,6 +152,7 @@ public class BTJobsManager implements BTService.IStateCallBack, BTService.IBLENo
     private void getModeInfo() {
         boolean result = false;
         List<BluetoothGattService> services = mGatt.getServices();
+        SimpleUtil.log("mode checksize:" + services.size());
         for (BluetoothGattService service : services) {
             SimpleUtil.log("serviceName:" + service.getUuid().toString());
             if (service.getUuid().toString().equals("0000180a-0000-1000-8000-00805f9b34fb")) {

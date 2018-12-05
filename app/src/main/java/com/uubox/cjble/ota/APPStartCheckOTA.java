@@ -54,6 +54,7 @@ public class APPStartCheckOTA extends Thread implements SimpleUtil.INormalBack, 
         update.setIotaCallBack(new OTAUpdate.IOTACallBack() {
             @Override
             public void callback(int mode, int arg1, int arg2, Object obj) {
+
                 if (mode == 6) {
                     if (arg1 == 2) {
                         fwVersion = (String) obj;
@@ -62,7 +63,7 @@ public class APPStartCheckOTA extends Thread implements SimpleUtil.INormalBack, 
                             release();
                         }
                         SimpleUtil.log("得到设备峰位版本:" + fwVersion + "，下面获取服务器版本，请稍后...");
-                        SimpleUtil.updateWaiting(mContext.getString(R.string.ble_getdevverok) + fwVersion);
+                        SimpleUtil.updateWaitTopMsg(mContext.getString(R.string.ble_getdevverok) + fwVersion);
                         if (update.getCurImage() != null && baseRemoteOTA == null) {
                             baseRemoteOTA = new WisegaHttpRemoteOTA(fwVersion, update.getCurImage());
                             Thread getserverfwThread = new Thread(baseRemoteOTA);
@@ -74,7 +75,7 @@ public class APPStartCheckOTA extends Thread implements SimpleUtil.INormalBack, 
                         mICheckOTABack.checkresult(3);
                         release();
                     } else if (arg1 == 3) {
-                        SimpleUtil.updateWaiting(mContext.getString(R.string.getdevimgok) + update.getCurImage());
+                        SimpleUtil.updateWaitTopMsg(mContext.getString(R.string.getdevimgok) + update.getCurImage());
                         if (fwVersion != null && baseRemoteOTA == null) {
                             baseRemoteOTA = new WisegaHttpRemoteOTA(fwVersion, update.getCurImage());
                             Thread getserverfwThread = new Thread(baseRemoteOTA);
@@ -85,7 +86,7 @@ public class APPStartCheckOTA extends Thread implements SimpleUtil.INormalBack, 
                 } else if (mode == 4) {
                     if (arg1 == 0)
                     {
-                        //SimpleUtil.updateWaiting((Activity) mContext, "温馨提示", "升级失败！");
+                        //SimpleUtil.updateWaitTopMsg((Activity) mContext, "温馨提示", "升级失败！");
                     } else if (arg1 == 1) {
                         SimpleUtil.addMsgtoTopNoRes(mContext, mContext.getString(R.string.kbv_warmwarn), mContext.getString(R.string.ble_sameimg));
                         release();
@@ -99,12 +100,13 @@ public class APPStartCheckOTA extends Thread implements SimpleUtil.INormalBack, 
                     mMaxProc = arg1;
                 } else if (mode == 3)//进度
                 {
+                    SimpleUtil.log("ota:" + mode + "," + arg1 + "," + arg2);
                     int proc = arg1;
                     float percent = (proc * 1.0f) / mMaxProc;
                     DecimalFormat df = new DecimalFormat("0.00%");
-                    SimpleUtil.updateWaiting(mContext.getString(R.string.ble_updating) + "[" + df.format(percent) + "]\n" + mContext.getString(R.string.ble_otaoffdev));
+                    SimpleUtil.updateWaitTopMsg(mContext.getString(R.string.ble_updating) + "[" + df.format(percent) + "]\n" + mContext.getString(R.string.ble_otaoffdev));
                     if (proc == mMaxProc) {
-                        //SimpleUtil.updateWaiting((Activity) mContext,mContext.getString(R.string.update_success));
+                        //SimpleUtil.updateWaitTopMsg((Activity) mContext,mContext.getString(R.string.update_success));
                         SimpleUtil.addMsgtoTopNoRes(mContext, mContext.getString(R.string.kbv_warmwarn), mContext.getString(R.string.ble_otaok));
                         release();
                     }
@@ -172,14 +174,14 @@ public class APPStartCheckOTA extends Thread implements SimpleUtil.INormalBack, 
                 {
                     if (Integer.parseInt(fwVersion.substring(0, 2)) < Integer.parseInt(server_fw.substring(0, 2)))//峰位版本太小，需要下载升级
                     {
-                        SimpleUtil.updateWaiting(mContext.getString(R.string.ble_otanewver) + "[" + update.getCurImage() + "]");
+                        SimpleUtil.updateWaitTopMsg(mContext.getString(R.string.ble_otanewver) + "[" + update.getCurImage() + "]");
                         baseRemoteOTA.wantImg();
                         //本地
                         //SimpleUtil.notifyall_(BaseRemoteOTA.OKBUFF_CALLBACK, new ByteArrayList(SimpleUtil.getAssertSmallFile("P10_"+(update.getCurImage().equals("A")?"B":"A")+"_add_bd_crc_oad_V3120_20181017.bin")));
                         return;
                     } else//需要升级MCU
                     {
-                        SimpleUtil.updateWaiting(mContext.getString(R.string.ble_otamcuupdate));
+                        SimpleUtil.updateWaitTopMsg(mContext.getString(R.string.ble_otamcuupdate));
                         SimpleUtil.sleep(1000);
                         sendMCUCMD();
                         return;

@@ -32,9 +32,11 @@ import com.clj.fastble.scan.BleScanRuleConfig;
 import com.uubox.padtool.R;
 import com.uubox.tools.CommonUtils;
 import com.uubox.tools.Hex;
+import com.uubox.tools.SimpleUtil;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -57,7 +59,16 @@ public class BTService extends Service {
     private static final String ET_UUID_SERVICE_K100 = "91680001-1111-6666-8888-0123456789ab";
     private static final String ET_UUID_WRITE_K100 = "91680002-1111-6666-8888-0123456789ab";
     private static final String ET_UUID_NOTIFY_K100 = "91680003-1111-6666-8888-0123456789ab";
+    private static List<String> MYBTS = new ArrayList<>();
 
+    static {
+        MYBTS.add("CJ007");
+        MYBTS.add("Gamesir-X1");
+        MYBTS.add("KT008");
+        MYBTS.add("mingpin");
+        MYBTS.add("P12");
+        MYBTS.add("P11");
+    }
     public enum UUID_TYPE {
         SERVICE, XJ_SERVICE, WRITE, NOTIFY
     }
@@ -121,14 +132,14 @@ public class BTService extends Service {
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
                 int blueState = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0);
-                Log.i(TAG, "bluetooth state change:" + blueState);
+                SimpleUtil.log("bluetooth state change:" + blueState);
                 if (blueState == BluetoothAdapter.STATE_ON) {
-                    Log.i(TAG, "检测到蓝牙打开，开启扫描！" + Thread.currentThread().getName());
+                    SimpleUtil.log("检测到蓝牙打开，开启扫描！" + Thread.currentThread().getName());
                     //scanAndConnect();
                 } else if (blueState == BluetoothAdapter.STATE_OFF) {
                     // BleManager.getInstance().disconnectAllDevice();
                     // BleManager.getInstance().destroy();
-                    Log.i(TAG, "检测到蓝牙已经关闭，正在释放资源！");
+                    SimpleUtil.log("检测到蓝牙已经关闭，正在释放资源！");
 
                 }
             }
@@ -210,7 +221,7 @@ public class BTService extends Service {
 
     @SuppressLint("PrivateApi")
     public synchronized boolean scanBound() {
-        Log.i(TAG, "start scanBound:" + mConnectState);
+        SimpleUtil.log("start scanBound:" + mConnectState);
         //recText.rec("scanBound");
         if (mConnectState != 0 || BleManager.getInstance().getBluetoothAdapter() == null || !BleManager.getInstance().getBluetoothAdapter().isEnabled()) {
             return false;
@@ -223,12 +234,12 @@ public class BTService extends Service {
             Method method = bluetoothAdapterClass.getDeclaredMethod("getConnectionState", (Class[]) null);
             method.setAccessible(true);
             int state = (int) method.invoke(adapter, (Object[]) null);
-            Log.i(TAG, "===================================:" + state);
+            SimpleUtil.log("===================================:" + state);
             //recText.rec("=3
             // ==================================:" + state);
             if (state == BluetoothAdapter.STATE_CONNECTED) {
                 Set<BluetoothDevice> devices = adapter.getBondedDevices();
-                Log.i(TAG, "device num:" + devices.size());
+                SimpleUtil.log("device num:" + devices.size());
                 BluetoothDevice otherDevice = null;
                 for (BluetoothDevice device : devices) {
                     Method isConnectedMethod = null;
@@ -241,16 +252,24 @@ public class BTService extends Service {
                     }
                     boolean isConnected = isConnectedMethod == null || (boolean) isConnectedMethod.invoke(device, (Object[]) null);
                     if (isConnected) {
-                        if ((device.getName().contains("CJ007") || device.getName().contains("Gamesir-X1") || device.getName().contains("KT008") || device.getName().contains("K100") || device.getName().contains("mingpin") || device.getName().contains("pow"))) {
-                            Log.i(TAG, "get the device:" + device.getName() + "[" + device.getAddress() + "]");
-                            //recText.rec("get the device:" + device.getName() + "[" + device.getAddress() + "]");
-                            isConnect = true;
-                            connect(device);
-                            break;
+                        for (String bt : MYBTS) {
+                            if (device.getName().contains(bt)) {
+                                SimpleUtil.log("get the device:" + device.getName() + "[" + device.getAddress() + "]");
+                                //recText.rec("get the device:" + device.getName() + "[" + device.getAddress() + "]");
+                                isConnect = true;
+                                connect(device);
+                                break;
+                            }
                         }
+
                         otherDevice = device;
                     }
+                    if (isConnect) {
+                        break;
+                    }
                 }
+                
+                
                 if (!isConnect) {
                     if (otherDevice != null) {
                         isConnect = true;
@@ -258,7 +277,7 @@ public class BTService extends Service {
                     } else {
                         for (BluetoothDevice device : devices) {
                             if ((device.getName().contains("CJ007") || device.getName().contains("Gamesir-X1") || device.getName().contains("KT008") || device.getName().contains("K100") || device.getName().contains("mingpin") || device.getName().contains("pow")) || device.getName().contains("P10")) {
-                                Log.i(TAG, "get the device:" + device.getName() + "[" + device.getAddress() + "]");
+                                SimpleUtil.log("get the device:" + device.getName() + "[" + device.getAddress() + "]");
                                 //recText.rec("get the device:" + device.getName() + "[" + device.getAddress() + "]");
                                 isConnect = true;
                                 connect(device);
@@ -267,10 +286,12 @@ public class BTService extends Service {
                         }
                     }
                 }
+
+
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Log.i(TAG, "===================================异常");
+            SimpleUtil.log("===================================异常");
             //recText.rec("execption1:"+e.getMessage());
         }
         if (!isConnect) {
@@ -282,24 +303,24 @@ public class BTService extends Service {
 
     public void scanDeviceWithMode2(final IStateCallBack iGetDevice) {
         if (BleManager.getInstance().getScanSate() == BleScanState.STATE_SCANNING) {
-            Log.i(TAG, "正在扫描，禁止多次扫描...");
+            SimpleUtil.log("正在扫描，禁止多次扫描...");
             return;
         }
         BleManager.getInstance().scan(new BleScanCallback() {
             @Override
             public void onScanStarted(boolean success) {
-                Log.i(TAG, "onScanStarted");
+                SimpleUtil.log("onScanStarted");
             }
 
             @Override
             public void onScanning(BleDevice result) {
-                Log.i(TAG, "onScanning:" + result.getDevice().getName());
+                SimpleUtil.log("onScanning:" + result.getDevice().getName());
                 iGetDevice.connectstate(5, null, result);
             }
 
             @Override
             public void onScanFinished(List<BleDevice> scanResultList) {
-                Log.i(TAG, "onScanFinished:" + scanResultList.size());
+                SimpleUtil.log("onScanFinished:" + scanResultList.size());
             }
         });
     }
@@ -321,25 +342,25 @@ public class BTService extends Service {
         @Override
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
             notifyAllEx(BLEMODTYPE.WRITE, gatt, characteristic, status);
-            // Log.i(TAG,"SDK-Write:"+characteristic.getUuid().toString()+":"+Hex.toString(characteristic.getValue()));
+            // SimpleUtil.log("SDK-Write:"+characteristic.getUuid().toString()+":"+Hex.toString(characteristic.getValue()));
         }
 
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
-//            Log.i(TAG, "CCCCCCCC:[" + characteristic.getUuid().toString() + "]" + Hex.toString(characteristic.getValue()));
+//            SimpleUtil.log( "CCCCCCCC:[" + characteristic.getUuid().toString() + "]" + Hex.toString(characteristic.getValue()));
             handleRecData(characteristic);
             notifyAllEx(BLEMODTYPE.CHANGE, gatt, characteristic, -100);
         }
 
         @Override
         public void onConnectionStateChange(final BluetoothGatt gatt, final int status, final int newState) {
-            Log.i(TAG, status + "," + newState + "   " + Thread.currentThread().getName());
+            SimpleUtil.log(status + "," + newState + "   " + Thread.currentThread().getName());
 
             //recText.rec(status + "," + newState);
             switch (newState) {
                 case BluetoothProfile.STATE_CONNECTED:
 
-                    Log.i(TAG, "蓝牙已经连接");
+                    SimpleUtil.log("蓝牙已经连接:" + gatt.getDevice().getName());
                     //recText.rec("bluetooth is connected! go to refresh the view");
                     mConnectState = 2;
                     mGatt = gatt;
@@ -404,9 +425,9 @@ public class BTService extends Service {
     private void enableNotificationOfCharacteristic2(BluetoothGatt gatt, UUID serviceUUID) {
         UUID CharaUUID = UUID.fromString(getUUID(gatt.getDevice().getName(), UUID_TYPE.NOTIFY));
         List<BluetoothGattService> services = gatt.getServices();
-        Log.i(TAG, "services-size:" + services.size());
+        SimpleUtil.log("services-size:" + services.size());
         for (BluetoothGattService service : services) {
-            Log.i(TAG, "subservice:" + service.getUuid().toString());
+            SimpleUtil.log("subservice:" + service.getUuid().toString());
         }
         BluetoothGattService service = gatt.getService(serviceUUID);
 
@@ -502,7 +523,9 @@ public class BTService extends Service {
         service = mGatt.getService(serviceUUID);
 
         if (service == null || charactUUID == null) {
-            bleWriteCallback.onWriteFailure(new OtherException("null point-1:" + service + "," + charactUUID));
+            if (bleWriteCallback != null) {
+                bleWriteCallback.onWriteFailure(new OtherException("null point-1:" + service + "," + charactUUID));
+            }
             return;
         }
         writeCharacter = service.getCharacteristic(charactUUID);
@@ -612,7 +635,7 @@ public class BTService extends Service {
         public void write(BluetoothGattCharacteristic characteristics, BleWriteCallback bleWriteCallback) {
             byte[] data = characteristics.getValue();
             if (data == null) {
-                Log.i(TAG, "write data is null!");
+                SimpleUtil.log("write data is null!");
                 return;
             }
             BTService.this.write(data, characteristics.getService().getUuid().toString(), characteristics.getUuid().toString(), bleWriteCallback);
