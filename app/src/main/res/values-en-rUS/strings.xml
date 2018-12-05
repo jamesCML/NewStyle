@@ -170,7 +170,11 @@
     <string name="initab_automouse">Open the map knapsack and exhale the mouse automatically</string>
     <string name="initab_tpcfg">This configuration belongs to the projection configuration</string>
     <string name="initab_outpath">Output path</string>
-    <string name="initab_storechange">存储更改！</string>
+    <string name="initab_storechange">Storage change！</string>
+    <string name="netdisable">Network is not available!</string>
+    <string name="readimgfail">Failed to read IMG</string>
+    <string name="unknowerror">unknown error</string>
+    <string name="gujianver">Firmware version</string>
     <string-array name="menu_ini_help_items">
         <item>《Key mapping setting》</item>
     </string-array>

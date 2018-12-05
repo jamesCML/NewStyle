@@ -189,7 +189,6 @@ public class OTAUpdate implements Runnable, BTService.IBLENotify {
                             }
                             SimpleUtil.log("1:get img agan!");
                         }
-
                         char type = mTargImgHdr.imgType;
                         mTargImgHdr.imgType = null;
 
@@ -565,7 +564,7 @@ public class OTAUpdate implements Runnable, BTService.IBLENotify {
         });
         long time0 = System.currentTimeMillis();
         while (waitSetting[0] && (System.currentTimeMillis() - time0) < 5000) {
-            SimpleUtil.log("wait for set the update inteval...");
+            // SimpleUtil.log("wait for set the update inteval...");
             SimpleUtil.sleep(10);
         }
         if (waitSetting[0]) {

@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
@@ -312,7 +314,27 @@ public class MainActivity extends Activity implements View.OnClickListener {
             @Override
             public void run() {
                 SimpleUtil.sleep(delay);
-                SimpleUtil.log("开始检查新版本");
+                boolean isNetOK = false;
+                ConnectivityManager connectivity = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                if (connectivity != null) {
+                    NetworkInfo info = connectivity.getActiveNetworkInfo();
+                    if (info != null && info.isConnected()) {
+                        if (info.getState() == NetworkInfo.State.CONNECTED) {
+                            isNetOK = true;
+                        }
+                    }
+                }
+                SimpleUtil.log("开始检查新版本:" + isNetOK);
+                if (!isNetOK) {
+                    SimpleUtil.addMsgBottomToTop(MainActivity.this, getString(R.string.netdisable), true);
+                    SimpleUtil.runOnUIThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            exeIniTask();
+                        }
+                    });
+                    return;
+                }
                 new PgyUpdateManager.Builder()
                         .setForced(true)
                         .setUserCanRetry(false)

@@ -171,6 +171,10 @@
     <string name="initab_tpcfg">该配置属于投屏配置</string>
     <string name="initab_outpath">输出路径</string>
     <string name="initab_storechange">存储更改！</string>
+    <string name="netdisable">网络不可用!</string>
+    <string name="readimgfail">读取IMG失败</string>
+    <string name="unknowerror">未知错误</string>
+    <string name="gujianver">固件版本</string>
 
     <string-array name="menu_ini_help_items">
         <item>《映射按键设置》</item>

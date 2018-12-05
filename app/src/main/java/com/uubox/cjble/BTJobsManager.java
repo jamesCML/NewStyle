@@ -268,8 +268,13 @@ public class BTJobsManager implements BTService.IStateCallBack, BTService.IBLENo
 
     }
 
+    private APPStartCheckOTA appStartCheckOTA;
+
+    public String getFWVer() {
+        return appStartCheckOTA == null ? "" : appStartCheckOTA.getFWVer();
+    }
     private void checkOTA() {
-        APPStartCheckOTA appStartCheckOTA = new APPStartCheckOTA(mContext);
+        appStartCheckOTA = new APPStartCheckOTA(mContext);
         appStartCheckOTA.setICheckOTABack(new APPStartCheckOTA.ICheckOTABack() {
             @Override
             public void checkresult(int enter) {
@@ -277,8 +282,10 @@ public class BTJobsManager implements BTService.IStateCallBack, BTService.IBLENo
                     readDever();
                 } else if (enter == 3) {
                     SimpleUtil.log("设备版本读取失败!");
+                    SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.readimgfail), true);
                 } else if (enter == 4) {
                     SimpleUtil.log("未知错误!");
+                    SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.unknowerror), true);
                 }
             }
         });

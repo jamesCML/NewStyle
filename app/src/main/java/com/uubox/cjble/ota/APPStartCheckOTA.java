@@ -37,6 +37,9 @@ public class APPStartCheckOTA extends Thread implements SimpleUtil.INormalBack, 
         mICheckOTABack = iCheckOTABack;
     }
 
+    public String getFWVer() {
+        return fwVersion;
+    }
     public void release() {
         SimpleUtil.resetWaitTop(mContext);
         BTJobsManager.getInstance().removeBLENotify(this);
