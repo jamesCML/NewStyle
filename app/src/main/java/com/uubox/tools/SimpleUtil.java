@@ -62,6 +62,7 @@ public class SimpleUtil {
     public static final int PRESSGUN_BQ = 28;
     public static final int PRESSGUN_AK = 39;
     public static String mLOCALIP = "192.168.1.11";
+    public static boolean mFactoryMode;
     public static byte[] getAssertSmallFile(Context context, String path) {
         try {
             InputStream stream = context.getAssets().open(path);
@@ -312,6 +313,9 @@ public class SimpleUtil {
     }
 
     public static void removeINormalCallback(INormalBack callback) {
+        if (!mCallBacks.contains(callback)) {
+            return;
+        }
         mCallBacks.remove(callback);
     }
 
@@ -523,7 +527,7 @@ public class SimpleUtil {
                     backTexts.add(editText.getText().toString());
                 }
                 iNormalBack.back(2, backTexts);
-
+                removeINormalCallback(iNormalBack);
                 //KeyboardEditWindowManager.getInstance().recycle();
 
             }
@@ -534,6 +538,7 @@ public class SimpleUtil {
                 if (noTask != null) {
                     runOnUIThread(noTask);
                 }
+                removeINormalCallback(iNormalBack);
                 KeyboardEditWindowManager.getInstance().close();
                 //KeyboardEditWindowManager.getInstance().recycle();
             }

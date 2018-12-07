@@ -665,7 +665,7 @@ public class IniTab {
         View view = LayoutInflater.from(mContext).inflate(R.layout.iniabout, null);
         ((TextView) (view.findViewById(R.id.iniabout_appver))).setText(mContext.getString(R.string.initab_appver) + CommonUtils.getAppVersionName(mContext));
         ((TextView) (view.findViewById(R.id.iniabout_devver))).setText(mContext.getString(R.string.initab_devber) + (SimpleUtil.mDeviceVersion == null ? mContext.getString(R.string.initab_redverfail) : SimpleUtil.mDeviceVersion));
-        ((TextView) (view.findViewById(R.id.iniabout_devver))).append(BTJobsManager.getInstance().isBLEConnected() ? mContext.getString(R.string.gujianver) + ":" + BTJobsManager.getInstance().getFWVer() : mContext.getString(R.string.gujianver) + ":" + "");
+        ((TextView) (view.findViewById(R.id.iniabout_devver))).append(BTJobsManager.getInstance().isBLEConnected() ? "    " + mContext.getString(R.string.gujianver) + ":" + BTJobsManager.getInstance().getFWVer() : "    " + mContext.getString(R.string.gujianver) + ":" + "");
         ((TextView) (view.findViewById(R.id.iniabout_pix))).setText(mContext.getString(R.string.initab_pixs) + SimpleUtil.zoomx + "*" + SimpleUtil.zoomy);
         SpannableStringBuilder spannableString = new SpannableStringBuilder(mContext.getString(R.string.initab_devnum) + (String) SimpleUtil.getFromShare(mContext, "ini", "idkey", String.class, ""));
         AbsoluteSizeSpan sizeSpan = new AbsoluteSizeSpan(40);

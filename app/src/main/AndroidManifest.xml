@@ -112,7 +112,10 @@
                 <action android:name="com.hexad.bluezime.getconfig" />
             </intent-filter>
         </service>
-
+        <activity
+            android:name=".FactoryAct"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+            android:screenOrientation="landscape" />
         <meta-data
             android:name="PGYER_APPID"
             android:value="${pgyid}" />

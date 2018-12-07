@@ -203,9 +203,11 @@ public class APPStartCheckOTA extends Thread implements SimpleUtil.INormalBack, 
                 break;
             case BaseRemoteOTA.CRCEER_CALLBACK:
                 SimpleUtil.log("CRC校验错误");
+                release();
                 break;
             case BaseRemoteOTA.DOWNLOADEER_CALLBACK:
                 mICheckOTABack.checkresult(4);
+                release();
                 break;
         }
     }

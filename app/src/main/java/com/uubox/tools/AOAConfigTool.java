@@ -284,10 +284,10 @@ public class AOAConfigTool implements SimpleUtil.INormalBack, BTService.IBLENoti
         } else {
             if (data.length <= 20) {
                 long time = System.currentTimeMillis();
-                for (int i = 0; i < 5; i++) {
+                for (int i = 0; i < 3; i++) {
                     mBLEWriteBack = null;
                     BTJobsManager.getInstance().writeDefault(data, null);
-                    while ((System.currentTimeMillis() - time < 3000) && !Arrays.equals(mBLEWriteBack, data))
+                    while ((System.currentTimeMillis() - time < 1000) && !Arrays.equals(mBLEWriteBack, data))
                         ;
                     //SimpleUtil.log("比对是否发送成功:"+Hex.toString(mBLEWriteBack)+"/"+Hex.toString(data));
                     if (Arrays.equals(mBLEWriteBack, data)) {

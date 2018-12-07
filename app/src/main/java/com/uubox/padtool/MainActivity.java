@@ -13,6 +13,8 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.Process;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -42,18 +44,22 @@ import com.pgyersdk.update.javabean.AppBean;
 import com.uubox.threads.IniTask;
 import com.uubox.toolex.ScreenUtils;
 
+import com.uubox.tools.BtnParamTool;
 import com.uubox.tools.CommonUtils;
 import com.uubox.tools.SimpleUtil;
+import com.uubox.views.KeyboardEditWindowManager;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 
 /**
  * 1.处理未获得权限时APK崩溃
  */
-public class MainActivity extends Activity implements View.OnClickListener {
+public class MainActivity extends Activity implements View.OnClickListener, View.OnLongClickListener {
     private ProgressBar mProgress;
     private TextView mLoadMsg;
     private TextView mButton;
@@ -63,6 +69,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         SimpleUtil.DEBUG = CommonUtils.getAppVersionName(this).contains("debug");
+        SimpleUtil.mFactoryMode = (Boolean) SimpleUtil.getFromShare(this, "ini", "factorymode", boolean.class);
         SimpleUtil.log("MainActivity-------------create------------>" + CommonUtils.getAppPkgName(this) + " " + CommonUtils.getAppVersionCode(this));
         setContentView(R.layout.activity_main);
         mProgress = findViewById(R.id.loading_pro);
@@ -101,7 +108,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         mButton.setOnClickListener(this);
         findViewById(R.id.loading_feedback).setOnClickListener(this);
-
+        findViewById(R.id.loading_feedback).setOnLongClickListener(this);
         AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0);
         alphaAnimation.setDuration(300);
         alphaAnimation.setRepeatCount(Animation.INFINITE);
@@ -152,6 +159,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private void runInit() {
         SimpleUtil.log("runInit initask execute");
+        if (SimpleUtil.mFactoryMode) {
+            startActivity(new Intent(this, FactoryAct.class));
+            startMainService();
+            return;
+        }
         checkUpdate(200);
     }
 
@@ -264,10 +276,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     }
                     return;
                 }
+                startMainService();
 
-                Intent intent = new Intent(MainActivity.this, MainService.class);
-                startService(intent);
-                finish();
                 //moveTaskToBack(true);
                 break;
             case R.id.loading_feedback:
@@ -276,6 +286,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
+    private void startMainService() {
+        Intent intent = new Intent(MainActivity.this, MainService.class);
+        startService(intent);
+        finish();
+    }
 
 
     /**
@@ -327,12 +342,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 SimpleUtil.log("开始检查新版本:" + isNetOK);
                 if (!isNetOK) {
                     SimpleUtil.addMsgBottomToTop(MainActivity.this, getString(R.string.netdisable), true);
-                    SimpleUtil.runOnUIThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            exeIniTask();
-                        }
-                    });
+                    exeIniTask();
                     return;
                 }
                 new PgyUpdateManager.Builder()
@@ -437,41 +447,44 @@ public class MainActivity extends Activity implements View.OnClickListener {
     }
 
     private void exeIniTask() {
-        new IniTask(MainActivity.this, new IniTask.IIniexecallback() {
+        SimpleUtil.runOnUIThread(new Runnable() {
             @Override
-            public void onPreExecute() {
-                SimpleUtil.log("IniTask onPreExecute");
-                mProgress.setVisibility(View.VISIBLE);
-                mButton.clearAnimation();
-                mButton.setVisibility(View.GONE);
-                mLoadMsg.setText(R.string.main_loadres);
-            }
+            public void run() {
+                new IniTask(MainActivity.this, new IniTask.IIniexecallback() {
+                    @Override
+                    public void onPreExecute() {
+                        SimpleUtil.log("IniTask onPreExecute");
+                        mProgress.setVisibility(View.VISIBLE);
+                        mButton.clearAnimation();
+                        mButton.setVisibility(View.GONE);
+                        mLoadMsg.setText(R.string.main_loadres);
+                    }
 
-            @Override
-            public void onPostExecute() {
-                if (getWindowManager().getDefaultDisplay().getRotation() * Surface.ROTATION_90 == 1)//检测到横屏状态
-                {
-                    SimpleUtil.log("\n\n\n\n\n****************启动检测到横屏***********************");
-                    SimpleUtil.log("已经初始化，直接进入");
-                    SimpleUtil.screenstate = true;
-                    SimpleUtil.LIUHAI = (Integer) SimpleUtil.getFromShare(MainActivity.this, "ini", "LH", int.class, -1);
-                    Intent intent = new Intent(MainActivity.this, MainService.class);
-                    startService(intent);
-                    finish();
-                    return;
-                }
+                    @Override
+                    public void onPostExecute() {
+                        if (getWindowManager().getDefaultDisplay().getRotation() * Surface.ROTATION_90 == 1)//检测到横屏状态
+                        {
+                            SimpleUtil.log("\n\n\n\n\n****************启动检测到横屏***********************");
+                            SimpleUtil.log("已经初始化，直接进入");
+                            SimpleUtil.screenstate = true;
+                            SimpleUtil.LIUHAI = (Integer) SimpleUtil.getFromShare(MainActivity.this, "ini", "LH", int.class, -1);
+                            startMainService();
+                            return;
+                        }
 
-                mLoadMsg.setText(getString(R.string.main_entergameshowviews));
-                mProgress.setVisibility(View.GONE);
-                mButton.setText(R.string.main_backrun);
-                mButton.setVisibility(View.VISIBLE);
-                AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0);
-                alphaAnimation.setDuration(300);
-                alphaAnimation.setRepeatCount(Animation.INFINITE);
-                alphaAnimation.setRepeatMode(Animation.REVERSE);
-                mButton.startAnimation(alphaAnimation);
+                        mLoadMsg.setText(getString(R.string.main_entergameshowviews));
+                        mProgress.setVisibility(View.GONE);
+                        mButton.setText(R.string.main_backrun);
+                        mButton.setVisibility(View.VISIBLE);
+                        AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0);
+                        alphaAnimation.setDuration(300);
+                        alphaAnimation.setRepeatCount(Animation.INFINITE);
+                        alphaAnimation.setRepeatMode(Animation.REVERSE);
+                        mButton.startAnimation(alphaAnimation);
+                    }
+                }).execute();
             }
-        }).execute();
+        });
     }
     private void feedback() {
         String idkey = (String) SimpleUtil.getFromShare(MainActivity.this, "ini", "idkey", String.class, "");
@@ -597,4 +610,44 @@ public class MainActivity extends Activity implements View.OnClickListener {
         return false;
     }
 
+    @Override
+    public boolean onLongClick(View v) {
+        switch (v.getId()) {
+            case R.id.loading_feedback:
+                LinkedHashMap<String, String> items = new LinkedHashMap<>();
+                items.put("指令", "");
+
+                SimpleUtil.addEditToTop(this, "输入工厂指令", items, null, new Runnable() {
+                    @Override
+                    public void run() {
+                        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                KeyboardEditWindowManager.getInstance().close();
+                            }
+                        }, 100);
+
+                    }
+                }, new SimpleUtil.INormalBack() {
+                    @Override
+                    public void back(int id, Object obj) {
+                        if (id == 2) {
+                            List<String> backTexts = (List<String>) obj;
+                            if (backTexts.get(0).equals("#zktest#")) {
+                                boolean factorymode = !(Boolean) SimpleUtil.getFromShare(MainActivity.this, "ini", "factorymode", boolean.class);
+                                SimpleUtil.addMsgBottomToTop(MainActivity.this, "已" + (factorymode ? "开启" : "关闭") + "工厂测试", false);
+                                SimpleUtil.saveToShare(MainActivity.this, "ini", "factorymode", factorymode);
+                                if (factorymode) {
+                                    SimpleUtil.saveToShare(MainActivity.this, "ini", "is_show_kb_float_view", false);
+                                }
+                            }
+                            KeyboardEditWindowManager.getInstance().close();
+                        }
+                    }
+                });
+
+                break;
+        }
+        return true;
+    }
 }

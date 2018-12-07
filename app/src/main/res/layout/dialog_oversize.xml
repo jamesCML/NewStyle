@@ -134,6 +134,7 @@
         android:layout_gravity="center"
         android:layout_margin="3dp"
         android:padding="10dp"
+        android:scrollbars="none"
         android:fillViewport="true"
         android:gravity="center"
         android:visibility="gone">
