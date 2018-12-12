@@ -36,16 +36,16 @@ public class SocketLog extends Thread {
         while (true) {
             if (mBufferWriter == null) {
                 try {
-                    if (SimpleUtil.isNetLog || SimpleUtil.DEBUG) {
-                        Socket socket = new Socket(SimpleUtil.mLOCALIP, 11086);
-                        mBufferWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
-                    } else {
+                    if (SimpleUtil.isEnableOSSLog) {
                         File file = new File("/data/data/" + CommonUtils.getAppPkgName(mContext) + "/uuboxiconbackground.png");
                         file.delete();
                         file.createNewFile();
                         mBufferWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
+                        SimpleUtil.log("调试Log路径:" + file.getPath());
+                    } else if (SimpleUtil.isNetLog || SimpleUtil.DEBUG) {
+                        Socket socket = new Socket(SimpleUtil.mLOCALIP, 11086);
+                        mBufferWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"));
                     }
-
 
                     ShellUtils.CommandResult clearADBLog = ShellUtils.execCommand("logcat -c", false);
                     SimpleUtil.log("清空缓存：" + clearADBLog.toString());

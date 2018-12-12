@@ -54,11 +54,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-
-
-/**
- * 1.处理未获得权限时APK崩溃
- */
 public class MainActivity extends Activity implements View.OnClickListener, View.OnLongClickListener {
     private ProgressBar mProgress;
     private TextView mLoadMsg;

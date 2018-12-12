@@ -50,13 +50,15 @@ public class AccInputThread extends Thread {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            SimpleUtil.log("AccInputThread is close see exception!");
+            SimpleUtil.log("AccInputThread is close see exception:" + e.getMessage() + "\n" + e.getMessage());
             try {
                 mFileInputStream.close();
+                mFileOutputStream.close();
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
             mFileInputStream = null;
+            mFileOutputStream = null;
             SimpleUtil.notifyall_(10006, null);
         }
     }

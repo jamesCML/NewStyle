@@ -26,7 +26,7 @@ public class APPStartCheckOTA extends Thread implements SimpleUtil.INormalBack, 
     private BaseRemoteOTA baseRemoteOTA;
     private String fwVersion;
     private OTAUpdate update;
-
+    private boolean mMCUUpdateOK;
     public APPStartCheckOTA(Context context) {
         mContext = context;
         BTJobsManager.getInstance().addBLENotify(this);
@@ -125,6 +125,7 @@ public class APPStartCheckOTA extends Thread implements SimpleUtil.INormalBack, 
     private int waitMCUCMDSending;
 
     private void sendMCUCMD() {
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -160,6 +161,12 @@ public class APPStartCheckOTA extends Thread implements SimpleUtil.INormalBack, 
 
                 }
 
+                SimpleUtil.sleep(10000);
+                if (!mMCUUpdateOK) {
+                    SimpleUtil.addMsgtoTopNoRes(mContext, mContext.getString(R.string.kbv_warmwarn), mContext.getString(R.string.ble_mcufail));
+                }
+                SimpleUtil.resetWaitTop(mContext);
+
             }
         }).start();
 
@@ -177,8 +184,19 @@ public class APPStartCheckOTA extends Thread implements SimpleUtil.INormalBack, 
                 {
                     if (Integer.parseInt(fwVersion.substring(0, 2)) < Integer.parseInt(server_fw.substring(0, 2)))//峰位版本太小，需要下载升级
                     {
-                        SimpleUtil.updateWaitTopMsg(mContext.getString(R.string.ble_otanewver) + "[" + update.getCurImage() + "]");
-                        baseRemoteOTA.wantImg();
+                        SimpleUtil.addMsgtoTop(mContext, mContext.getString(R.string.kbv_warmwarn), mContext.getString(R.string.ble_otanewver) + ":" + server_fw, new Runnable() {
+                            @Override
+                            public void run() {
+                                SimpleUtil.updateWaitTopMsg(mContext.getString(R.string.ble_otanewver) + "[" + update.getCurImage() + "]");
+                                baseRemoteOTA.wantImg();
+                            }
+                        }, new Runnable() {
+                            @Override
+                            public void run() {
+                                release();
+                                mICheckOTABack.checkresult(1);
+                            }
+                        }, false);
                         //本地
                         //SimpleUtil.notifyall_(BaseRemoteOTA.OKBUFF_CALLBACK, new ByteArrayList(SimpleUtil.getAssertSmallFile("P10_"+(update.getCurImage().equals("A")?"B":"A")+"_add_bd_crc_oad_V3120_20181017.bin")));
                         return;
@@ -202,7 +220,7 @@ public class APPStartCheckOTA extends Thread implements SimpleUtil.INormalBack, 
                 thread.start();
                 break;
             case BaseRemoteOTA.CRCEER_CALLBACK:
-                SimpleUtil.log("CRC校验错误");
+                SimpleUtil.log("CRC校验错误!!!");
                 release();
                 break;
             case BaseRemoteOTA.DOWNLOADEER_CALLBACK:
@@ -225,6 +243,7 @@ public class APPStartCheckOTA extends Thread implements SimpleUtil.INormalBack, 
                     SimpleUtil.updateWaitTopMsg(mContext.getString(R.string.ble_otaoffdont));
                 } else if (data[3] == 1)//升级成功
                 {
+                    mMCUUpdateOK = true;
                     SimpleUtil.addMsgtoTopNoRes(mContext, mContext.getString(R.string.kbv_warmwarn), mContext.getString(R.string.ota_mcuok));
                     //SimpleUtil.popWindowNoRes(mContext, SimpleUtil.getString(R.string.switchtomcu), SimpleUtil.getString(R.string.switchmcuupdateok));
                     release();

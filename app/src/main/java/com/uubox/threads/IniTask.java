@@ -190,11 +190,11 @@ public class IniTask extends AsyncTask<Void, Integer, Void> {
 
             }
 
-
             //----------------------------------------------------------------------------------
             if (SimpleUtil.isEnableOSSLog) {
                 SimpleUtil.addWaitToTop(mContext, mContext.getString(R.string.ini_uplogloading));
-                new AliyuOSS(mContext).uploadFilesToOSS("usbpublicreadwrite", new String[]{"templogs/" + android.os.Build.MODEL + "_" + idkey + "_main.txt", "templogs/" + android.os.Build.MODEL + "_" + idkey + "_ex.txt"}, new String[]{"/data/data/" + CommonUtils.getAppPkgName(mContext) + "/uuboxiconbackground.png", "/data/data/" + CommonUtils.getAppPkgName(mContext) + "/uuboxicon.png"}, new OSSCompletedCallback<PutObjectRequest, PutObjectResult>() {
+                String time = SimpleUtil.getSystemTimeNum();
+                new AliyuOSS(mContext).uploadFilesToOSS("usbpublicreadwrite", new String[]{"templogs/" + android.os.Build.MODEL + "_a_" + time + "_" + idkey + "_main.txt", "templogs/" + android.os.Build.MODEL + "_a_" + time + "_" + idkey + "_ex.txt"}, new String[]{"/data/data/" + CommonUtils.getAppPkgName(mContext) + "/uuboxiconbackground.png", "/data/data/" + CommonUtils.getAppPkgName(mContext) + "/uuboxicon.png"}, new OSSCompletedCallback<PutObjectRequest, PutObjectResult>() {
                     @Override
                     public void onSuccess(PutObjectRequest request, PutObjectResult result) {
                         if (request.getUploadFilePath().endsWith("uuboxicon.png")) {

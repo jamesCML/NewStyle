@@ -55,14 +55,20 @@ public class WisegaHttpRemoteOTA extends BaseRemoteOTA {
                 XmlPugiElement root = new XmlPugiElement(byteArrayList.all2Bytes());
                 List<XmlPugiElement> names = getChild(root);
                 boolean isFind = false;
+                String btname = BTJobsManager.getInstance().getDevice().getName();
                 for (XmlPugiElement name : names)//蓝牙名称集合
                 {
                     if (isFind) break;
-                    if ((BTJobsManager.getInstance().getDevice().getName()).contains(name.getName().replace("space", " "))) {
+                    String serbtname = name.getName().replace("space", " ");
+                    SimpleUtil.log("checkname:" + btname + "," + serbtname);
+                    if (btname.contains(serbtname)) {
                         List<XmlPugiElement> models = getChild(name);
                         for (XmlPugiElement mode : models)//mode集合
                         {
-                            if (mode.getName().equals(BTJobsManager.getInstance().getDevMod())) {
+                            String btmod = BTJobsManager.getInstance().getDevMod();
+                            String sermod = mode.getName();
+                            SimpleUtil.log("checkmode:" + btmod + "," + sermod);
+                            if (sermod.equals(btmod)) {
                                 mServerVer = mode.getAttr("version");
                                 if (Integer.valueOf(mServerVer) >= Integer.valueOf(mFWVersion)) {
                                     List<XmlPugiElement> abTypes = getChild(mode);
@@ -135,6 +141,7 @@ public class WisegaHttpRemoteOTA extends BaseRemoteOTA {
             public void run() {
                 final OkHttpClient okHttpImgClient = new OkHttpClient();
                 Request request = new Request.Builder().url(mImgURL).build();
+                SimpleUtil.log("下载地址:" + mImgURL);
                 okHttpImgClient.newCall(request).enqueue(new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
@@ -158,6 +165,7 @@ public class WisegaHttpRemoteOTA extends BaseRemoteOTA {
                             byte[] hashedByte = digest.digest();
                             String crcMd5 = Hex.toString(hashedByte);
                             if (recCount != totalLen || !crcMd5.replace(" ", "").equalsIgnoreCase(mAttrs.get("md5").replace(" ", ""))) {
+                                SimpleUtil.log("mycrc:" + crcMd5 + ",hiscrc:" + mAttrs.get("md5").replace(" ", "") + ",recle:" + recCount + ",hislen:" + totalLen);
                                 SimpleUtil.notifyall_(CRCEER_CALLBACK, null);
                                 mBuff.clear();
                             } else {

@@ -68,6 +68,7 @@ public class BTService extends Service {
         MYBTS.add("mingpin");
         MYBTS.add("P12");
         MYBTS.add("P11");
+        MYBTS.add("FPS-DOCK");
     }
     public enum UUID_TYPE {
         SERVICE, XJ_SERVICE, WRITE, NOTIFY
@@ -242,6 +243,7 @@ public class BTService extends Service {
                 SimpleUtil.log("device num:" + devices.size());
                 BluetoothDevice otherDevice = null;
                 for (BluetoothDevice device : devices) {
+                    SimpleUtil.log("bound设备名称:" + device.getName());
                     Method isConnectedMethod = null;
                     try {
                         isConnectedMethod = BluetoothDevice.class.getDeclaredMethod("isConnected", (Class[]) null);
@@ -287,11 +289,10 @@ public class BTService extends Service {
                     }
                 }
 
-
             }
         } catch (Exception e) {
             e.printStackTrace();
-            SimpleUtil.log("===================================异常");
+            SimpleUtil.log("=========================异常");
             //recText.rec("execption1:"+e.getMessage());
         }
         if (!isConnect) {
@@ -328,6 +329,7 @@ public class BTService extends Service {
     private BluetoothDevice bluetoothDeviceTmp;
 
     public void connect(final BluetoothDevice bluetoothDevice) {
+        SimpleUtil.log("开始连接:" + bluetoothDevice.getName() + "  线程:" + Thread.currentThread().getName());
         bluetoothDeviceTmp = bluetoothDevice;
         bluetoothDevice.connectGatt(getApplicationContext(), false, bluetoothGattCallback);
     }

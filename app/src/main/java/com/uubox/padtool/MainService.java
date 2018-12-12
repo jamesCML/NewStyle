@@ -61,7 +61,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
     private ParcelFileDescriptor mParcelFileDescriptor;
     private AOAConfigTool mAOAConfigTool;
     private final int HANDLE_SCAN_AOA = 2;
-
+    private boolean mHasTry;
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -150,12 +150,10 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         if (usbAccessories == null) {
             SimpleUtil.log("return usbAccessories list is null!!!!!!");
             mfloatingIv.setImageResource(getAPPUserFloatIcon((Integer) mfloatingIv.getTag() == 0));
-            //SimpleUtil.log("HANDLE_SCAN_AOA:"+2);
             //mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 3000);
             return;
         }
         //防止开启异常后继续扫描
-        //SimpleUtil.log("HANDLE_SCAN_AOA:"+3);
         //mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 5000);
         String s = "accessory：\n" +
                 "model:" + usbAccessories[0].getModel() + "\n" +
@@ -493,17 +491,11 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
 
         mWindowManager = (WindowManager) getApplication().getSystemService(Context.WINDOW_SERVICE);
         wmParams = getParams(wmParams);//设置好悬浮窗的参数
-        // 悬浮窗默认显示以左上角为起始坐标
         wmParams.gravity = Gravity.LEFT | Gravity.TOP;
-        //悬浮窗的开始位置，因为设置的是从左上角开始，所以屏幕左上角是x=0;y=0
         wmParams.x = 50;
         wmParams.y = 50;
-        //得到容器，通过这个inflater来获得悬浮窗控件
         inflater = LayoutInflater.from(getApplicationContext());
-        // 获取浮动窗口视图所在布局
         mlayout = (LinearLayout) inflater.inflate(R.layout.item_0, null);
-        // 添加悬浮窗的视图
-//        Log.e("mk", "initWindow: (mlayout=)" + mlayout.toString() + ",wmParams" + wmParams.toString());
         mWindowManager.addView(mlayout, wmParams);
         initFloating();
     }
@@ -516,25 +508,15 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
      */
     public WindowManager.LayoutParams getParams(WindowManager.LayoutParams wmParams) {
         wmParams = new WindowManager.LayoutParams();
-        //设置window type 下面变量2002是在屏幕区域显示，2003则可以显示在状态栏之上你
-//        wmParams.type = LayoutParams.TYPE_PHONE;
-//        wmParams.type = LayoutParams.TYPE_SYSTEM_ALERT;
-
-        //Android 8.0版本兼容
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             wmParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
         else
             wmParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
-        //设置图片格式，效果为背景透明
         wmParams.format = PixelFormat.RGBA_8888;
-        //设置浮动窗口不可聚焦（实现操作除浮动窗口外的其他可见窗口的操作）
-        //wmParams.flags = LayoutParams.FLAG_NOT_FOCUSABLE;
-        //设置可以显示在状态栏上
         wmParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL |
                 WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_LAYOUT_INSET_DECOR |
                 WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH;
 
-        //设置悬浮窗口长宽数据
         wmParams.width = WindowManager.LayoutParams.WRAP_CONTENT;
         wmParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
 
@@ -591,19 +573,6 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
 
 
     private int getAPPUserFloatIcon(boolean atSide) {
-        /*switch (SimpleUtil.mAPPUSER) {
-            case WISEGA:
-                if (atSide) {
-                    return (mAOAConfigTool == null || !mAOAConfigTool.isConnect()) ? R.mipmap.ic_folat_offline_edge : R.mipmap.ic_folat_online_edge;
-                } else {
-                    return (mAOAConfigTool == null || !mAOAConfigTool.isConnect()) ? R.mipmap.ic_folat_offline : R.mipmap.ic_folat_online;
-                }
-            case FPS:
-                if (atSide) {
-                    return (mAOAConfigTool == null || !mAOAConfigTool.isConnect()) ? R.mipmap.fps_float_online : R.mipmap.fps_float_online;
-                } else {
-                    return (mAOAConfigTool == null || !mAOAConfigTool.isConnect()) ? R.mipmap.fps_float_online : R.mipmap.fps_float_online;
-               }*/
         if (atSide) {
             return (mAOAConfigTool == null || !mAOAConfigTool.isConnect()) ? R.mipmap.ic_folat_offline_edge : R.mipmap.ic_folat_online_edge;
         } else {
@@ -620,10 +589,6 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
         mHandler.sendEmptyMessageDelayed(MSG_MOVE_TO_LEFT_SIDE, TIME_MOVE_TO_LEFT_SIDE_DELAY);
     }
 
-    private void updateIcon(boolean isConnect) {
-
-    }
-
     @Override
     public void back(int id, final Object obj) {
         SimpleUtil.log("MainService getnotify id:" + id);
@@ -636,13 +601,7 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
                 savechanged = false;
             }
             //SimpleUtil.removeINormalCallback(this);
-        } /*else if (id == 10000) {
-            SimpleUtil.log("AOA掉线了！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！");
-            closeAcc();
-            mfloatingIv.setImageResource((Integer) mfloatingIv.getTag() == 1 ? R.mipmap.app_icon0805001_gray : R.mipmap.app_icon0805001_half_gray);
-           // SimpleUtil.log("HANDLE_SCAN_AOA:"+4);
-            //mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 3000);
-        } */ else if (id == 10001) {
+        } else if (id == 10001) {
             if (obj == null) {
                 return;
             }
@@ -687,17 +646,21 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
 
                     if (mParcelFileDescriptor != null) {
                         try {
+                            //mParcelFileDescriptor.detachFd();
                             mParcelFileDescriptor.close();
                             mParcelFileDescriptor = null;
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
                     mfloatingIv.setImageResource(getAPPUserFloatIcon((Integer) mfloatingIv.getTag() == 0));
-                    //SimpleUtil.addMsgBottomToTop(getBaseContext(),"与设备之间的连接已经断开！",true);
+                    //mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 100);
+                    SimpleUtil.addMsgBottomToTop(getBaseContext(), getString(R.string.aoa_disconnect), true);
                     //System.exit(0);
-                    // SimpleUtil.log("HANDLE_SCAN_AOA:"+5);
-                    // mHandler.sendEmptyMessageDelayed(HANDLE_SCAN_AOA, 3);
+                    if (!mHasTry) {
+                        mHasTry = true;
+                        //SimpleUtil.log("尝试一次断开重连！");
+                    }
 
                 }
             });

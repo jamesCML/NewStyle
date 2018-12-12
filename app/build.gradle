@@ -5,8 +5,8 @@ android {
         applicationId "com.uubox.padtool"
         minSdkVersion 19
         targetSdkVersion 22
-        versionCode 161
-        versionName "2.4.6"
+        versionCode 163
+        versionName "2.4.7"
         flavorDimensions "versionCode"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -45,6 +45,12 @@ android {
         UUBox_FPS {
             applicationId "com.fpsbox.padtool"
             manifestPlaceholders = [app_icon: "@mipmap/ic_launcher", appname: "FPSBOX",aoafilter:"@xml/accessory_filter_xj",pgyid: "84b6fb903f7085609d7aa3077f47379c"]
+            //buildConfigField "int", "TYPE", "1"
+            signingConfig signingConfigs.release
+        }
+        UUBox_FPSDOCK {
+            applicationId "com.fpsdock.padtool"
+            manifestPlaceholders = [app_icon: "@mipmap/ic_launcher", appname: "FPSDOCK",aoafilter:"@xml/accessory_filter_xj",pgyid: "84b6fb903f7085609d7aa3077f47379c"]
             //buildConfigField "int", "TYPE", "1"
             signingConfig signingConfigs.release
         }

@@ -28,11 +28,17 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.alibaba.sdk.android.oss.ClientException;
+import com.alibaba.sdk.android.oss.ServiceException;
+import com.alibaba.sdk.android.oss.callback.OSSCompletedCallback;
+import com.alibaba.sdk.android.oss.model.PutObjectRequest;
+import com.alibaba.sdk.android.oss.model.PutObjectResult;
 import com.uubox.adapters.GunQaAdapter;
 import com.uubox.adapters.MoveConfigAdapter;
 import com.uubox.cjble.BTJobsManager;
 import com.uubox.padtool.R;
 import com.uubox.tools.AOAConfigTool;
+import com.uubox.tools.AliyuOSS;
 import com.uubox.tools.CommonUtils;
 import com.uubox.tools.Hex;
 import com.uubox.tools.SimpleUtil;
@@ -685,11 +691,12 @@ public class IniTab {
         if (SimpleUtil.isSaveToXml) {
             view.findViewById(R.id.iniabout_savexml).setVisibility(View.VISIBLE);
             ((TextView) (view.findViewById(R.id.iniabout_savexml))).setText(R.string.initab_confgsaveallow);
+
         }
         if (SimpleUtil.isEnableOSSLog || SimpleUtil.isNetLog) {
             int logtype = (Integer) SimpleUtil.getFromShare(mContext, "ini", "logtype", int.class, 1);
+            view.findViewById(R.id.iniabout_logpar).setVisibility(View.VISIBLE);
             final TextView logtv = view.findViewById(R.id.iniabout_correctlog);
-            logtv.setVisibility(View.VISIBLE);
             logtv.append("(" + mContext.getString(R.string.initab_outpath) + ":" + (logtype == 1 ? "Cloud" : "Local") + ")");
             logtv.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
@@ -703,6 +710,37 @@ public class IniTab {
                     }
                     SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_storechange), false);
                     return true;
+                }
+            });
+            view.findViewById(R.id.iniabout_uplog).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final String time = SimpleUtil.getSystemTimeNum();
+                    final String idkey = (String) SimpleUtil.getFromShare(mContext, "ini", "idkey", String.class, "");
+                    SimpleUtil.runOnThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            new AliyuOSS(mContext).uploadFilesToOSS("usbpublicreadwrite", new String[]{"templogs/" + android.os.Build.MODEL + "_h_" + time + "_" + idkey + "_main.txt", "templogs/" + android.os.Build.MODEL + "_h_" + time + "_" + idkey + "_ex.txt"}, new String[]{"/data/data/" + CommonUtils.getAppPkgName(mContext) + "/uuboxiconbackground.png", "/data/data/" + CommonUtils.getAppPkgName(mContext) + "/uuboxicon.png"}, new OSSCompletedCallback<PutObjectRequest, PutObjectResult>() {
+                                @Override
+                                public void onSuccess(PutObjectRequest request, PutObjectResult result) {
+                                    if (request.getUploadFilePath().endsWith("uuboxicon.png")) {
+                                        SimpleUtil.resetWaitTop(mContext);
+                                        SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.ini_uologok), false);
+
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(PutObjectRequest request, ClientException clientException, ServiceException serviceException) {
+                                    if (request.getUploadFilePath().endsWith("uuboxicon.png")) {
+                                        SimpleUtil.resetWaitTop(mContext);
+                                        SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.ini_uplogfail), true);
+
+                                    }
+                                }
+                            });
+                        }
+                    });
                 }
             });
         }

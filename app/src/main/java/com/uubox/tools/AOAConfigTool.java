@@ -773,7 +773,10 @@ public class AOAConfigTool implements SimpleUtil.INormalBack, BTService.IBLENoti
     public void back(int id, Object obj) {
         if (id == 10002)//AOA数据接口
         {
+
             byte[] data = (byte[]) obj;
+            //data = Hex.parse("A5 12 01 00 FF FF 00 00 00 00 00 00 00 00 00 00 00 B6");
+            // addReq((byte)0xb2);
             SimpleUtil.log("AOADataPack rec:" + Hex.toString(data));
             if (data.length < 4) {
                 SimpleUtil.log("bad data:" + Hex.toString(data));
@@ -1152,7 +1155,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack, BTService.IBLENoti
 
     private synchronized boolean addReq(byte type) {
         long time = System.currentTimeMillis();
-        while (mReqs.size() != 0 && (System.currentTimeMillis() - time) < 3000) ;
+        while (mReqs.size() != 0 && (System.currentTimeMillis() - time) < 1000) ;
         SimpleUtil.log("指令增加时间:" + (System.currentTimeMillis() - time));
         Req tmp = new Req(type);
         if (mReqs.contains(tmp)) {

@@ -164,7 +164,7 @@
     <string name="ble_otamcuupdate">检测到MCU需要升级...</string>
     <string name="ble_otaoffdont">升级中，请勿关闭设备...</string>
     <string name="ota_mcuok">MCU升级成功！</string>
-    <string name="ble_mcufail">MCU升级失败！</string>
+    <string name="ble_mcufail">MCU升级失败！请尝试取消蓝牙配对再重新连接进行MCU升级！</string>
     <string name="adjustgunsen">压枪灵敏度调整</string>
     <string name="main_updatemsg">更新内容</string>
     <string name="initab_automouse">打开地图背包自动呼出鼠标</string>
@@ -175,6 +175,8 @@
     <string name="readimgfail">读取IMG失败</string>
     <string name="unknowerror">未知错误</string>
     <string name="gujianver">固件版本</string>
+    <string name="aoa_disconnect">连接断开</string>
+    <string name="ini_uplog">点击上传日志</string>
 
     <string-array name="menu_ini_help_items">
         <item>《映射按键设置》</item>

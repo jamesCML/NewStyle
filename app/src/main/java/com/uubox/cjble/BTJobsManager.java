@@ -296,6 +296,7 @@ public class BTJobsManager implements BTService.IStateCallBack, BTService.IBLENo
         SimpleUtil.runOnThread(new Runnable() {
             @Override
             public void run() {
+                SimpleUtil.sleep(1000);
                 SimpleUtil.log("蓝牙开始读取版本");
                 byte[] result = null;
                 for (int i = 0; i < 3; i++) {

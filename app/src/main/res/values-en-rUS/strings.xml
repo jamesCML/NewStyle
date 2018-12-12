@@ -164,7 +164,7 @@
     <string name="ble_otamcuupdate">MCU needs to be upgraded....</string>
     <string name="ble_otaoffdont">Do not shut down equipment during upgrade....</string>
     <string name="ota_mcuok">MCU upgrade success！</string>
-    <string name="ble_mcufail">MCU upgrade failed！</string>
+    <string name="ble_mcufail">MCU upgrade failed！Please try to cancel Bluetooth pairing and reconnect for MCU upgrade</string>
     <string name="adjustgunsen">Adjustment of press sensitivity</string>
     <string name="main_updatemsg">Update Content</string>
     <string name="initab_automouse">Open the map knapsack and exhale the mouse automatically</string>
@@ -175,6 +175,8 @@
     <string name="readimgfail">Failed to read IMG</string>
     <string name="unknowerror">unknown error</string>
     <string name="gujianver">Firmware version</string>
+    <string name="aoa_disconnect">Disconnect</string>
+    <string name="ini_uplog">Click upload log</string>
     <string-array name="menu_ini_help_items">
         <item>《Key mapping setting》</item>
     </string-array>

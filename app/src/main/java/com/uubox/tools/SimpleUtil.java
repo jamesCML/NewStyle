@@ -61,8 +61,17 @@ public class SimpleUtil {
     public static final int PRESSGUN_CFQ = 23;
     public static final int PRESSGUN_BQ = 28;
     public static final int PRESSGUN_AK = 39;
-    public static String mLOCALIP = "192.168.1.11";
+    public static String mLOCALIP = "192.168.1.198";
     public static boolean mFactoryMode;
+    public static List<String> mIssus = new ArrayList<>();
+
+    public static String getSystemTimeNum() {
+        return getSystemTime().replace("-", "").replace("_", "");
+    }
+
+    public static String getSystemTime() {
+        return new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date());
+    }
     public static byte[] getAssertSmallFile(Context context, String path) {
         try {
             InputStream stream = context.getAssets().open(path);
@@ -241,10 +250,11 @@ public class SimpleUtil {
     }
 
     public static void log(String msg) {
-        if (isNetLog || SimpleUtil.DEBUG) {
-            SocketLogEx.getInstance().sendLog(getCurTime() + "  " + msg);
-        } else if (isEnableOSSLog) {
+        if (isEnableOSSLog) {
             LogToFileUtils.write(msg);
+            SocketLogEx.getInstance().sendLog(getCurTime() + "  " + msg);
+        } else if (isNetLog || SimpleUtil.DEBUG) {
+            SocketLogEx.getInstance().sendLog(getCurTime() + "  " + msg);
         }
         if (!DEBUG) {
             return;
