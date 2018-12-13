@@ -507,6 +507,7 @@ public class SimpleUtil {
             right.setTextColor(Color.WHITE);
             right.setFocusable(true);
             right.setSingleLine();
+            right.setBackgroundResource(R.mipmap.et_bg);
             right.setFocusableInTouchMode(true);
             right.setOnKeyListener(keyListener);
 
