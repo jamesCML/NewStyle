@@ -218,7 +218,6 @@ public class KeyboardView extends FrameLayout
 
         mIvMenuBtnL.setVisibility(VISIBLE);
         mIvMenuBtnR.setVisibility(VISIBLE);
-        // FIXME: 2017/9/18  测试页面 和 提示语  后续版本添加
 
         mImgExit = findViewById(R.id.iv_menu_btn_exit);
         if(SimpleUtil.mAPPUSER== SimpleUtil.APPUSER.AGP)
@@ -891,7 +890,6 @@ public class KeyboardView extends FrameLayout
     @Override
     public void onScaleFinish(View v) {
         Log.i(TAG, "onScaleFinish: " + v.toString());
-        //TODO 先拖拽按钮，到达目标位置后，不松开手指，直接缩放，此时记忆的坐标为拖拽前的坐标
         if (v.getTag() == null) {
             return;
         }
