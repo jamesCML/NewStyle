@@ -788,7 +788,8 @@ public class SimpleUtil {
                     .replace("丛林法则", "Law of the jungle")
                     .replace("光荣使命", "Passion Leads Army")
                     .replace("绝地求生之全军出击", "PUBG Tecent")
-                    .replace("绝地求生之刺激战场", "PUBG");
+                    .replace("绝地求生之刺激战场", "PUBG")
+                    .replace("明日之后", "The day after tomorrow");
         }
         return str;
     }
@@ -819,7 +820,8 @@ public class SimpleUtil {
                             .replace("Law of the jungle", "丛林法则")
                             .replace("Passion Leads Army", "光荣使命")
                             .replace("PUBG Tecent", "绝地求生之全军出击")
-                            .replace("PUBG", "绝地求生之刺激战场");
+                            .replace("PUBG", "绝地求生之刺激战场")
+                            .replace("The day after tomorrow", "明日之后");
         }
         return str;
     }

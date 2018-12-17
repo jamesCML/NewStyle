@@ -21,7 +21,7 @@
     <string name="initab_fail">Failed</string>
     <string name="initab_game">Game</string>
     <string name="initab_haveclear">Wiped</string>
-    <string name="initab_pressgun">其它</string>
+    <string name="initab_pressgun">Other setting</string>
     <string name="initab_gotoconfiglist">Config list</string>
     <string name="initab_gotogunpresslist">Other setting</string>
     <string name="initab_curusedel">Config is using can\'t be canceled!</string>
