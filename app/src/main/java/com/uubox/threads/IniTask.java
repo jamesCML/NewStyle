@@ -121,7 +121,7 @@ public class IniTask extends AsyncTask<Void, Integer, Void> {
                         return null;
                     }
                     BtnParamTool.setComfirGame(game);
-                    BtnParamTool.updateGuanfangConfig(mContext, buff);
+                    BtnParamTool.updateGuanfangConfig(mContext, buff, i == 0 && curConfigVer == 0);
                     if (curConfigVer == 0)//只有第一次才去构造顺序
                     {
                         if (i < 4) {
@@ -137,6 +137,9 @@ public class IniTask extends AsyncTask<Void, Integer, Void> {
             }
             if (curConfigVer == 0) {
                 SimpleUtil.saveToShare(mContext, "ini", "configsorderbytes", Hex.toString(virtulorder));
+                //第一次，则直接指向刺激战场
+                BtnParamTool.setComfirGame("绝地求生之刺激战场");
+                BtnParamTool.loadBtnParamsFromPrefs(mContext);
             }
             SimpleUtil.saveToShare(mContext, "ini", "configver", configVersion);
             SimpleUtil.saveToShare(mContext, "ini", "storevercode", appvercode);

@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -39,6 +40,7 @@ import com.uubox.cjble.BTJobsManager;
 import com.uubox.padtool.R;
 import com.uubox.tools.AOAConfigTool;
 import com.uubox.tools.AliyuOSS;
+import com.uubox.tools.ByteArrayList;
 import com.uubox.tools.CommonUtils;
 import com.uubox.tools.Hex;
 import com.uubox.tools.SimpleUtil;
@@ -480,11 +482,13 @@ public class IniTab {
                                     adapterRight.notifyDataSetChanged();
                                 } else if (id == 10012)//配置写入完成通知结果
                                 {
+
                                     SimpleUtil.removeINormalCallback(this);
                                     SimpleUtil.runOnUIThread(new Runnable() {
                                         @Override
                                         public void run() {
                                             byte[] c0Data = (byte[]) obj;
+                                            SimpleUtil.log("配置写完回调:" + Hex.toString(c0Data));
                                             SimpleUtil.notifyall_(10013, configsRightData.get(c0Data[3] - 1));
                                             KeyboardEditWindowManager.getInstance().close();
 
@@ -492,19 +496,7 @@ public class IniTab {
                                     });
 
                                 } else if (id == 10014) {
-                                    if (configCopyRight.size() != configsRightData.size() || (Boolean) SimpleUtil.getFromShare(mContext, "ini", "configschange", boolean.class)) {
-                                        SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_checknewconfigs), false);
-                                        view.findViewById(R.id.dialog_oversize_write).performClick();
-                                    } else {
-                                        for (int i = 0; i < configCopyRight.size(); i++) {
-                                            if (!configCopyRight.get(i).equals(configsRightData.get(i)) || configCopyRight.get(i).getIsUsed() != configsRightData.get(i).getIsUsed()) {
-                                                SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_checknewconfigs), false);
-                                                view.findViewById(R.id.dialog_oversize_write).performClick();
-                                                break;
-                                            }
-                                        }
-                                    }
-                                    //SimpleUtil.removeINormalCallback(this);
+                                    view.findViewById(R.id.dialog_oversize_write).performClick();
                                 }
 
                             }
@@ -519,7 +511,59 @@ public class IniTab {
                                     return;
                                 }
                                 SimpleUtil.log("dialog_oversize_write==>");
-                                AOAConfigTool.getInstance(mContext).writeManyConfigs(configsRightData);
+                                if (configCopyRight.size() != configsRightData.size() || (Boolean) SimpleUtil.getFromShare(mContext, "ini", "configschange", boolean.class)) {
+                                    SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_checknewconfigs), false);
+                                    AOAConfigTool.getInstance(mContext).writeManyConfigs(configsRightData);
+                                    return;
+                                } else {
+                                    for (int i = 0; i < configCopyRight.size(); i++) {
+                                        if (!configCopyRight.get(i).equals(configsRightData.get(i))) {//顺序乱了，必须重新写入
+                                            //SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_checknewconfigs), false);
+                                            AOAConfigTool.getInstance(mContext).writeManyConfigs(configsRightData);
+                                            return;
+                                        }
+                                    }
+                                    int oldused = 0, newused = 0;
+                                    for (int j = 0; j < configCopyRight.size(); j++) {
+                                        if (configCopyRight.get(j).getIsUsed()) {
+                                            oldused = j + 1;
+                                            break;
+                                        }
+                                    }
+                                    for (int j = 0; j < configsRightData.size(); j++) {
+                                        if (configsRightData.get(j).getIsUsed()) {
+                                            newused = j + 1;
+                                            break;
+                                        }
+                                    }
+                                    final byte[] dever = Hex.parse(SimpleUtil.mDeviceVersion);
+                                    if (newused != oldused && dever[0] >= 0x17) {
+                                        SimpleUtil.log("切换了新的索引:" + newused);
+                                        ByteArrayList changeuseddata = new ByteArrayList();
+                                        changeuseddata.add((byte) 0xa5);
+                                        changeuseddata.add((byte) 0x05);
+                                        changeuseddata.add((byte) 0xb4);
+                                        changeuseddata.add((byte) newused);
+                                        changeuseddata.add(SimpleUtil.sumCheck(changeuseddata.all2Bytes()));
+                                        byte[] result = AOAConfigTool.getInstance(mContext).writeWaitResult((byte) 0xb4, changeuseddata.all2Bytes(), 2000);
+                                        SimpleUtil.log("设置切换了新的顺索引结果:" + Hex.toString(result));
+                                        if (result != null && result[3] == 0) {
+                                            String configsorderbytes = (String) SimpleUtil.getFromShare(mContext, "ini", "configsorderbytes", String.class, null);
+                                            byte[] saveorder = Hex.parse(configsorderbytes);
+                                            saveorder[3] = (byte) newused;
+                                            SimpleUtil.saveToShare(mContext, "ini", "configsorderbytes", Hex.toString(saveorder));
+                                            SimpleUtil.log("结果存储:" + Hex.toString(saveorder));
+                                            SimpleUtil.notifyall_(10015, saveorder);
+                                            KeyboardEditWindowManager.getInstance().close();
+                                            SimpleUtil.removeINormalCallback(iNormalBack);
+                                        }
+                                        return;
+                                    } else {
+                                        AOAConfigTool.getInstance(mContext).writeManyConfigs(configsRightData);
+                                    }
+                                    //SimpleUtil.removeINormalCallback(iNormalBack);
+                                }
+                                //SimpleUtil.removeINormalCallback(this);
 
                             }
                         });

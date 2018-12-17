@@ -70,7 +70,7 @@ public class BtnParamTool {
         return results;
     }
 
-    public static void updateGuanfangConfig(Context context, byte[] okxmlbuff) {
+    public static void updateGuanfangConfig(Context context, byte[] okxmlbuff, boolean allowDefault) {
         XmlPugiElement xmlPugiElement = new XmlPugiElement(okxmlbuff);
         if (!xmlPugiElement.loadSucess) {
             SimpleUtil.addMsgBottomToTop(context, context.getString(R.string.bpt_xmlparfail), true);
@@ -107,7 +107,8 @@ public class BtnParamTool {
             }
 
         }
-        saveBtnParams(context, (comfirGame + System.currentTimeMillis()) + "#Z%W#" + comfirGame + "[官方]#Z%W#" + comfirGame + "[官方]");
+        saveBtnParams(context, (comfirGame + System.currentTimeMillis()) + "#Z%W#" + comfirGame + "[官方]#Z%W#" + comfirGame + "[官方]", allowDefault);
+
         xmlPugiElement.release();
 
     }
@@ -324,7 +325,7 @@ public class BtnParamTool {
         return true;
     }
 
-    public static synchronized boolean saveBtnParams(Context context, String wholeName) {
+    public static synchronized boolean saveBtnParams(Context context, String wholeName, boolean allowDefault) {
         pressFloatable = false;
         SimpleUtil.log("saveBtnParams===>" + wholeName);
         String[] sp = wholeName.split("#Z%W#", -1);
@@ -412,7 +413,7 @@ public class BtnParamTool {
             //加到总映射表
 
             SimpleUtil.saveToShare(context, "KeysConfigs", comfirGame, System.currentTimeMillis());
-            if (sharedPreferences.getAll().size() == 0 || sp[1].equals(sp[2])) {
+            if ((sharedPreferences.getAll().size() == 0 || sp[1].equals(sp[2])) && allowDefault) {
                 SimpleUtil.saveToShare(context, "ini", "gloabkeyconfig", wholeName + "#Z%W#" + comfirGame);
                 SimpleUtil.saveToShare(sharedPreferences.edit(), sp[0], wholeName);
                 pressFloatable = true;

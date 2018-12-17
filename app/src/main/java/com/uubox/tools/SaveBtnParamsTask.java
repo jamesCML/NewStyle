@@ -36,7 +36,7 @@ public class SaveBtnParamsTask extends AsyncTask<String, Integer, String> {
         BtnParamTool.setComfirGame(SimpleUtil.entozhChange(mContext, BtnParamTool.getComfirGame()));
         String[] sp = args[0].split("#Z%W#", -1);
         isNewIni = sp[1].equals(sp[2]);
-        BtnParamTool.saveBtnParams(mContext, args[0]);
+        BtnParamTool.saveBtnParams(mContext, args[0], true);
         return sp[1];
     }
 

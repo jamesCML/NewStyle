@@ -130,38 +130,6 @@ public class DragImageView extends android.support.v7.widget.AppCompatImageView 
         if (mDragListener != null) {
             mDragListener.onDragStart(this);
         }
-        // 对控件进行操作时，将控件置于UI最顶级
-
-       /* SimpleUtil.runOnThread(new Runnable() {
-            @Override
-            public void run() {
-                int i = 5;
-                while(i-->0)
-                {
-                    SimpleUtil.sleep(500);
-                    SimpleUtil.runOnUIThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            int[] beforep = new int[2];
-                            measure(0,0);
-                            getLocationInWindow(beforep);
-                            SimpleUtil.log("before:"+(beforep[0])+","+(beforep[1]));
-                            //setX(beforep[0]);
-                            //setY(beforep[1]+5);
-
-                            ViewGroup.LayoutParams params = getLayoutParams();
-                            ((FrameLayout.LayoutParams) params).leftMargin = beforep[0];
-                            ((FrameLayout.LayoutParams) params).topMargin = beforep[1]+5;
-                            setLayoutParams(params);
-
-
-
-                        }
-                    });
-                }
-            }
-        });*/
-
 
         this.bringToFront();
     }
@@ -191,51 +159,13 @@ public class DragImageView extends android.support.v7.widget.AppCompatImageView 
         // 拖拽
         if (mMode == MODE.DRAG) {
 
-            // 拖拽越界处理
-           /* if (left <= 0) {
-                left = 0;
-                right = this.getWidth();
-            }
-            if (right >= SimpleUtil.zoomy) {
-                left = SimpleUtil.zoomy - this.getWidth();
-            }
-            if (top <= 0) {
-                top = 0;
-                bottom = this.getHeight();
-            }
-            if (bottom >= SimpleUtil.zoomx) {
-
-
-
-                top = SimpleUtil.zoomx - this.getHeight();
-            }*/
-           /* if (DEBUG) {
-                Log.d(TAG, "left = " + left + "  ,  " + right + "  ,  " + top + "  ,  " + bottom);
-            }
-            // 更新坐标
-            ViewGroup.LayoutParams params = this.getLayoutParams();
-            if (params instanceof FrameLayout.LayoutParams) {
-
-                int[] beforep = new int[2];
-                this.getLocationOnScreen(beforep);
-
-                SimpleUtil.log(("before:"+((FrameLayout.LayoutParams) params).leftMargin+","+((FrameLayout.LayoutParams) params).topMargin)+","+beforep[0]+","+beforep[1]);
-               // ((FrameLayout.LayoutParams) params).leftMargin = (int) event.getRawX();
-                //((FrameLayout.LayoutParams) params).topMargin = (int) event.getRawY();
-            }*/
-
-            //this.setLayoutParams(params);
             int[] beforep = new int[2];
-
 
             int distx = (int) event.getRawX() - mCurrentX;
             int disty = (int) event.getRawY() - mCurrentY;
 
             measure(0, 0);
             getLocationInWindow(beforep);
-            // SimpleUtil.log("before:"+(beforep[0])+","+(beforep[1]));
-            //setX(beforep[0]);
-            //setY(beforep[1]+5);
 
             ViewGroup.LayoutParams params = getLayoutParams();
             ((FrameLayout.LayoutParams) params).leftMargin = beforep[0] + distx;

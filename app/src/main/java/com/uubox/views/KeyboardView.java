@@ -464,7 +464,7 @@ public class KeyboardView extends FrameLayout
                             //SimpleUtil.toast(getContext().getString(R.string.msg_a5));
                             return;
                         }
-                        BtnParamTool.saveBtnParams(getContext(), iniDatas.get(position).whole);
+                        BtnParamTool.saveBtnParams(getContext(), iniDatas.get(position).whole, true);
                         //SimpleUtil.toast(getContext().getString(R.string.save_success));
                         BtnParamTool.setBtnParamsChanged(false);
                         KeyboardEditWindowManager.getInstance().removeView(button_ini_content);
@@ -1047,9 +1047,8 @@ public class KeyboardView extends FrameLayout
             mFlMain.removeView(btnParams.img);
             BtnParamTool.resetRepeatBtnParams(btnParams.getBelongBtn());
             btnParams.img = null;
-        } else {//常规按钮
+        } else {
             mFlMain.removeView(btnParams.img);
-            //还有附属按键，则一起死！！！！！！
             if (btnParams.iHaveChild()) {
                 BtnParams subParams = btnParams.getBtn2();
                 mFlMain.removeView(subParams.img);

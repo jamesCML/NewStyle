@@ -104,6 +104,9 @@ public class KeyboardFloatView extends FrameLayout implements SimpleUtil.INormal
     }
 
     private void addView(BtnParams params, KeyboardView.Btn btn) {
+        if (params == null) {
+            return;
+        }
         int x = params.getX();//- SimpleUtil.LIUHAI
         int y = params.getY();
 
@@ -113,6 +116,7 @@ public class KeyboardFloatView extends FrameLayout implements SimpleUtil.INormal
                 || btn == KeyboardView.Btn.L || btn == KeyboardView.Btn.R) {
             return;
         }
+        SimpleUtil.log("增加按键:" + params.toString());
         Drawable drawable = BtnUtil.getBtnDrawable(btn, getContext());
         if (drawable != null) {
             iv.setImageDrawable(drawable);
@@ -200,7 +204,7 @@ public class KeyboardFloatView extends FrameLayout implements SimpleUtil.INormal
         Iterator<String> allIt = maps.keySet().iterator();
         while (allIt.hasNext()) {
             String key = allIt.next();
-            SimpleUtil.log("游戏:" + key);
+            SimpleUtil.log("增加按键游戏:" + key);
             SharedPreferences allSubConfigs = getContext().getSharedPreferences(key + "_table", 0);
             Iterator<? extends Map.Entry<String, ?>> it = allSubConfigs.getAll().entrySet().iterator();
             while (it.hasNext()) {

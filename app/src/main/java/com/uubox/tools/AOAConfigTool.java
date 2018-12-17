@@ -119,7 +119,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack, BTService.IBLENoti
                 // byte[] value_int_s = SimpleUtil.getAES().decrypt(subValue.getBytes());
                 // subValue = new String(value_int_s);
 
-                //SimpleUtil.log("游戏 "+subKey+":"+subValue);
+                SimpleUtil.log("游戏-" + subKey + ":" + subValue);
                 String[] sp = subValue.split("#Z%W#", -1);
                 config.mTabValue = sp[2];
                 //config.setDeleted((Boolean) SimpleUtil.getFromShare(mContext, sp[2], "isDelete", boolean.class, false));
@@ -159,7 +159,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack, BTService.IBLENoti
 
         //根据版本号转换一下，16
         byte[] dever = Hex.parse(SimpleUtil.mDeviceVersion);
-        OAODEVICE_Y = dever[0] >= 0x16 ? 4095 : 2304;
+        OAODEVICE_Y = dever[0] >= 0x17 ? 4095 : 2304;
         LinkedHashMap<KeyboardView.Btn, BtnParams> xmlConfig = BtnParamTool.getButtonParamsFromXML(mContext, config.mTabValue);
         SimpleUtil.log("加载xml数据到configbuff:" + config.getmBelongGame() + "/" + config.getmConfigName());
         ByteArrayList cj_cfg_t = new ByteArrayList();
@@ -212,17 +212,17 @@ public class AOAConfigTool implements SimpleUtil.INormalBack, BTService.IBLENoti
         int akNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "akNum", int.class, SimpleUtil.PRESSGUN_AK);
         boolean automouse = (Boolean) SimpleUtil.getFromShare(mContext, config.mTabValue, "automouse", boolean.class, true);
         boolean tpcfg = (Boolean) SimpleUtil.getFromShare(mContext, config.mTabValue, "tpcfg", boolean.class, false);
-        tempContainer[0] = dever[0] >= 0x16 ? (byte) cfqNum : (byte) (cfqNum * 2304 / 4095 + 1);
-        tempContainer[1] = dever[0] >= 0x16 ? (byte) bqNum : (byte) (bqNum * 2304 / 4095 + 1);
-        tempContainer[2] = dever[0] >= 0x16 ? (byte) akNum : (byte) (akNum * 2304 / 4095 + 1);
+        tempContainer[0] = dever[0] >= 0x17 ? (byte) cfqNum : (byte) (cfqNum * 2304 / 4095 + 1);
+        tempContainer[1] = dever[0] >= 0x17 ? (byte) bqNum : (byte) (bqNum * 2304 / 4095 + 1);
+        tempContainer[2] = dever[0] >= 0x17 ? (byte) akNum : (byte) (akNum * 2304 / 4095 + 1);
         tempContainer[3] = (byte) configID_;
         tempContainer[4] = Hex.setBit(tempContainer[4], 7, automouse);
         tempContainer[4] = Hex.setBit(tempContainer[4], 6, tpcfg);
         SimpleUtil.log("鼠标灵敏度:" + mouse_step + ",滚轮灵敏度:" + gunlun_step + ",冲锋枪:" + tempContainer[0] + ",步枪:" + tempContainer[1] + ",AK:" + tempContainer[2] + " 自动鼠标:" + automouse + ",投屏:" + tpcfg);
         SimpleUtil.log("configID:" + config.mTabValue + "   " + tempContainer[3]);
 
-        //int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "defaultgun", int.class, 0);
-        // tempContainer[4] = (byte) defaultgun;
+        int defaultgun = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "defaultgun", int.class, 0);
+        //tempContainer[4] = (byte) defaultgun;
         cj_cfg_t.add(tempContainer);
 
         ByteArrayList keyPoints = new ByteArrayList();
@@ -316,7 +316,7 @@ public class AOAConfigTool implements SimpleUtil.INormalBack, BTService.IBLENoti
             return;
         }
         final byte[] dever = Hex.parse(SimpleUtil.mDeviceVersion);
-        OAODEVICE_Y = dever[0] >= 0x16 ? 4095 : 2304;
+        OAODEVICE_Y = dever[0] >= 0x17 ? 4095 : 2304;
         SimpleUtil.log("准备开始写配置，其中分辨率:" + SimpleUtil.zoomx + "," + SimpleUtil.zoomy);
         SimpleUtil.runOnThread(new Runnable() {
             @Override
@@ -330,9 +330,12 @@ public class AOAConfigTool implements SimpleUtil.INormalBack, BTService.IBLENoti
                         SimpleUtil.runOnThread(new Runnable() {
                             @Override
                             public void run() {
-                                for (AOAConfigTool.Config config : allConfigs) {
+                                int usedIndex = 0;
+                                for (int i = 0; i < allConfigs.size(); i++) {
+                                    Config config = allConfigs.get(i);
                                     loadXmlToConfigData(config);
                                     if (config.getIsUsed()) {
+                                        usedIndex = i + 1;
                                         //压枪数据重新构造一下
                                         int cfqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "cfqNum", int.class, SimpleUtil.PRESSGUN_CFQ);
                                         int bqNum = (Integer) SimpleUtil.getFromShare(mContext, config.mTabValue, "bqNum", int.class, SimpleUtil.PRESSGUN_BQ);
@@ -341,9 +344,9 @@ public class AOAConfigTool implements SimpleUtil.INormalBack, BTService.IBLENoti
                                         boolean automouse = (Boolean) SimpleUtil.getFromShare(mContext, config.mTabValue, "automouse", boolean.class, true);
                                         boolean tpcfg = (Boolean) SimpleUtil.getFromShare(mContext, config.mTabValue, "tpcfg", boolean.class, false);
                                         byte[] data = config.getmData().all2Bytes();
-                                        data[32] = dever[0] >= 0x16 ? (byte) cfqNum : (byte) (cfqNum * 2304 / 4095 + 1);
-                                        data[33] = dever[0] >= 0x16 ? (byte) bqNum : (byte) (bqNum * 2304 / 4095 + 1);
-                                        data[34] = dever[0] >= 0x16 ? (byte) akNum : (byte) (akNum * 2304 / 4095 + 1);
+                                        data[32] = dever[0] >= 0x17 ? (byte) cfqNum : (byte) (cfqNum * 2304 / 4095 + 1);
+                                        data[33] = dever[0] >= 0x17 ? (byte) bqNum : (byte) (bqNum * 2304 / 4095 + 1);
+                                        data[34] = dever[0] >= 0x17 ? (byte) akNum : (byte) (akNum * 2304 / 4095 + 1);
                                         SimpleUtil.log("重新调整一下压枪灵敏度、压枪：" + data[32] + "," + data[33] + "," + data[34] + "," + defaultgun + " 自动鼠标:" + automouse + ",投屏:" + tpcfg);
                                         //[35]正在使用的gameid
                                         //data[36] = (byte) defaultgun;//压枪设置，如开启、使用哪一把枪等
@@ -429,6 +432,20 @@ public class AOAConfigTool implements SimpleUtil.INormalBack, BTService.IBLENoti
 
                                     index_++;
                                 }
+
+                                if (dever[0] >= 0x17) {
+                                    //发送一个change
+                                    SimpleUtil.log("发送结束再发送使用索引");
+                                    ByteArrayList changeuseddata = new ByteArrayList();
+                                    changeuseddata.add((byte) 0xa5);
+                                    changeuseddata.add((byte) 0x05);
+                                    changeuseddata.add((byte) 0xb4);
+                                    changeuseddata.add((byte) usedIndex);
+                                    changeuseddata.add(SimpleUtil.sumCheck(changeuseddata.all2Bytes()));
+                                    byte[] result = AOAConfigTool.getInstance(mContext).writeWaitResult((byte) 0xb4, changeuseddata.all2Bytes(), 2000);
+                                    SimpleUtil.log("设置切换了新的索引结果:" + Hex.toString(result));
+                                }
+
                                 SimpleUtil.log("保底配置顺序，查询一下！！！");
                                 //保底配置顺序，查询一下
                                 byte[] d0data = getDeviceConfigD0();
