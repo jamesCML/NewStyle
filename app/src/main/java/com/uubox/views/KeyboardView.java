@@ -667,6 +667,7 @@ public class KeyboardView extends FrameLayout
             SimpleUtil.addMsgtoTop(getContext(), getContext().getString(R.string.kbv_warmwarn), getContext().getString(R.string.kbv_exitapp), new Runnable() {
                 @Override
                 public void run() {
+                    AOAConfigTool.getInstance(getContext()).openOrCloseRecKeycode(false);
                     getContext().stopService(new Intent(getContext(), MainService.class));
                     System.exit(0);
                 }

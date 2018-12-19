@@ -537,29 +537,31 @@ public class IniTab {
                                         }
                                     }
                                     final byte[] dever = Hex.parse(SimpleUtil.mDeviceVersion);
-                                    if (newused != oldused && dever[0] >= 0x17) {
-                                        SimpleUtil.log("切换了新的索引:" + newused);
-                                        ByteArrayList changeuseddata = new ByteArrayList();
-                                        changeuseddata.add((byte) 0xa5);
-                                        changeuseddata.add((byte) 0x05);
-                                        changeuseddata.add((byte) 0xb4);
-                                        changeuseddata.add((byte) newused);
-                                        changeuseddata.add(SimpleUtil.sumCheck(changeuseddata.all2Bytes()));
-                                        byte[] result = AOAConfigTool.getInstance(mContext).writeWaitResult((byte) 0xb4, changeuseddata.all2Bytes(), 2000);
-                                        SimpleUtil.log("设置切换了新的顺索引结果:" + Hex.toString(result));
-                                        if (result != null && result[3] == 0) {
-                                            String configsorderbytes = (String) SimpleUtil.getFromShare(mContext, "ini", "configsorderbytes", String.class, null);
-                                            byte[] saveorder = Hex.parse(configsorderbytes);
-                                            saveorder[3] = (byte) newused;
-                                            SimpleUtil.saveToShare(mContext, "ini", "configsorderbytes", Hex.toString(saveorder));
-                                            SimpleUtil.log("结果存储:" + Hex.toString(saveorder));
-                                            SimpleUtil.notifyall_(10015, saveorder);
-                                            KeyboardEditWindowManager.getInstance().close();
-                                            SimpleUtil.removeINormalCallback(iNormalBack);
+                                    if (newused != oldused) {
+                                        if (dever[0] >= 0x17) {
+                                            SimpleUtil.log("切换了新的索引:" + newused);
+                                            ByteArrayList changeuseddata = new ByteArrayList();
+                                            changeuseddata.add((byte) 0xa5);
+                                            changeuseddata.add((byte) 0x05);
+                                            changeuseddata.add((byte) 0xb4);
+                                            changeuseddata.add((byte) newused);
+                                            changeuseddata.add(SimpleUtil.sumCheck(changeuseddata.all2Bytes()));
+                                            byte[] result = AOAConfigTool.getInstance(mContext).writeWaitResult((byte) 0xb4, changeuseddata.all2Bytes(), 2000);
+                                            SimpleUtil.log("设置切换了新的顺索引结果:" + Hex.toString(result));
+                                            if (result != null && result[3] == 0) {
+                                                String configsorderbytes = (String) SimpleUtil.getFromShare(mContext, "ini", "configsorderbytes", String.class, null);
+                                                byte[] saveorder = Hex.parse(configsorderbytes);
+                                                saveorder[3] = (byte) newused;
+                                                SimpleUtil.saveToShare(mContext, "ini", "configsorderbytes", Hex.toString(saveorder));
+                                                SimpleUtil.log("结果存储:" + Hex.toString(saveorder));
+                                                SimpleUtil.notifyall_(10015, saveorder);
+                                                KeyboardEditWindowManager.getInstance().close();
+                                                SimpleUtil.removeINormalCallback(iNormalBack);
+                                            }
+                                            return;
+                                        } else {
+                                            AOAConfigTool.getInstance(mContext).writeManyConfigs(configsRightData);
                                         }
-                                        return;
-                                    } else {
-                                        AOAConfigTool.getInstance(mContext).writeManyConfigs(configsRightData);
                                     }
                                     //SimpleUtil.removeINormalCallback(iNormalBack);
                                 }

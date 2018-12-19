@@ -323,7 +323,7 @@ public class OTAUpdate implements Runnable, BTService.IBLENotify {
                     SimpleUtil.log("setinteval fail!!!!!!!");
                     return;
                 }
-                inteval_b += (byte) 0x02;
+                //inteval_b += (byte) 0x02;
                 SimpleUtil.log("++inteval:" + inteval_b);
             }
 
@@ -593,7 +593,7 @@ public class OTAUpdate implements Runnable, BTService.IBLENotify {
                     if (data[2] == (byte) 0x12 && data.length >= 6) {
 
                         SimpleUtil.log("读取蓝牙interval[" + (data[3] & 0xff) + "]");
-                        if (data[3] == inteval_b) {
+                        if (data[3] >= 0x0c) {
                             waitingInteval = false;
                         }
                         BTJobsManager.getInstance().removeBLENotify(this);
@@ -705,7 +705,7 @@ public class OTAUpdate implements Runnable, BTService.IBLENotify {
     }
 
     private boolean equalBytes(byte[] data1, byte[] data2) {
-        if (data1.length != data2.length) {
+        if (data1 == null || data2 == null || data1.length != data2.length) {
             return false;
         }
         int len = data1.length;
