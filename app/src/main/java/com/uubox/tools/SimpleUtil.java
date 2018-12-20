@@ -180,13 +180,6 @@ public class SimpleUtil {
         } else
             return false;
     }
-
-    private static AES aes = new AES();
-
-    public static AES getAES() {
-        return aes;
-    }
-
     public static SharedPreferences.Editor editSaveToShare(SharedPreferences.Editor edit, String key, Object value) {
         if (value instanceof Integer) {
             return edit.putInt(key, (Integer) value);

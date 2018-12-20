@@ -496,13 +496,14 @@ public class IniTab {
                                     });
 
                                 } else if (id == 10014) {
+                                    view.findViewById(R.id.dialog_oversize_write).setTag(1);
                                     view.findViewById(R.id.dialog_oversize_write).performClick();
                                 }
 
                             }
                         };
                         SimpleUtil.addINormalCallback(iNormalBack);
-
+                        view.findViewById(R.id.dialog_oversize_write).setTag(0);
                         view.findViewById(R.id.dialog_oversize_write).setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -557,13 +558,21 @@ public class IniTab {
                                                 SimpleUtil.notifyall_(10015, saveorder);
                                                 KeyboardEditWindowManager.getInstance().close();
                                                 SimpleUtil.removeINormalCallback(iNormalBack);
+                                                SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.aoac_configwritesuc), false);
                                             }
                                             return;
                                         } else {
                                             AOAConfigTool.getInstance(mContext).writeManyConfigs(configsRightData);
                                         }
+
+                                        return;
                                     }
-                                    //SimpleUtil.removeINormalCallback(iNormalBack);
+                                    //实在要写也没办法
+                                    int tag = (Integer) v.getTag();
+                                    if (tag == 0) {
+                                        AOAConfigTool.getInstance(mContext).writeManyConfigs(configsRightData);
+                                    }
+                                    v.setTag(0);
                                 }
                                 //SimpleUtil.removeINormalCallback(this);
 

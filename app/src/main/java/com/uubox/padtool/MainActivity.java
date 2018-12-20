@@ -122,7 +122,7 @@ public class MainActivity extends Activity implements View.OnClickListener, View
         String appName = CommonUtils.getAppName(this);
         if (appName.equals("UUBOX")) {
             SimpleUtil.mAPPUSER = SimpleUtil.APPUSER.WISEGA;
-        } else if (appName.equals("FPSBOX")) {
+        } else if (appName.equals("FPSBOX") || appName.equals("FPSDOCK")) {
             SimpleUtil.mAPPUSER = SimpleUtil.APPUSER.FPS;
         }else if (appName.equals("AGP")) {
             SimpleUtil.mAPPUSER = SimpleUtil.APPUSER.AGP;
@@ -159,7 +159,7 @@ public class MainActivity extends Activity implements View.OnClickListener, View
             startMainService();
             return;
         }
-        checkUpdate(200);
+        exeIniTask();
     }
 
     @Override
@@ -317,7 +317,7 @@ public class MainActivity extends Activity implements View.OnClickListener, View
         }
         if(SimpleUtil.mAPPUSER== SimpleUtil.APPUSER.FPS)//小鸡用自己的平台
         {
-            exeIniTask();
+            //exeIniTask();
             return;
         }
         SimpleUtil.runOnThread(new Runnable() {
@@ -337,7 +337,7 @@ public class MainActivity extends Activity implements View.OnClickListener, View
                 SimpleUtil.log("开始检查新版本:" + isNetOK);
                 if (!isNetOK) {
                     SimpleUtil.addMsgBottomToTop(MainActivity.this, getString(R.string.netdisable), true);
-                    exeIniTask();
+                    //exeIniTask();
                     return;
                 }
                 new PgyUpdateManager.Builder()
@@ -349,7 +349,7 @@ public class MainActivity extends Activity implements View.OnClickListener, View
                             public void onNoUpdateAvailable() {
                                 //没有更新是回调此方法
                                 SimpleUtil.log("there is no new version");
-                                exeIniTask();
+                                //exeIniTask();
                         }
 
                             @Override
@@ -358,7 +358,7 @@ public class MainActivity extends Activity implements View.OnClickListener, View
                                 SimpleUtil.log("蒲公英版本:" + appBean.getVersionCode());
                                 final boolean isForce = false;
 
-                                SimpleUtil.popWindow(MainActivity.this, getString(R.string.main_verupdate), getString(R.string.main_findnewver) + appBean.getVersionName() + getString(R.string.main_updateenable) + "\n" + getString(R.string.main_updatemsg) + "\n" + appBean.getReleaseNote(),
+                                SimpleUtil.addMsgtoTop(MainActivity.this, getString(R.string.main_verupdate), getString(R.string.main_findnewver) + appBean.getVersionName() + getString(R.string.main_updateenable) + "\n" + getString(R.string.main_updatemsg) + "\n" + appBean.getReleaseNote(),
                                         new Runnable() {
                                             @Override
                                             public void run() {
@@ -378,11 +378,11 @@ public class MainActivity extends Activity implements View.OnClickListener, View
                                                 if (isForce) {
                                                     System.exit(0);
                                                 } else {
-                                                    exeIniTask();
+                                                    //exeIniTask();
                                                 }
 
                                             }
-                                        }, getString(R.string.main_load), isForce ? getString(R.string.main_exit) : getString(R.string.main_cancel), false, 0);//说明:双数表示强制升级，主要涉及一些重要结构调整必须升级 单数则不强制升级
+                                        }, false);//说明:双数表示强制升级，主要涉及一些重要结构调整必须升级 单数则不强制升级
 
 
                                 //PgyUpdateManager.downLoadApk(appBean.getDownloadURL());
@@ -394,7 +394,7 @@ public class MainActivity extends Activity implements View.OnClickListener, View
 
                                 e.printStackTrace();
                                 SimpleUtil.log("检查更新失败 ");
-                                exeIniTask();
+                                // exeIniTask();
                             }
                         })
                         //注意 ：
@@ -457,6 +457,7 @@ public class MainActivity extends Activity implements View.OnClickListener, View
 
                     @Override
                     public void onPostExecute() {
+                        checkUpdate(0);
                         if (getWindowManager().getDefaultDisplay().getRotation() * Surface.ROTATION_90 == 1)//检测到横屏状态
                         {
                             SimpleUtil.log("\n\n\n\n\n****************启动检测到横屏***********************");
@@ -476,7 +477,9 @@ public class MainActivity extends Activity implements View.OnClickListener, View
                         alphaAnimation.setRepeatCount(Animation.INFINITE);
                         alphaAnimation.setRepeatMode(Animation.REVERSE);
                         mButton.startAnimation(alphaAnimation);
+
                     }
+                    //检查版本更新放在这里
                 }).execute();
             }
         });
