@@ -40,13 +40,16 @@ import com.uubox.threads.AccInputThread;
 import com.uubox.tools.AOAConfigTool;
 import com.uubox.tools.BtnParamTool;
 import com.uubox.tools.CommonUtils;
+import com.uubox.tools.Hex;
 import com.uubox.tools.SimpleUtil;
 import com.uubox.views.KeyboardEditWindowManager;
 import com.uubox.views.KeyboardFloatView;
 import com.uubox.views.KeyboardView;
+import com.uubox.views.MouseUtils;
 
 import java.io.FileDescriptor;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class MainService extends Service implements SimpleUtil.INormalBack {
     private UsbManager mUSBManager;
@@ -675,6 +678,27 @@ public class MainService extends Service implements SimpleUtil.INormalBack {
                     mfloatingIv.setImageResource(getAPPUserFloatIcon((Integer) mfloatingIv.getTag() == 0));
                 }
             });
+        } else if (id == 10017)//模拟鼠标UI展现
+        {
+            byte[] data = (byte[]) obj;
+
+            if (data.length != 9) {
+                SimpleUtil.log("模拟鼠标数据长度错误:" + data.length);
+                return;
+            }
+            if (data[3] == 0) {
+                SimpleUtil.log("虚拟鼠标隐藏！");
+                MouseUtils.removeMouse(MainService.this);
+                return;
+            }
+            MouseUtils.addMouse(MainService.this);
+            short x = Hex.toShortL(Arrays.copyOfRange(data, 4, 6));
+            short y = Hex.toShortL(Arrays.copyOfRange(data, 6, 8));
+            SimpleUtil.log("模拟鼠标数据:" + x + "," + y);
+            x = (short) (SimpleUtil.zoomy * x / 4095);
+            y = (short) (SimpleUtil.zoomx * y / 4095);
+            SimpleUtil.log("模拟鼠标数据(转换):" + x + "," + y);
+            MouseUtils.move(SimpleUtil.zoomx, SimpleUtil.zoomy, x, y);
         }
 
     }

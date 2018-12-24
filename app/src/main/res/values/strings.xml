@@ -177,6 +177,8 @@
     <string name="gujianver">固件版本</string>
     <string name="aoa_disconnect">连接断开</string>
     <string name="ini_uplog">点击上传日志</string>
+    <string name="initab_simumouse">使用模拟鼠标</string>
+    <string name="initab_needrebound">修改了鼠标类型，需要取消配对重新连接！</string>
 
     <string-array name="menu_ini_help_items">
         <item>《映射按键设置》</item>

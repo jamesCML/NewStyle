@@ -129,7 +129,7 @@ public class IniTab {
         final TextView ak = view.findViewById(R.id.dialog_oversize_gun_ak_sen);
         final CheckBox automouse = view.findViewById(R.id.dialog_oversize_automouse);
         final CheckBox tpcfg = view.findViewById(R.id.dialog_oversize_tpcfg);
-
+        final CheckBox simumouse = view.findViewById(R.id.dialog_oversize_simumouse);
         final RadioGroup radioGroup = view.findViewById(R.id.dialog_oversize_gun_rg);
 
         final List<AOAConfigTool.Config> configsLeftData = new ArrayList<>();
@@ -183,19 +183,30 @@ public class IniTab {
                                             SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
                                         }
                                         break;
+                                    case R.id.dialog_oversize_simumouse:
+
+                                        if ((Boolean) SimpleUtil.getFromShare(mContext, "ini", "simumouse", boolean.class, false) != isChecked) {
+                                            SimpleUtil.log("模拟鼠标配置:" + isChecked);
+                                            SimpleUtil.saveToShare(mContext, "ini", "simumouse", isChecked);
+                                            SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
+                                            SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_needrebound), true);
+                                        }
+                                        break;
                                 }
 
                             }
                         };
                         automouse.setOnCheckedChangeListener(onCheckedChangeListener);
                         tpcfg.setOnCheckedChangeListener(onCheckedChangeListener);
-
+                        simumouse.setOnCheckedChangeListener(onCheckedChangeListener);
 
                         boolean b1 = (Boolean) SimpleUtil.getFromShare(mContext, sp0[2], "automouse", boolean.class, true);
                         boolean b2 = (Boolean) SimpleUtil.getFromShare(mContext, sp0[2], "tpcfg", boolean.class, false);
-                        SimpleUtil.log("cb:" + b1 + "," + b2);
+                        boolean b_simumouse = (Boolean) SimpleUtil.getFromShare(mContext, "ini", "simumouse", boolean.class, false);
+                        SimpleUtil.log("cb:" + b1 + "," + b2 + "," + b_simumouse);
                         automouse.setChecked(b1);
                         tpcfg.setChecked(b2);
+                        simumouse.setChecked(b_simumouse);
                         View.OnClickListener click = new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {

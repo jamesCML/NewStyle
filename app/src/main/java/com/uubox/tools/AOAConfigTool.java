@@ -397,6 +397,9 @@ public class AOAConfigTool implements SimpleUtil.INormalBack, BTService.IBLENoti
                                 c0Data.add(Hex.fromShortB(totlen));
                                 byte[] leave = new byte[9];
                                 leave[0] = (byte) Build.VERSION.SDK_INT;//发送安卓版本信息
+                                boolean simumouse = (Boolean) SimpleUtil.getFromShare(mContext, "ini", "simumouse", boolean.class, false);
+                                SimpleUtil.log("simumouse:" + simumouse);
+                                leave[1] = (byte) (simumouse ? 1 : 0);//0或其他:系统鼠标  1:模拟鼠标
                                 c0Data.add(leave);
 
                                 c0Data.add(SimpleUtil.sumCheck(c0Data.all2Bytes()));
@@ -824,6 +827,9 @@ public class AOAConfigTool implements SimpleUtil.INormalBack, BTService.IBLENoti
                             SimpleUtil.notifyall_(10015, data);
                         }
 
+                    } else if (data[2] == (byte) 0x03)//模拟鼠标数据
+                    {
+                        SimpleUtil.notifyall_(10017, data);
                     }
                 }
             }

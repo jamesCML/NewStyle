@@ -177,6 +177,8 @@
     <string name="gujianver">Firmware version</string>
     <string name="aoa_disconnect">Disconnect</string>
     <string name="ini_uplog">Click upload log</string>
+    <string name="initab_simumouse">Using the Simulated Mouse</string>
+    <string name="initab_needrebound">Modified mouse type, need to cancel pairing reconnection！</string>
     <string-array name="menu_ini_help_items">
         <item>《Key mapping setting》</item>
     </string-array>

@@ -339,6 +339,16 @@
                         android:paddingHorizontal="5dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
+
+                    <CheckBox
+                        android:text="@string/initab_simumouse"
+                        android:id="@+id/dialog_oversize_simumouse"
+                        android:textColor="@color/mk_white"
+                        android:textSize="10sp"
+                        android:layout_marginTop="10dp"
+                        android:paddingHorizontal="5dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
             </LinearLayout>
 
