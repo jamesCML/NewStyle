@@ -136,10 +136,16 @@ public class IniTask extends AsyncTask<Void, Integer, Void> {
 
             }
             if (curConfigVer == 0) {
+
                 SimpleUtil.saveToShare(mContext, "ini", "configsorderbytes", Hex.toString(virtulorder));
                 //第一次，则直接指向刺激战场
                 BtnParamTool.setComfirGame("绝地求生之刺激战场");
                 BtnParamTool.loadBtnParamsFromPrefs(mContext);
+
+                //海外版增加默认使用模拟鼠标
+                if (!SimpleUtil.isZh(mContext)) {
+                    SimpleUtil.saveToShare(mContext, "ini", "simumouse", true);
+                }
             }
             SimpleUtil.saveToShare(mContext, "ini", "configver", configVersion);
             SimpleUtil.saveToShare(mContext, "ini", "storevercode", appvercode);

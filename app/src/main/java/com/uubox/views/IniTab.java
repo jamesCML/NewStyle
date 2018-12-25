@@ -190,6 +190,10 @@ public class IniTab {
                                             SimpleUtil.saveToShare(mContext, "ini", "simumouse", isChecked);
                                             SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
                                             SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_needrebound), true);
+                                            if (!isChecked)//隐藏鼠标
+                                            {
+                                                MouseUtils.removeMouse(mContext);
+                                            }
                                         }
                                         break;
                                 }
