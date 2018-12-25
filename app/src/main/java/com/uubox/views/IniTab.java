@@ -164,7 +164,7 @@ public class IniTab {
                         //
                         CompoundButton.OnCheckedChangeListener onCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
                             @Override
-                            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
                                 switch (buttonView.getId()) {
                                     case R.id.dialog_oversize_automouse:
 
@@ -187,13 +187,25 @@ public class IniTab {
 
                                         if ((Boolean) SimpleUtil.getFromShare(mContext, "ini", "simumouse", boolean.class, false) != isChecked) {
                                             SimpleUtil.log("模拟鼠标配置:" + isChecked);
-                                            SimpleUtil.saveToShare(mContext, "ini", "simumouse", isChecked);
-                                            SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
-                                            SimpleUtil.addMsgBottomToTop(mContext, mContext.getString(R.string.initab_needrebound), true);
-                                            if (!isChecked)//隐藏鼠标
-                                            {
-                                                MouseUtils.removeMouse(mContext);
-                                            }
+
+
+                                            SimpleUtil.addMsgtoTop(mContext, mContext.getString(R.string.kbv_warmwarn), mContext.getString(R.string.initab_needrebound), new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    SimpleUtil.saveToShare(mContext, "ini", "simumouse", isChecked);
+                                                    SimpleUtil.saveToShare(mContext, "ini", "configschange", true);
+                                                    if (!isChecked)//隐藏鼠标
+                                                    {
+                                                        MouseUtils.removeMouse(mContext);
+                                                    }
+                                                }
+                                            }, new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    simumouse.setChecked(!isChecked);
+                                                }
+                                            }, false);
+
                                         }
                                         break;
                                 }
@@ -291,11 +303,6 @@ public class IniTab {
                         view.findViewById(R.id.ak_add).setOnClickListener(click);
                         view.findViewById(R.id.ak_sub).setOnClickListener(click);
                         view.findViewById(R.id.btn_reset_gun).setOnClickListener(click);
-
-
-
-
-
 
                         for (AOAConfigTool.Config config : configsRightData) {
                             configCopyRight.add((AOAConfigTool.Config) config.clone());

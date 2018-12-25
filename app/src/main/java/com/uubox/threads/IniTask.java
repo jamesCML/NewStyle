@@ -83,7 +83,7 @@ public class IniTask extends AsyncTask<Void, Integer, Void> {
                     String game = gameElements[i].getValue();
 
                     //增加一个本地测试接口
-                    if (7 == 77) {//testfor
+                    if (7 == 77) {
                         File root = new File(Environment.getExternalStorageDirectory().getPath() + "/Zhiwan/cfg");
                         File[] configs = root.listFiles();
                         String path = null;
