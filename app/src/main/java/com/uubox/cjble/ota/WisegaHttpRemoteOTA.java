@@ -165,8 +165,10 @@ public class WisegaHttpRemoteOTA extends BaseRemoteOTA {
                             byte[] hashedByte = digest.digest();
                             String crcMd5 = Hex.toString(hashedByte);
                             if (recCount != totalLen || !crcMd5.replace(" ", "").equalsIgnoreCase(mAttrs.get("md5").replace(" ", ""))) {
-                                SimpleUtil.log("mycrc:" + crcMd5 + ",hiscrc:" + mAttrs.get("md5").replace(" ", "") + ",recle:" + recCount + ",hislen:" + totalLen);
-                                SimpleUtil.notifyall_(CRCEER_CALLBACK, null);
+                                String errorMsg = "Download Error!\ncrc1:" + crcMd5 + "\ncrc2:" + mAttrs.get("md5").replace(" ", "") + "\nlen1:" + recCount + "\nlen2:" + totalLen;
+                                errorMsg = errorMsg.toLowerCase().replace(" ", "");
+                                SimpleUtil.log(errorMsg);
+                                SimpleUtil.notifyall_(CRCEER_CALLBACK, errorMsg);
                                 mBuff.clear();
                             } else {
                                 SimpleUtil.notifyall_(OKBUFF_CALLBACK, mBuff);

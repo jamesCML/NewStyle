@@ -400,8 +400,16 @@ public class SimpleUtil {
             public void run() {
                 final View view = LayoutInflater.from(context).inflate(R.layout.dialog_message, null);
                 ((TextView) view.findViewById(R.id.dialogmsgtitle)).setText(title);
-                ((TextView) view.findViewById(R.id.dialogmsgmsg)).setText(msg);
-
+                final TextView msgView = ((TextView) view.findViewById(R.id.dialogmsgmsg));
+                final float width = msgView.getPaint().measureText(msg);
+                msgView.setText(msg);
+                msgView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        SimpleUtil.log("文本长度:" + msgView.getLineCount());
+                        msgView.setGravity(width > (9 * SimpleUtil.zoomy) / 20 || msgView.getLineCount() != 1 ? Gravity.LEFT : Gravity.CENTER);
+                    }
+                });
 
                 view.findViewById(R.id.dialogmsgyes).setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -437,7 +445,7 @@ public class SimpleUtil {
         });
     }
 
-    public static void addMsgtoTopNoRes(final Context context, final String title, final String msg) {
+    public static void addMsgtoTopNoRes(final Context context, final String title, final String msg, int gravity) {
         addMsgtoTop(context, title, msg, null, null, true);
     }
     public static String getCurTime() {

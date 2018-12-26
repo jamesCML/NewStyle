@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Context;
+import android.view.Gravity;
 
 import com.clj.fastble.callback.BleWriteCallback;
 import com.clj.fastble.exception.BleException;
@@ -91,12 +92,12 @@ public class APPStartCheckOTA extends Thread implements SimpleUtil.INormalBack, 
                     {
                         //SimpleUtil.updateWaitTopMsg((Activity) mContext, "温馨提示", "升级失败！");
                     } else if (arg1 == 1) {
-                        SimpleUtil.addMsgtoTopNoRes(mContext, mContext.getString(R.string.kbv_warmwarn), mContext.getString(R.string.ble_sameimg));
+                        SimpleUtil.addMsgtoTopNoRes(mContext, mContext.getString(R.string.kbv_warmwarn), mContext.getString(R.string.ble_sameimg), Gravity.CENTER);
                         release();
                     }
 
                 } else if (mode == 5) {
-                    SimpleUtil.addMsgtoTopNoRes(mContext, mContext.getString(R.string.kbv_warmwarn), mContext.getString(R.string.ble_otafail));
+                    SimpleUtil.addMsgtoTopNoRes(mContext, mContext.getString(R.string.kbv_warmwarn), mContext.getString(R.string.ble_otafail), Gravity.CENTER);
                     release();
                 } else if (mode == 2)//进度条初始化
                 {
@@ -110,7 +111,7 @@ public class APPStartCheckOTA extends Thread implements SimpleUtil.INormalBack, 
                     SimpleUtil.updateWaitTopMsg(mContext.getString(R.string.ble_updating) + "[" + df.format(percent) + "]\n" + mContext.getString(R.string.ble_otaoffdev));
                     if (proc == mMaxProc) {
                         //SimpleUtil.updateWaitTopMsg((Activity) mContext,mContext.getString(R.string.update_success));
-                        SimpleUtil.addMsgtoTopNoRes(mContext, mContext.getString(R.string.kbv_warmwarn), mContext.getString(R.string.ble_otaok));
+                        SimpleUtil.addMsgtoTopNoRes(mContext, mContext.getString(R.string.kbv_warmwarn), mContext.getString(R.string.ble_otaok), Gravity.CENTER);
                         release();
                     }
                 }
@@ -163,7 +164,7 @@ public class APPStartCheckOTA extends Thread implements SimpleUtil.INormalBack, 
 
                 SimpleUtil.sleep(10000);
                 if (!mMCUUpdateOK) {
-                    SimpleUtil.addMsgtoTopNoRes(mContext, mContext.getString(R.string.kbv_warmwarn), mContext.getString(R.string.ble_mcufail));
+                    SimpleUtil.addMsgtoTopNoRes(mContext, mContext.getString(R.string.kbv_warmwarn), mContext.getString(R.string.ble_mcufail), Gravity.CENTER);
                 }
                 SimpleUtil.resetWaitTop(mContext);
 
@@ -221,6 +222,7 @@ public class APPStartCheckOTA extends Thread implements SimpleUtil.INormalBack, 
                 break;
             case BaseRemoteOTA.CRCEER_CALLBACK:
                 SimpleUtil.log("CRC校验错误!!!");
+                SimpleUtil.addMsgtoTopNoRes(mContext, mContext.getString(R.string.kbv_warmwarn), (String) obj, Gravity.LEFT);
                 release();
                 break;
             case BaseRemoteOTA.DOWNLOADEER_CALLBACK:
@@ -244,13 +246,13 @@ public class APPStartCheckOTA extends Thread implements SimpleUtil.INormalBack, 
                 } else if (data[3] == 1)//升级成功
                 {
                     mMCUUpdateOK = true;
-                    SimpleUtil.addMsgtoTopNoRes(mContext, mContext.getString(R.string.kbv_warmwarn), mContext.getString(R.string.ota_mcuok));
+                    SimpleUtil.addMsgtoTopNoRes(mContext, mContext.getString(R.string.kbv_warmwarn), mContext.getString(R.string.ota_mcuok), Gravity.CENTER);
                     //SimpleUtil.popWindowNoRes(mContext, SimpleUtil.getString(R.string.switchtomcu), SimpleUtil.getString(R.string.switchmcuupdateok));
                     release();
 
                 } else if (data[3] == 2)//升级失败
                 {
-                    SimpleUtil.addMsgtoTopNoRes(mContext, mContext.getString(R.string.kbv_warmwarn), mContext.getString(R.string.ble_mcufail));
+                    SimpleUtil.addMsgtoTopNoRes(mContext, mContext.getString(R.string.kbv_warmwarn), mContext.getString(R.string.ble_mcufail), Gravity.CENTER);
                     // SimpleUtil.popWindowNoRes(mContext, SimpleUtil.getString(R.string.switchtomcu), SimpleUtil.getString(R.string.switchmcuupdatefail));
                     release();
 
