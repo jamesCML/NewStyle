@@ -42,6 +42,7 @@ public class WrapFloat {
 
     }
 
+    //test
     private WindowManager.LayoutParams getmLayoutParams() {
         WindowManager.LayoutParams mLayoutParams = new WindowManager.LayoutParams();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
