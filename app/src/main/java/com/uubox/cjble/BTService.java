@@ -477,7 +477,7 @@ public class BTService extends Service {
             switch (data[2] & 0xff) {
                 case 0x01:
                     if (data.length < 17) {
-                        Log.e(TAG, "onCharacteristicChanged: bad length = " + data.length);
+                        Log.e(TAG, "CharacteristicChanged: bad length = " + data.length);
                     }
 
                     break;
