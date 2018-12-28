@@ -83,7 +83,7 @@ public class IniTask extends AsyncTask<Void, Integer, Void> {
                     String game = gameElements[i].getValue();
 
                     //增加一个本地测试接口
-                    if (7 == 77) {
+                    if (false) {
                         File root = new File(Environment.getExternalStorageDirectory().getPath() + "/Zhiwan/cfg");
                         File[] configs = root.listFiles();
                         String path = null;
@@ -143,9 +143,9 @@ public class IniTask extends AsyncTask<Void, Integer, Void> {
                 BtnParamTool.loadBtnParamsFromPrefs(mContext);
 
                 //海外版增加默认使用模拟鼠标
-                if (!SimpleUtil.isZh(mContext)) {
+                /*if (!SimpleUtil.isZh(mContext)) {
                     SimpleUtil.saveToShare(mContext, "ini", "simumouse", true);
-                }
+                }*/
             }
             SimpleUtil.saveToShare(mContext, "ini", "configver", configVersion);
             SimpleUtil.saveToShare(mContext, "ini", "storevercode", appvercode);
