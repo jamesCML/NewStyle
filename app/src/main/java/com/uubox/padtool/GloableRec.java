@@ -62,18 +62,7 @@ public class GloableRec extends BroadcastReceiver {
                 SimpleUtil.log("usb accessonry permission fail!");
                 SimpleUtil.notifyall_(10001, null);
             }
-        } else if (action.equals(Intent.ACTION_SCREEN_OFF)) {
-            SimpleUtil.log("屏幕关闭");
-        } else if (action.equals(Intent.ACTION_SCREEN_ON)) {
-            SimpleUtil.log("屏幕开启");
-        } else if (action.equals(Intent.ACTION_USER_PRESENT)) {
-            SimpleUtil.log("屏幕解锁");
         }
-           /* intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
-            // 屏幕亮屏广播
-            intentFilter.addAction(Intent.ACTION_SCREEN_ON);
-            // 屏幕解锁广播
-            intentFilter.addAction(Intent.ACTION_USER_PRESENT);*/
 
     }
 }
